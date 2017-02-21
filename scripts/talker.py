@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 #
 # License: BSD
-#   https://raw.github.com/stonier/py_trees_suite/license/LICENSE
+#   https://raw.github.com/stonier/py_trees_ros/license/LICENSE
 #
 ##############################################################################
 # Documentation
