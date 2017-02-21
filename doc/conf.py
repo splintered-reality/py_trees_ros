@@ -304,4 +304,9 @@ texinfo_documents = [
 
 
 # Example configuration for intersphinx: refer to the Python standard library.
-# intersphinx_mapping = {'http://docs.python.org/': None}
+intersphinx_mapping = {
+    'python': ('http://docs.python.org/', None),
+    # get a useless warning if we use py_trees, anyway, this is only
+    # important if there's ambiguity...you prefix it with this
+    'pt': ('http://py-trees.readthedocs.io/en/devel/', None)
+}
