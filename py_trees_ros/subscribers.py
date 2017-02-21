@@ -6,25 +6,16 @@
 ##############################################################################
 
 """
-.. module:: subscribers
-   :platform: Unix
-   :synopsis: Generic ros subscriber patterns.
+ROS subscribers are asynchronous communication handles whilst py_trees
+are by their nature synchronous. They tick, pause, then tick again and
+provide an assumption that only one behaviour or function is running at
+any single moment. Firing off a subscriber callback in the middle of that
+synchronicity to write to a blackboard would break this assumption.
 
-This module provides various behaviours that utilise common usage patterns
-with ros subscribers.
-
-.. warning::
-
-   The subscriber for all of these classes runs in the background
-   runs continuously in the background. Do not use with high frequency/large
-   data topics!
-
-If you want to connect to a high frequency/large data topic, consider
-creating a different class. It would complicate the mechanics too much
-to add to these and in most cases, you don't want to be flinging around
-large data at high frequence in behaviours anyway - it's a decisional tool,
-not a computational tool.
-
+To get around that, subscriber behaviours run the ros callbacks in a
+background thread and constrain locking and a local cache inside the behaviour.
+Only in the update function is a cached variable unlocked and then
+permitted to be used or written to the blackboard.
 """
 
 ##############################################################################
@@ -36,11 +27,7 @@ import operator
 import rospy
 import threading
 
-import py_trees.behaviour
-import py_trees.blackboard
-import py_trees.common
-import py_trees.logging
-import py_trees.trees
+import py_trees
 
 ##############################################################################
 # Behaviours

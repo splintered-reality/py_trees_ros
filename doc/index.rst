@@ -3,8 +3,8 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-Py Trees
-========
+Py Trees for ROS
+================
 
 Behaviour trees for ros in python.
 
@@ -12,15 +12,17 @@ Contents:
 
 .. toctree::
    :maxdepth: 2
+   :caption: Guide
 
    background
-   building_blocks
-   patterns
-   examples
-   terminology
-   modules
-   programs
+   faq
+
+.. toctree::
+   :maxdepth: 2
+   :caption: Reference
+
    changelog
+   modules
 
 
 Indices and tables

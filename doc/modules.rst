@@ -3,76 +3,40 @@
 Module API
 ==========
 
-py_trees
---------
+py_trees_ros
+------------
 
-.. automodule:: py_trees
-   :synopsis: look after your misbehaving robot with py_trees
+.. automodule:: py_trees_ros
+   :synopsis: is your robot misbehaving?
 
-py_trees.behaviour
+py_trees_ros.blackboard
+-----------------------
+
+.. automodule:: py_trees_ros.blackboard
+    :members:
+    :show-inheritance:
+    :synopsis: the ros blackboard and the blackboard watcher
+
+py_trees_ros.conversions
+------------------------
+
+.. automodule:: py_trees_ros.conversions
+    :members:
+    :show-inheritance:
+    :synopsis: py_trees - ros messages conversion library
+
+py_trees_ros.subscribers
+------------------------
+
+.. automodule:: py_trees_ros.subscribers
+    :members:
+    :show-inheritance:
+    :synopsis: put a lid on the asynchronicity
+
+py_trees_ros.trees
 ------------------
 
-.. automodule:: py_trees.behaviour
+.. automodule:: py_trees_ros.trees
     :members:
     :show-inheritance:
-
-py_trees.behaviours
--------------------
-
-.. automodule:: py_trees.behaviours
-    :members:
-    :show-inheritance:
-
-py_trees.common
----------------
-
-.. automodule:: py_trees.common
-    :members:
-    :show-inheritance:
-
-py_trees.composites
--------------------
-
-.. automodule:: py_trees.composites
-    :members:
-    :special-members:
-    :show-inheritance:
-
-py_trees.display
-----------------
-
-.. automodule:: py_trees.display
-    :members:
-    :show-inheritance:
-
-py_trees.meta
--------------
-
-.. automodule:: py_trees.meta
-    :members:
-    :special-members:
-    :show-inheritance:
-
-py_trees.subscribers
---------------------
-
-.. automodule:: py_trees.subscribers
-    :members:
-    :special-members:
-    :show-inheritance:
-
-py_trees.timers
----------------
-
-.. automodule:: py_trees.timers
-    :members:
-    :special-members:
-    :show-inheritance:
-
-py_trees.trees
---------------
-
-.. automodule:: py_trees.trees
-    :members:
-    :special-members:
-    :show-inheritance:
+    :synopsis: extensions with ros handles for debugging, visualisation messages and more

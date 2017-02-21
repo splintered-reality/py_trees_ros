@@ -8,21 +8,17 @@
 ##############################################################################
 
 """
-.. module:: conversions
-   :platform: Unix
-   :synopsis: Functions used for converting between behaviour messages and internal representation
-
+Converter methods for transferring information back and forth between
+py_trees objects and ros messages.
 """
 
 ##############################################################################
 # Imports
 ##############################################################################
 
-from . import composites
-from . import common
-from .behaviours import Behaviour
 import unique_id
 import uuid_msgs.msg as uuid_msgs
+import py_trees
 import py_trees_msgs.msg as py_trees_msgs
 
 ##############################################################################
@@ -32,39 +28,39 @@ import py_trees_msgs.msg as py_trees_msgs
 
 def convert_type(behaviour):
     # problems with decorators?
-    if isinstance(behaviour, composites.Sequence):
+    if isinstance(behaviour, py_trees.composites.Sequence):
         return py_trees_msgs.Behaviour.SEQUENCE
-    elif isinstance(behaviour, composites.Chooser):
+    elif isinstance(behaviour, py_trees.composites.Chooser):
         return py_trees_msgs.Behaviour.CHOOSER
-    elif isinstance(behaviour, composites.Selector):
+    elif isinstance(behaviour, py_trees.composites.Selector):
         return py_trees_msgs.Behaviour.SELECTOR
-    elif isinstance(behaviour, composites.Parallel):
+    elif isinstance(behaviour, py_trees.composites.Parallel):
         return py_trees_msgs.Behaviour.PARALLEL
-    elif isinstance(behaviour, Behaviour):
+    elif isinstance(behaviour, py_trees.behaviour.Behaviour):
         return py_trees_msgs.Behaviour.BEHAVIOUR
     else:
         return 0  # unknown type
 
 
 def convert_status(status):
-    if status == common.Status.INVALID:
+    if status == py_trees.common.Status.INVALID:
         return py_trees_msgs.Behaviour.INVALID
-    elif status == common.Status.RUNNING:
+    elif status == py_trees.common.Status.RUNNING:
         return py_trees_msgs.Behaviour.RUNNING
-    elif status == common.Status.SUCCESS:
+    elif status == py_trees.common.Status.SUCCESS:
         return py_trees_msgs.Behaviour.SUCCESS
-    elif status == common.Status.FAILURE:
+    elif status == py_trees.common.Status.FAILURE:
         return py_trees_msgs.Behaviour.FAILURE
     else:
         return 0  # unknown status
 
 
 def convert_blackbox_level(blackbox_level):
-    if blackbox_level == common.BlackBoxLevel.DETAIL:
+    if blackbox_level == py_trees.common.BlackBoxLevel.DETAIL:
         return py_trees_msgs.Behaviour.BLACKBOX_LEVEL_DETAIL
-    elif blackbox_level == common.BlackBoxLevel.COMPONENT:
+    elif blackbox_level == py_trees.common.BlackBoxLevel.COMPONENT:
         return py_trees_msgs.Behaviour.BLACKBOX_LEVEL_COMPONENT
-    elif blackbox_level == common.BlackBoxLevel.BIG_PICTURE:
+    elif blackbox_level == py_trees.common.BlackBoxLevel.BIG_PICTURE:
         return py_trees_msgs.Behaviour.BLACKBOX_LEVEL_BIG_PICTURE
     else:
         return py_trees_msgs.Behaviour.BLACKBOX_LEVEL_NOT_A_BLACKBOX

@@ -22,11 +22,7 @@ Bless my noggin with a tickle from your noodly appendages!
 
 import datetime
 import os
-import py_trees.display
-import py_trees.blackboard
-import py_trees.common
-import py_trees.conversions
-import py_trees.trees
+import py_trees
 import py_trees_msgs.msg as py_trees_msgs
 import rocon_python_comms
 import rosbag
@@ -37,6 +33,7 @@ import threading
 import unique_id
 
 from . import blackboard
+from . import conversions
 
 ##############################################################################
 # ROS Trees
@@ -57,7 +54,7 @@ class BehaviourTree(py_trees.trees.BehaviourTree):
      - ~/log/tree (std_msgs/String) : runtime view, with logging information of the entire tree for rqt/bagging
     """
 
-    class SnapshotVisitor(py_trees.trees.VisitorBase):
+    class SnapshotVisitor(py_trees.visitors.VisitorBase):
         """
         Visits the tree in tick-tock, recording runtime information for publishing
         the information as a snapshot view of the tree after the iteration has
@@ -81,7 +78,7 @@ class BehaviourTree(py_trees.trees.BehaviourTree):
             if behaviour.status == py_trees.common.Status.RUNNING:
                 self.running_nodes.append(behaviour.id)
 
-    class LoggingVisitor(py_trees.trees.VisitorBase):
+    class LoggingVisitor(py_trees.visitors.VisitorBase):
         """
         Visits the entire tree and gathers logging information.
         """
@@ -94,7 +91,7 @@ class BehaviourTree(py_trees.trees.BehaviourTree):
             self.tree.header.stamp = rospy.Time.now()
 
         def run(self, behaviour):
-            self.tree.behaviours.append(py_trees.conversions.behaviour_to_msg(behaviour))
+            self.tree.behaviours.append(conversions.behaviour_to_msg(behaviour))
 
     def __init__(self, root):
         """
@@ -202,7 +199,7 @@ class BehaviourTree(py_trees.trees.BehaviourTree):
             if self.root.tip() is None:
                 rospy.logerr("Behaviours: your tree is returning in an INVALID state (should always be FAILURE, RUNNING or SUCCESS)")
                 return
-            self.publishers.tip.publish(py_trees.conversions.behaviour_to_msg(self.root.tip()))
+            self.publishers.tip.publish(conversions.behaviour_to_msg(self.root.tip()))
             self.publishers.log_tree.publish(self.logging_visitor.tree)
             with self.lock:
                 if not self._bag_closed:
