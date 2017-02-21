@@ -25,23 +25,16 @@
   <doc_depend>python-sphinx-rtd-theme</doc_depend>
   <doc_depend>python-catkin-pkg</doc_depend>
 
-  <!-- for documentation -->
   <exec_depend>py_trees_msgs</exec_depend>
+  <exec_depend>python-rospkg</exec_depend>
+  <exec_depend>rosbag</exec_depend>
+  <exec_depend>rospy</exec_depend>
+  <exec_depend>std_msgs</exec_depend>
+  <exec_depend>unique_id</exec_depend>
+  <exec_depend>uuid_msgs</exec_depend>
 
   <!--
-  <exec_depend>rocon_python_comms</exec_depend>
-  <exec_depend>std_msgs</exec_depend>
-  <exec_depend>uuid_msgs</exec_depend>
-  <exec_depend>unique_id</exec_depend>
-
-  <run_depend>python-termcolor</run_depend>
-  <run_depend>py_trees_msgs</run_depend>
-  <run_depend>rocon_python_comms</run_depend>
-  <run_depend>rospy</run_depend>
-  <run_depend>rospy_tutorials</run_depend>
-  <run_depend>std_msgs</run_depend>
-  <run_depend>unique_id</run_depend>
-  <run_depend>uuid_msgs</run_depend>
+  <exec_depend>rospy_tutorials</exec_depend>
  -->
 
   <test_depend>rostest</test_depend>

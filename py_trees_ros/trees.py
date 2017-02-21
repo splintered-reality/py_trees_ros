@@ -8,12 +8,7 @@
 ##############################################################################
 
 """
-.. module:: trees
-   :platform: Unix
-   :synopsis: A tree caretaker with ros interfaces
-
-Oh my spaghettified magnificence,
-Bless my noggin with a tickle from your noodly appendages!
+A ROS style custodian for behaviour trees.
 """
 
 ##############################################################################
@@ -24,7 +19,6 @@ import datetime
 import os
 import py_trees
 import py_trees_msgs.msg as py_trees_msgs
-import rocon_python_comms
 import rosbag
 import rospkg
 import rospy
@@ -34,6 +28,7 @@ import unique_id
 
 from . import blackboard
 from . import conversions
+from . import utilities
 
 ##############################################################################
 # ROS Trees
@@ -148,7 +143,7 @@ class BehaviourTree(py_trees.trees.BehaviourTree):
 
     def setup_publishers(self):
         latched = True
-        self.publishers = rocon_python_comms.utils.Publishers(
+        self.publishers = utilities.Publishers(
             [
                 ("ascii_tree", "~ascii/tree", std_msgs.String, latched, 2),
                 ("ascii_snapshot", "~ascii/snapshot", std_msgs.String, latched, 2),

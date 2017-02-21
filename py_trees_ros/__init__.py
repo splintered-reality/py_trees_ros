@@ -7,11 +7,10 @@
 ##############################################################################
 
 """
-This is the top-level namespace of the py_trees_ros_
-package. It provides trees and behaviours to assist in
-robotics specific behaviour tree development.
+ROS extensions, behaviours and utilities for py_trees.
 
-.. _py_trees_ros: http://wiki.ros.org/py_trees_ros
+Oh my spaghettified magnificence,
+Bless my noggin with a tickle from your noodly appendages!
 """
 
 ##############################################################################
@@ -22,3 +21,4 @@ from . import blackboard
 from . import conversions
 from . import subscribers
 from . import trees
+from . import utilities
