@@ -16,7 +16,7 @@ Test for CheckSubscriberVariable
 import std_msgs.msg as std_msgs
 import operator
 import py_trees
-# import rocon_console.console as console
+# import py_trees.console as console
 import rospy
 import unittest
 import rostest

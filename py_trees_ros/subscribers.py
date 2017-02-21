@@ -24,10 +24,9 @@ permitted to be used or written to the blackboard.
 
 import copy
 import operator
+import py_trees
 import rospy
 import threading
-
-import py_trees
 
 ##############################################################################
 # Behaviours

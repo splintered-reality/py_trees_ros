@@ -16,7 +16,7 @@ Test for CheckSubscriberVariable
 from geometry_msgs.msg import Pose
 import operator
 import py_trees
-# import rocon_console.console as console
+# import py_trees.console as console
 import rospy
 import unittest
 import rostest

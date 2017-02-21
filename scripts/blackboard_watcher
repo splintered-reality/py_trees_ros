@@ -17,7 +17,7 @@ import argparse
 import functools
 import py_trees_msgs.srv as py_trees_srvs
 import rospy
-import rocon_console.console as console
+import py_trees.console as console
 import rosservice
 import sys
 import std_msgs.msg as std_msgs

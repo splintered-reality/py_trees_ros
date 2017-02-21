@@ -3,6 +3,8 @@
 	<name>py_trees_ros</name>
 	<comment></comment>
 	<projects>
+		<project>py_trees</project>
+		<project>py_trees_msgs</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>

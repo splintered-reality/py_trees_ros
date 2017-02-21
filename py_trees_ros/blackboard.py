@@ -8,12 +8,7 @@
 ##############################################################################
 
 """
-.. module:: blackboard
-   :platform: Unix
-   :synopsis: Ros wrapped blackboard
-
-Oh my spaghettified magnificence,
-Bless my noggin with a tickle from your noodly appendages!
+The ROS blackboard overlord and blackboard watchers.
 """
 
 ##############################################################################
@@ -21,10 +16,10 @@ Bless my noggin with a tickle from your noodly appendages!
 ##############################################################################
 
 import operator
-import py_trees.blackboard
+import py_trees
 import py_trees_msgs.srv as py_trees_srvs
 import rospy
-import rocon_console.console as console
+import py_trees.console as console
 import std_msgs.msg as std_msgs
 
 from cPickle import dumps
