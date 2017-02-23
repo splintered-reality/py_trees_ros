@@ -118,11 +118,11 @@ class BehaviourTree(py_trees.trees.BehaviourTree):
             :obj:`bool`: suceess or failure of the operation
         """
         self._setup_publishers()
-        self.ros_blackboard = blackboard.Exchange()
-        if not self.ros_blackboard.setup(timeout):
+        self.blackboard_exchange = blackboard.Exchange()
+        if not self.blackboard_exchange.setup(timeout):
             return False
         self.post_tick_handlers.append(self._publish_tree_snapshots)
-        self.post_tick_handlers.append(self.ros_blackboard.publish_blackboard)
+        self.post_tick_handlers.append(self.blackboard_exchange.publish_blackboard)
         return super(BehaviourTree, self).setup(timeout)
 
     def _setup_publishers(self):
