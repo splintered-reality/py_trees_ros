@@ -1,9 +1,13 @@
-*/*.egg-info
+py_trees_ros.egg-info
 */doc/html
 */doc/manifest.yaml
 *.pyc
 *.png
 *.svg
+build
+dist
+deb_dist
+py_trees*.tar.gz 
 *~
 \#*
 .#*

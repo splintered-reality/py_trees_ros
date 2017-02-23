@@ -40,3 +40,20 @@ py_trees_ros.trees
     :members:
     :show-inheritance:
     :synopsis: extensions with ros handles for debugging, visualisation messages and more
+
+py_trees.utilities
+------------------
+
+.. automodule:: py_trees_ros.utilities
+    :members:
+    :show-inheritance:
+    :synopsis: assorted utility functions
+
+py_trees.visitors
+-----------------
+
+.. automodule:: py_trees_ros.visitors
+    :members:
+    :show-inheritance:
+    :synopsis: entities that visit behaviours as a tree is traversed
+

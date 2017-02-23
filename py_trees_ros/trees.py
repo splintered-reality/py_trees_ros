@@ -29,6 +29,7 @@ import unique_id
 from . import blackboard
 from . import conversions
 from . import utilities
+from . import visitors
 
 ##############################################################################
 # ROS Trees
@@ -37,57 +38,38 @@ from . import utilities
 
 class BehaviourTree(py_trees.trees.BehaviourTree):
     """
-    Wrap the :py:class:`BehaviourTree <py_trees.trees.BehaviourTree>` class with
-    a few latched publishers that publish representations of both the full tree and the
-    runtime iteration on that tree.
+    Extend the :class:`py_trees.trees.BehaviourTree` class with
+    a few bells and whistles for ROS:
 
-    Publishers:
+    * ros publishers with snapshot ascii/dot graph views of the tree
+    * ros publisher with data representation of the entire tree for monitoring/bagging
+    * ros publisher showing what the current tip is
+    * a blackboard exchange with introspection and watcher services
 
-     - ~/ascii/tree (std_msgs/String) : static view of the entire tree.
-     - ~/ascii/snapshot (std_msgs/String) : runtime snapshot of the ticking ascii tree.
-     - ~/dot/tree (std_msgs/String) : static dot graph view of the entire tree.
-     - ~/log/tree (std_msgs/String) : runtime view, with logging information of the entire tree for rqt/bagging
+
+    ROS Publishers:
+        * **~ascii_tree** (:class:`std_msgs.msg.String`)
+
+          * static view of the entire tree
+        * **~ascii_snapshot** (:class:`std_msgs.msg.String`)
+
+          * runtime ascii snapshot view of the ticking tree
+        * **~dot_tree** (:class:`std_msgs.msg.String`)
+
+          * static dot graph of the entire tree
+        * **~log_tree** (:class:`py_trees_msgs.msg.BehaviourTree`)
+
+          * representation of the entire tree in message form for rqt/bagging
+        * **~tip** (:class:`py_trees_msgs.msg.Behaviour`)
+
+          * the tip of the tree after the last tick
+
+    Args:
+        root (:class:`~py_trees.behaviour.Behaviour`): root node of the tree
+
+    Raises:
+        AssertionError: if incoming root variable is not the correct type
     """
-
-    class SnapshotVisitor(py_trees.visitors.VisitorBase):
-        """
-        Visits the tree in tick-tock, recording runtime information for publishing
-        the information as a snapshot view of the tree after the iteration has
-        finished.
-
-        Puts all iterated nodes into a dictionary, key: unique id value: status
-        """
-        def __init__(self):
-            super(BehaviourTree.SnapshotVisitor, self).__init__()
-            self.nodes = {}
-            self.running_nodes = []
-            self.previously_running_nodes = []
-
-        def initialise(self):
-            self.nodes = {}
-            self.previously_running_nodes = self.running_nodes
-            self.running_nodes = []
-
-        def run(self, behaviour):
-            self.nodes[behaviour.id] = behaviour.status
-            if behaviour.status == py_trees.common.Status.RUNNING:
-                self.running_nodes.append(behaviour.id)
-
-    class LoggingVisitor(py_trees.visitors.VisitorBase):
-        """
-        Visits the entire tree and gathers logging information.
-        """
-        def __init__(self):
-            super(BehaviourTree.LoggingVisitor, self).__init__()
-            self.full = True  # examine all nodes
-
-        def initialise(self):
-            self.tree = py_trees_msgs.BehaviourTree()
-            self.tree.header.stamp = rospy.Time.now()
-
-        def run(self, behaviour):
-            self.tree.behaviours.append(conversions.behaviour_to_msg(behaviour))
-
     def __init__(self, root):
         """
         Initialise the tree with a root.
@@ -97,13 +79,11 @@ class BehaviourTree(py_trees.trees.BehaviourTree):
         :raises AssertionError: if incoming root variable is not the correct type.
         """
         super(BehaviourTree, self).__init__(root)
-        self.snapshot_visitor = BehaviourTree.SnapshotVisitor()
-        self.logging_visitor = BehaviourTree.LoggingVisitor()
+        self.snapshot_visitor = visitors.SnapshotVisitor()
+        self.logging_visitor = visitors.LoggingVisitor()
         self.visitors.append(self.snapshot_visitor)
         self.visitors.append(self.logging_visitor)
         self._bag_closed = False
-
-        self.ros_blackboard = blackboard.Blackboard()
 
         now = datetime.datetime.now()
         topdir = rospkg.get_ros_home() + '/behaviour_trees'
@@ -123,25 +103,29 @@ class BehaviourTree(py_trees.trees.BehaviourTree):
         # delay the publishers so we can instantiate this class without connecting to ros (private names need init_node)
         self.publishers = None
 
-        # cleanup must come last as it assumes the existence of the bag
-        rospy.on_shutdown(self.cleanup)
+        # _cleanup must come last as it assumes the existence of the bag
+        rospy.on_shutdown(self._cleanup)
 
     def setup(self, timeout):
         """
-        This gives control over the ros initialisation to the user...do all your ros stuff here!
+        Setup the publishers, exechange and add ros-relevant pre/post tick handlers to the tree.
+        Ultimately relays this call down to all the behaviours in the tree.
 
-        :param double timeout: time to wait (0.0 is blocking forever)
-        :returns: whether it timed out trying to setup
-        :rtype: boolean
+        Args:
+            timeout (:obj:`float`): time to wait (0.0 is blocking forever)
+
+        Returns:
+            :obj:`bool`: suceess or failure of the operation
         """
-        self.setup_publishers()
+        self._setup_publishers()
+        self.ros_blackboard = blackboard.Exchange()
         if not self.ros_blackboard.setup(timeout):
             return False
-        self.post_tick_handlers.append(self.publish_tree_snapshots)
-        self.post_tick_handlers.append(self.ros_blackboard.publish_blackboard)
+        self.post_tick_handlers.append(self._publish_tree_snapshots)
+        self.post_tick_handlers.append(self.ros_blackboard._publish_blackboard)
         return super(BehaviourTree, self).setup(timeout)
 
-    def setup_publishers(self):
+    def _setup_publishers(self):
         latched = True
         self.publishers = utilities.Publishers(
             [
@@ -154,12 +138,12 @@ class BehaviourTree(py_trees.trees.BehaviourTree):
         )
 
         # publish current state
-        self.publish_tree_modifications(self.root)
+        self._publish_tree_modifications(self.root)
         # set a handler to publish future modifiactions
         # tree_update_handler is in the base class, set this to the callback function here.
-        self.tree_update_handler = self.publish_tree_modifications
+        self.tree_update_handler = self._publish_tree_modifications
 
-    def publish_tree_modifications(self, tree):
+    def _publish_tree_modifications(self, tree):
         """
         Publishes updates when the whole tree has been modified.
 
@@ -172,9 +156,9 @@ class BehaviourTree(py_trees.trees.BehaviourTree):
         self.publishers.ascii_tree.publish(std_msgs.String(py_trees.display.ascii_tree(self.root)))
         self.publishers.dot_tree.publish(std_msgs.String(py_trees.display.stringify_dot_tree(self.root)))
 
-    def publish_tree_snapshots(self, tree):
+    def _publish_tree_snapshots(self, tree):
         """
-        Callback that runs on a :py:class:`BehaviourTree <py_trees.trees.BehaviourTree>` after
+        Callback that runs on a :class:`BehaviourTree <py_trees.trees.BehaviourTree>` after
         it has ticked.
 
         :param tree: the behaviour tree
@@ -201,7 +185,7 @@ class BehaviourTree(py_trees.trees.BehaviourTree):
                     self.bag.write(self.publishers.log_tree.name, self.logging_visitor.tree)
             self.last_tree = self.logging_visitor.tree
 
-    def cleanup(self):
+    def _cleanup(self):
         with self.lock:
             self.bag.close()
             self.interrupt_tick_tocking = True

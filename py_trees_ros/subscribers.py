@@ -33,7 +33,7 @@ import threading
 ##############################################################################
 
 
-class SubscriberHandler(py_trees.behaviour.Behaviour):
+class Handler(py_trees.behaviour.Behaviour):
     """
     Not intended for direct use, as this just absorbs the mechanics of setting up
     a subscriber for inheritance by user-defined behaviour classes. There are several
@@ -42,24 +42,35 @@ class SubscriberHandler(py_trees.behaviour.Behaviour):
     **Always Look for New Data**
 
     This will clear any currently stored data upon entry into the behaviour (i.e. when
-    :py:meth:`initialise` is called). This is useful for a behaviour in a sequence
+    :meth:`initialise` is called). This is useful for a behaviour in a sequence
     that is looking to start fresh as it is about to tick and be
-    in a :py:data:`~py_trees.common.Status.RUNNING` state
+    in a :attr:`~py_trees.common.Status.RUNNING` state
     until new data arrives.
 
     **Look for New Data only after SUCCESS**
 
     This will clear any currently stored data as soon as the behaviour returns
-    :py:data:`~py_trees.common.Status.SUCCESS`. This is useful for catching new
+    :attr:`~py_trees.common.Status.SUCCESS`. This is useful for catching new
     triggers/events from things like buttons where you don't want to miss things
     even though you may not actually be ticking.
 
     **Use the Latest Data**
 
     Even if this data was received before entry into the behaviour. In this case
-    :py:meth:`initialise` does not do anything with the currently stored data. Useful
+    :meth:`initialise` does not do anything with the currently stored data. Useful
     as a blocking behaviour to wait on some some topic having been initialised with
     some data (e.g. CameraInfo).
+
+    .. warning::
+        Do not use - it will always return
+        :attr:`~py_trees.common.Status.INVALID`. Subclass it to create a functional
+        behaviour.
+
+    Args:
+        name (:obj:`str`): name of the behaviour
+        topic_name (:obj:`str`): name of the topic to connect to
+        topic_type (:obj:`any`): class of the message type (e.g. :obj:`std_msgs.msg.String`)
+        clearing_policy (:class:`~py_trees.common.ClearingPolicy`): when to clear the data
     """
     def __init__(self,
                  name="Subscriber Handler",
@@ -67,13 +78,7 @@ class SubscriberHandler(py_trees.behaviour.Behaviour):
                  topic_type=None,
                  clearing_policy=py_trees.common.ClearingPolicy.ON_INITIALISE
                  ):
-        """
-        :param str name: name of the behaviour
-        :param str topic_name: name of the topic to connect to
-        :param obj topic_type: class of the message type (e.g. std_msgs.String)
-        :param clearing_policy: when to clear the data, see :py:class:`~py_trees.common.ClearingPolicy`
-        """
-        super(SubscriberHandler, self).__init__(name)
+        super(Handler, self).__init__(name)
         self.topic_name = topic_name
         self.topic_type = topic_type
         self.msg = None
@@ -82,6 +87,15 @@ class SubscriberHandler(py_trees.behaviour.Behaviour):
         self.clearing_policy = clearing_policy
 
     def setup(self, timeout):
+        """
+        Initialises the subscriber.
+
+        Args:
+            timeout (:obj:`float`): time to wait (0.0 is blocking forever)
+
+        Returns:
+            :obj:`bool`: whether it timed out trying to setup
+        """
         # ros doesn't care if it is init'd or not for subscriber construction, but
         # good to have here anyway so initialisation can occur before the callback is connected
         self.subscriber = rospy.Subscriber(self.topic_name, self.topic_type, self._callback, queue_size=5)
@@ -89,42 +103,64 @@ class SubscriberHandler(py_trees.behaviour.Behaviour):
 
     def initialise(self):
         """
-        Clears the internally stored message ready for a new run
-        if ``old_data_is_valid`` wasn't set.
+        If the clearing policy is set to :attr:`~py_trees.common.ClearingPolicy.ON_INITIALISE` it
+        will clear the internally saved message, otherwise it does nothing.
         """
-        self.logger.debug("  %s [SubscriberHandler::initialise()]" % self.name)
+        self.logger.debug("%s.initialise()" % self.__class__.__name__)
         with self.data_guard:
             if self.clearing_policy == py_trees.common.ClearingPolicy.ON_INITIALISE:
                 self.msg = None
 
     def _callback(self, msg):
         """
-        Subscriber callback, just stored the message.
+        The subscriber callback, just stores a copy of the message internally.
+
+        Args:
+            msg (:obj:`any`): the incoming message
         """
         with self.data_guard:
             self.msg = msg
             # else ignore it
 
 
-class CheckSubscriberVariable(SubscriberHandler):
+class CheckData(Handler):
     """
-    Check a subscriber to see if it has a specific variable
-    and optionally whether that variable has a specific value.
+    Check a subscriber to see if it has received data
+    and optionally whether that data, or part of it has a specific value.
 
     **Usage Patterns**
 
-    *Sequence Guard*: RUNNING until there is a successful comparison
+    *Sequence Guard*: :attr:`~py_trees.common.Status.RUNNING` until there is a successful comparison
 
     - fail_if_no_data=False
     - fail_if_bad_comparison=False
 
-    *Selector Priority Chooser*: FAILURE until there is a successful comparison
+    *Selector Priority Chooser*: :attr:`~py_trees.common.Status.FAILURE` until there is a successful comparison
 
     - fail_if_no_data=True
     - fail_if_bad_comparison=True
+
+    Args:
+        name (:obj:`str`): name of the behaviour
+        topic_name (:obj:`str`): name of the topic to connect to
+        topic_type (:obj:`any`): class of the message type (e.g. :obj:`std_msgs.msg.String`)
+        variable_name (:obj:`str`): name of the variable to check
+        expected_value (:obj:`any`): expected value of the variable
+        fail_if_no_data (:obj:`bool`): :attr:`~py_trees.common.Status.FAILURE` instead of :attr:`~py_trees.common.Status.RUNNING` if there is no data yet
+        fail_if_bad_comparison (:obj:`bool`): :attr:`~py_trees.common.Status.FAILURE` instead of :attr:`~py_trees.common.Status.RUNNING` if comparison failed
+        comparison_operator (:obj:`func`): one from the python `operator module`_
+        clearing_policy (:class:`~py_trees.common.ClearingPolicy`): when to clear the data
+
+    .. tip::
+
+        Prefer :class:`~py_trees_ros.subscribers.ToBlackboard` and the various blackboard checking behaviours instead. It will provide you with
+        better introspection capability and less complex behaviour construction to manage.
+
+    .. include:: weblinks.rst
+
     """
     def __init__(self,
-                 name="Check Subscriber Variable",
+                 name="Check Data",
                  topic_name="/foo",
                  topic_type=None,
                  variable_name="bar",
@@ -134,20 +170,7 @@ class CheckSubscriberVariable(SubscriberHandler):
                  comparison_operator=operator.eq,
                  clearing_policy=py_trees.common.ClearingPolicy.ON_INITIALISE
                  ):
-        """
-        :param str name: name of the behaviour
-        :param str topic_name: name of the topic to connect to
-        :param obj topic_type: class of the message type (e.g. std_msgs.String)
-        :param str variable_name: name of the variable to check
-        :param obj expected_value: expected value of the variable
-        :param bool fail_if_no_data: FAILURE instead of RUNNING if there is no data yet
-        :param bool fail_if_bad_comparison: FAILURE instead of RUNNING if comparison failed
-        :param function comparison_operator: one from the python `operator module`_
-        :param clearing_policy: when to clear the data, see :py:class:`~py_trees.common.ClearingPolicy`
-
-        .. _operator module: https://docs.python.org/2/library/operator.html
-        """
-        super(CheckSubscriberVariable, self).__init__(
+        super(CheckData, self).__init__(
             name,
             topic_name=topic_name,
             topic_type=topic_type,
@@ -163,9 +186,10 @@ class CheckSubscriberVariable(SubscriberHandler):
         """
         Handles all the logic for determining what result should go back.
 
-        :returns: :py:data:`~py_trees.common.Status.FAILURE`, :py:data:`~py_trees.common.Status.RUNNING`, or :py:data:`~py_trees.common.Status.SUCCESS` depending on the logic.
+        Returns:
+            :class:`~py_trees.common.Status`: depending on the checking results
         """
-        self.logger.debug("  %s [CheckSubscriberVariable::update()]" % self.name)
+        self.logger.debug("%s.update()]" % self.__class__.__name__)
         with self.data_guard:
             msg = copy.copy(self.msg)
         if msg is None:
@@ -195,7 +219,7 @@ class CheckSubscriberVariable(SubscriberHandler):
             return py_trees.common.Status.FAILURE if self.fail_if_bad_comparison else py_trees.common.Status.RUNNING
 
 
-class WaitForSubscriberData(SubscriberHandler):
+class WaitForData(Handler):
     """
     Waits for a subscriber's callback to be triggered. This doesn't care about
     the actual data, just whether it arrived or not, so is useful for catching
@@ -207,39 +231,39 @@ class WaitForSubscriberData(SubscriberHandler):
 
     *Got Something, Sometime*
 
-    * clearing_policy == :py:data:`~py_trees.common.ClearingPolicy.NEVER`
+    * clearing_policy == :attr:`~py_trees.common.ClearingPolicy.NEVER`
 
     Don't care when data arrived, just that it arrived. This could be for something
-    like a map topic, or a configuration that you need to block. Once it returns SUCCESS,
-    it will always return SUCCESS.
+    like a map topic, or a configuration that you need to block. Once it returns :attr:`~py_trees.common.Status.SUCCESS`,
+    it will always return :attr:`~py_trees.common.Status.SUCCESS`.
 
     *Wating for the Next Thing, Starting From Now*
 
-    * clearing_policy == :py:data:`~py_trees.common.ClearingPolicy.ON_INTIALISE`
+    * clearing_policy == :attr:`~py_trees.common.ClearingPolicy.ON_INTIALISE`
 
     Useful as a gaurd at the start of a sequence, that is waiting for an event to
     trigger after the sequence has started (i.e. been initialised).
 
     *Wating for the Next Thing, Starting from the Last*
 
-    * clearing_policy == :py:data:`~py_trees.common.ClearingPolicy.ON_SUCCESS`
+    * clearing_policy == :attr:`~py_trees.common.ClearingPolicy.ON_SUCCESS`
 
     Useful as a guard watching for an event that could have come in anytime, but for
     which we do with to reset (and subsequently look for the next event). e.g. button events.
+
+    Args:
+        name (:obj:`str`): name of the behaviour
+        topic_name (:obj:`str`): name of the topic to connect to
+        topic_type (:obj:`any`): class of the message type (e.g. :obj:`std_msgs.msg.String`)
+        clearing_policy (:class:`~py_trees.common.ClearingPolicy`): when to clear the data
     """
     def __init__(self,
-                 name="Wait For Subscriber",
+                 name="Wait For Data",
                  topic_name="chatter",
                  topic_type=None,
                  clearing_policy=py_trees.common.ClearingPolicy.ON_INITIALISE
                  ):
-        """
-        :param str name: name of the behaviour
-        :param str topic_name: name of the topic to connect to
-        :param obj topic_type: class of the message type (e.g. std_msgs.String)
-        :param clearing_policy: when to clear the data, see :py:class:`~py_trees.common.ClearingPolicy`
-        """
-        super(WaitForSubscriberData, self).__init__(
+        super(WaitForData, self).__init__(
             name,
             topic_name=topic_name,
             topic_type=topic_type,
@@ -248,9 +272,10 @@ class WaitForSubscriberData(SubscriberHandler):
 
     def update(self):
         """
-        :returns: :py:data:`~py_trees.common.Status.RUNNING` (no data) or :py:data:`~py_trees.common.Status.SUCCESS`
+        Returns:
+            :class:`~py_trees.common.Status`: :attr:`~py_trees.common.Status.RUNNING` (no data) or :attr:`~py_trees.common.Status.SUCCESS`
         """
-        self.logger.debug("  %s [WaitForSubscriberData::update()]" % self.name)
+        self.logger.debug("%s.update()]" % self.__class__.__name__)
         with self.data_guard:
             if self.msg is None:
                 self.feedback_message = "no message received yet"
@@ -262,7 +287,7 @@ class WaitForSubscriberData(SubscriberHandler):
                 return py_trees.common.Status.SUCCESS
 
 
-class ToBlackboard(SubscriberHandler):
+class ToBlackboard(Handler):
     """
     Saves the latest message to the blackboard and immediately returns success.
     If no data has yet been received, this behaviour blocks (i.e. returns
@@ -270,6 +295,40 @@ class ToBlackboard(SubscriberHandler):
 
     Typically this will save the entire message, however sub fields can be
     designated, in which case they will write to the specified keys.
+
+    Args:
+        name (:obj:`str`): name of the behaviour
+        topic_name (:obj:`str`): name of the topic to connect to
+        topic_type (:obj:`any`): class of the message type (e.g. :obj:`std_msgs.msg.String`)
+        blackboard_variables (:obj:`dict`): blackboard variable string or dict {names (keys) - message subfields (values)}, use a value of None to indicate the entire message
+        initialise_variables (:obj:`bool`): initialise the blackboard variables to some defaults
+        clearing_policy (:class:`~py_trees.common.ClearingPolicy`): when to clear the data
+
+    Examples:
+
+        To capture an entire message:
+
+        .. code-block:: python
+
+            chatter_to_blackboard = ToBlackboard(topic_name="chatter",
+                                                 topic_type=std_msgs.msg.String,
+                                                 blackboard_variables = {'chatter': None}
+                                                 )
+
+        or to get rid of the annoying sub-data field in std_msgs/String:
+
+        .. code-block:: python
+
+            chatter_to_blackboard = ToBlackboard(topic_name="chatter",
+                                                 topic_type=std_msgs.msg.String,
+                                                 blackboard_variables = {'chatter': 'data'}
+                                                 )
+
+        combinations of multiple entities inside the message can also be saved:
+
+        .. code-block:: python
+
+           blackboard_variables={"pose_with_covariance_stamped": None, "pose": "pose.pose"}
     """
     def __init__(self,
                  name="ToBlackboard",
@@ -279,20 +338,6 @@ class ToBlackboard(SubscriberHandler):
                  initialise_variables={},
                  clearing_policy=py_trees.common.ClearingPolicy.ON_INITIALISE
                  ):
-        """
-        :param str name: name of the behaviour
-        :param str topic_name: name of the topic to connect to
-        :param obj topic_type: class of the message type (e.g. std_msgs.String)
-        :param dict blackboard_variables: blackboard variable string or dict {names (keys) - message subfields (values)}
-        :param clearing_policy: when to clear the data, see :py:class:`~py_trees.common.ClearingPolicy`
-
-        If a dict is used to designate the blackboard variables, then a value of None will force the entire
-        message to be saved to the string identified by the key.
-
-        .. code-block:: python
-
-           blackboard_variables={"pose_with_covariance_stamped": None, "pose": "pose.pose"}
-        """
         super(ToBlackboard, self).__init__(
             name,
             topic_name=topic_name,
@@ -321,13 +366,23 @@ class ToBlackboard(SubscriberHandler):
                 self.logger.error("tried to initialise an already initialised blackboard variable '{0}', check that you do not have a conflict with another behaviour [{1}]".format(name, self.name))
 
     def setup(self, timeout):
+        """
+        Initialise the subscriber.
+
+        Args:
+            timeout (:obj:`float`): time to wait (0.0 is blocking forever)
+
+        Returns:
+            :obj:`bool`: whether it timed out trying to setup
+        """
         return super(ToBlackboard, self).setup(timeout)
 
     def update(self):
         """
         Writes the data (if available) to the blackboard.
 
-        :returns: :py:data:`~py_trees.common.Status.RUNNING` (no data) or :py:data:`~py_trees.common.Status.SUCCESS`
+        Returns:
+            :class:`~py_trees.common.Status`: :attr:`~py_trees.common.Status.RUNNING` (no data) or :attr:`~py_trees.common.Status.SUCCESS`
         """
         with self.data_guard:
             if self.msg is None:

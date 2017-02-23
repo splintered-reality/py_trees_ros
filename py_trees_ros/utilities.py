@@ -26,15 +26,21 @@ import std_msgs.msg as std_msgs
 
 def basename(name):
     """
-    Generate the basename from a ros name, e.g.
-    ...code-block:: python
-       > basename("~dude")
-       > 'dude'
-       > basename("/gang/dude")
-       > 'dude'
-    :param str name: ros name as input
-    :returns: name stripped up until the last slash or tilde character.
-    :rtype: str
+    Generate the basename from a ros name.
+
+    Args:
+        name (:obj:`str`): ros name
+
+    Returns:
+        :obj:`str`: name stripped up until the last slash or tilde character.
+    Examples:
+
+        .. code-block:: python
+
+           basename("~dude")
+           # 'dude'
+           basename("/gang/dude")
+           # 'dude'
     """
     return name.rsplit('/', 1)[-1].rsplit('~', 1)[-1]
 
@@ -43,6 +49,10 @@ def publish_resolved_names(publisher, ros_communication_handles):
     """
     Worker that provides a string representation of all the resolved names
     and publishes it so we can use it as an introspection topic in runtime.
+
+    Args:
+        publisher (:obj:`rospy.Publisher`): use this object to publish with
+        ros_communication_handles ([]): list of handles with their resolved names to to publish
     """
     s = console.bold + "\nResolved Names\n\n" + console.reset
     for handle in ros_communication_handles:
@@ -55,10 +65,17 @@ def publish_resolved_names(publisher, ros_communication_handles):
 
 
 class Publishers(object):
-    def __init__(self, publishers, introspection_topic_name="publishers"):
-        """
-        Converts the incoming list of publisher name, type, latched, queue_size specifications into proper variables of this class.
+    """
+    Utility class that groups the publishers together in one convenient structure.
+
+    Args:
+        publishers (obj:`tuple`): list of (str, str, bool, int) tuples representing (topic_name, publisher_type, latched, queue_size) specifications to create publishers with
+
+    Examples:
+        Convert the incoming list of publisher name, type, latched, queue_size specifications into proper variables of this class.
+
         .. code-block:: python
+
            publishers = rocon_python_comms.utils.Publishers(
                [
                    ('~foo', std_msgs.String, True, 5),
@@ -66,11 +83,11 @@ class Publishers(object):
                    ('foobar', '/foo/bar', std_msgs.String, False, 5),
                ]
            )
+
         Note: '~/introspection/dude' will become just 'dude' unless you prepend a field for the name
         as in the third example above.
-        :param publishers: incoming list of service specifications
-        :type publishers: list of (str, str, bool, int) tuples representing (topic_name, publisher_type, latched, queue_size) specifications.
-        """
+    """
+    def __init__(self, publishers, introspection_topic_name="publishers"):
         publisher_details = []
         for info in publishers:
             if len(info) == 4:

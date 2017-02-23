@@ -8,9 +8,6 @@
 
 """
 ROS extensions, behaviours and utilities for py_trees.
-
-Oh my spaghettified magnificence,
-Bless my noggin with a tickle from your noodly appendages!
 """
 
 ##############################################################################
