@@ -16,11 +16,11 @@ Test for CheckSubscriberVariable
 from geometry_msgs.msg import Pose
 import operator
 import py_trees
+import py_trees_ros
 # import py_trees.console as console
 import rospy
 import unittest
 import rostest
-
 
 
 ##############################################################################
@@ -40,7 +40,7 @@ class TestSubscriberNestedCheck(unittest.TestCase):
         expected_value = 1.0 if not generate_failure else -1.0
         self.logger = py_trees.logging.Logger("Subscriber Check")
         self.root = py_trees.Sequence(name="Demo Subscribers")
-        check_subscriber_variable = py_trees.subscribers.CheckSubscriberVariable(
+        check_subscriber_variable = py_trees_ros.subscribers.CheckData(
             "Check",
             topic_name=topic_name,
             topic_type=Pose,
@@ -48,14 +48,14 @@ class TestSubscriberNestedCheck(unittest.TestCase):
             expected_value=expected_value,
             comparison_operator=operator.eq
         )
-        wait_for_subscriber = py_trees.subscribers.WaitForSubscriberData(
+        wait_for_subscriber = py_trees_ros.subscribers.WaitForData(
             "Wait",
             topic_name=topic_name,
             topic_type=Pose,
         )
         self.root.add_child(check_subscriber_variable)
         self.root.add_child(wait_for_subscriber)
-        self.tree = py_trees.ros.BehaviourTree(self.root)
+        self.tree = py_trees_ros.trees.BehaviourTree(self.root)
         rospy.on_shutdown(self.shutdown)
         # py_trees.display.render_dot_tree(self.root)
         py_trees.display.print_ascii_tree(self.root, 0)
@@ -66,8 +66,10 @@ class TestSubscriberNestedCheck(unittest.TestCase):
 
     def test_tick_tock(self):
         self.tree.visitors.append(py_trees.visitors.DebugVisitor())
+        self.tree.setup(15)
+        max_number_of_iterations = 500
         rate = rospy.Rate(10)
-        while not rospy.is_shutdown():
+        while not rospy.is_shutdown() and self.tree.count < max_number_of_iterations:
             self.tree.tick(pre_tick_handler=self.pre_tick_handler)
             if self.root.status == py_trees.Status.SUCCESS or self.root.status == py_trees.Status.FAILURE:
                 break

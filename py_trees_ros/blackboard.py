@@ -232,7 +232,7 @@ class Exchange(object):
 
     def _list_blackboard_variables_service(self, req):
         nested_keys = self._get_nested_keys()
-        return py_trees_srvs.BlackboardVariablesResponse(nested_keys)
+        return py_trees_srvs.GetBlackboardVariablesResponse(nested_keys)
 
     def _spawn_blackboard_watcher_service(self, req):
         topic_name = self._initialize_sub_blackboard(req.variables)
@@ -240,4 +240,4 @@ class Exchange(object):
             absolute_topic_name = rospy.get_name() + "/" + topic_name
         else:
             absolute_topic_name = None
-        return py_trees_srvs.SpawnBlackboardWatcherResponse(absolute_topic_name)
+        return py_trees_srvs.OpenBlackboardWatcherResponse(absolute_topic_name)

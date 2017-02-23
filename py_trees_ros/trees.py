@@ -48,21 +48,25 @@ class BehaviourTree(py_trees.trees.BehaviourTree):
 
 
     ROS Publishers:
-        * **~ascii_tree** (:class:`std_msgs.msg.String`)
+        * **~ascii/tree** (:class:`std_msgs.msg.String`)
 
-          * static view of the entire tree
-        * **~ascii_snapshot** (:class:`std_msgs.msg.String`)
+          * static view of the entire tree (debugging)
+        * **~ascii/snapshot** (:class:`std_msgs.msg.String`)
 
-          * runtime ascii snapshot view of the ticking tree
-        * **~dot_tree** (:class:`std_msgs.msg.String`)
+          * runtime ascii snapshot view of the ticking tree (debugging)
+        * **~dot/tree** (:class:`std_msgs.msg.String`)
 
-          * static dot graph of the entire tree
-        * **~log_tree** (:class:`py_trees_msgs.msg.BehaviourTree`)
+          * static dot graph of the entire tree (debugging)
+        * **~log/tree** (:class:`py_trees_msgs.msg.BehaviourTree`)
 
           * representation of the entire tree in message form for rqt/bagging
         * **~tip** (:class:`py_trees_msgs.msg.Behaviour`)
 
           * the tip of the tree after the last tick
+
+    .. seealso::
+        It also exposes publishers and services from the blackboard exchange
+        in it's private namespace. Refer to :class:`~py_trees_ros.blackboard.Exchange` for details.
 
     Args:
         root (:class:`~py_trees.behaviour.Behaviour`): root node of the tree
