@@ -122,7 +122,7 @@ class BehaviourTree(py_trees.trees.BehaviourTree):
         if not self.ros_blackboard.setup(timeout):
             return False
         self.post_tick_handlers.append(self._publish_tree_snapshots)
-        self.post_tick_handlers.append(self.ros_blackboard._publish_blackboard)
+        self.post_tick_handlers.append(self.ros_blackboard.publish_blackboard)
         return super(BehaviourTree, self).setup(timeout)
 
     def _setup_publishers(self):
