@@ -151,9 +151,9 @@ class Exchange(object):
         .. seealso:: This method is called in the way illustrated above in :class:`~py_trees_ros.trees.BehaviourTree`.
         """
         self.publisher = rospy.Publisher("~blackboard", std_msgs.String, latch=True, queue_size=2)
-        rospy.Service('~list_blackboard_variables', py_trees_srvs.BlackboardVariables, self._list_blackboard_variables_service)
-        rospy.Service('~spawn_blackboard_watcher', py_trees_srvs.SpawnBlackboardWatcher, self._spawn_blackboard_watcher_service)
-        rospy.Service('~destroy_blackboard_watcher', py_trees_srvs.DestroyBlackboardWatcher, self._destroy_blackboard_watcher_service)
+        rospy.Service('~get_blackboard_variables', py_trees_srvs.GetBlackboardVariables, self._list_blackboard_variables_service)
+        rospy.Service('~open_blackboard_watcher', py_trees_srvs.OpenBlackboardWatcher, self._spawn_blackboard_watcher_service)
+        rospy.Service('~close_blackboard_watcher', py_trees_srvs.CloseBlackboardWatcher, self._destroy_blackboard_watcher_service)
         return True
 
     def _get_nested_keys(self):
