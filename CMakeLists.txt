@@ -24,6 +24,7 @@ catkin_package()
      PROGRAMS
          scripts/demo_exchange
          scripts/demo_tree
+         scripts/mock_component
      DESTINATION
          ${CATKIN_PACKAGE_BIN_DESTINATION}
 )
