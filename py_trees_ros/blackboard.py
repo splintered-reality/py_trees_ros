@@ -8,8 +8,13 @@
 ##############################################################################
 
 """
-Using ROS to introspect and monitor the blackboard or points of relevant
-interested on the blackboard.
+A blackboard provides easy access to behaviours in a tree, but provides
+no easy means of introspection from outside. In a ROS environment
+we can wrap it with a ROS API that both publishes the blackboard and provides
+services to watch relevant parts of the blackboard (in the case that the
+blackboard contents is too large and noisy to filter).
+
+.. seealso:: :ref:`pt:blackboards-section`
 """
 
 ##############################################################################
@@ -46,7 +51,7 @@ class _View(object):
         self.attrs = attrs
         self.dict = {}
         self.cached_dict = {}
-        self.publisher = rospy.Publisher("~" + topic_name, std_msgs.String, latch=True, queue_size=2)
+        self.publisher = rospy.Publisher(topic_name, std_msgs.String, latch=True, queue_size=2)
 
     def _update_sub_blackboard(self):
         for attr in self.attrs:
@@ -111,12 +116,35 @@ class Exchange(object):
 
           * close a previously opened watcher
 
-    .. seealso:: This class is utilised in the :class:`~py_trees_ros.trees.BehaviourTree` class.
+    Watching could be more simply enabled by just providing a *get* stye service
+    on a particular variable(s), however that would introduce an asynchronous
+    interrupt on the library's usage and subsequently, locking. Instead, a
+    watcher service requests for a stream, i.e. a publisher to be created for private
+    use that streams only a subsection of the blackboard to the user. Additional
+    services are provided for closing the stream and listing the variables on the
+    blackboard.
+
+    .. seealso::
+
+        :class:`~py_trees_ros.trees.BehaviourTree` (in which it is used) and
+        :ref:`py-trees-ros-demo-exchange` (working with the watchers).
     """
+    _counter = 0
+    """Incremental counter guaranteeing unique watcher names"""
+
     def __init__(self):
         self.blackboard = py_trees.blackboard.Blackboard()
+        """
+        Internal handle to the blackboard. Users can utilise this, or create their own handles via the
+        usual, e.g.
+
+        .. code-block:: python
+
+            my_blackboard = py_trees.blackboard.Blackboard()
+
+        """
         self.cached_blackboard_dict = {}
-        self.sub_blackboards = []
+        self.watchers = []
         self.publisher = None
 
     def setup(self, timeout):
@@ -147,13 +175,14 @@ class Exchange(object):
                     def setup(self, timeout):
                         super(MyTreeManager, self).setup(timeout)
                         self.exchange = py_trees_ros.blackboard.Exchange()
+                        self.exchange.setup(timeout)
 
         .. seealso:: This method is called in the way illustrated above in :class:`~py_trees_ros.trees.BehaviourTree`.
         """
         self.publisher = rospy.Publisher("~blackboard", std_msgs.String, latch=True, queue_size=2)
-        rospy.Service('~get_blackboard_variables', py_trees_srvs.GetBlackboardVariables, self._list_blackboard_variables_service)
-        rospy.Service('~open_blackboard_watcher', py_trees_srvs.OpenBlackboardWatcher, self._spawn_blackboard_watcher_service)
-        rospy.Service('~close_blackboard_watcher', py_trees_srvs.CloseBlackboardWatcher, self._destroy_blackboard_watcher_service)
+        rospy.Service('~get_blackboard_variables', py_trees_srvs.GetBlackboardVariables, self._get_blackboard_variables_service)
+        rospy.Service('~open_blackboard_watcher', py_trees_srvs.OpenBlackboardWatcher, self._open_blackboard_watcher_service)
+        rospy.Service('~close_blackboard_watcher', py_trees_srvs.CloseBlackboardWatcher, self._close_blackboard_watcher_service)
         return True
 
     def _get_nested_keys(self):
@@ -175,21 +204,11 @@ class Exchange(object):
 
         return variables
 
-    def _initialize_sub_blackboard(self, attrs, topic_name=None):
-        if isinstance(attrs, list):
-            if not topic_name:
-                topic_name = "sub_blackboard_" + str(len(self.sub_blackboards))
-
-            sub_blackboard = _View(topic_name, attrs)
-            self.sub_blackboards.append(sub_blackboard)
-
-        return topic_name
-
-    def _shutdown_sub_blackboard(self, req):
-        for (i, sub_blackboard) in enumerate(self.sub_blackboards):
-            if sub_blackboard.topic_name == req.topic_name:
-                sub_blackboard.publisher.unregister()
-                del self.sub_blackboards[i]
+    def _close_watcher(self, req):
+        for (i, watcher) in enumerate(self.watchers):
+            if watcher.topic_name == req.topic_name:
+                watcher.publisher.unregister()
+                del self.watchers[i]
                 return True
         return False
 
@@ -199,7 +218,7 @@ class Exchange(object):
         self.cached_blackboard_dict = current_pickle
         return blackboard_changed
 
-    def publish_blackboard(self, tree):
+    def publish_blackboard(self, unused_tree=None):
         """
         Lazy string publishing of the blackboard (the contents of
         the blackboard can be of many and varied types, so string form is the only
@@ -209,6 +228,9 @@ class Exchange(object):
         :class:`py_trees_ros.trees.BehaviourTree`) after each and every tick.
 
         .. note:: Lazy: it will only do the relevant string processing if there are subscribers present.
+
+        Args:
+            unused_tree (:obj:`any`): if used as a post_tick_handler, needs the argument, but nonetheless, gets unused
         """
         if self.publisher is None:
             rospy.logerr("Blackboard Exchange: no publishers [hint: call setup() on the exchange]")
@@ -219,25 +241,25 @@ class Exchange(object):
             if self._is_changed():
                 self.publisher.publish("%s" % self.blackboard)
 
-        # publish sub_blackboards
-        if len(self.sub_blackboards) > 0:
-            for (unused_i, sub_blackboard) in enumerate(self.sub_blackboards):
+        # publish watchers
+        if len(self.watchers) > 0:
+            for (unused_i, sub_blackboard) in enumerate(self.watchers):
                 if sub_blackboard.publisher.get_num_connections() > 0:
                     if sub_blackboard._is_changed():
                         sub_blackboard.publisher.publish("%s" % sub_blackboard)
 
-    def _destroy_blackboard_watcher_service(self, req):
-        result = self._shutdown_sub_blackboard(req)
+    def _close_blackboard_watcher_service(self, req):
+        result = self._close_watcher(req)
         return result
 
-    def _list_blackboard_variables_service(self, req):
+    def _get_blackboard_variables_service(self, req):
         nested_keys = self._get_nested_keys()
         return py_trees_srvs.GetBlackboardVariablesResponse(nested_keys)
 
-    def _spawn_blackboard_watcher_service(self, req):
-        topic_name = self._initialize_sub_blackboard(req.variables)
-        if topic_name:
-            absolute_topic_name = rospy.get_name() + "/" + topic_name
-        else:
-            absolute_topic_name = None
-        return py_trees_srvs.OpenBlackboardWatcherResponse(absolute_topic_name)
+    def _open_blackboard_watcher_service(self, req):
+        if isinstance(req.variables, list):
+            topic_name = rospy.names.resolve_name("~blackboard/watcher_" + str(Exchange._counter))
+            Exchange._counter += 1
+            watcher = _View(topic_name, req.variables)
+            self.watchers.append(watcher)
+        return py_trees_srvs.OpenBlackboardWatcherResponse(topic_name)

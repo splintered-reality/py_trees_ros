@@ -1,24 +1,22 @@
+#!/usr/bin/env python
 #
-# License: BSD
-#   https://raw.github.com/stonier/py_trees_ros/license/LICENSE
+# License: Yujin
 #
 ##############################################################################
 # Documentation
 ##############################################################################
-
 """
-ROS extensions, behaviours and utilities for py_trees.
+Open up a window to a blackboard!
 """
-
 ##############################################################################
 # Imports
 ##############################################################################
 
-from . import blackboard
-from . import conversions
-from . import demos
-from . import programs
-from . import subscribers
-from . import trees
-from . import utilities
-from . import visitors
+import py_trees_ros
+
+##############################################################################
+# Main
+##############################################################################
+
+if __name__ == '__main__':
+    py_trees_ros.programs.blackboard_watcher.main()

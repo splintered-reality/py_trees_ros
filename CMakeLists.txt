@@ -22,8 +22,8 @@ catkin_package()
 
  catkin_install_python(
      PROGRAMS
+         scripts/demo_exchange
          scripts/demo_tree
-         scripts/blackboard_watcher
      DESTINATION
          ${CATKIN_PACKAGE_BIN_DESTINATION}
 )
@@ -35,5 +35,5 @@ install(DIRECTORY launch DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION})
 ##############################################################################
 
 if (CATKIN_ENABLE_TESTING)
-  #add_subdirectory(tests)
+  add_subdirectory(tests)
 endif()

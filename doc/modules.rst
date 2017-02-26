@@ -57,3 +57,12 @@ py_trees.visitors
     :show-inheritance:
     :synopsis: entities that visit behaviours as a tree is traversed
 
+py_trees.demos.exchange
+-----------------------
+
+.. automodule:: py_trees_ros.demos.exchange
+    :members:
+    :special-members:
+    :show-inheritance:
+    :synopsis: demo the blackboard exchange
+

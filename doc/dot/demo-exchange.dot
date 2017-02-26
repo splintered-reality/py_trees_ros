@@ -1,0 +1,10 @@
+digraph sequence {
+graph [fontname="times-roman"];
+node [fontname="times-roman"];
+edge [fontname="times-roman"];
+Sequence [fillcolor=orange, fontcolor=black, fontsize=11, shape=box, style=filled];
+Carbonara [fillcolor=gray, fontcolor=black, fontsize=11, shape=ellipse, style=filled];
+Sequence -> Carbonara;
+Gnocchi [fillcolor=gray, fontcolor=black, fontsize=11, shape=ellipse, style=filled];
+Sequence -> Gnocchi;
+}
