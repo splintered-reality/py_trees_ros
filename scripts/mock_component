@@ -17,7 +17,6 @@ that we want instantiated.
 import argparse
 import importlib
 import py_trees.console as console
-import py_trees_ros
 import rospy
 import sys
 
@@ -51,5 +50,3 @@ if __name__ == '__main__':
         node.spin()
     else:
         rospy.spin()
-
-
