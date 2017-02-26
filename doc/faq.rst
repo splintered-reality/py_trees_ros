@@ -14,3 +14,6 @@ the tree instead of tick-tock and a few other tricks that have evolved in the ga
 industry over the last few years. Having a c++ implementation for use in the control
 layer of a robotics system would be a driving use case.
 
+**Comparison with Pi Trees?**
+
+TODO

@@ -1,24 +1,16 @@
 #
 # License: BSD
-#   https://raw.github.com/stonier/py_trees_ros/license/LICENSE
+#   https://raw.githubusercontent.com/stonier/py_trees_ros/devel/LICENSE
 #
 ##############################################################################
 # Documentation
 ##############################################################################
 
 """
-ROS extensions, behaviours and utilities for py_trees.
+This package contains py_trees_ros demo script code.
 """
-
 ##############################################################################
 # Imports
 ##############################################################################
 
-from . import blackboard
-from . import conversions
-from . import demos
-from . import programs
-from . import subscribers
-from . import trees
-from . import utilities
-from . import visitors
+from . import exchange

@@ -1,20 +1,30 @@
 #!/usr/bin/env python
 #
-# License: Yujin
-#
+# License: BSD
+#   https://raw.githubusercontent.com/stonier/py_trees/devel/LICENSE
 #
 ##############################################################################
 # Documentation
 ##############################################################################
+
 """
-Simple utility to watch and display items from Blackboard
+.. argparse::
+   :module: py_trees_ros.programs.blackboard_watcher
+   :func: command_line_argument_parser
+   :prog: py-trees-blackboard-watcher
+
+Example output watching the blackboard created by :ref:`py-trees-ros-demo-exchange`.
+
+.. image:: images/watcher.gif
 """
+
 ##############################################################################
 # Imports
 ##############################################################################
 
 import argparse
 import functools
+import py_trees
 import py_trees_msgs.srv as py_trees_srvs
 import rospy
 import py_trees.console as console
@@ -22,50 +32,62 @@ import rosservice
 import sys
 import std_msgs.msg as std_msgs
 
-
 ##############################################################################
-# Command Handler
+# Classes
 ##############################################################################
 
 
-def show_usage():
-    s = "\n"
-    s += console.bold + "    Introspection" + console.reset + "\n\n"
-    s += console.cyan + "        blackboard_watcher" + console.yellow + " [option]" + console.reset + "\n"
-    s += "\n"
-    s += " " * 12 + "where " + console.yellow + "[option]" + console.reset + " is one of:\n\n"
-    s += console.cyan + " " * 12 + "-l, --list_variables         " + console.yellow + "list variables in the blackboard." + console.reset + "\n"
-    s += console.cyan + " " * 12 + "-n, --namespace              " + console.yellow + "namespace of blackboard services." + console.reset + "\n"
-    s += "\n"
-    s += console.bold + "    Command" + console.reset + "\n\n"
-    s += console.cyan + "        blackboard_watcher" + console.yellow + " <variables>" + console.reset + "\n"
-    s += "\n"
-    s += " " * 12 + "where " + console.yellow + "<variables>" + console.reset + " is a space separated list of blackboard variables\n"
-    s += "\n"
-    s += console.bold + "    Example" + console.reset + "\n\n"
-    s += console.cyan + "        blackboard_watcher" + console.yellow + " access_point odom/pose/pose/position" + console.reset + "\n"
-    s += "\n"
+def examples():
+    examples = [console.cyan + "blackboard_watcher" + console.yellow + " --list-variables" + console.reset,
+                console.cyan + "blackboard_watcher" + console.yellow + " access_point odom/pose/pose/position" + console.reset
+                ]
+    return examples
+
+
+def description():
+    short = "Open up a window onto the blackboard!\n"
+
+    if py_trees.console.has_colours:
+        banner_line = console.green + "*" * 79 + "\n" + console.reset
+        s = "\n"
+        s += banner_line
+        s += console.bold_white + "Blackboard Exchange".center(79) + "\n" + console.reset
+        s += banner_line
+        s += "\n"
+        s += short
+        s += "\n"
+        s += console.bold + "Examples" + console.reset + "\n\n"
+        s += '\n'.join([" $ " + example for example in examples()])
+        s += "\n\n"
+        s += banner_line
+    else:
+        # for sphinx documentation (doesn't like raw text)
+        s = short
+        s += "\n"
+        s += console.bold + "**Examples**" + console.reset + "\n\n"
+        s += ".. code-block:: bash\n"
+        s += "    \n"
+        s += '\n'.join(["    $ {0}".format(example) for example in examples()])
+        s += "\n"
     return s
 
 
-def show_description():
-    s = ""
-    s += console.green + "Watch and log the blackboard!" + console.reset
-    return s
+def epilog():
+    if py_trees.console.has_colours:
+        return console.cyan + "And his noodly appendage reached forth to tickle the blessed...\n" + console.reset
+    else:
+        return None
 
 
-def parse_arguments(command_line_args):
-    parser = argparse.ArgumentParser(description=show_description(),
-                                     usage=show_usage(),
-                                     epilog="And his noodly appendage reached forth to tickle the blessed...",
-                                     formatter_class=argparse.RawTextHelpFormatter
+def command_line_argument_parser():
+    parser = argparse.ArgumentParser(description=description(),
+                                     epilog=epilog(),
+                                     formatter_class=argparse.RawDescriptionHelpFormatter,
                                      )
-    parser.add_argument('-l', '--list_variables', action='store_true', default=None, help='list variables in the blackboard.')
-    parser.add_argument('-n', '--namespace', nargs='?', default=None, help='namespace of blackboard services.')
-    parser.add_argument('variables', nargs=argparse.REMAINDER, default=None, help='list of blackboard variables')
-
-    args = parser.parse_args(command_line_args)
-    return args
+    parser.add_argument('-l', '--list_variables', action='store_true', default=None, help='list the blackboard variables')
+    parser.add_argument('-n', '--namespace', nargs='?', default=None, help='namespace of blackboard services (if there should be more than one blackboard)')
+    parser.add_argument('variables', nargs=argparse.REMAINDER, default=None, help='space separated list of blackboard variables to watch')
+    return parser
 
 
 def pretty_print_variables(variables):
@@ -86,21 +108,26 @@ def echo_sub_blackboard(sub_blackboard):
     print "%s" % sub_blackboard.data
 
 
-def spin_ros_node(received_topic):
-    rospy.init_node(received_topic.topic.split('/')[-1])
+def spin_ros_node(received_topic, namespace):
+    """
+    Args:
+        received_topic (:obj:`str`): topic name
+        namespace (:obj:`str`): where to look for blackboard exchange services
+    """
+    rospy.init_node(received_topic.split('/')[-1])
 
-    destroy_blackboard_watcher_service_name = find_service(args.namespace, 'py_trees_msgs/DestroyBlackboardWatcher')
+    close_blackboard_watcher_service_name = find_service(namespace, 'py_trees_msgs/CloseBlackboardWatcher')
 
-    def request_blackboard_watcher_destruction(updates_subscriber):
+    def request_close_blackboard_watcher(updates_subscriber):
         """
         :param rospy.Subscriber updates_subscriber: subscriber to unregister
         """
         updates_subscriber.unregister()
         try:
-            rospy.wait_for_service(destroy_blackboard_watcher_service_name, timeout=3.0)
+            rospy.wait_for_service(close_blackboard_watcher_service_name, timeout=3.0)
             try:
-                shutdown_sub_blackboard = rospy.ServiceProxy(destroy_blackboard_watcher_service_name, py_trees_srvs.DestroyBlackboardWatcher)
-                unused_result = shutdown_sub_blackboard(received_topic.topic.split('/')[-1])
+                close_blackboard_watcher = rospy.ServiceProxy(close_blackboard_watcher_service_name, py_trees_srvs.CloseBlackboardWatcher)
+                unused_result = close_blackboard_watcher(received_topic)  # received_topic.split('/')[-1]
                 # could check if result returned success
             except rospy.ServiceException, e:
                     print(console.red + "ERROR: service call failed [%s]" % str(e) + console.reset)
@@ -109,20 +136,13 @@ def spin_ros_node(received_topic):
             print(console.red + "ERROR: unknown ros exception [%s]" % str(e) + console.reset)
             sys.exit(1)
 
-    updates_subscriber = rospy.Subscriber(received_topic.topic, std_msgs.String, echo_sub_blackboard)
-    rospy.on_shutdown(functools.partial(request_blackboard_watcher_destruction, updates_subscriber))
+    updates_subscriber = rospy.Subscriber(received_topic, std_msgs.String, echo_sub_blackboard)
+    rospy.on_shutdown(functools.partial(request_close_blackboard_watcher, updates_subscriber))
     while not rospy.is_shutdown():
         rospy.spin()
 
 
 def find_service(namespace, service_type):
-    """
-    Will either exit or return the name of the service requested for.
-
-    :param string namespace: optional namespace lookup helper
-    :param string service_type: ros service type
-    :returns service_name
-    """
     service_name = rosservice.rosservice_find(service_type)
     if len(service_name) > 0:
         if len(service_name) == 1:
@@ -148,11 +168,11 @@ def find_service(namespace, service_type):
 
 def handle_args(args):
     if args.list_variables:
-        list_variables_service_name = find_service(args.namespace, 'py_trees_msgs/BlackboardVariables')
+        list_variables_service_name = find_service(args.namespace, 'py_trees_msgs/GetBlackboardVariables')
         try:
             rospy.wait_for_service(list_variables_service_name, timeout=3.0)
             try:
-                list_variables = rospy.ServiceProxy(list_variables_service_name, py_trees_srvs.BlackboardVariables)
+                list_variables = rospy.ServiceProxy(list_variables_service_name, py_trees_srvs.GetBlackboardVariables)
                 recieved_variables = list_variables()
                 pretty_print_variables(recieved_variables.variables)
             except rospy.ServiceException, e:
@@ -165,25 +185,25 @@ def handle_args(args):
         if not args.variables:
             print(console.red + "\nERROR: please provide a list of variables to watch.\n" + console.reset)
             print(console.bold + console.yellow + "  Usage" + console.reset)
-            print("%s" % show_usage())
+            print("%s" % description())
             sys.exit(1)
         else:
             variables = args.variables[0:]
             variables = [variable.strip(',[]') for variable in variables]
 
-            spawn_blackboard_watcher_service = find_service(args.namespace, 'py_trees_msgs/SpawnBlackboardWatcher')
+            open_blackboard_watcher_service = find_service(args.namespace, 'py_trees_msgs/OpenBlackboardWatcher')
 
             try:
-                rospy.wait_for_service(spawn_blackboard_watcher_service, timeout=3.0)
+                rospy.wait_for_service(open_blackboard_watcher_service, timeout=3.0)
                 try:
-                    sub_blackboard_watch_service_call = rospy.ServiceProxy(spawn_blackboard_watcher_service, py_trees_srvs.SpawnBlackboardWatcher)
-                    received_topic = sub_blackboard_watch_service_call(variables)
+                    open_watcher = rospy.ServiceProxy(open_blackboard_watcher_service, py_trees_srvs.OpenBlackboardWatcher)
+                    response = open_watcher(variables)
                 except rospy.ServiceException, e:
                     print(console.red + "ERROR: service call failed [%s]" % str(e) + console.reset)
                     sys.exit(1)
 
-                if received_topic is not None:
-                    spin_ros_node(received_topic)
+                if response is not None:
+                    spin_ros_node(response.topic, args.namespace)
 
                 else:
                     print(console.red + "\nERROR: subscribing to topic failed\n" + console.reset)
@@ -191,12 +211,16 @@ def handle_args(args):
                 print(console.red + "ERROR: unknown ros exception [%s]" % str(e) + console.reset)
                 sys.exit(1)
 
-
 ##############################################################################
 # Main
 ##############################################################################
 
-if __name__ == '__main__':
+
+def main():
+    """
+    Entry point for the blackboard watcher script.
+    """
     command_line_args = rospy.myargv(argv=sys.argv)[1:]
-    args = parse_arguments(command_line_args)
+    parser = command_line_argument_parser()
+    args = parser.parse_args(command_line_args)
     handle_args(args)

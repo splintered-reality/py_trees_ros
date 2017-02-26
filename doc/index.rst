@@ -15,14 +15,17 @@ Contents:
    :caption: Guide
 
    background
+   exchange
    faq
 
 .. toctree::
    :maxdepth: 2
    :caption: Reference
 
-   changelog
+   demos
+   programs
    modules
+   changelog
 
 
 Indices and tables

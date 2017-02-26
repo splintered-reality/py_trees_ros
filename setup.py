@@ -8,6 +8,8 @@ d = generate_distutils_setup(
     # global installs, for package relative installs, look in CMakeLists.txt
     # scripts=['scripts/demo_tree'],
     keywords=['ros', 'behaviour-trees'],
+    scripts=['scripts/py-trees-blackboard-watcher',
+             ]
 )
 
 setup(**d)
