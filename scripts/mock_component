@@ -28,7 +28,7 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Mock a robot component')
     parser.add_argument('name', action='store', nargs='?',
                         default='move_base.MoveBase',
-                        choices=['move_base.MoveBase'],
+                        choices=['move_base.MoveBase', 'rotate.Rotate'],
                         help='name of the class to mock')
 
     command_line_args = rospy.myargv(argv=sys.argv)[1:]

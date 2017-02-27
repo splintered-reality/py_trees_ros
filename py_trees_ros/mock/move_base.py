@@ -32,9 +32,9 @@ class MoveBase(action_server.ActionServer):
     """
     Simulates:
 
-    - move base interface
-    - publishing on /odom
-    - publishing on /pose
+    * move base interface
+    * publishing on /odom (nav_msgs.msg.Odometry)
+    * publishing on /pose (geometry_msgs.msg.PoseWithCovarianceStamped)
 
     Args:
         odometry_topic (:obj:`str`): name of the odometry topic
@@ -68,6 +68,11 @@ class MoveBase(action_server.ActionServer):
         self.start()
 
     def worker(self):
+        """
+        Increment the odometry and pose towards the goal.
+        """
+        # actually doesn't go to the goal right now...but we could take the feedback from the action
+        # and increment this to that proportion
         self.odometry.pose.pose.position.x += 0.01
         self.pose.pose.pose.position.x += 0.01
 
