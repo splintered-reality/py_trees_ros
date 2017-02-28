@@ -57,7 +57,7 @@ def description():
         s += short
         s += "\n"
         s += console.bold + "Examples" + console.reset + "\n\n"
-        s += '\n'.join([" $ " + example for example in examples()])
+        s += '\n'.join(["    $ " + example for example in examples()])
         s += "\n\n"
         s += banner_line
     else:

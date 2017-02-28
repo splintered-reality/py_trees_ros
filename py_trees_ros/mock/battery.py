@@ -71,7 +71,7 @@ class Battery:
         self.battery.serial_number = ""
 
         # immediately reconfigured by dynamic_reconfigure
-        self.charging_increment = 0.001
+        self.charging_increment = 0.01
 
         # dynamic_reconfigure
         self.parameters = None
@@ -104,15 +104,15 @@ class Battery:
         return config
 
     def spin(self):
-        rate = rospy.Rate(50)  # hz
+        """
+        Spin around, updating battery state and publishing the result.
+        """
+        rate = rospy.Rate(5)  # hz
         while not rospy.is_shutdown():
-            self.update_battery_state()
+            if self.parameters.charging:
+                self.dynamic_reconfigure_server.update_configuration({"charging_percentage": min(100, self.battery.percentage + self.charging_increment)})
+            else:
+                self.dynamic_reconfigure_server.update_configuration({"charging_percentage": max(0, self.battery.percentage - self.charging_increment)})
             self.battery.header.stamp = rospy.get_rostime()  # get_rostime() returns the time in rospy.Time structure
             self.battery_publisher.publish(self.battery)
             rate.sleep()
-
-    def update_battery_state(self):
-        if self.parameters.charging:
-            self.dynamic_reconfigure_server.update_configuration({"charging_percentage": min(100, self.battery.percentage + self.charging_increment)})
-        else:
-            self.dynamic_reconfigure_server.update_configuration({"charging_percentage": max(0, self.battery.percentage - self.charging_increment)})

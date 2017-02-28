@@ -9,6 +9,14 @@ py_trees_ros
 .. automodule:: py_trees_ros
    :synopsis: is your robot misbehaving?
 
+py_trees_ros.battery
+--------------------
+
+.. automodule:: py_trees_ros.battery
+    :members:
+    :show-inheritance:
+    :synopsis: helpers for getting the most out of your battery
+
 py_trees_ros.blackboard
 -----------------------
 
@@ -72,8 +80,8 @@ py_trees_ros.mock
 .. automodule:: py_trees_ros.mock
    :synopsis: utilities and components for mocking a robot
 
-py_trees.mock.action_server
----------------------------
+py_trees_ros.mock.action_server
+-------------------------------
 
 .. automodule:: py_trees_ros.mock.action_server
     :members:
@@ -81,8 +89,8 @@ py_trees.mock.action_server
     :show-inheritance:
     :synopsis: reusable action server for mock components
 
-py_trees.mock.battery
----------------------
+py_trees_ros.mock.battery
+-------------------------
 
 .. automodule:: py_trees_ros.mock.battery
     :members:
@@ -90,8 +98,8 @@ py_trees.mock.battery
     :show-inheritance:
     :synopsis: mock the state of a battery component
 
-py_trees.mock.move_base
------------------------
+py_trees_ros.mock.move_base
+---------------------------
 
 .. automodule:: py_trees_ros.mock.move_base
     :members:
@@ -99,8 +107,8 @@ py_trees.mock.move_base
     :show-inheritance:
     :synopsis: mock the ROS navistack move base
 
-py_trees.mock.rotate
---------------------
+py_trees_ros.mock.rotate
+------------------------
 
 .. automodule:: py_trees_ros.mock.rotate
     :members:

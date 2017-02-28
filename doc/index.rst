@@ -16,6 +16,8 @@ Contents:
 
    background
    exchange
+   tutorials
+   terminology
    faq
 
 .. toctree::

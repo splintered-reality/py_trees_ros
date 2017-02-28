@@ -89,11 +89,14 @@ class LEDStrip(object):
         return '\n' + top_bottom + '\n' + left + label.replace('_', ' ') + right + '\n' + top_bottom
 
     def generate_led_text(self, colour):
-        text = self.get_display_string(self._pattern_width, label=colour)
-        return termcolor.colored(text,
-                                 colour,
-                                 attrs=['blink']
-                                 )
+        if not colour:
+            return ""
+        else:
+            text = self.get_display_string(self._pattern_width, label=colour)
+            return termcolor.colored(text,
+                                     colour,
+                                     attrs=['blink']
+                                     )
 
     def command_callback(self, msg):
         with self.lock:
