@@ -25,6 +25,15 @@
   <doc_depend>python-sphinx-rtd-theme</doc_depend>
   <doc_depend>python-catkin-pkg</doc_depend>
 
+  <!-- mocking & simulation dependencies -->
+  <exec_depend>dynamic_reconfigure</exec_depend>
+  <exec_depend>geometry_msgs</exec_depend>
+  <exec_depend>move_base_msgs</exec_depend>
+  <exec_depend>python-termcolor</exec_depend>
+  <exec_depend>nav_msgs</exec_depend>
+  <exec_depend>sensor_msgs</exec_depend>
+
+  <!-- core dependencies -->
   <exec_depend>py_trees_msgs</exec_depend>
   <exec_depend>python-rospkg</exec_depend>
   <exec_depend>rosbag</exec_depend>

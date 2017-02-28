@@ -1,0 +1,52 @@
+#!/usr/bin/env python
+#
+# License: Yujin
+#
+##############################################################################
+# Documentation
+##############################################################################
+"""
+Launch a component of the mock robot. Rather than having a hundred scripts,
+we just re-use this one with a couple of args that will point to the class
+that we want instantiated.
+"""
+##############################################################################
+# Imports
+##############################################################################
+
+import argparse
+import importlib
+import py_trees.console as console
+import rospy
+import sys
+
+##############################################################################
+# Main
+##############################################################################
+
+if __name__ == '__main__':
+    parser = argparse.ArgumentParser(description='Mock a robot component')
+    parser.add_argument('name', action='store', nargs='?',
+                        default='move_base.MoveBase',
+                        choices=['move_base.MoveBase', 'rotate.Rotate'],
+                        help='name of the class to mock')
+
+    command_line_args = rospy.myargv(argv=sys.argv)[1:]
+    args = parser.parse_args(command_line_args)
+    module_name = "py_trees_ros.mock." + args.name.rsplit(".", 1)[0]
+    class_name = args.name.rsplit(".", 1)[1]
+    full_class_name = "py_trees_ros.mock." + args.name
+
+    try:
+        module_itself = importlib.import_module(module_name)
+    except ImportError:
+        console.logerror("Could not import module [{0}]".format(args.name))
+        sys.exit(1)
+    class_itself = getattr(module_itself, class_name)
+
+    rospy.init_node(module_name.rsplit(".", 1)[1])
+    node = class_itself()
+    if getattr(class_itself, "spin", None):
+        node.spin()
+    else:
+        rospy.spin()

@@ -1,17 +1,19 @@
 #
 # License: BSD
-#   https://raw.githubusercontent.com/stonier/py_trees_ros/devel/LICENSE
+#   https://raw.github.com/stonier/py_trees_ros/license/LICENSE
 #
 ##############################################################################
 # Documentation
 ##############################################################################
 
 """
-This package contains py_trees_ros program script code.
+Entry points to the tutorials
 """
 
 ##############################################################################
 # Imports
 ##############################################################################
 
-from . import blackboard_watcher
+from . import behaviours
+from . import one
+from . import two

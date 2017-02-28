@@ -14,11 +14,14 @@ ROS extensions, behaviours and utilities for py_trees.
 # Imports
 ##############################################################################
 
+from . import battery
 from . import blackboard
 from . import conversions
 from . import demos
+from . import mock
 from . import programs
 from . import subscribers
 from . import trees
+from . import tutorials
 from . import utilities
 from . import visitors

@@ -14,7 +14,7 @@ we can wrap it with a ROS API that both publishes the blackboard and provides
 services to watch relevant parts of the blackboard (in the case that the
 blackboard contents is too large and noisy to filter).
 
-.. seealso:: :ref:`pt:blackboards-section`
+.. seealso:: :ref:`pt:blackboards-section`, :ref:`py-trees-ros-demo-exchange`, :ref:`py-trees-blackboard-watcher`
 """
 
 ##############################################################################

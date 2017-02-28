@@ -12,7 +12,7 @@ There are three working parts to exchange demo:
 
 * :ref:`demo-exchange-node` : scripts a demo tree with an exchange in a ROS node
 * :ref:`demo-exchange-launch` : launches the demo tree/exchange node
-* :ref:`demo-exchange-watcher`: tune into the exchange's services to watch the blackboard
+* :ref:`demo-exchange-watcher` : tune into the exchange's services to watch the blackboards
 
 .. _demo-exchange-node:
 
@@ -40,6 +40,8 @@ Launcher
    :caption: launch/demo_exchange.launch
 
 .. image:: images/exchange.gif
+
+.. _demo-exchange-watcher:
 
 Watcher
 ^^^^^^^
