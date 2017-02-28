@@ -310,6 +310,6 @@ intersphinx_mapping = {
     'python': ('http://docs.python.org/', None),
     # get a useless warning if we use py_trees, anyway, this is only
     # important if there's ambiguity...you prefix it with this
-    # 'pt': ('http://py-trees.readthedocs.io/en/devel/', None)
-    'pt': ('file:///mnt/mervin/workspaces/py_trees/src/py_trees/doc/html/', None)
+    'pt': ('http://py-trees.readthedocs.io/en/devel/', None)
+    # 'pt': ('file:///mnt/mervin/workspaces/py_trees/src/py_trees/doc/html/', None)
 }
