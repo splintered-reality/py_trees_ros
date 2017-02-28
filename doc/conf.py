@@ -54,17 +54,18 @@ extensions = [
 # Autodoc
 ##############################################################################
 
-autodoc_mock_imports = [
-    'actionlib',
-    'dynamic_reconfigure',
-    'geometry_msgs.msg',
-    'nav_msgs.msg',
-    'py_trees_msgs.msg',
-    'py_trees_msgs.srv',
-    'rospy',
-    'sensor_msgs.msg',
-    'std_mgs.msg',
-]
+# This would be nice if it worked, but it doesn't handle submodules well
+# autodoc_mock_imports = [
+#     'actionlib',
+#     'dynamic_reconfigure',
+#     'geometry_msgs.msg',
+#     'nav_msgs.msg',
+#     'py_trees_msgs.msg',
+#     'py_trees_msgs.srv',
+#     'rospy',
+#     'sensor_msgs.msg',
+#     'std_mgs.msg',
+# ]
 
 ##############################################################################
 # Napolean

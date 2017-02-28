@@ -1,4 +1,0 @@
-Sphinx
-sphinx-argparse
-sphinx_rtd_theme
-py_trees
