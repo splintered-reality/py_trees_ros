@@ -60,6 +60,7 @@ autodoc_mock_imports = [
     'geometry_msgs.msg',
     'nav_msgs.msg',
     'py_trees_msgs.msg',
+    'py_trees_msgs.srv',
     'rospy',
     'sensor_msgs.msg',
     'std_mgs.msg',
