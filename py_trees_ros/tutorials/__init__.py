@@ -15,5 +15,8 @@ Entry points to the tutorials
 ##############################################################################
 
 from . import behaviours
+from . import qt
+
 from . import one
 from . import two
+from . import five

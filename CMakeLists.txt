@@ -22,10 +22,10 @@ catkin_package()
 
  catkin_install_python(
      PROGRAMS
-         scripts/demo_exchange
          scripts/mock_battery
          scripts/mock_led_strip
          scripts/mock_component
+         scripts/tutorial_dashboard
          scripts/tutorial_tree
      DESTINATION
          ${CATKIN_PACKAGE_BIN_DESTINATION}

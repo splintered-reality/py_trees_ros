@@ -16,7 +16,6 @@ Mocks the move base action server of the ROS navigation stack.
 ##############################################################################
 
 import actionlib
-import py_trees_ros
 import rospy
 
 ##############################################################################
@@ -44,7 +43,7 @@ class ActionServer(object):
                                                           auto_start=False
                                                           )
         self.percent_completed = 0
-        self.title = action_name.replace('_', ' ').upper()
+        self.title = action_name.replace('_', ' ').title()
         self.action = action_type()
 
     def start(self):
@@ -72,7 +71,7 @@ class ActionServer(object):
         while True:
             if rospy.is_shutdown() or self.action_server.is_preempt_requested():
                 rospy.loginfo("{title}: goal preempted".format(title=self.title))
-                self.action_server.set_preempted(self.action.action_result, "goal was preempted")
+                self.action_server.set_preempted(self.action.action_result.result, "goal was preempted")
                 success = False
                 break
             if self.percent_completed >= 100:
@@ -86,4 +85,4 @@ class ActionServer(object):
             rate.sleep()
         if success:
             rospy.loginfo("{title}: goal success".format(title=self.title))
-            self.action_server.set_succeeded(self.action.action_result, "goal reached")
+            self.action_server.set_succeeded(self.action.action_result.result, "goal reached")

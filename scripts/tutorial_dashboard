@@ -7,26 +7,29 @@
 # Documentation
 ##############################################################################
 """
-Instantiates a mock battery provider that can be controlled via
-dynamic reconfigure.
+Launch a qt dashboard for the tutorials.
 """
 ##############################################################################
 # Imports
 ##############################################################################
 
-import argparse
 import py_trees_ros
 import rospy
+import signal
 import sys
+
+from python_qt_binding.QtWidgets import QApplication, QMainWindow
 
 ##############################################################################
 # Main
 ##############################################################################
 
 if __name__ == '__main__':
-    parser = argparse.ArgumentParser(description='Mock an led strip')
-    command_line_args = rospy.myargv(argv=sys.argv)[1:]
-    unused_args = parser.parse_args(command_line_args)
-    rospy.init_node("led_strip")
-    led_strip = py_trees_ros.mock.led_strip.LEDStrip()
-    led_strip.spin()
+    rospy.init_node('dashboard')
+    app = QApplication(sys.argv)
+    window = QMainWindow()
+    dashboard = py_trees_ros.tutorials.qt.Dashboard()
+    window.setCentralWidget(dashboard)
+    window.show()
+    signal.signal(signal.SIGINT, signal.SIG_DFL)
+    sys.exit(app.exec_())

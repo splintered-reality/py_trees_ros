@@ -1,5 +1,3 @@
 <launch>
   <include file="$(find py_trees_ros)/launch/tutorial_two.launch"/>
-  <node pkg="rqt_reconfigure" name="rqt_reconfigure" type="rqt_reconfigure"/>
-  <node pkg="rqt_py_trees" name="rqt_py_trees" type="rqt_py_trees"/>
 </launch>
