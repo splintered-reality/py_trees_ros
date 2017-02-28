@@ -25,3 +25,9 @@ from . import trees
 from . import tutorials
 from . import utilities
 from . import visitors
+
+##############################################################################
+# Version
+##############################################################################
+
+from .version import __version__

@@ -12,14 +12,15 @@
 # All configuration values have a default; values that are commented out
 # serve to show the default.
 
-import catkin_pkg.package
 import os
 import sphinx_rtd_theme
 import sys
 
 # Pull in __version__
 project_dir = os.path.abspath(os.path.join(os.path.abspath(__file__), os.pardir, os.pardir))
-catkin_package = catkin_pkg.package.parse_package(os.path.join(project_dir, catkin_pkg.package.PACKAGE_MANIFEST_FILENAME))
+version_file = os.path.join(project_dir, 'py_trees_ros', 'version.py')
+with open(version_file) as f:
+    exec(f.read())
 
 # If extensions (or modules to document with autodoc) are in another directory,
 # add these directories to sys.path here. If the directory is relative to the
@@ -88,7 +89,8 @@ copyright = u'2017, Daniel Stonier'
 # built documents.
 #
 # The short X.Y version.
-version = catkin_package.version
+version = __version__
+# version = catkin_package.version
 # The full version, including alpha/beta/rc tags.
 release = version
 
