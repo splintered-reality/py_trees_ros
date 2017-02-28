@@ -37,8 +37,8 @@ class ToBlackboard(subscribers.ToBlackboard):
     :attr:`~py_trees.common.Status.SUCCESS` otherwise.
 
     Blackboard Variables:
-        battery (:class:`sensor_msgs.msg.BatteryState`)[w]: the raw battery message
-        battery_low_warning (:obj:`bool`)[w]: False if battery is ok, True if critically low
+        * battery (:class:`sensor_msgs.msg.BatteryState`)[w]: the raw battery message
+        * battery_low_warning (:obj:`bool`)[w]: False if battery is ok, True if critically low
 
     Args:
         name (:obj:`str`): name of the behaviour

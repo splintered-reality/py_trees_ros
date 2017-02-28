@@ -13,7 +13,7 @@
    :func: command_line_argument_parser
    :prog: py-trees-blackboard-watcher
 
-Example output watching the blackboard created by :ref:`py-trees-ros-demo-exchange`.
+Example interaction with the services of a :class:`Blackboard Exchange <py_trees_ros.blackboard.Exchange>`:
 
 .. image:: images/watcher.gif
 """
@@ -24,7 +24,6 @@ Example output watching the blackboard created by :ref:`py-trees-ros-demo-exchan
 
 import argparse
 import functools
-import py_trees
 import py_trees_msgs.srv as py_trees_srvs
 import rospy
 import py_trees.console as console
@@ -37,54 +36,51 @@ import std_msgs.msg as std_msgs
 ##############################################################################
 
 
-def examples():
-    examples = [console.cyan + "blackboard_watcher" + console.yellow + " --list-variables" + console.reset,
-                console.cyan + "blackboard_watcher" + console.yellow + " access_point odom/pose/pose/position" + console.reset
-                ]
-    return examples
-
-
-def description():
+def description(formatted_for_sphinx):
     short = "Open up a window onto the blackboard!\n"
+    examples = ["--list-variables", "access_point odom/pose/pose/position"]
+    script_name = "py-trees-blackboard-watcher"
 
-    if py_trees.console.has_colours:
-        banner_line = console.green + "*" * 79 + "\n" + console.reset
-        s = "\n"
-        s += banner_line
-        s += console.bold_white + "Blackboard Exchange".center(79) + "\n" + console.reset
-        s += banner_line
-        s += "\n"
-        s += short
-        s += "\n"
-        s += console.bold + "Examples" + console.reset + "\n\n"
-        s += '\n'.join(["    $ " + example for example in examples()])
-        s += "\n\n"
-        s += banner_line
-    else:
+    if formatted_for_sphinx:
         # for sphinx documentation (doesn't like raw text)
         s = short
         s += "\n"
-        s += console.bold + "**Examples**" + console.reset + "\n\n"
+        s += "**Examples:**\n\n"
         s += ".. code-block:: bash\n"
         s += "    \n"
-        s += '\n'.join(["    $ {0}".format(example) for example in examples()])
+        s += '\n'.join(["    $ {0} {1}".format(script_name, example_args) for example_args in examples])
         s += "\n"
+    else:
+        banner_line = console.green + "*" * 79 + "\n" + console.reset
+        s = "\n"
+        s += banner_line
+        s += console.bold_white + "Blackboard Watcher".center(79) + "\n" + console.reset
+        s += banner_line
+        s += "\n"
+        s += "Open up a window onto the blackboard!\n"
+        s += "\n"
+        s += console.bold + "Examples" + console.reset + "\n\n"
+        s += '\n'.join(["    $ " + console.cyan + script_name + console.yellow + " {0}".format(example_args) + console.reset for example_args in examples])
+        s += "\n\n"
+        s += banner_line
     return s
 
 
-def epilog():
-    if py_trees.console.has_colours:
-        return console.cyan + "And his noodly appendage reached forth to tickle the blessed...\n" + console.reset
-    else:
+def epilog(formatted_for_sphinx):
+    if formatted_for_sphinx:
         return None
+    else:
+        return console.cyan + "And his noodly appendage reached forth to tickle the blessed...\n" + console.reset
 
 
-def command_line_argument_parser():
-    parser = argparse.ArgumentParser(description=description(),
-                                     epilog=epilog(),
+def command_line_argument_parser(formatted_for_sphinx=True):
+    # formatted_for_sphinx is an ugly hack to make sure sphinx does not pick up the colour codes.
+    # works only by assuming that the only callee who calls it without setting the arg is sphinx's argparse
+    parser = argparse.ArgumentParser(description=description(formatted_for_sphinx),
+                                     epilog=epilog(formatted_for_sphinx),
                                      formatter_class=argparse.RawDescriptionHelpFormatter,
                                      )
-    parser.add_argument('-l', '--list_variables', action='store_true', default=None, help='list the blackboard variables')
+    parser.add_argument('-l', '--list-variables', action='store_true', default=None, help='list the blackboard variables')
     parser.add_argument('-n', '--namespace', nargs='?', default=None, help='namespace of blackboard services (if there should be more than one blackboard)')
     parser.add_argument('variables', nargs=argparse.REMAINDER, default=None, help='space separated list of blackboard variables to watch')
     return parser
@@ -221,6 +217,6 @@ def main():
     Entry point for the blackboard watcher script.
     """
     command_line_args = rospy.myargv(argv=sys.argv)[1:]
-    parser = command_line_argument_parser()
+    parser = command_line_argument_parser(formatted_for_sphinx=False)
     args = parser.parse_args(command_line_args)
     handle_args(args)

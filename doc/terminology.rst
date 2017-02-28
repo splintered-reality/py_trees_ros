@@ -3,6 +3,16 @@ Terminology
 
 .. glossary::
 
+   data gathering
+      Caching events, notifications, or incoming data arriving asynchronously on the blackboard.
+      This is a fairly common practice for behaviour trees which exist inside a complex system.
+      In the ROS world, it is most likely you will catch data coming in on subscribers in this way.
+
+      In most cases, data gathering is done at the front end of your tree under a parallel
+      directly alongside your priority work selector.
+
+      .. seealso:: :ref:`tutorial-one`
+
    block
    blocking
       A behaviour is sometimes referred to as a 'blocking' behaviour. Technically, the execution
@@ -26,7 +36,7 @@ Terminology
       insert handles that can help you force decision making to
       branch to where you want to test. For example, using dynamic reconfigure in
       :class:`py_trees_ros.mock.battery.Battery` to abruptly force charging/discharging and at
-      varying rates. Also, if you set up the mock well, you'll find it executes far faster
+      varying rates. Additionally, if you set up the mock well, you'll find it executes far faster
       than a full simulation (you can montage - no need to endure travel time).
 
       t will also make your web team happier (for apps that sit astride the behaiviour tree).

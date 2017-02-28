@@ -17,32 +17,19 @@ For this, we'll get the robot to flash it's led strip.
 Tree
 ^^^^
 
-.. tip::
-    While designing your tree, it's very useful to get a visual on what you are
-    inserting into the tree, even before you actually execute it or implement
-    anything more than skeleton behaviours. For this tutorial, you can render
-    it with:
-
-    .. code-block:: python
-
-        py-trees-render py_trees_ros.tutorials.two.create_root
-
 .. graphviz:: dot/tutorial-two.dot
 
 The white coloured ellipse shown here is a decorated behaviour (in this
 case a :class:`~py_trees.composites.Selector` with the :func:`~py_trees.meta.success_is_failure`
-decorator.
-
-.. note:: Hopefully we'll have decorators visualised in a more convenient way in the future.
+decorator (looking forward to better visualisations for this in the future).
 
 .. literalinclude:: ../py_trees_ros/tutorials/two.py
    :language: python
    :linenos:
-   :lines: 107-132
+   :lines: 104-129
    :caption: py_trees_ros/tutorials/two.py
 
-Here we've added a branch for priority jobs (complete with idle behaviour that is
-always :attr:`~py_trees.common.Status.RUNNING`) and a high priority branch for
+Here we've added a high priority branch for
 dealing with a low battery that causes the hardware strip to flash.
 
 An important point here is to make sure that the flashing behaviour gets
@@ -54,6 +41,16 @@ check underneath the selector, but also had to decorate the selector with
 
 You could have also designed this particular subtree with sequences and parallels
 instead of the selector and decorator here.
+
+.. tip::
+    When designing, it's very useful to get a visual on what you are
+    doing, even before you actually execute or implement
+    anything more than a tree of skeleton behaviours. For this tutorial,
+    you can render with:
+
+    .. code-block:: python
+
+        py-trees-render py_trees_ros.tutorials.two.create_root
 
 Behaviours
 ^^^^^^^^^^

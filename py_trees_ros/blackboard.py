@@ -8,13 +8,17 @@
 ##############################################################################
 
 """
-A blackboard provides easy access to behaviours in a tree, but provides
-no easy means of introspection from outside. In a ROS environment
-we can wrap it with a ROS API that both publishes the blackboard and provides
-services to watch relevant parts of the blackboard (in the case that the
-blackboard contents is too large and noisy to filter).
+The :class:`Blackboard Exchange <py_trees_ros.blackboard.Exchange>` wraps a
+:ref:`Blackboard <pt:blackboards-section>` with a ROS API to provide easy
+introspection of a blackboard from outside the tree. This includes both
+lazily publishing of the entire board when there's a change as well as
+services to open windows onto parts of the blackboard for when the
+entirity becomes too noisy to track.
 
-.. seealso:: :ref:`pt:blackboards-section`, :ref:`py-trees-ros-demo-exchange`, :ref:`py-trees-blackboard-watcher`
+You get this for free in the
+:class:`ROS Behaviour Tree <py_trees_ros.trees.BehaviourTree>` manager and the
+:ref:`py-trees-blackboard-watcher` command line utility provides a convenient
+means of interacting with the watching services.
 """
 
 ##############################################################################
@@ -127,7 +131,7 @@ class Exchange(object):
     .. seealso::
 
         :class:`~py_trees_ros.trees.BehaviourTree` (in which it is used) and
-        :ref:`py-trees-ros-demo-exchange` (working with the watchers).
+        :ref:`py-trees-blackboard-watcher` (working with the watchers).
     """
     _counter = 0
     """Incremental counter guaranteeing unique watcher names"""

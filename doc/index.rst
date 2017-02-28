@@ -15,7 +15,7 @@ Contents:
    :caption: Guide
 
    background
-   exchange
+   new_and_shiny
    tutorials
    terminology
    faq
@@ -24,7 +24,6 @@ Contents:
    :maxdepth: 2
    :caption: Reference
 
-   demos
    programs
    modules
    changelog

@@ -30,8 +30,13 @@ Tree
 .. literalinclude:: ../py_trees_ros/tutorials/one.py
    :language: python
    :linenos:
-   :lines: 71-88
+   :lines: 86-108
    :caption: py_trees_ros/tutorials/one.py
+
+Along with the data gathering side, you'll also notice the dummy branch for
+priority jobs (complete with idle behaviour that is always
+:attr:`~py_trees.common.Status.RUNNING`). This configuration is typical
+of the :term`data gathering` pattern.
 
 Behaviours
 ^^^^^^^^^^
@@ -86,15 +91,20 @@ def create_root():
     Returns:
         :class:`~py_trees.behaviour.Behaviour`: the root of the tree
     """
-    root = py_trees.composites.Selector("Tutorial")
+    root = py_trees.composites.Parallel("Tutorial")
 
     topics2bb = py_trees.composites.Sequence("Topics2BB")
     battery2bb = py_trees_ros.battery.ToBlackboard(name="Battery2BB",
                                                    topic_name="/battery/state",
                                                    threshold=30.0
                                                    )
-    topics2bb.add_child(battery2bb)
+    priorities = py_trees.composites.Selector("Priorities")
+    idle = py_trees.behaviours.Running(name="Idle")
+
     root.add_child(topics2bb)
+    topics2bb.add_child(battery2bb)
+    root.add_child(priorities)
+    priorities.add_child(idle)
     return root
 
 
