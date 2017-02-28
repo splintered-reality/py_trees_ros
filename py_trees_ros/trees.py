@@ -8,7 +8,13 @@
 ##############################################################################
 
 """
-A ROS style custodian for behaviour trees.
+The :class:`ROS Behaviour Tree <py_trees_ros.trees.BehaviourTree>`
+extends the core :class:`Behaviour Tree <py_trees.trees.BehaviourTree>` class
+with a few ROS style adornments. The major features currently include:
+
+* Publishers for ascii/dot tree visualisations and the blackboard
+* A publisher which dumps the entire tree at every change for the rqt plugin
+* Bagging of the tree for offline visualisation and debugging
 """
 
 ##############################################################################

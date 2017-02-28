@@ -36,7 +36,7 @@ Tree
 Along with the data gathering side, you'll also notice the dummy branch for
 priority jobs (complete with idle behaviour that is always
 :attr:`~py_trees.common.Status.RUNNING`). This configuration is typical
-of the :term`data gathering` pattern.
+of the :term:`data gathering` pattern.
 
 Behaviours
 ^^^^^^^^^^
