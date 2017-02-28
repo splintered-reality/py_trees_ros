@@ -103,6 +103,11 @@ def create_root():
     # behaviours
     root = py_trees.composites.Parallel("Tutorial")
     topics2bb = py_trees.composites.Sequence("Topics2BB")
+    scan2bb = py_trees_ros.subscribers.EventToBlackboard(
+        name="Scan2BB",
+        topic_name="/dashboard/scan",
+        variable_name="event_scan_button"
+    )
     battery2bb = py_trees_ros.battery.ToBlackboard(name="Battery2BB",
                                                    topic_name="/battery/state",
                                                    threshold=30.0
@@ -126,7 +131,7 @@ def create_root():
 
     # tree
     root.add_children([topics2bb, priorities])
-    topics2bb.add_child(battery2bb)
+    topics2bb.add_children([scan2bb, battery2bb])
     priorities.add_children([battery_check, scan, idle])
     battery_check.add_children([is_battery_ok, flash_led_strip])
     scan.add_children([scan_rotate, scan_flash_led_strip])

@@ -62,14 +62,6 @@ class Dashboard(QWidget):
         self.abort_push_button.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
         self.abort_push_button.pressed.connect(functools.partial(self.publish_button_message, self.publishers.abort))
 
-#         self.emergency_push_button = QPushButton("Emergency")
-#         self.emergency_push_button.setStyleSheet("QPushButton { font-size: 30pt; }")
-#         self.emergency_push_button.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
-#         self.emergency_push_button.setCheckable(True)
-#         self.emergency_push_button.toggled.connect(functools.partial(self.publish_toggle_button,
-#                                                                      self.emergency_push_button,
-#                                                                      self.publishers.emergency))
-
         self.led_strip_flashing = True
         self.led_strip_on_count = 1
         self.led_strip_colour = "blue"
@@ -95,27 +87,8 @@ class Dashboard(QWidget):
         )
         self.led_strip_timer.start(500)  # ms
 
-#     def publish_toggle_button(self, button, publisher, pressed):
-#         if pressed:
-#             button.setStyleSheet("background-color: maroon; font-size: 30pt;")
-#         else:
-#             button.setStyleSheet("background-color: red; font-size: 30pt;")
-#         publisher.publish(std_msgs.Bool(pressed))
-
     def publish_button_message(self, publisher):
         publisher.publish(std_msgs.Empty())
-
-#     def set_go_colour(self, val):
-#         if val:
-#             self.go_push_button.setStyleSheet("QPushButton { font-size: 30pt; background-color: green}")
-#         else:
-#             self.go_push_button.setStyleSheet("QPushButton { font-size: 30pt; }")
-#
-#     def set_stop_colour(self, val):
-#         if val:
-#             self.stop_push_button.setStyleSheet("QPushButton { font-size: 30pt; background-color: red}")
-#         else:
-#             self.stop_push_button.setStyleSheet("QPushButton { font-size: 30pt; }")
 
     def led_strip_display_callback(self, msg):
         with self.led_strip_lock:

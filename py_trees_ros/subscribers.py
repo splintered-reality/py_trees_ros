@@ -26,6 +26,7 @@ import copy
 import operator
 import py_trees
 import rospy
+import std_msgs.msg as std_msgs
 import threading
 
 ##############################################################################
@@ -404,3 +405,46 @@ class ToBlackboard(Handler):
                 if self.clearing_policy == py_trees.common.ClearingPolicy.ON_SUCCESS:
                     self.msg = None
                 return py_trees.common.Status.SUCCESS
+
+
+class EventToBlackboard(Handler):
+    """
+    This will listen for events (:obj:`std_msgs.msg.Empty`) on a
+    subscriber and write the result (True if at least one message was received,
+    False otherwise) to a bool on the blackboard. This can then be consumed
+    by the tree's tick. No need to clean up, it will write anew on the next tick.
+
+    .. tip::
+        Ideally you need this at the very highest part of the tree so that it
+        gets triggered every time - once this happens, then the rest of the behaviour
+        tree can utilise the variables.
+
+    Args:
+        name (:obj:`str`): name of the behaviour
+        topic_name (:obj:`str`): name of the topic to connect to
+        variable_name (:obj:`str`): name to write the boolean result on the blackboard
+    """
+    def __init__(self,
+                 name="Event to Blackboard",
+                 topic_name="/event",
+                 variable_name="event"
+                 ):
+        super(EventToBlackboard, self).__init__(
+            name=name,
+            topic_name=topic_name,
+            topic_type=std_msgs.Empty,
+            clearing_policy=py_trees.common.ClearingPolicy.ON_SUCCESS
+        )
+        self.variable_name = variable_name
+        self.blackboard = py_trees.Blackboard()
+
+    def update(self):
+        """
+        Check for data and write to the board.
+        """
+        self.logger.debug("%s.update()" % self.__class__.__name__)
+        with self.data_guard:
+            self.blackboard.set(self.variable_name, self.msg is not None, overwrite=True)
+            # ON_SUCCESS is the only clearing_policy that subclasses of SubscriberHandler must implement themselves
+            self.msg = None
+        return py_trees.common.Status.SUCCESS
