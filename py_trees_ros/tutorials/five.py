@@ -28,7 +28,7 @@ Tree
    :language: python
    :linenos:
    :lines: 121-178
-   :caption: py_trees_ros/tutorials/five.py
+   :caption: py_trees_ros/tutorials/five.py#create_root
 
 **Guards**
 
@@ -72,7 +72,7 @@ Introducing the rotate action client behaviour!
    :language: python
    :linenos:
    :lines: 158-163
-   :caption: py_trees_ros/tutorials/five.py
+   :caption: py_trees_ros/tutorials/five.py#action_client_instantiation
 
 .. literalinclude:: ../py_trees_ros/actions.py
    :language: python

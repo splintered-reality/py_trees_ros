@@ -114,3 +114,30 @@ py_trees_ros.mock.rotate
     :special-members:
     :show-inheritance:
     :synopsis: mock a very simple rotation action server
+
+py_trees_ros.tutorials
+----------------------
+
+.. automodule:: py_trees_ros.tutorials
+    :members:
+    :special-members:
+    :show-inheritance:
+    :synopsis: everything to support the tutorials
+
+py_trees_ros.tutorials.behaviours
+---------------------------------
+
+.. automodule:: py_trees_ros.tutorials.behaviours
+    :members:
+    :special-members:
+    :show-inheritance:
+    :synopsis: behaviours crafted specifically for the tutorials
+
+py_trees_ros.tutorials.qt
+-------------------------
+
+.. automodule:: py_trees_ros.tutorials.qt
+    :members:
+    :special-members:
+    :show-inheritance:
+    :synopsis: graphical widgets specifically for interaction with the tutorials

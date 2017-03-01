@@ -61,7 +61,7 @@ Introducing the flashing behaviour!
    :language: python
    :linenos:
    :lines: 27-77
-   :caption: py_trees_ros/battery.py
+   :caption: py_trees_ros/tutorials/behaviours.py#Flashing
 
 A new feature here is the way it uses the terminate method to put a 'fullstop'
 to the commands sent when ticking. Note also that it is permanently in the

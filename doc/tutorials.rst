@@ -51,7 +51,7 @@ Tutorial 2 - Adding a Battery Check
 -----------------------------------
 
 .. automodule:: py_trees_ros.tutorials.two
-    :synopsis: check and react to a low battery state
+    :synopsis: decision making conditional on a low battery state
 
 .. _tutorial-three:
 
@@ -172,12 +172,4 @@ TODO
 Tutorial 8 - Bags
 -----------------
 
-About
-^^^^^
-
-TODO - Visualisation handles and bagging
-
-Running
-^^^^^^^
-
-TODO - Replaying a bag
+TODO - Visualisation handles and bagging, replaying (in running section)
