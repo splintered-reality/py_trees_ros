@@ -9,6 +9,14 @@ py_trees_ros
 .. automodule:: py_trees_ros
    :synopsis: is your robot misbehaving?
 
+py_trees_ros.actions
+--------------------
+
+.. automodule:: py_trees_ros.actions
+    :members:
+    :show-inheritance:
+    :synopsis: action server/client behaviours
+
 py_trees_ros.battery
 --------------------
 

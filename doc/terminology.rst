@@ -20,6 +20,11 @@ Terminology
       'RUNNING' to 'FAILURE/SUCCESS' takes more than one tick, we say that the behaviour itself
       is blocking. In short, `blocking == RUNNING`.
 
+   guard
+      A guard is a behaviour at the start of a work sequence that checks for a particular condition
+      (e.g. is battery low?). If the check succeeds, then the door is opened to the rest of the
+      work sequence.
+
    mock
    mocking
       A very useful paradigm to accelerate development and testing of your behaviour trees

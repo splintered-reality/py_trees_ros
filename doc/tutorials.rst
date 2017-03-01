@@ -146,8 +146,30 @@ While not in this package itself, it's worth taking some time out to discover wh
 
 .. image:: images/tutorial-four-rqt.png
 
+.. _tutorial-actions:
 
-Tutorial N - Bags
+Tutorial 5 - Action Clients
+---------------------------
+
+.. automodule:: py_trees_ros.tutorials.five
+    :synopsis: action client behaviours and a manually triggered work priority branch
+
+
+.. _tutorial-abort:
+
+Tutorial 6 - Global Abort Branch
+--------------------------------
+
+.. _tutorial-dynamic:
+
+Tutorial 7 - Dynamic Priority Branches
+--------------------------------------
+
+TODO
+
+.. _tutorial-bags:
+
+Tutorial 8 - Bags
 -----------------
 
 About

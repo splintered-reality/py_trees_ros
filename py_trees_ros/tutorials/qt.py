@@ -62,9 +62,9 @@ class Dashboard(QWidget):
         self.abort_push_button.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
         self.abort_push_button.pressed.connect(functools.partial(self.publish_button_message, self.publishers.abort))
 
-        self.led_strip_flashing = True
+        self.led_strip_flashing = False
         self.led_strip_on_count = 1
-        self.led_strip_colour = "blue"
+        self.led_strip_colour = "grey"
 
         self.led_strip_lock = threading.Lock()
         self.led_strip_timer = QTimer()
