@@ -16,6 +16,7 @@ with ROS.
 
 The py_trees ROS repositories:
 
+* [py_trees](https://github.com/stonier/py_trees)
 * [py_trees_msgs](https://github.com/stonier/py_trees_msgs)
 * [py_trees_ros](https://github.com/stonier/py_trees_ros)
 * [rqt_py_trees](https://github.com/stonier/rqt_py_trees)
