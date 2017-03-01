@@ -8,6 +8,7 @@ New and Shiny
 Behaviours
 ----------
 
+* :class:`py_trees_ros.actions.ActionClient`
 * :class:`py_trees_ros.battery.ToBlackboard`
 * :class:`py_trees_ros.subscribers.CheckData`
 * :class:`py_trees_ros.subscribers.ToBlackboard`
