@@ -3,7 +3,16 @@ Changelog
 
 0.5.0 (2017-02-21)
 ------------------
-* ...
+* [docs] new and shiny index added
+* [tutorials] qt dashboard support
+* [tutorials] 5 - tree scanning added
+* [tutorials] 4 - tree introspection added
+* [tutorials] 3 - blackboards added
+* [tutorials] 2 - battery low branch added
+* [tutorials] 1 - data gathering added
+* [mock] a mock robot for tutorials and testing
+* [behaviours] action client, battery behaviours added
+* [infra] refactoring for kinetic
 
 Indigo -> Kinetic Changelist
 ----------------------------
