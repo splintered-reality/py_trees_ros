@@ -1,0 +1,343 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>py_trees_ros.utilities &mdash; py_trees_ros 0.5.0 documentation</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+    <link rel="top" title="py_trees_ros 0.5.0 documentation" href="../../index.html"/>
+        <link rel="up" title="Module code" href="../index.html"/> 
+
+  
+  <script src="../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../index.html" class="icon icon-home"> py_trees_ros
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.5.0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+    
+            
+            
+                <p class="caption"><span class="caption-text">Guide</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../background.html">Background</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../new_and_shiny.html">New and Shiny</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../tutorials.html">Tutorials</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../terminology.html">Terminology</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../faq.html">FAQ</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Reference</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../programs.html">Programs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../modules.html">Module API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../changelog.html">Changelog</a></li>
+</ul>
+
+            
+          
+    <a href="genindex.html">Index</a>
+    <a href="py-modindex.html">Module Index</a>
+  
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="../../index.html">py_trees_ros</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../../index.html">Docs</a> &raquo;</li>
+      
+          <li><a href="../index.html">Module code</a> &raquo;</li>
+      
+    <li>py_trees_ros.utilities</li>
+      <li class="wy-breadcrumbs-aside">
+        
+          
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for py_trees_ros.utilities</h1><div class="highlight"><pre>
+<span class="ch">#!/usr/bin/env python</span>
+<span class="c1">#</span>
+<span class="c1"># License: BSD</span>
+<span class="c1">#   https://raw.githubusercontent.com/stonier/py_trees_ros/devel/LICENSE</span>
+<span class="c1">#</span>
+<span class="c1">##############################################################################</span>
+<span class="c1"># Documentation</span>
+<span class="c1">##############################################################################</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Assorted utility functions.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="c1">##############################################################################</span>
+<span class="c1"># Imports</span>
+<span class="c1">##############################################################################</span>
+
+<span class="kn">import</span> <span class="nn">py_trees.console</span> <span class="kn">as</span> <span class="nn">console</span>
+<span class="kn">import</span> <span class="nn">rospy</span>
+<span class="kn">import</span> <span class="nn">std_msgs.msg</span> <span class="kn">as</span> <span class="nn">std_msgs</span>
+
+<span class="c1">##############################################################################</span>
+<span class="c1"># Methods</span>
+<span class="c1">##############################################################################</span>
+
+
+<div class="viewcode-block" id="basename"><a class="viewcode-back" href="../../modules.html#py_trees_ros.utilities.basename">[docs]</a><span class="k">def</span> <span class="nf">basename</span><span class="p">(</span><span class="n">name</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Generate the basename from a ros name.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        name (:obj:`str`): ros name</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        :obj:`str`: name stripped up until the last slash or tilde character.</span>
+<span class="sd">    Examples:</span>
+
+<span class="sd">        .. code-block:: python</span>
+
+<span class="sd">           basename(&quot;~dude&quot;)</span>
+<span class="sd">           # &#39;dude&#39;</span>
+<span class="sd">           basename(&quot;/gang/dude&quot;)</span>
+<span class="sd">           # &#39;dude&#39;</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">name</span><span class="o">.</span><span class="n">rsplit</span><span class="p">(</span><span class="s1">&#39;/&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">rsplit</span><span class="p">(</span><span class="s1">&#39;~&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span></div>
+
+
+<div class="viewcode-block" id="publish_resolved_names"><a class="viewcode-back" href="../../modules.html#py_trees_ros.utilities.publish_resolved_names">[docs]</a><span class="k">def</span> <span class="nf">publish_resolved_names</span><span class="p">(</span><span class="n">publisher</span><span class="p">,</span> <span class="n">ros_communication_handles</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Worker that provides a string representation of all the resolved names</span>
+<span class="sd">    and publishes it so we can use it as an introspection topic in runtime.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        publisher (:obj:`rospy.Publisher`): use this object to publish with</span>
+<span class="sd">        ros_communication_handles ([]): list of handles with their resolved names to to publish</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">s</span> <span class="o">=</span> <span class="n">console</span><span class="o">.</span><span class="n">bold</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Resolved Names</span><span class="se">\n\n</span><span class="s2">&quot;</span> <span class="o">+</span> <span class="n">console</span><span class="o">.</span><span class="n">reset</span>
+    <span class="k">for</span> <span class="n">handle</span> <span class="ow">in</span> <span class="n">ros_communication_handles</span><span class="p">:</span>
+        <span class="n">s</span> <span class="o">+=</span> <span class="n">console</span><span class="o">.</span><span class="n">yellow</span> <span class="o">+</span> <span class="s2">&quot;  &quot;</span> <span class="o">+</span> <span class="n">handle</span><span class="o">.</span><span class="n">resolved_name</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span> <span class="o">+</span> <span class="n">console</span><span class="o">.</span><span class="n">reset</span>
+        <span class="n">publisher</span><span class="o">.</span><span class="n">publish</span><span class="p">(</span><span class="n">std_msgs</span><span class="o">.</span><span class="n">String</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">s</span><span class="p">))</span></div>
+
+<span class="c1">##############################################################################</span>
+<span class="c1"># Classes</span>
+<span class="c1">##############################################################################</span>
+
+
+<div class="viewcode-block" id="Publishers"><a class="viewcode-back" href="../../modules.html#py_trees_ros.utilities.Publishers">[docs]</a><span class="k">class</span> <span class="nc">Publishers</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Utility class that groups the publishers together in one convenient structure.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        publishers (obj:`tuple`): list of (str, str, bool, int) tuples representing (topic_name, publisher_type, latched, queue_size) specifications to create publishers with</span>
+
+<span class="sd">    Examples:</span>
+<span class="sd">        Convert the incoming list of publisher name, type, latched, queue_size specifications into proper variables of this class.</span>
+
+<span class="sd">        .. code-block:: python</span>
+
+<span class="sd">           publishers = rocon_python_comms.utils.Publishers(</span>
+<span class="sd">               [</span>
+<span class="sd">                   (&#39;~foo&#39;, std_msgs.String, True, 5),</span>
+<span class="sd">                   (&#39;/foo/bar&#39;, std_msgs.String, False, 5),</span>
+<span class="sd">                   (&#39;foobar&#39;, &#39;/foo/bar&#39;, std_msgs.String, False, 5),</span>
+<span class="sd">               ]</span>
+<span class="sd">           )</span>
+
+<span class="sd">        Note: &#39;~/introspection/dude&#39; will become just &#39;dude&#39; unless you prepend a field for the name</span>
+<span class="sd">        as in the third example above.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">publishers</span><span class="p">,</span> <span class="n">introspection_topic_name</span><span class="o">=</span><span class="s2">&quot;publishers&quot;</span><span class="p">):</span>
+        <span class="n">publisher_details</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">info</span> <span class="ow">in</span> <span class="n">publishers</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">info</span><span class="p">)</span> <span class="o">==</span> <span class="mi">4</span><span class="p">:</span>
+                <span class="n">publisher_details</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">basename</span><span class="p">(</span><span class="n">info</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span> <span class="n">info</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">info</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">info</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> <span class="n">info</span><span class="p">[</span><span class="mi">3</span><span class="p">]))</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="c1"># naively assume the user got it right and added exactly 5 fields</span>
+                <span class="n">publisher_details</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">info</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__dict__</span> <span class="o">=</span> <span class="p">{</span><span class="n">name</span><span class="p">:</span> <span class="n">rospy</span><span class="o">.</span><span class="n">Publisher</span><span class="p">(</span><span class="n">topic_name</span><span class="p">,</span> <span class="n">publisher_type</span><span class="p">,</span> <span class="n">latch</span><span class="o">=</span><span class="n">latched</span><span class="p">,</span> <span class="n">queue_size</span><span class="o">=</span><span class="n">queue_size</span><span class="p">)</span> <span class="k">for</span> <span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">topic_name</span><span class="p">,</span> <span class="n">publisher_type</span><span class="p">,</span> <span class="n">latched</span><span class="p">,</span> <span class="n">queue_size</span><span class="p">)</span> <span class="ow">in</span> <span class="n">publisher_details</span><span class="p">}</span>
+        <span class="n">publisher</span> <span class="o">=</span> <span class="n">rospy</span><span class="o">.</span><span class="n">Publisher</span><span class="p">(</span><span class="s2">&quot;~introspection/&quot;</span> <span class="o">+</span> <span class="n">introspection_topic_name</span><span class="p">,</span> <span class="n">std_msgs</span><span class="o">.</span><span class="n">String</span><span class="p">,</span> <span class="n">latch</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">queue_size</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">publish_resolved_names</span><span class="p">(</span><span class="n">publisher</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">__dict__</span><span class="o">.</span><span class="n">values</span><span class="p">())</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">introspection_publisher</span> <span class="o">=</span> <span class="n">publisher</span></div>
+
+
+<div class="viewcode-block" id="Subscribers"><a class="viewcode-back" href="../../modules.html#py_trees_ros.utilities.Subscribers">[docs]</a><span class="k">class</span> <span class="nc">Subscribers</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Converts the incoming list of subscriber name, msg type, callback triples into proper</span>
+<span class="sd">    variables of this class. Optionally you can prefix an arg that forces the name of</span>
+<span class="sd">    the variable created.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        subscribers (obj:`tuple`): list of (str, str, bool, int) tuples representing (topic_name, subscriber_type, latched, queue_size) specifications to create subscribers with</span>
+
+<span class="sd">    Examples:</span>
+
+<span class="sd">        .. code-block:: python</span>
+
+<span class="sd">           subscribers = rocon_python_comms.utils.Subscribers(</span>
+<span class="sd">               [</span>
+<span class="sd">                   (&#39;~dudette&#39;, std_msgs.String, subscriber_callback),</span>
+<span class="sd">                   (&#39;/dudette/jane&#39;, std_msgs.String, subscriber_callback),</span>
+<span class="sd">                   (&#39;jane&#39;, /dudette/jane&#39;, std_msgs.String, subscriber_callback),</span>
+<span class="sd">               ]</span>
+<span class="sd">           )</span>
+
+<span class="sd">        Note: &#39;~/introspection/dude&#39; will become just &#39;dude&#39; unless you prepend a field for the name</span>
+<span class="sd">        as in the third example above.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">subscribers</span><span class="p">,</span> <span class="n">introspection_topic_name</span><span class="o">=</span><span class="s2">&quot;subscribers&quot;</span><span class="p">):</span>
+        <span class="n">subscriber_details</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">info</span> <span class="ow">in</span> <span class="n">subscribers</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">info</span><span class="p">)</span> <span class="o">==</span> <span class="mi">3</span><span class="p">:</span>
+                <span class="n">subscriber_details</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">basename</span><span class="p">(</span><span class="n">info</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span> <span class="n">info</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">info</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">info</span><span class="p">[</span><span class="mi">2</span><span class="p">]))</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="c1"># naively assume the user got it right and added exactly 4 fields</span>
+                <span class="n">subscriber_details</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">info</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__dict__</span> <span class="o">=</span> <span class="p">{</span><span class="n">name</span><span class="p">:</span> <span class="n">rospy</span><span class="o">.</span><span class="n">Subscriber</span><span class="p">(</span><span class="n">topic_name</span><span class="p">,</span> <span class="n">subscriber_type</span><span class="p">,</span> <span class="n">callback</span><span class="p">)</span> <span class="k">for</span> <span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">topic_name</span><span class="p">,</span> <span class="n">subscriber_type</span><span class="p">,</span> <span class="n">callback</span><span class="p">)</span> <span class="ow">in</span> <span class="n">subscriber_details</span><span class="p">}</span>
+        <span class="n">publisher</span> <span class="o">=</span> <span class="n">rospy</span><span class="o">.</span><span class="n">Publisher</span><span class="p">(</span><span class="s2">&quot;~introspection/&quot;</span> <span class="o">+</span> <span class="n">introspection_topic_name</span><span class="p">,</span> <span class="n">std_msgs</span><span class="o">.</span><span class="n">String</span><span class="p">,</span> <span class="n">latch</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">queue_size</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">publish_resolved_names</span><span class="p">(</span><span class="n">publisher</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">__dict__</span><span class="o">.</span><span class="n">values</span><span class="p">())</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">introspection_publisher</span> <span class="o">=</span> <span class="n">publisher</span></div>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+
+    </p>
+  </div> 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../',
+            VERSION:'0.5.0',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

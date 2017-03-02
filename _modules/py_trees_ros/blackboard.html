@@ -1,0 +1,473 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>py_trees_ros.blackboard &mdash; py_trees_ros 0.5.0 documentation</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+    <link rel="top" title="py_trees_ros 0.5.0 documentation" href="../../index.html"/>
+        <link rel="up" title="Module code" href="../index.html"/> 
+
+  
+  <script src="../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../index.html" class="icon icon-home"> py_trees_ros
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.5.0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+    
+            
+            
+                <p class="caption"><span class="caption-text">Guide</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../background.html">Background</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../new_and_shiny.html">New and Shiny</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../tutorials.html">Tutorials</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../terminology.html">Terminology</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../faq.html">FAQ</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Reference</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../programs.html">Programs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../modules.html">Module API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../changelog.html">Changelog</a></li>
+</ul>
+
+            
+          
+    <a href="genindex.html">Index</a>
+    <a href="py-modindex.html">Module Index</a>
+  
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="../../index.html">py_trees_ros</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../../index.html">Docs</a> &raquo;</li>
+      
+          <li><a href="../index.html">Module code</a> &raquo;</li>
+      
+    <li>py_trees_ros.blackboard</li>
+      <li class="wy-breadcrumbs-aside">
+        
+          
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for py_trees_ros.blackboard</h1><div class="highlight"><pre>
+<span class="ch">#!/usr/bin/env python</span>
+<span class="c1">#</span>
+<span class="c1"># License: BSD</span>
+<span class="c1">#   https://raw.github.com/stonier/py_trees_ros/license/LICENSE</span>
+<span class="c1">#</span>
+<span class="c1">##############################################################################</span>
+<span class="c1"># Documentation</span>
+<span class="c1">##############################################################################</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">The :class:`Blackboard Exchange &lt;py_trees_ros.blackboard.Exchange&gt;` wraps a</span>
+<span class="sd">:ref:`Blackboard &lt;pt:blackboards-section&gt;` with a ROS API to provide easy</span>
+<span class="sd">introspection of a blackboard from outside the tree. This includes both</span>
+<span class="sd">lazily publishing of the entire board when there&#39;s a change as well as</span>
+<span class="sd">services to open windows onto parts of the blackboard for when the</span>
+<span class="sd">entirity becomes too noisy to track.</span>
+
+<span class="sd">You get this for free in the</span>
+<span class="sd">:class:`ROS Behaviour Tree &lt;py_trees_ros.trees.BehaviourTree&gt;` manager and the</span>
+<span class="sd">:ref:`py-trees-blackboard-watcher` command line utility provides a convenient</span>
+<span class="sd">means of interacting with the watching services.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="c1">##############################################################################</span>
+<span class="c1"># Imports</span>
+<span class="c1">##############################################################################</span>
+
+<span class="kn">import</span> <span class="nn">operator</span>
+<span class="kn">import</span> <span class="nn">py_trees</span>
+<span class="kn">import</span> <span class="nn">py_trees_msgs.srv</span> <span class="kn">as</span> <span class="nn">py_trees_srvs</span>
+<span class="kn">import</span> <span class="nn">rospy</span>
+<span class="kn">import</span> <span class="nn">py_trees.console</span> <span class="kn">as</span> <span class="nn">console</span>
+<span class="kn">import</span> <span class="nn">std_msgs.msg</span> <span class="kn">as</span> <span class="nn">std_msgs</span>
+
+<span class="kn">from</span> <span class="nn">cPickle</span> <span class="kn">import</span> <span class="n">dumps</span>
+
+<span class="c1">##############################################################################</span>
+<span class="c1"># ROS Blackboard</span>
+<span class="c1">##############################################################################</span>
+
+
+<span class="k">class</span> <span class="nc">_View</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Utility class that enables tracking and publishing of relevant</span>
+<span class="sd">    parts of the blackboard for a user. This is used by the</span>
+<span class="sd">    :class:`~py_trees_ros.blackboard.Exchange` operator.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        topic_name (:obj:`str`): name of the topic for the publisher</span>
+<span class="sd">        attrs (:obj:`???`):</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">topic_name</span><span class="p">,</span> <span class="n">attrs</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">blackboard</span> <span class="o">=</span> <span class="n">py_trees</span><span class="o">.</span><span class="n">blackboard</span><span class="o">.</span><span class="n">Blackboard</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">topic_name</span> <span class="o">=</span> <span class="n">topic_name</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">attrs</span> <span class="o">=</span> <span class="n">attrs</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dict</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cached_dict</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">publisher</span> <span class="o">=</span> <span class="n">rospy</span><span class="o">.</span><span class="n">Publisher</span><span class="p">(</span><span class="n">topic_name</span><span class="p">,</span> <span class="n">std_msgs</span><span class="o">.</span><span class="n">String</span><span class="p">,</span> <span class="n">latch</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">queue_size</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_update_sub_blackboard</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">attr</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">attrs</span><span class="p">:</span>
+            <span class="k">if</span> <span class="s1">&#39;/&#39;</span> <span class="ow">in</span> <span class="n">attr</span><span class="p">:</span>
+                <span class="n">check_attr</span> <span class="o">=</span> <span class="n">operator</span><span class="o">.</span><span class="n">attrgetter</span><span class="p">(</span><span class="s2">&quot;.&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">attr</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;/&#39;</span><span class="p">)))</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">check_attr</span> <span class="o">=</span> <span class="n">operator</span><span class="o">.</span><span class="n">attrgetter</span><span class="p">(</span><span class="n">attr</span><span class="p">)</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">value</span> <span class="o">=</span> <span class="n">check_attr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">blackboard</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">dict</span><span class="p">[</span><span class="n">attr</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
+            <span class="k">except</span> <span class="ne">AttributeError</span><span class="p">:</span>
+                <span class="k">pass</span>
+
+    <span class="k">def</span> <span class="nf">_is_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_update_sub_blackboard</span><span class="p">()</span>
+        <span class="n">current_pickle</span> <span class="o">=</span> <span class="n">dumps</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dict</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">blackboard_changed</span> <span class="o">=</span> <span class="n">current_pickle</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">cached_dict</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cached_dict</span> <span class="o">=</span> <span class="n">current_pickle</span>
+
+        <span class="k">return</span> <span class="n">blackboard_changed</span>
+
+    <span class="k">def</span> <span class="nf">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">s</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+        <span class="n">max_length</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">dict</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+            <span class="n">max_length</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">k</span><span class="p">)</span> <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">k</span><span class="p">)</span> <span class="o">&gt;</span> <span class="n">max_length</span> <span class="k">else</span> <span class="n">max_length</span>
+        <span class="n">keys</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dict</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">keys</span><span class="p">:</span>
+            <span class="n">value</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dict</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">value</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+                <span class="n">value_string</span> <span class="o">=</span> <span class="s2">&quot;-&quot;</span>
+                <span class="n">s</span> <span class="o">+=</span> <span class="n">console</span><span class="o">.</span><span class="n">cyan</span> <span class="o">+</span> <span class="s2">&quot;  &quot;</span> <span class="o">+</span> <span class="s1">&#39;{0: &lt;{1}}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">max_length</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">+</span> <span class="n">console</span><span class="o">.</span><span class="n">reset</span> <span class="o">+</span> <span class="s2">&quot;: &quot;</span> <span class="o">+</span> <span class="n">console</span><span class="o">.</span><span class="n">yellow</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">value_string</span><span class="p">)</span> <span class="o">+</span> <span class="n">console</span><span class="o">.</span><span class="n">reset</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">lines</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;</span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">value</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+                <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">lines</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+                    <span class="n">s</span> <span class="o">+=</span> <span class="n">console</span><span class="o">.</span><span class="n">cyan</span> <span class="o">+</span> <span class="s2">&quot;  &quot;</span> <span class="o">+</span> <span class="s1">&#39;{0: &lt;{1}}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">max_length</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">+</span> <span class="n">console</span><span class="o">.</span><span class="n">reset</span> <span class="o">+</span> <span class="s2">&quot;:</span><span class="se">\n</span><span class="s2">&quot;</span>
+                    <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">lines</span><span class="p">:</span>
+                        <span class="n">s</span> <span class="o">+=</span> <span class="n">console</span><span class="o">.</span><span class="n">yellow</span> <span class="o">+</span> <span class="s2">&quot;    </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">line</span> <span class="o">+</span> <span class="n">console</span><span class="o">.</span><span class="n">reset</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">s</span> <span class="o">+=</span> <span class="n">console</span><span class="o">.</span><span class="n">cyan</span> <span class="o">+</span> <span class="s2">&quot;  &quot;</span> <span class="o">+</span> <span class="s1">&#39;{0: &lt;{1}}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">max_length</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">+</span> <span class="n">console</span><span class="o">.</span><span class="n">reset</span> <span class="o">+</span> <span class="s2">&quot;: &quot;</span> <span class="o">+</span> <span class="n">console</span><span class="o">.</span><span class="n">yellow</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">value</span><span class="p">)</span> <span class="o">+</span> <span class="n">console</span><span class="o">.</span><span class="n">reset</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span>
+        <span class="k">return</span> <span class="n">s</span><span class="o">.</span><span class="n">rstrip</span><span class="p">()</span>  <span class="c1"># get rid of the trailing newline...print will take care of adding a new line</span>
+
+
+<div class="viewcode-block" id="Exchange"><a class="viewcode-back" href="../../modules.html#py_trees_ros.blackboard.Exchange">[docs]</a><span class="k">class</span> <span class="nc">Exchange</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Establishes ros communications around a :class:`~py_trees.blackboard.Blackboard`</span>
+<span class="sd">    that enable users to introspect or watch relevant parts of the blackboard.</span>
+
+<span class="sd">    ROS Publishers:</span>
+<span class="sd">        * **~blackboard** (:class:`std_msgs.msg.String`)</span>
+
+<span class="sd">          * streams (string form) the contents of the entire blackboard as it updates</span>
+
+<span class="sd">    ROS Services:</span>
+<span class="sd">        * **~get_blackboard_variables** (:class:`py_trees_msgs.srv.GetBlackboardVariables`)</span>
+
+<span class="sd">          * list all the blackboard variable names (not values)</span>
+<span class="sd">        * **~open_blackboard_watcher** (:class:`py_trees_msgs.srv.OpenBlackboardWatcher`)</span>
+
+<span class="sd">          * request a publisher to stream a part of the blackboard contents</span>
+<span class="sd">        * **~close_blackboard_watcher** (:class:`py_trees_msgs.srv.CloseBlackboardWatcher`)</span>
+
+<span class="sd">          * close a previously opened watcher</span>
+
+<span class="sd">    Watching could be more simply enabled by just providing a *get* stye service</span>
+<span class="sd">    on a particular variable(s), however that would introduce an asynchronous</span>
+<span class="sd">    interrupt on the library&#39;s usage and subsequently, locking. Instead, a</span>
+<span class="sd">    watcher service requests for a stream, i.e. a publisher to be created for private</span>
+<span class="sd">    use that streams only a subsection of the blackboard to the user. Additional</span>
+<span class="sd">    services are provided for closing the stream and listing the variables on the</span>
+<span class="sd">    blackboard.</span>
+
+<span class="sd">    .. seealso::</span>
+
+<span class="sd">        :class:`~py_trees_ros.trees.BehaviourTree` (in which it is used) and</span>
+<span class="sd">        :ref:`py-trees-blackboard-watcher` (working with the watchers).</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">_counter</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="sd">&quot;&quot;&quot;Incremental counter guaranteeing unique watcher names&quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">blackboard</span> <span class="o">=</span> <span class="n">py_trees</span><span class="o">.</span><span class="n">blackboard</span><span class="o">.</span><span class="n">Blackboard</span><span class="p">()</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Internal handle to the blackboard. Users can utilise this, or create their own handles via the</span>
+<span class="sd">        usual, e.g.</span>
+
+<span class="sd">        .. code-block:: python</span>
+
+<span class="sd">            my_blackboard = py_trees.blackboard.Blackboard()</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cached_blackboard_dict</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">watchers</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">publisher</span> <span class="o">=</span> <span class="bp">None</span>
+
+<div class="viewcode-block" id="Exchange.setup"><a class="viewcode-back" href="../../modules.html#py_trees_ros.blackboard.Exchange.setup">[docs]</a>    <span class="k">def</span> <span class="nf">setup</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">timeout</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        This is where the ros initialisation of publishers and services happens. It is kept</span>
+<span class="sd">        outside of the constructor for the same reasons that the familiar py_trees</span>
+<span class="sd">        :meth:`~py_trees.trees.BehaviourTree.setup` method has - to enable construction</span>
+<span class="sd">        of behaviours and trees offline (away from their execution environment) so that</span>
+<span class="sd">        dot graphs and other visualisations of the tree can be created.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">             timeout (:obj:`float`): time to wait (0.0 is blocking forever)</span>
+
+<span class="sd">        Return:</span>
+<span class="sd">            :obj:`bool`: suceess or failure of the operation</span>
+
+<span class="sd">        Examples:</span>
+
+<span class="sd">            It is expected that users will use this in their own customised tree custodian:</span>
+
+<span class="sd">            .. code-block:: python</span>
+
+<span class="sd">                class MyTreeManager(py_trees.trees.BehaviourTree):</span>
+
+<span class="sd">                    def __init__(self):</span>
+<span class="sd">                        pass</span>
+
+<span class="sd">                    def setup(self, timeout):</span>
+<span class="sd">                        super(MyTreeManager, self).setup(timeout)</span>
+<span class="sd">                        self.exchange = py_trees_ros.blackboard.Exchange()</span>
+<span class="sd">                        self.exchange.setup(timeout)</span>
+
+<span class="sd">        .. seealso:: This method is called in the way illustrated above in :class:`~py_trees_ros.trees.BehaviourTree`.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">publisher</span> <span class="o">=</span> <span class="n">rospy</span><span class="o">.</span><span class="n">Publisher</span><span class="p">(</span><span class="s2">&quot;~blackboard&quot;</span><span class="p">,</span> <span class="n">std_msgs</span><span class="o">.</span><span class="n">String</span><span class="p">,</span> <span class="n">latch</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">queue_size</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+        <span class="n">rospy</span><span class="o">.</span><span class="n">Service</span><span class="p">(</span><span class="s1">&#39;~get_blackboard_variables&#39;</span><span class="p">,</span> <span class="n">py_trees_srvs</span><span class="o">.</span><span class="n">GetBlackboardVariables</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_blackboard_variables_service</span><span class="p">)</span>
+        <span class="n">rospy</span><span class="o">.</span><span class="n">Service</span><span class="p">(</span><span class="s1">&#39;~open_blackboard_watcher&#39;</span><span class="p">,</span> <span class="n">py_trees_srvs</span><span class="o">.</span><span class="n">OpenBlackboardWatcher</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_open_blackboard_watcher_service</span><span class="p">)</span>
+        <span class="n">rospy</span><span class="o">.</span><span class="n">Service</span><span class="p">(</span><span class="s1">&#39;~close_blackboard_watcher&#39;</span><span class="p">,</span> <span class="n">py_trees_srvs</span><span class="o">.</span><span class="n">CloseBlackboardWatcher</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_close_blackboard_watcher_service</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">True</span></div>
+
+    <span class="k">def</span> <span class="nf">_get_nested_keys</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">variables</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="k">def</span> <span class="nf">inner</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="n">k</span><span class="p">):</span>
+            <span class="k">for</span> <span class="n">attr</span> <span class="ow">in</span> <span class="nb">dir</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">v</span><span class="p">)):</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="p">(</span><span class="nb">bool</span><span class="p">,</span> <span class="nb">list</span><span class="p">,</span> <span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">)):</span>
+                        <span class="k">if</span> <span class="ow">not</span> <span class="n">attr</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;_&quot;</span><span class="p">):</span>
+                            <span class="n">value</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="n">attr</span><span class="p">)</span>
+                            <span class="k">if</span> <span class="ow">not</span> <span class="nb">callable</span><span class="p">(</span><span class="n">value</span><span class="p">):</span>
+                                <span class="k">if</span> <span class="ow">not</span> <span class="n">attr</span><span class="o">.</span><span class="n">isupper</span><span class="p">():</span>
+                                    <span class="n">variables</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">k</span> <span class="o">+</span> <span class="s2">&quot;/&quot;</span> <span class="o">+</span> <span class="n">attr</span><span class="p">)</span>
+                                    <span class="n">inner</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">k</span> <span class="o">+</span> <span class="s2">&quot;/&quot;</span> <span class="o">+</span> <span class="n">attr</span><span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">blackboard</span><span class="o">.</span><span class="n">__dict__</span><span class="p">):</span>
+            <span class="n">variables</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
+            <span class="n">inner</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">blackboard</span><span class="o">.</span><span class="n">__dict__</span><span class="p">[</span><span class="n">key</span><span class="p">],</span> <span class="n">key</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">variables</span>
+
+    <span class="k">def</span> <span class="nf">_close_watcher</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">req</span><span class="p">):</span>
+        <span class="k">for</span> <span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">watcher</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">watchers</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">watcher</span><span class="o">.</span><span class="n">topic_name</span> <span class="o">==</span> <span class="n">req</span><span class="o">.</span><span class="n">topic_name</span><span class="p">:</span>
+                <span class="n">watcher</span><span class="o">.</span><span class="n">publisher</span><span class="o">.</span><span class="n">unregister</span><span class="p">()</span>
+                <span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="n">watchers</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+                <span class="k">return</span> <span class="bp">True</span>
+        <span class="k">return</span> <span class="bp">False</span>
+
+    <span class="k">def</span> <span class="nf">_is_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">current_pickle</span> <span class="o">=</span> <span class="n">dumps</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">blackboard</span><span class="o">.</span><span class="n">__dict__</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">blackboard_changed</span> <span class="o">=</span> <span class="n">current_pickle</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">cached_blackboard_dict</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cached_blackboard_dict</span> <span class="o">=</span> <span class="n">current_pickle</span>
+        <span class="k">return</span> <span class="n">blackboard_changed</span>
+
+<div class="viewcode-block" id="Exchange.publish_blackboard"><a class="viewcode-back" href="../../modules.html#py_trees_ros.blackboard.Exchange.publish_blackboard">[docs]</a>    <span class="k">def</span> <span class="nf">publish_blackboard</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">unused_tree</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Lazy string publishing of the blackboard (the contents of</span>
+<span class="sd">        the blackboard can be of many and varied types, so string form is the only</span>
+<span class="sd">        way to transmit this across a ros message) on the **~blackboard** topic.</span>
+
+<span class="sd">        Typically you would call this from a tree custodian (e.g.</span>
+<span class="sd">        :class:`py_trees_ros.trees.BehaviourTree`) after each and every tick.</span>
+
+<span class="sd">        .. note:: Lazy: it will only do the relevant string processing if there are subscribers present.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            unused_tree (:obj:`any`): if used as a post_tick_handler, needs the argument, but nonetheless, gets unused</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">publisher</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="n">rospy</span><span class="o">.</span><span class="n">logerr</span><span class="p">(</span><span class="s2">&quot;Blackboard Exchange: no publishers [hint: call setup() on the exchange]&quot;</span><span class="p">)</span>
+            <span class="k">return</span>
+
+        <span class="c1"># publish blackboard</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">publisher</span><span class="o">.</span><span class="n">get_num_connections</span><span class="p">()</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_is_changed</span><span class="p">():</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">publisher</span><span class="o">.</span><span class="n">publish</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">blackboard</span><span class="p">)</span>
+
+        <span class="c1"># publish watchers</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">watchers</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">for</span> <span class="p">(</span><span class="n">unused_i</span><span class="p">,</span> <span class="n">sub_blackboard</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">watchers</span><span class="p">):</span>
+                <span class="k">if</span> <span class="n">sub_blackboard</span><span class="o">.</span><span class="n">publisher</span><span class="o">.</span><span class="n">get_num_connections</span><span class="p">()</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="n">sub_blackboard</span><span class="o">.</span><span class="n">_is_changed</span><span class="p">():</span>
+                        <span class="n">sub_blackboard</span><span class="o">.</span><span class="n">publisher</span><span class="o">.</span><span class="n">publish</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">sub_blackboard</span><span class="p">)</span></div>
+
+    <span class="k">def</span> <span class="nf">_close_blackboard_watcher_service</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">req</span><span class="p">):</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_close_watcher</span><span class="p">(</span><span class="n">req</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">result</span>
+
+    <span class="k">def</span> <span class="nf">_get_blackboard_variables_service</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">req</span><span class="p">):</span>
+        <span class="n">nested_keys</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_nested_keys</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">py_trees_srvs</span><span class="o">.</span><span class="n">GetBlackboardVariablesResponse</span><span class="p">(</span><span class="n">nested_keys</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_open_blackboard_watcher_service</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">req</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">req</span><span class="o">.</span><span class="n">variables</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+            <span class="n">topic_name</span> <span class="o">=</span> <span class="n">rospy</span><span class="o">.</span><span class="n">names</span><span class="o">.</span><span class="n">resolve_name</span><span class="p">(</span><span class="s2">&quot;~blackboard/watcher_&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">Exchange</span><span class="o">.</span><span class="n">_counter</span><span class="p">))</span>
+            <span class="n">Exchange</span><span class="o">.</span><span class="n">_counter</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="n">watcher</span> <span class="o">=</span> <span class="n">_View</span><span class="p">(</span><span class="n">topic_name</span><span class="p">,</span> <span class="n">req</span><span class="o">.</span><span class="n">variables</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">watchers</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">watcher</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">py_trees_srvs</span><span class="o">.</span><span class="n">OpenBlackboardWatcherResponse</span><span class="p">(</span><span class="n">topic_name</span><span class="p">)</span></div>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+
+    </p>
+  </div> 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../',
+            VERSION:'0.5.0',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

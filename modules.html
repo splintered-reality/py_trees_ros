@@ -1,0 +1,1448 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Module API &mdash; py_trees_ros 0.5.0 documentation</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+    <link rel="top" title="py_trees_ros 0.5.0 documentation" href="index.html"/>
+        <link rel="next" title="Changelog" href="changelog.html"/>
+        <link rel="prev" title="Programs" href="programs.html"/> 
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="index.html" class="icon icon-home"> py_trees_ros
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.5.0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+    
+            
+            
+                <p class="caption"><span class="caption-text">Guide</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="background.html">Background</a></li>
+<li class="toctree-l1"><a class="reference internal" href="new_and_shiny.html">New and Shiny</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorials.html">Tutorials</a></li>
+<li class="toctree-l1"><a class="reference internal" href="terminology.html">Terminology</a></li>
+<li class="toctree-l1"><a class="reference internal" href="faq.html">FAQ</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Reference</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="programs.html">Programs</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="">Module API</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#module-py_trees_ros">py_trees_ros</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-py_trees_ros.actions">py_trees_ros.actions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-py_trees_ros.battery">py_trees_ros.battery</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-py_trees_ros.blackboard">py_trees_ros.blackboard</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-py_trees_ros.conversions">py_trees_ros.conversions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-py_trees_ros.subscribers">py_trees_ros.subscribers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-py_trees_ros.trees">py_trees_ros.trees</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-py_trees_ros.utilities">py_trees.utilities</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-py_trees_ros.visitors">py_trees.visitors</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-py_trees_ros.mock">py_trees_ros.mock</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-py_trees_ros.mock.action_server">py_trees_ros.mock.action_server</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-py_trees_ros.mock.battery">py_trees_ros.mock.battery</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-py_trees_ros.mock.move_base">py_trees_ros.mock.move_base</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-py_trees_ros.mock.rotate">py_trees_ros.mock.rotate</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-py_trees_ros.tutorials">py_trees_ros.tutorials</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-py_trees_ros.tutorials.behaviours">py_trees_ros.tutorials.behaviours</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-py_trees_ros.tutorials.qt">py_trees_ros.tutorials.qt</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="changelog.html">Changelog</a></li>
+</ul>
+
+            
+          
+    <a href="genindex.html">Index</a>
+    <a href="py-modindex.html">Module Index</a>
+  
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="index.html">py_trees_ros</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+ 
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="index.html">Docs</a> &raquo;</li>
+      
+    <li>Module API</li>
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            <a href="_sources/modules.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="module-api">
+<span id="modules-section-label"></span><h1>Module API<a class="headerlink" href="#module-api" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="module-py_trees_ros">
+<span id="py-trees-ros"></span><h2>py_trees_ros<a class="headerlink" href="#module-py_trees_ros" title="Permalink to this headline">¶</a></h2>
+<p>ROS extensions, behaviours and utilities for py_trees.</p>
+</div>
+<div class="section" id="module-py_trees_ros.actions">
+<span id="py-trees-ros-actions"></span><h2>py_trees_ros.actions<a class="headerlink" href="#module-py_trees_ros.actions" title="Permalink to this headline">¶</a></h2>
+<p>Various instantiable templates for action client/server style behaviours.</p>
+<dl class="class">
+<dt id="py_trees_ros.actions.ActionClient">
+<em class="property">class </em><code class="descclassname">py_trees_ros.actions.</code><code class="descname">ActionClient</code><span class="sig-paren">(</span><em>name='Action Client'</em>, <em>action_spec=None</em>, <em>action_goal=None</em>, <em>action_namespace='/action'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/py_trees_ros/actions.html#ActionClient"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#py_trees_ros.actions.ActionClient" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="http://py-trees.readthedocs.io/en/devel/modules.html#py_trees.behaviour.Behaviour" title="(in py_trees v0.5.7)"><code class="xref py py-class docutils literal"><span class="pre">py_trees.behaviour.Behaviour</span></code></a></p>
+<p>A generic action client interface. This simply sends a pre-configured
+goal to the action client.</p>
+<p>Cases where you might want to subclass and extend this behaviour:</p>
+<ul class="simple">
+<li>Update the goal data in <a class="reference internal" href="#py_trees_ros.actions.ActionClient.initialise" title="py_trees_ros.actions.ActionClient.initialise"><code class="xref py py-meth docutils literal"><span class="pre">initialise()</span></code></a><ul>
+<li>e.g. use blackboard data to determine the new characteristics of your goal</li>
+</ul>
+</li>
+<li>Trigger true pre-emption by sending a new goal in <a class="reference internal" href="#py_trees_ros.actions.ActionClient.update" title="py_trees_ros.actions.ActionClient.update"><code class="xref py py-meth docutils literal"><span class="pre">update()</span></code></a></li>
+</ul>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>name</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><code class="xref py py-obj docutils literal"><span class="pre">str</span></code></a>) &#8211; name of the behaviour</li>
+<li><strong>action_spec</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#any" title="(in Python v2.7)"><code class="xref py py-obj docutils literal"><span class="pre">any</span></code></a>) &#8211; spec type for the action (e.g. move_base_msgs.msg.MoveBaseAction)</li>
+<li><strong>action_goal</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#any" title="(in Python v2.7)"><code class="xref py py-obj docutils literal"><span class="pre">any</span></code></a>) &#8211; preconfigured action goal (e.g. move_base_msgs.msg.MoveBaseGoal())</li>
+<li><strong>action_namespace</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><code class="xref py py-obj docutils literal"><span class="pre">str</span></code></a>) &#8211; where you can find the action topics</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="py_trees_ros.actions.ActionClient.initialise">
+<code class="descname">initialise</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/py_trees_ros/actions.html#ActionClient.initialise"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#py_trees_ros.actions.ActionClient.initialise" title="Permalink to this definition">¶</a></dt>
+<dd><p>Reset the internal variables.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="py_trees_ros.actions.ActionClient.setup">
+<code class="descname">setup</code><span class="sig-paren">(</span><em>timeout</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/py_trees_ros/actions.html#ActionClient.setup"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#py_trees_ros.actions.ActionClient.setup" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>timeout</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#float" title="(in Python v2.7)"><code class="xref py py-obj docutils literal"><span class="pre">float</span></code></a>) &#8211; time to wait (0.0 is blocking forever)</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">whether it timed out trying to setup</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="http://docs.python.org/library/functions.html#bool" title="(in Python v2.7)"><code class="xref py py-obj docutils literal"><span class="pre">bool</span></code></a></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="py_trees_ros.actions.ActionClient.terminate">
+<code class="descname">terminate</code><span class="sig-paren">(</span><em>new_status</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/py_trees_ros/actions.html#ActionClient.terminate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#py_trees_ros.actions.ActionClient.terminate" title="Permalink to this definition">¶</a></dt>
+<dd><p>If running and the current goal has not already succeeded, cancel it.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>new_status</strong> (<a class="reference external" href="http://py-trees.readthedocs.io/en/devel/modules.html#py_trees.common.Status" title="(in py_trees v0.5.7)"><code class="xref py py-class docutils literal"><span class="pre">Status</span></code></a>) &#8211; the behaviour is transitioning to this new status</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="py_trees_ros.actions.ActionClient.update">
+<code class="descname">update</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/py_trees_ros/actions.html#ActionClient.update"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#py_trees_ros.actions.ActionClient.update" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check only to see whether the underlying action server has
+succeeded, is running, or has cancelled/aborted for some reason and
+map these to the usual behaviour return states.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-py_trees_ros.battery">
+<span id="py-trees-ros-battery"></span><h2>py_trees_ros.battery<a class="headerlink" href="#module-py_trees_ros.battery" title="Permalink to this headline">¶</a></h2>
+<p>Getting the most out of your battery.</p>
+<dl class="class">
+<dt id="py_trees_ros.battery.ToBlackboard">
+<em class="property">class </em><code class="descclassname">py_trees_ros.battery.</code><code class="descname">ToBlackboard</code><span class="sig-paren">(</span><em>name</em>, <em>topic_name='/battery/state'</em>, <em>threshold=30.0</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/py_trees_ros/battery.html#ToBlackboard"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#py_trees_ros.battery.ToBlackboard" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#py_trees_ros.subscribers.ToBlackboard" title="py_trees_ros.subscribers.ToBlackboard"><code class="xref py py-class docutils literal"><span class="pre">py_trees_ros.subscribers.ToBlackboard</span></code></a></p>
+<p>Subscribes to the battery message and writes battery data to the blackboard.
+Also adds a warning flag to the blackboard if the battery
+is low - note that it does some buffering against ping-pong problems so the warning
+doesn&#8217;t trigger on/off rapidly when close to the threshold.</p>
+<p>When ticking, updates with <a class="reference external" href="http://py-trees.readthedocs.io/en/devel/modules.html#py_trees.common.Status.RUNNING" title="(in py_trees v0.5.7)"><code class="xref py py-attr docutils literal"><span class="pre">RUNNING</span></code></a> if it got no data,
+<a class="reference external" href="http://py-trees.readthedocs.io/en/devel/modules.html#py_trees.common.Status.SUCCESS" title="(in py_trees v0.5.7)"><code class="xref py py-attr docutils literal"><span class="pre">SUCCESS</span></code></a> otherwise.</p>
+<dl class="docutils">
+<dt>Blackboard Variables:</dt>
+<dd><ul class="first last simple">
+<li>battery (<code class="xref py py-class docutils literal"><span class="pre">sensor_msgs.msg.BatteryState</span></code>)[w]: the raw battery message</li>
+<li>battery_low_warning (<a class="reference external" href="http://docs.python.org/library/functions.html#bool" title="(in Python v2.7)"><code class="xref py py-obj docutils literal"><span class="pre">bool</span></code></a>)[w]: False if battery is ok, True if critically low</li>
+</ul>
+</dd>
+</dl>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>name</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><code class="xref py py-obj docutils literal"><span class="pre">str</span></code></a>) &#8211; name of the behaviour</li>
+<li><strong>topic_name</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><code class="xref py py-obj docutils literal"><span class="pre">str</span></code></a>) &#8211; name of the battery state topic</li>
+<li><strong>threshold</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#float" title="(in Python v2.7)"><code class="xref py py-obj docutils literal"><span class="pre">float</span></code></a>) &#8211; percentage level threshold for flagging as low (0-100)</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="py_trees_ros.battery.ToBlackboard.update">
+<code class="descname">update</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/py_trees_ros/battery.html#ToBlackboard.update"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#py_trees_ros.battery.ToBlackboard.update" title="Permalink to this definition">¶</a></dt>
+<dd><p>Call the parent to write the raw data to the blackboard and then check against the
+threshold to determine if the low warning flag should also be updated.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-py_trees_ros.blackboard">
+<span id="py-trees-ros-blackboard"></span><h2>py_trees_ros.blackboard<a class="headerlink" href="#module-py_trees_ros.blackboard" title="Permalink to this headline">¶</a></h2>
+<p>The <a class="reference internal" href="#py_trees_ros.blackboard.Exchange" title="py_trees_ros.blackboard.Exchange"><code class="xref py py-class docutils literal"><span class="pre">Blackboard</span> <span class="pre">Exchange</span></code></a> wraps a
+<a class="reference external" href="http://py-trees.readthedocs.io/en/devel/blackboards.html#blackboards-section" title="(in py_trees v0.5.7)"><span class="xref std std-ref">Blackboard</span></a> with a ROS API to provide easy
+introspection of a blackboard from outside the tree. This includes both
+lazily publishing of the entire board when there&#8217;s a change as well as
+services to open windows onto parts of the blackboard for when the
+entirity becomes too noisy to track.</p>
+<p>You get this for free in the
+<a class="reference internal" href="#py_trees_ros.trees.BehaviourTree" title="py_trees_ros.trees.BehaviourTree"><code class="xref py py-class docutils literal"><span class="pre">ROS</span> <span class="pre">Behaviour</span> <span class="pre">Tree</span></code></a> manager and the
+<a class="reference internal" href="programs.html#py-trees-blackboard-watcher"><span>py-trees-blackboard-watcher</span></a> command line utility provides a convenient
+means of interacting with the watching services.</p>
+<dl class="class">
+<dt id="py_trees_ros.blackboard.Exchange">
+<em class="property">class </em><code class="descclassname">py_trees_ros.blackboard.</code><code class="descname">Exchange</code><a class="reference internal" href="_modules/py_trees_ros/blackboard.html#Exchange"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#py_trees_ros.blackboard.Exchange" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="http://docs.python.org/library/functions.html#object" title="(in Python v2.7)"><code class="xref py py-class docutils literal"><span class="pre">object</span></code></a></p>
+<p>Establishes ros communications around a <a class="reference external" href="http://py-trees.readthedocs.io/en/devel/modules.html#py_trees.blackboard.Blackboard" title="(in py_trees v0.5.7)"><code class="xref py py-class docutils literal"><span class="pre">Blackboard</span></code></a>
+that enable users to introspect or watch relevant parts of the blackboard.</p>
+<dl class="docutils">
+<dt>ROS Publishers:</dt>
+<dd><ul class="first last simple">
+<li><strong>~blackboard</strong> (<code class="xref py py-class docutils literal"><span class="pre">std_msgs.msg.String</span></code>)<ul>
+<li>streams (string form) the contents of the entire blackboard as it updates</li>
+</ul>
+</li>
+</ul>
+</dd>
+<dt>ROS Services:</dt>
+<dd><ul class="first last simple">
+<li><strong>~get_blackboard_variables</strong> (<code class="xref py py-class docutils literal"><span class="pre">py_trees_msgs.srv.GetBlackboardVariables</span></code>)<ul>
+<li>list all the blackboard variable names (not values)</li>
+</ul>
+</li>
+<li><strong>~open_blackboard_watcher</strong> (<code class="xref py py-class docutils literal"><span class="pre">py_trees_msgs.srv.OpenBlackboardWatcher</span></code>)<ul>
+<li>request a publisher to stream a part of the blackboard contents</li>
+</ul>
+</li>
+<li><strong>~close_blackboard_watcher</strong> (<code class="xref py py-class docutils literal"><span class="pre">py_trees_msgs.srv.CloseBlackboardWatcher</span></code>)<ul>
+<li>close a previously opened watcher</li>
+</ul>
+</li>
+</ul>
+</dd>
+</dl>
+<p>Watching could be more simply enabled by just providing a <em>get</em> stye service
+on a particular variable(s), however that would introduce an asynchronous
+interrupt on the library&#8217;s usage and subsequently, locking. Instead, a
+watcher service requests for a stream, i.e. a publisher to be created for private
+use that streams only a subsection of the blackboard to the user. Additional
+services are provided for closing the stream and listing the variables on the
+blackboard.</p>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last"><a class="reference internal" href="#py_trees_ros.trees.BehaviourTree" title="py_trees_ros.trees.BehaviourTree"><code class="xref py py-class docutils literal"><span class="pre">BehaviourTree</span></code></a> (in which it is used) and
+<a class="reference internal" href="programs.html#py-trees-blackboard-watcher"><span>py-trees-blackboard-watcher</span></a> (working with the watchers).</p>
+</div>
+<dl class="attribute">
+<dt id="py_trees_ros.blackboard.Exchange.blackboard">
+<code class="descname">blackboard</code><em class="property"> = None</em><a class="headerlink" href="#py_trees_ros.blackboard.Exchange.blackboard" title="Permalink to this definition">¶</a></dt>
+<dd><p>Internal handle to the blackboard. Users can utilise this, or create their own handles via the
+usual, e.g.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">my_blackboard</span> <span class="o">=</span> <span class="n">py_trees</span><span class="o">.</span><span class="n">blackboard</span><span class="o">.</span><span class="n">Blackboard</span><span class="p">()</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="py_trees_ros.blackboard.Exchange.publish_blackboard">
+<code class="descname">publish_blackboard</code><span class="sig-paren">(</span><em>unused_tree=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/py_trees_ros/blackboard.html#Exchange.publish_blackboard"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#py_trees_ros.blackboard.Exchange.publish_blackboard" title="Permalink to this definition">¶</a></dt>
+<dd><p>Lazy string publishing of the blackboard (the contents of
+the blackboard can be of many and varied types, so string form is the only
+way to transmit this across a ros message) on the <strong>~blackboard</strong> topic.</p>
+<p>Typically you would call this from a tree custodian (e.g.
+<a class="reference internal" href="#py_trees_ros.trees.BehaviourTree" title="py_trees_ros.trees.BehaviourTree"><code class="xref py py-class docutils literal"><span class="pre">py_trees_ros.trees.BehaviourTree</span></code></a>) after each and every tick.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">Lazy: it will only do the relevant string processing if there are subscribers present.</p>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>unused_tree</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#any" title="(in Python v2.7)"><code class="xref py py-obj docutils literal"><span class="pre">any</span></code></a>) &#8211; if used as a post_tick_handler, needs the argument, but nonetheless, gets unused</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="py_trees_ros.blackboard.Exchange.setup">
+<code class="descname">setup</code><span class="sig-paren">(</span><em>timeout</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/py_trees_ros/blackboard.html#Exchange.setup"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#py_trees_ros.blackboard.Exchange.setup" title="Permalink to this definition">¶</a></dt>
+<dd><p>This is where the ros initialisation of publishers and services happens. It is kept
+outside of the constructor for the same reasons that the familiar py_trees
+<a class="reference external" href="http://py-trees.readthedocs.io/en/devel/modules.html#py_trees.trees.BehaviourTree.setup" title="(in py_trees v0.5.7)"><code class="xref py py-meth docutils literal"><span class="pre">setup()</span></code></a> method has - to enable construction
+of behaviours and trees offline (away from their execution environment) so that
+dot graphs and other visualisations of the tree can be created.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>timeout</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#float" title="(in Python v2.7)"><code class="xref py py-obj docutils literal"><span class="pre">float</span></code></a>) &#8211; time to wait (0.0 is blocking forever)</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">suceess or failure of the operation</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="http://docs.python.org/library/functions.html#bool" title="(in Python v2.7)"><code class="xref py py-obj docutils literal"><span class="pre">bool</span></code></a></td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Examples</p>
+<p>It is expected that users will use this in their own customised tree custodian:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="k">class</span> <span class="nc">MyTreeManager</span><span class="p">(</span><span class="n">py_trees</span><span class="o">.</span><span class="n">trees</span><span class="o">.</span><span class="n">BehaviourTree</span><span class="p">):</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">pass</span>
+
+    <span class="k">def</span> <span class="nf">setup</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">timeout</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">MyTreeManager</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">setup</span><span class="p">(</span><span class="n">timeout</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">exchange</span> <span class="o">=</span> <span class="n">py_trees_ros</span><span class="o">.</span><span class="n">blackboard</span><span class="o">.</span><span class="n">Exchange</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">exchange</span><span class="o">.</span><span class="n">setup</span><span class="p">(</span><span class="n">timeout</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last">This method is called in the way illustrated above in <a class="reference internal" href="#py_trees_ros.trees.BehaviourTree" title="py_trees_ros.trees.BehaviourTree"><code class="xref py py-class docutils literal"><span class="pre">BehaviourTree</span></code></a>.</p>
+</div>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-py_trees_ros.conversions">
+<span id="py-trees-ros-conversions"></span><h2>py_trees_ros.conversions<a class="headerlink" href="#module-py_trees_ros.conversions" title="Permalink to this headline">¶</a></h2>
+<p>Converter methods for transferring information back and forth between
+py_trees objects and ros messages.</p>
+<dl class="function">
+<dt id="py_trees_ros.conversions.behaviour_to_msg">
+<code class="descclassname">py_trees_ros.conversions.</code><code class="descname">behaviour_to_msg</code><span class="sig-paren">(</span><em>behaviour</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/py_trees_ros/conversions.html#behaviour_to_msg"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#py_trees_ros.conversions.behaviour_to_msg" title="Permalink to this definition">¶</a></dt>
+<dd><p>Convert a behaviour to a message.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>behaviour</strong> (<a class="reference external" href="http://py-trees.readthedocs.io/en/devel/modules.html#py_trees.behaviour.Behaviour" title="(in py_trees v0.5.7)"><code class="xref py py-class docutils literal"><span class="pre">Behaviour</span></code></a>) &#8211; behaviour to convert</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">a ros message representation of a behaviour</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><code class="xref py py-class docutils literal"><span class="pre">Behaviour</span></code></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="py_trees_ros.conversions.behaviour_type_to_msg_constant">
+<code class="descclassname">py_trees_ros.conversions.</code><code class="descname">behaviour_type_to_msg_constant</code><span class="sig-paren">(</span><em>behaviour</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/py_trees_ros/conversions.html#behaviour_type_to_msg_constant"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#py_trees_ros.conversions.behaviour_type_to_msg_constant" title="Permalink to this definition">¶</a></dt>
+<dd><p>Convert a behaviour class type to a message constant.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>behaviour</strong> (<a class="reference external" href="http://py-trees.readthedocs.io/en/devel/modules.html#py_trees.behaviour.Behaviour" title="(in py_trees v0.5.7)"><code class="xref py py-class docutils literal"><span class="pre">Behaviour</span></code></a>) &#8211; investigate the type of this behaviour</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">from the type constants in <code class="xref py py-class docutils literal"><span class="pre">Behaviour</span></code></td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><code class="xref py py-obj docutils literal"><span class="pre">uint8</span></code></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="py_trees_ros.conversions.blackbox_enum_to_msg_constant">
+<code class="descclassname">py_trees_ros.conversions.</code><code class="descname">blackbox_enum_to_msg_constant</code><span class="sig-paren">(</span><em>blackbox_level</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/py_trees_ros/conversions.html#blackbox_enum_to_msg_constant"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#py_trees_ros.conversions.blackbox_enum_to_msg_constant" title="Permalink to this definition">¶</a></dt>
+<dd><p>Convert a blackbox level enum to a message constant.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>blackbox_level</strong> (<code class="xref py py-class docutils literal"><span class="pre">BlackboxLevel</span></code>) &#8211; blackbox level of a behaviour</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">from the type constants in <code class="xref py py-class docutils literal"><span class="pre">Behaviour</span></code></td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><code class="xref py py-obj docutils literal"><span class="pre">uint8</span></code></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="py_trees_ros.conversions.status_enum_to_msg_constant">
+<code class="descclassname">py_trees_ros.conversions.</code><code class="descname">status_enum_to_msg_constant</code><span class="sig-paren">(</span><em>status</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/py_trees_ros/conversions.html#status_enum_to_msg_constant"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#py_trees_ros.conversions.status_enum_to_msg_constant" title="Permalink to this definition">¶</a></dt>
+<dd><p>Convert a status to a message constant.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>status</strong> (<a class="reference external" href="http://py-trees.readthedocs.io/en/devel/modules.html#py_trees.common.Status" title="(in py_trees v0.5.7)"><code class="xref py py-class docutils literal"><span class="pre">Status</span></code></a>) &#8211; status enum of a behaviour</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">from the status constants in <code class="xref py py-class docutils literal"><span class="pre">Behaviour</span></code></td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><code class="xref py py-obj docutils literal"><span class="pre">uint8</span></code></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+<div class="section" id="module-py_trees_ros.subscribers">
+<span id="py-trees-ros-subscribers"></span><h2>py_trees_ros.subscribers<a class="headerlink" href="#module-py_trees_ros.subscribers" title="Permalink to this headline">¶</a></h2>
+<p>ROS subscribers are asynchronous communication handles whilst py_trees
+are by their nature synchronous. They tick, pause, then tick again and
+provide an assumption that only one behaviour or function is running at
+any single moment. Firing off a subscriber callback in the middle of that
+synchronicity to write to a blackboard would break this assumption.</p>
+<p>To get around that, subscriber behaviours run the ros callbacks in a
+background thread and constrain locking and a local cache inside the behaviour.
+Only in the update function is a cached variable unlocked and then
+permitted to be used or written to the blackboard.</p>
+<dl class="class">
+<dt id="py_trees_ros.subscribers.CheckData">
+<em class="property">class </em><code class="descclassname">py_trees_ros.subscribers.</code><code class="descname">CheckData</code><span class="sig-paren">(</span><em>name='Check Data'</em>, <em>topic_name='/foo'</em>, <em>topic_type=None</em>, <em>variable_name='bar'</em>, <em>expected_value=None</em>, <em>fail_if_no_data=False</em>, <em>fail_if_bad_comparison=False</em>, <em>comparison_operator=&lt;built-in function eq&gt;</em>, <em>clearing_policy=&lt;ClearingPolicy.ON_INITIALISE: 1&gt;</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/py_trees_ros/subscribers.html#CheckData"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#py_trees_ros.subscribers.CheckData" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#py_trees_ros.subscribers.Handler" title="py_trees_ros.subscribers.Handler"><code class="xref py py-class docutils literal"><span class="pre">py_trees_ros.subscribers.Handler</span></code></a></p>
+<p>Check a subscriber to see if it has received data
+and optionally whether that data, or part of it has a specific value.</p>
+<p><strong>Usage Patterns</strong></p>
+<p><em>Sequence Guard</em>: <a class="reference external" href="http://py-trees.readthedocs.io/en/devel/modules.html#py_trees.common.Status.RUNNING" title="(in py_trees v0.5.7)"><code class="xref py py-attr docutils literal"><span class="pre">RUNNING</span></code></a> until there is a successful comparison</p>
+<ul class="simple">
+<li>fail_if_no_data=False</li>
+<li>fail_if_bad_comparison=False</li>
+</ul>
+<p><em>Selector Priority Chooser</em>: <a class="reference external" href="http://py-trees.readthedocs.io/en/devel/modules.html#py_trees.common.Status.FAILURE" title="(in py_trees v0.5.7)"><code class="xref py py-attr docutils literal"><span class="pre">FAILURE</span></code></a> until there is a successful comparison</p>
+<ul class="simple">
+<li>fail_if_no_data=True</li>
+<li>fail_if_bad_comparison=True</li>
+</ul>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>name</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><code class="xref py py-obj docutils literal"><span class="pre">str</span></code></a>) &#8211; name of the behaviour</li>
+<li><strong>topic_name</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><code class="xref py py-obj docutils literal"><span class="pre">str</span></code></a>) &#8211; name of the topic to connect to</li>
+<li><strong>topic_type</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#any" title="(in Python v2.7)"><code class="xref py py-obj docutils literal"><span class="pre">any</span></code></a>) &#8211; class of the message type (e.g. <code class="xref py py-obj docutils literal"><span class="pre">std_msgs.msg.String</span></code>)</li>
+<li><strong>variable_name</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><code class="xref py py-obj docutils literal"><span class="pre">str</span></code></a>) &#8211; name of the variable to check</li>
+<li><strong>expected_value</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#any" title="(in Python v2.7)"><code class="xref py py-obj docutils literal"><span class="pre">any</span></code></a>) &#8211; expected value of the variable</li>
+<li><strong>fail_if_no_data</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#bool" title="(in Python v2.7)"><code class="xref py py-obj docutils literal"><span class="pre">bool</span></code></a>) &#8211; <a class="reference external" href="http://py-trees.readthedocs.io/en/devel/modules.html#py_trees.common.Status.FAILURE" title="(in py_trees v0.5.7)"><code class="xref py py-attr docutils literal"><span class="pre">FAILURE</span></code></a> instead of <a class="reference external" href="http://py-trees.readthedocs.io/en/devel/modules.html#py_trees.common.Status.RUNNING" title="(in py_trees v0.5.7)"><code class="xref py py-attr docutils literal"><span class="pre">RUNNING</span></code></a> if there is no data yet</li>
+<li><strong>fail_if_bad_comparison</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#bool" title="(in Python v2.7)"><code class="xref py py-obj docutils literal"><span class="pre">bool</span></code></a>) &#8211; <a class="reference external" href="http://py-trees.readthedocs.io/en/devel/modules.html#py_trees.common.Status.FAILURE" title="(in py_trees v0.5.7)"><code class="xref py py-attr docutils literal"><span class="pre">FAILURE</span></code></a> instead of <a class="reference external" href="http://py-trees.readthedocs.io/en/devel/modules.html#py_trees.common.Status.RUNNING" title="(in py_trees v0.5.7)"><code class="xref py py-attr docutils literal"><span class="pre">RUNNING</span></code></a> if comparison failed</li>
+<li><strong>comparison_operator</strong> (<code class="xref py py-obj docutils literal"><span class="pre">func</span></code>) &#8211; one from the python <a class="reference external" href="https://docs.python.org/2/library/operator.html">operator module</a></li>
+<li><strong>clearing_policy</strong> (<a class="reference external" href="http://py-trees.readthedocs.io/en/devel/modules.html#py_trees.common.ClearingPolicy" title="(in py_trees v0.5.7)"><code class="xref py py-class docutils literal"><span class="pre">ClearingPolicy</span></code></a>) &#8211; when to clear the data</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition tip">
+<p class="first admonition-title">Tip</p>
+<p class="last">Prefer <a class="reference internal" href="#py_trees_ros.subscribers.ToBlackboard" title="py_trees_ros.subscribers.ToBlackboard"><code class="xref py py-class docutils literal"><span class="pre">ToBlackboard</span></code></a> and the various blackboard checking behaviours instead. It will provide you with
+better introspection capability and less complex behaviour construction to manage.</p>
+</div>
+<dl class="method">
+<dt id="py_trees_ros.subscribers.CheckData.update">
+<code class="descname">update</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/py_trees_ros/subscribers.html#CheckData.update"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#py_trees_ros.subscribers.CheckData.update" title="Permalink to this definition">¶</a></dt>
+<dd><p>Handles all the logic for determining what result should go back.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">depending on the checking results</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="http://py-trees.readthedocs.io/en/devel/modules.html#py_trees.common.Status" title="(in py_trees v0.5.7)"><code class="xref py py-class docutils literal"><span class="pre">Status</span></code></a></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="py_trees_ros.subscribers.EventToBlackboard">
+<em class="property">class </em><code class="descclassname">py_trees_ros.subscribers.</code><code class="descname">EventToBlackboard</code><span class="sig-paren">(</span><em>name='Event to Blackboard'</em>, <em>topic_name='/event'</em>, <em>variable_name='event'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/py_trees_ros/subscribers.html#EventToBlackboard"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#py_trees_ros.subscribers.EventToBlackboard" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#py_trees_ros.subscribers.Handler" title="py_trees_ros.subscribers.Handler"><code class="xref py py-class docutils literal"><span class="pre">py_trees_ros.subscribers.Handler</span></code></a></p>
+<p>This will listen for events (<code class="xref py py-obj docutils literal"><span class="pre">std_msgs.msg.Empty</span></code>) on a
+subscriber and write the result (True if at least one message was received,
+False otherwise) to a bool on the blackboard. This can then be consumed
+by the tree&#8217;s tick. No need to clean up, it will write anew on the next tick.</p>
+<div class="admonition tip">
+<p class="first admonition-title">Tip</p>
+<p class="last">Ideally you need this at the very highest part of the tree so that it
+gets triggered every time - once this happens, then the rest of the behaviour
+tree can utilise the variables.</p>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>name</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><code class="xref py py-obj docutils literal"><span class="pre">str</span></code></a>) &#8211; name of the behaviour</li>
+<li><strong>topic_name</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><code class="xref py py-obj docutils literal"><span class="pre">str</span></code></a>) &#8211; name of the topic to connect to</li>
+<li><strong>variable_name</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><code class="xref py py-obj docutils literal"><span class="pre">str</span></code></a>) &#8211; name to write the boolean result on the blackboard</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="py_trees_ros.subscribers.EventToBlackboard.update">
+<code class="descname">update</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/py_trees_ros/subscribers.html#EventToBlackboard.update"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#py_trees_ros.subscribers.EventToBlackboard.update" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check for data and write to the board.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="py_trees_ros.subscribers.Handler">
+<em class="property">class </em><code class="descclassname">py_trees_ros.subscribers.</code><code class="descname">Handler</code><span class="sig-paren">(</span><em>name='Subscriber Handler'</em>, <em>topic_name='/foo'</em>, <em>topic_type=None</em>, <em>clearing_policy=&lt;ClearingPolicy.ON_INITIALISE: 1&gt;</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/py_trees_ros/subscribers.html#Handler"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#py_trees_ros.subscribers.Handler" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="http://py-trees.readthedocs.io/en/devel/modules.html#py_trees.behaviour.Behaviour" title="(in py_trees v0.5.7)"><code class="xref py py-class docutils literal"><span class="pre">py_trees.behaviour.Behaviour</span></code></a></p>
+<p>Not intended for direct use, as this just absorbs the mechanics of setting up
+a subscriber for inheritance by user-defined behaviour classes. There are several
+options for the mechanism of clearing the data so that a new result can be processed.</p>
+<p><strong>Always Look for New Data</strong></p>
+<p>This will clear any currently stored data upon entry into the behaviour (i.e. when
+<a class="reference internal" href="#py_trees_ros.subscribers.Handler.initialise" title="py_trees_ros.subscribers.Handler.initialise"><code class="xref py py-meth docutils literal"><span class="pre">initialise()</span></code></a> is called). This is useful for a behaviour in a sequence
+that is looking to start fresh as it is about to tick and be
+in a <a class="reference external" href="http://py-trees.readthedocs.io/en/devel/modules.html#py_trees.common.Status.RUNNING" title="(in py_trees v0.5.7)"><code class="xref py py-attr docutils literal"><span class="pre">RUNNING</span></code></a> state
+until new data arrives.</p>
+<p><strong>Look for New Data only after SUCCESS</strong></p>
+<p>This will clear any currently stored data as soon as the behaviour returns
+<a class="reference external" href="http://py-trees.readthedocs.io/en/devel/modules.html#py_trees.common.Status.SUCCESS" title="(in py_trees v0.5.7)"><code class="xref py py-attr docutils literal"><span class="pre">SUCCESS</span></code></a>. This is useful for catching new
+triggers/events from things like buttons where you don&#8217;t want to miss things
+even though you may not actually be ticking.</p>
+<p><strong>Use the Latest Data</strong></p>
+<p>Even if this data was received before entry into the behaviour. In this case
+<a class="reference internal" href="#py_trees_ros.subscribers.Handler.initialise" title="py_trees_ros.subscribers.Handler.initialise"><code class="xref py py-meth docutils literal"><span class="pre">initialise()</span></code></a> does not do anything with the currently stored data. Useful
+as a blocking behaviour to wait on some some topic having been initialised with
+some data (e.g. CameraInfo).</p>
+<div class="admonition warning">
+<p class="first admonition-title">Warning</p>
+<p class="last">Do not use - it will always return
+<a class="reference external" href="http://py-trees.readthedocs.io/en/devel/modules.html#py_trees.common.Status.INVALID" title="(in py_trees v0.5.7)"><code class="xref py py-attr docutils literal"><span class="pre">INVALID</span></code></a>. Subclass it to create a functional
+behaviour.</p>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>name</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><code class="xref py py-obj docutils literal"><span class="pre">str</span></code></a>) &#8211; name of the behaviour</li>
+<li><strong>topic_name</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><code class="xref py py-obj docutils literal"><span class="pre">str</span></code></a>) &#8211; name of the topic to connect to</li>
+<li><strong>topic_type</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#any" title="(in Python v2.7)"><code class="xref py py-obj docutils literal"><span class="pre">any</span></code></a>) &#8211; class of the message type (e.g. <code class="xref py py-obj docutils literal"><span class="pre">std_msgs.msg.String</span></code>)</li>
+<li><strong>clearing_policy</strong> (<a class="reference external" href="http://py-trees.readthedocs.io/en/devel/modules.html#py_trees.common.ClearingPolicy" title="(in py_trees v0.5.7)"><code class="xref py py-class docutils literal"><span class="pre">ClearingPolicy</span></code></a>) &#8211; when to clear the data</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="py_trees_ros.subscribers.Handler.initialise">
+<code class="descname">initialise</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/py_trees_ros/subscribers.html#Handler.initialise"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#py_trees_ros.subscribers.Handler.initialise" title="Permalink to this definition">¶</a></dt>
+<dd><p>If the clearing policy is set to <a class="reference external" href="http://py-trees.readthedocs.io/en/devel/modules.html#py_trees.common.ClearingPolicy.ON_INITIALISE" title="(in py_trees v0.5.7)"><code class="xref py py-attr docutils literal"><span class="pre">ON_INITIALISE</span></code></a> it
+will clear the internally saved message, otherwise it does nothing.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="py_trees_ros.subscribers.Handler.setup">
+<code class="descname">setup</code><span class="sig-paren">(</span><em>timeout</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/py_trees_ros/subscribers.html#Handler.setup"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#py_trees_ros.subscribers.Handler.setup" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initialises the subscriber.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>timeout</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#float" title="(in Python v2.7)"><code class="xref py py-obj docutils literal"><span class="pre">float</span></code></a>) &#8211; time to wait (0.0 is blocking forever)</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">whether it timed out trying to setup</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="http://docs.python.org/library/functions.html#bool" title="(in Python v2.7)"><code class="xref py py-obj docutils literal"><span class="pre">bool</span></code></a></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="py_trees_ros.subscribers.ToBlackboard">
+<em class="property">class </em><code class="descclassname">py_trees_ros.subscribers.</code><code class="descname">ToBlackboard</code><span class="sig-paren">(</span><em>name='ToBlackboard'</em>, <em>topic_name='chatter'</em>, <em>topic_type=None</em>, <em>blackboard_variables={'chatter': None}</em>, <em>initialise_variables={}</em>, <em>clearing_policy=&lt;ClearingPolicy.ON_INITIALISE: 1&gt;</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/py_trees_ros/subscribers.html#ToBlackboard"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#py_trees_ros.subscribers.ToBlackboard" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#py_trees_ros.subscribers.Handler" title="py_trees_ros.subscribers.Handler"><code class="xref py py-class docutils literal"><span class="pre">py_trees_ros.subscribers.Handler</span></code></a></p>
+<p>Saves the latest message to the blackboard and immediately returns success.
+If no data has yet been received, this behaviour blocks (i.e. returns
+RUNNING).</p>
+<p>Typically this will save the entire message, however sub fields can be
+designated, in which case they will write to the specified keys.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>name</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><code class="xref py py-obj docutils literal"><span class="pre">str</span></code></a>) &#8211; name of the behaviour</li>
+<li><strong>topic_name</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><code class="xref py py-obj docutils literal"><span class="pre">str</span></code></a>) &#8211; name of the topic to connect to</li>
+<li><strong>topic_type</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#any" title="(in Python v2.7)"><code class="xref py py-obj docutils literal"><span class="pre">any</span></code></a>) &#8211; class of the message type (e.g. <code class="xref py py-obj docutils literal"><span class="pre">std_msgs.msg.String</span></code>)</li>
+<li><strong>blackboard_variables</strong> (<a class="reference external" href="http://docs.python.org/library/stdtypes.html#dict" title="(in Python v2.7)"><code class="xref py py-obj docutils literal"><span class="pre">dict</span></code></a>) &#8211; blackboard variable string or dict {names (keys) - message subfields (values)}, use a value of None to indicate the entire message</li>
+<li><strong>initialise_variables</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#bool" title="(in Python v2.7)"><code class="xref py py-obj docutils literal"><span class="pre">bool</span></code></a>) &#8211; initialise the blackboard variables to some defaults</li>
+<li><strong>clearing_policy</strong> (<a class="reference external" href="http://py-trees.readthedocs.io/en/devel/modules.html#py_trees.common.ClearingPolicy" title="(in py_trees v0.5.7)"><code class="xref py py-class docutils literal"><span class="pre">ClearingPolicy</span></code></a>) &#8211; when to clear the data</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Examples</p>
+<p>To capture an entire message:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">chatter_to_blackboard</span> <span class="o">=</span> <span class="n">ToBlackboard</span><span class="p">(</span><span class="n">topic_name</span><span class="o">=</span><span class="s2">&quot;chatter&quot;</span><span class="p">,</span>
+                                     <span class="n">topic_type</span><span class="o">=</span><span class="n">std_msgs</span><span class="o">.</span><span class="n">msg</span><span class="o">.</span><span class="n">String</span><span class="p">,</span>
+                                     <span class="n">blackboard_variables</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;chatter&#39;</span><span class="p">:</span> <span class="bp">None</span><span class="p">}</span>
+                                     <span class="p">)</span>
+</pre></div>
+</div>
+<p>or to get rid of the annoying sub-data field in std_msgs/String:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">chatter_to_blackboard</span> <span class="o">=</span> <span class="n">ToBlackboard</span><span class="p">(</span><span class="n">topic_name</span><span class="o">=</span><span class="s2">&quot;chatter&quot;</span><span class="p">,</span>
+                                     <span class="n">topic_type</span><span class="o">=</span><span class="n">std_msgs</span><span class="o">.</span><span class="n">msg</span><span class="o">.</span><span class="n">String</span><span class="p">,</span>
+                                     <span class="n">blackboard_variables</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;chatter&#39;</span><span class="p">:</span> <span class="s1">&#39;data&#39;</span><span class="p">}</span>
+                                     <span class="p">)</span>
+</pre></div>
+</div>
+<p>combinations of multiple entities inside the message can also be saved:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">blackboard_variables</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;pose_with_covariance_stamped&quot;</span><span class="p">:</span> <span class="bp">None</span><span class="p">,</span> <span class="s2">&quot;pose&quot;</span><span class="p">:</span> <span class="s2">&quot;pose.pose&quot;</span><span class="p">}</span>
+</pre></div>
+</div>
+<dl class="method">
+<dt id="py_trees_ros.subscribers.ToBlackboard.setup">
+<code class="descname">setup</code><span class="sig-paren">(</span><em>timeout</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/py_trees_ros/subscribers.html#ToBlackboard.setup"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#py_trees_ros.subscribers.ToBlackboard.setup" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initialise the subscriber.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>timeout</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#float" title="(in Python v2.7)"><code class="xref py py-obj docutils literal"><span class="pre">float</span></code></a>) &#8211; time to wait (0.0 is blocking forever)</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">whether it timed out trying to setup</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="http://docs.python.org/library/functions.html#bool" title="(in Python v2.7)"><code class="xref py py-obj docutils literal"><span class="pre">bool</span></code></a></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="py_trees_ros.subscribers.ToBlackboard.update">
+<code class="descname">update</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/py_trees_ros/subscribers.html#ToBlackboard.update"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#py_trees_ros.subscribers.ToBlackboard.update" title="Permalink to this definition">¶</a></dt>
+<dd><p>Writes the data (if available) to the blackboard.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><a class="reference external" href="http://py-trees.readthedocs.io/en/devel/modules.html#py_trees.common.Status.RUNNING" title="(in py_trees v0.5.7)"><code class="xref py py-attr docutils literal"><span class="pre">RUNNING</span></code></a> (no data) or <a class="reference external" href="http://py-trees.readthedocs.io/en/devel/modules.html#py_trees.common.Status.SUCCESS" title="(in py_trees v0.5.7)"><code class="xref py py-attr docutils literal"><span class="pre">SUCCESS</span></code></a></td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="http://py-trees.readthedocs.io/en/devel/modules.html#py_trees.common.Status" title="(in py_trees v0.5.7)"><code class="xref py py-class docutils literal"><span class="pre">Status</span></code></a></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="py_trees_ros.subscribers.WaitForData">
+<em class="property">class </em><code class="descclassname">py_trees_ros.subscribers.</code><code class="descname">WaitForData</code><span class="sig-paren">(</span><em>name='Wait For Data'</em>, <em>topic_name='chatter'</em>, <em>topic_type=None</em>, <em>clearing_policy=&lt;ClearingPolicy.ON_INITIALISE: 1&gt;</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/py_trees_ros/subscribers.html#WaitForData"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#py_trees_ros.subscribers.WaitForData" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#py_trees_ros.subscribers.Handler" title="py_trees_ros.subscribers.Handler"><code class="xref py py-class docutils literal"><span class="pre">py_trees_ros.subscribers.Handler</span></code></a></p>
+<p>Waits for a subscriber&#8217;s callback to be triggered. This doesn&#8217;t care about
+the actual data, just whether it arrived or not, so is useful for catching
+triggers (std_msgs/Empty messages) or blocking (in the behaviour sense)
+until some data has arrived (e.g. camera configuration). There are
+two use cases:</p>
+<p><strong>Usage Patterns</strong></p>
+<p><em>Got Something, Sometime</em></p>
+<ul class="simple">
+<li>clearing_policy == <a class="reference external" href="http://py-trees.readthedocs.io/en/devel/modules.html#py_trees.common.ClearingPolicy.NEVER" title="(in py_trees v0.5.7)"><code class="xref py py-attr docutils literal"><span class="pre">NEVER</span></code></a></li>
+</ul>
+<p>Don&#8217;t care when data arrived, just that it arrived. This could be for something
+like a map topic, or a configuration that you need to block. Once it returns <a class="reference external" href="http://py-trees.readthedocs.io/en/devel/modules.html#py_trees.common.Status.SUCCESS" title="(in py_trees v0.5.7)"><code class="xref py py-attr docutils literal"><span class="pre">SUCCESS</span></code></a>,
+it will always return <a class="reference external" href="http://py-trees.readthedocs.io/en/devel/modules.html#py_trees.common.Status.SUCCESS" title="(in py_trees v0.5.7)"><code class="xref py py-attr docutils literal"><span class="pre">SUCCESS</span></code></a>.</p>
+<p><em>Wating for the Next Thing, Starting From Now</em></p>
+<ul class="simple">
+<li>clearing_policy == <code class="xref py py-attr docutils literal"><span class="pre">ON_INTIALISE</span></code></li>
+</ul>
+<p>Useful as a gaurd at the start of a sequence, that is waiting for an event to
+trigger after the sequence has started (i.e. been initialised).</p>
+<p><em>Wating for the Next Thing, Starting from the Last</em></p>
+<ul class="simple">
+<li>clearing_policy == <a class="reference external" href="http://py-trees.readthedocs.io/en/devel/modules.html#py_trees.common.ClearingPolicy.ON_SUCCESS" title="(in py_trees v0.5.7)"><code class="xref py py-attr docutils literal"><span class="pre">ON_SUCCESS</span></code></a></li>
+</ul>
+<p>Useful as a guard watching for an event that could have come in anytime, but for
+which we do with to reset (and subsequently look for the next event). e.g. button events.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>name</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><code class="xref py py-obj docutils literal"><span class="pre">str</span></code></a>) &#8211; name of the behaviour</li>
+<li><strong>topic_name</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><code class="xref py py-obj docutils literal"><span class="pre">str</span></code></a>) &#8211; name of the topic to connect to</li>
+<li><strong>topic_type</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#any" title="(in Python v2.7)"><code class="xref py py-obj docutils literal"><span class="pre">any</span></code></a>) &#8211; class of the message type (e.g. <code class="xref py py-obj docutils literal"><span class="pre">std_msgs.msg.String</span></code>)</li>
+<li><strong>clearing_policy</strong> (<a class="reference external" href="http://py-trees.readthedocs.io/en/devel/modules.html#py_trees.common.ClearingPolicy" title="(in py_trees v0.5.7)"><code class="xref py py-class docutils literal"><span class="pre">ClearingPolicy</span></code></a>) &#8211; when to clear the data</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="py_trees_ros.subscribers.WaitForData.update">
+<code class="descname">update</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/py_trees_ros/subscribers.html#WaitForData.update"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#py_trees_ros.subscribers.WaitForData.update" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><a class="reference external" href="http://py-trees.readthedocs.io/en/devel/modules.html#py_trees.common.Status.RUNNING" title="(in py_trees v0.5.7)"><code class="xref py py-attr docutils literal"><span class="pre">RUNNING</span></code></a> (no data) or <a class="reference external" href="http://py-trees.readthedocs.io/en/devel/modules.html#py_trees.common.Status.SUCCESS" title="(in py_trees v0.5.7)"><code class="xref py py-attr docutils literal"><span class="pre">SUCCESS</span></code></a></td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="http://py-trees.readthedocs.io/en/devel/modules.html#py_trees.common.Status" title="(in py_trees v0.5.7)"><code class="xref py py-class docutils literal"><span class="pre">Status</span></code></a></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-py_trees_ros.trees">
+<span id="py-trees-ros-trees"></span><h2>py_trees_ros.trees<a class="headerlink" href="#module-py_trees_ros.trees" title="Permalink to this headline">¶</a></h2>
+<p>The <a class="reference internal" href="#py_trees_ros.trees.BehaviourTree" title="py_trees_ros.trees.BehaviourTree"><code class="xref py py-class docutils literal"><span class="pre">ROS</span> <span class="pre">Behaviour</span> <span class="pre">Tree</span></code></a>
+extends the core <a class="reference external" href="http://py-trees.readthedocs.io/en/devel/modules.html#py_trees.trees.BehaviourTree" title="(in py_trees v0.5.7)"><code class="xref py py-class docutils literal"><span class="pre">Behaviour</span> <span class="pre">Tree</span></code></a> class
+with a few ROS style adornments. The major features currently include:</p>
+<ul class="simple">
+<li>Publishers for ascii/dot tree visualisations and the blackboard</li>
+<li>A publisher which dumps the entire tree at every change for the rqt plugin</li>
+<li>Bagging of the tree for offline visualisation and debugging</li>
+</ul>
+<dl class="class">
+<dt id="py_trees_ros.trees.BehaviourTree">
+<em class="property">class </em><code class="descclassname">py_trees_ros.trees.</code><code class="descname">BehaviourTree</code><span class="sig-paren">(</span><em>root</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/py_trees_ros/trees.html#BehaviourTree"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#py_trees_ros.trees.BehaviourTree" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="http://py-trees.readthedocs.io/en/devel/modules.html#py_trees.trees.BehaviourTree" title="(in py_trees v0.5.7)"><code class="xref py py-class docutils literal"><span class="pre">py_trees.trees.BehaviourTree</span></code></a></p>
+<p>Extend the <a class="reference external" href="http://py-trees.readthedocs.io/en/devel/modules.html#py_trees.trees.BehaviourTree" title="(in py_trees v0.5.7)"><code class="xref py py-class docutils literal"><span class="pre">py_trees.trees.BehaviourTree</span></code></a> class with
+a few bells and whistles for ROS:</p>
+<ul class="simple">
+<li>ros publishers with snapshot ascii/dot graph views of the tree</li>
+<li>ros publisher with data representation of the entire tree for monitoring/bagging</li>
+<li>ros publisher showing what the current tip is</li>
+<li>a blackboard exchange with introspection and watcher services</li>
+</ul>
+<dl class="docutils">
+<dt>ROS Publishers:</dt>
+<dd><ul class="first last simple">
+<li><strong>~ascii/tree</strong> (<code class="xref py py-class docutils literal"><span class="pre">std_msgs.msg.String</span></code>)<ul>
+<li>static view of the entire tree (debugging)</li>
+</ul>
+</li>
+<li><strong>~ascii/snapshot</strong> (<code class="xref py py-class docutils literal"><span class="pre">std_msgs.msg.String</span></code>)<ul>
+<li>runtime ascii snapshot view of the ticking tree (debugging)</li>
+</ul>
+</li>
+<li><strong>~dot/tree</strong> (<code class="xref py py-class docutils literal"><span class="pre">std_msgs.msg.String</span></code>)<ul>
+<li>static dot graph of the entire tree (debugging)</li>
+</ul>
+</li>
+<li><strong>~log/tree</strong> (<code class="xref py py-class docutils literal"><span class="pre">py_trees_msgs.msg.BehaviourTree</span></code>)<ul>
+<li>representation of the entire tree in message form for rqt/bagging</li>
+</ul>
+</li>
+<li><strong>~tip</strong> (<code class="xref py py-class docutils literal"><span class="pre">py_trees_msgs.msg.Behaviour</span></code>)<ul>
+<li>the tip of the tree after the last tick</li>
+</ul>
+</li>
+</ul>
+</dd>
+</dl>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last">It also exposes publishers and services from the blackboard exchange
+in it&#8217;s private namespace. Refer to <a class="reference internal" href="#py_trees_ros.blackboard.Exchange" title="py_trees_ros.blackboard.Exchange"><code class="xref py py-class docutils literal"><span class="pre">Exchange</span></code></a> for details.</p>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>root</strong> (<a class="reference external" href="http://py-trees.readthedocs.io/en/devel/modules.html#py_trees.behaviour.Behaviour" title="(in py_trees v0.5.7)"><code class="xref py py-class docutils literal"><span class="pre">Behaviour</span></code></a>) &#8211; root node of the tree</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><code class="xref py py-exc docutils literal"><span class="pre">AssertionError</span></code> &#8211;
+if incoming root variable is not the correct type</td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="py_trees_ros.trees.BehaviourTree.setup">
+<code class="descname">setup</code><span class="sig-paren">(</span><em>timeout</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/py_trees_ros/trees.html#BehaviourTree.setup"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#py_trees_ros.trees.BehaviourTree.setup" title="Permalink to this definition">¶</a></dt>
+<dd><p>Setup the publishers, exechange and add ros-relevant pre/post tick handlers to the tree.
+Ultimately relays this call down to all the behaviours in the tree.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>timeout</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#float" title="(in Python v2.7)"><code class="xref py py-obj docutils literal"><span class="pre">float</span></code></a>) &#8211; time to wait (0.0 is blocking forever)</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">suceess or failure of the operation</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="http://docs.python.org/library/functions.html#bool" title="(in Python v2.7)"><code class="xref py py-obj docutils literal"><span class="pre">bool</span></code></a></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-py_trees_ros.utilities">
+<span id="py-trees-utilities"></span><h2>py_trees.utilities<a class="headerlink" href="#module-py_trees_ros.utilities" title="Permalink to this headline">¶</a></h2>
+<p>Assorted utility functions.</p>
+<dl class="class">
+<dt id="py_trees_ros.utilities.Publishers">
+<em class="property">class </em><code class="descclassname">py_trees_ros.utilities.</code><code class="descname">Publishers</code><span class="sig-paren">(</span><em>publishers</em>, <em>introspection_topic_name='publishers'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/py_trees_ros/utilities.html#Publishers"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#py_trees_ros.utilities.Publishers" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="http://docs.python.org/library/functions.html#object" title="(in Python v2.7)"><code class="xref py py-class docutils literal"><span class="pre">object</span></code></a></p>
+<p>Utility class that groups the publishers together in one convenient structure.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>(obj</strong> (<em>publishers</em>) &#8211; <cite>tuple</cite>): list of (str, str, bool, int) tuples representing (topic_name, publisher_type, latched, queue_size) specifications to create publishers with</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Examples</p>
+<p>Convert the incoming list of publisher name, type, latched, queue_size specifications into proper variables of this class.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">publishers</span> <span class="o">=</span> <span class="n">rocon_python_comms</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">Publishers</span><span class="p">(</span>
+    <span class="p">[</span>
+        <span class="p">(</span><span class="s1">&#39;~foo&#39;</span><span class="p">,</span> <span class="n">std_msgs</span><span class="o">.</span><span class="n">String</span><span class="p">,</span> <span class="bp">True</span><span class="p">,</span> <span class="mi">5</span><span class="p">),</span>
+        <span class="p">(</span><span class="s1">&#39;/foo/bar&#39;</span><span class="p">,</span> <span class="n">std_msgs</span><span class="o">.</span><span class="n">String</span><span class="p">,</span> <span class="bp">False</span><span class="p">,</span> <span class="mi">5</span><span class="p">),</span>
+        <span class="p">(</span><span class="s1">&#39;foobar&#39;</span><span class="p">,</span> <span class="s1">&#39;/foo/bar&#39;</span><span class="p">,</span> <span class="n">std_msgs</span><span class="o">.</span><span class="n">String</span><span class="p">,</span> <span class="bp">False</span><span class="p">,</span> <span class="mi">5</span><span class="p">),</span>
+    <span class="p">]</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<p>Note: &#8216;~/introspection/dude&#8217; will become just &#8216;dude&#8217; unless you prepend a field for the name
+as in the third example above.</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="py_trees_ros.utilities.Subscribers">
+<em class="property">class </em><code class="descclassname">py_trees_ros.utilities.</code><code class="descname">Subscribers</code><span class="sig-paren">(</span><em>subscribers</em>, <em>introspection_topic_name='subscribers'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/py_trees_ros/utilities.html#Subscribers"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#py_trees_ros.utilities.Subscribers" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="http://docs.python.org/library/functions.html#object" title="(in Python v2.7)"><code class="xref py py-class docutils literal"><span class="pre">object</span></code></a></p>
+<p>Converts the incoming list of subscriber name, msg type, callback triples into proper
+variables of this class. Optionally you can prefix an arg that forces the name of
+the variable created.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>(obj</strong> (<a class="reference internal" href="#module-py_trees_ros.subscribers" title="py_trees_ros.subscribers: put a lid on the asynchronicity"><em>subscribers</em></a>) &#8211; <cite>tuple</cite>): list of (str, str, bool, int) tuples representing (topic_name, subscriber_type, latched, queue_size) specifications to create subscribers with</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Examples</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">subscribers</span> <span class="o">=</span> <span class="n">rocon_python_comms</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">Subscribers</span><span class="p">(</span>
+    <span class="p">[</span>
+        <span class="p">(</span><span class="s1">&#39;~dudette&#39;</span><span class="p">,</span> <span class="n">std_msgs</span><span class="o">.</span><span class="n">String</span><span class="p">,</span> <span class="n">subscriber_callback</span><span class="p">),</span>
+        <span class="p">(</span><span class="s1">&#39;/dudette/jane&#39;</span><span class="p">,</span> <span class="n">std_msgs</span><span class="o">.</span><span class="n">String</span><span class="p">,</span> <span class="n">subscriber_callback</span><span class="p">),</span>
+        <span class="p">(</span><span class="s1">&#39;jane&#39;</span><span class="p">,</span> <span class="o">/</span><span class="n">dudette</span><span class="o">/</span><span class="n">jane</span><span class="s1">&#39;, std_msgs.String, subscriber_callback),</span>
+    <span class="p">]</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<p>Note: &#8216;~/introspection/dude&#8217; will become just &#8216;dude&#8217; unless you prepend a field for the name
+as in the third example above.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="py_trees_ros.utilities.basename">
+<code class="descclassname">py_trees_ros.utilities.</code><code class="descname">basename</code><span class="sig-paren">(</span><em>name</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/py_trees_ros/utilities.html#basename"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#py_trees_ros.utilities.basename" title="Permalink to this definition">¶</a></dt>
+<dd><p>Generate the basename from a ros name.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>name</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><code class="xref py py-obj docutils literal"><span class="pre">str</span></code></a>) &#8211; ros name</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">name stripped up until the last slash or tilde character.</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><code class="xref py py-obj docutils literal"><span class="pre">str</span></code></a></td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Examples</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">basename</span><span class="p">(</span><span class="s2">&quot;~dude&quot;</span><span class="p">)</span>
+<span class="c1"># &#39;dude&#39;</span>
+<span class="n">basename</span><span class="p">(</span><span class="s2">&quot;/gang/dude&quot;</span><span class="p">)</span>
+<span class="c1"># &#39;dude&#39;</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="py_trees_ros.utilities.publish_resolved_names">
+<code class="descclassname">py_trees_ros.utilities.</code><code class="descname">publish_resolved_names</code><span class="sig-paren">(</span><em>publisher</em>, <em>ros_communication_handles</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/py_trees_ros/utilities.html#publish_resolved_names"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#py_trees_ros.utilities.publish_resolved_names" title="Permalink to this definition">¶</a></dt>
+<dd><p>Worker that provides a string representation of all the resolved names
+and publishes it so we can use it as an introspection topic in runtime.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>publisher</strong> (<code class="xref py py-obj docutils literal"><span class="pre">rospy.Publisher</span></code>) &#8211; use this object to publish with</li>
+<li><strong>ros_communication_handles</strong> (<em>[]</em>) &#8211; list of handles with their resolved names to to publish</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+<div class="section" id="module-py_trees_ros.visitors">
+<span id="py-trees-visitors"></span><h2>py_trees.visitors<a class="headerlink" href="#module-py_trees_ros.visitors" title="Permalink to this headline">¶</a></h2>
+<p>ROS Visitors are entities that can be passed to a ROS tree implementation
+(e.g. <a class="reference internal" href="#py_trees_ros.trees.BehaviourTree" title="py_trees_ros.trees.BehaviourTree"><code class="xref py py-class docutils literal"><span class="pre">BehaviourTree</span></code></a>) and used to either visit
+each and every behaviour in the tree, or visit behaviours as the tree is
+traversed in an executing tick. At each behaviour, the visitor
+runs its own method on the behaviour to do as it wishes - logging, introspecting).</p>
+<div class="admonition warning">
+<p class="first admonition-title">Warning</p>
+<p class="last">Visitors should not modify the behaviours they visit.</p>
+</div>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last">The base interface and core visitors in <a class="reference external" href="http://py-trees.readthedocs.io/en/devel/modules.html#module-py_trees.visitors" title="(in py_trees v0.5.7)"><code class="xref py py-mod docutils literal"><span class="pre">py_trees.visitors</span></code></a></p>
+</div>
+<dl class="class">
+<dt id="py_trees_ros.visitors.LoggingVisitor">
+<em class="property">class </em><code class="descclassname">py_trees_ros.visitors.</code><code class="descname">LoggingVisitor</code><a class="reference internal" href="_modules/py_trees_ros/visitors.html#LoggingVisitor"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#py_trees_ros.visitors.LoggingVisitor" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="http://py-trees.readthedocs.io/en/devel/modules.html#py_trees.visitors.VisitorBase" title="(in py_trees v0.5.7)"><code class="xref py py-class docutils literal"><span class="pre">py_trees.visitors.VisitorBase</span></code></a></p>
+<p>Visits the entire tree and gathers all behaviours as
+messages for the tree logging publishers.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Variables:</th><td class="field-body"><strong>tree</strong> (<code class="xref py py-class docutils literal"><span class="pre">py_trees_msgs.msg.BehaviourTree</span></code>) &#8211; tree representation in message form</td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="py_trees_ros.visitors.LoggingVisitor.initialise">
+<code class="descname">initialise</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/py_trees_ros/visitors.html#LoggingVisitor.initialise"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#py_trees_ros.visitors.LoggingVisitor.initialise" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initialise and stamp a <code class="xref py py-class docutils literal"><span class="pre">py_trees_msgs.msg.BehaviourTree</span></code>
+instance.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="py_trees_ros.visitors.LoggingVisitor.run">
+<code class="descname">run</code><span class="sig-paren">(</span><em>behaviour</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/py_trees_ros/visitors.html#LoggingVisitor.run"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#py_trees_ros.visitors.LoggingVisitor.run" title="Permalink to this definition">¶</a></dt>
+<dd><p>Convert the behaviour into a message and appendd it to the tree.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>behaviour</strong> (<a class="reference external" href="http://py-trees.readthedocs.io/en/devel/modules.html#py_trees.behaviour.Behaviour" title="(in py_trees v0.5.7)"><code class="xref py py-class docutils literal"><span class="pre">Behaviour</span></code></a>) &#8211; behaviour to convert</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="py_trees_ros.visitors.SnapshotVisitor">
+<em class="property">class </em><code class="descclassname">py_trees_ros.visitors.</code><code class="descname">SnapshotVisitor</code><a class="reference internal" href="_modules/py_trees_ros/visitors.html#SnapshotVisitor"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#py_trees_ros.visitors.SnapshotVisitor" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="http://py-trees.readthedocs.io/en/devel/modules.html#py_trees.visitors.VisitorBase" title="(in py_trees v0.5.7)"><code class="xref py py-class docutils literal"><span class="pre">py_trees.visitors.VisitorBase</span></code></a></p>
+<p>Visits the tree in tick-tock, recording runtime information for publishing
+the information as a snapshot view of the tree after the iteration has
+finished.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Variables:</th><td class="field-body"><ul class="first last simple">
+<li><strong>nodes</strong> (<a class="reference external" href="http://docs.python.org/library/stdtypes.html#dict" title="(in Python v2.7)"><em>dict</em></a>) &#8211; dictionary of behaviour id (uuid.UUID) and status (<a class="reference external" href="http://py-trees.readthedocs.io/en/devel/modules.html#py_trees.common.Status" title="(in py_trees v0.5.7)"><code class="xref py py-class docutils literal"><span class="pre">Status</span></code></a>) pairs</li>
+<li><strong>running_nodes</strong> (<em>[uuid.UUID]</em>) &#8211; list of id&#8217;s for behaviours which were traversed in the current tick</li>
+<li><strong>previously_running_nodes</strong> (<em>[uuid.UUID]</em>) &#8211; list of id&#8217;s for behaviours which were traversed in the last tick</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last">This visitor should be used with the <a class="reference internal" href="#py_trees_ros.trees.BehaviourTree" title="py_trees_ros.trees.BehaviourTree"><code class="xref py py-class docutils literal"><span class="pre">BehaviourTree</span></code></a> class to collect
+information to publish for both bagging and the rqt monitoring plugin.</p>
+</div>
+<dl class="method">
+<dt id="py_trees_ros.visitors.SnapshotVisitor.initialise">
+<code class="descname">initialise</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/py_trees_ros/visitors.html#SnapshotVisitor.initialise"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#py_trees_ros.visitors.SnapshotVisitor.initialise" title="Permalink to this definition">¶</a></dt>
+<dd><p>Switch running to previously running and then reset all other variables. This will
+get called before a tree ticks.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="py_trees_ros.visitors.SnapshotVisitor.run">
+<code class="descname">run</code><span class="sig-paren">(</span><em>behaviour</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/py_trees_ros/visitors.html#SnapshotVisitor.run"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#py_trees_ros.visitors.SnapshotVisitor.run" title="Permalink to this definition">¶</a></dt>
+<dd><p>This method gets run as each behaviour is ticked. Catch the id and status and store it.
+Additionally add it to the running list if it is <code class="xref py py-data docutils literal"><span class="pre">RUNNING</span></code>.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>behaviour</strong> (<a class="reference external" href="http://py-trees.readthedocs.io/en/devel/modules.html#py_trees.behaviour.Behaviour" title="(in py_trees v0.5.7)"><code class="xref py py-class docutils literal"><span class="pre">Behaviour</span></code></a>) &#8211; behaviour that is ticking</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-py_trees_ros.mock">
+<span id="py-trees-ros-mock"></span><h2>py_trees_ros.mock<a class="headerlink" href="#module-py_trees_ros.mock" title="Permalink to this headline">¶</a></h2>
+<p>This package contains mock nodes for ROS py_trees simulations.</p>
+</div>
+<div class="section" id="module-py_trees_ros.mock.action_server">
+<span id="py-trees-ros-mock-action-server"></span><h2>py_trees_ros.mock.action_server<a class="headerlink" href="#module-py_trees_ros.mock.action_server" title="Permalink to this headline">¶</a></h2>
+<p>Mocks the move base action server of the ROS navigation stack.</p>
+<dl class="class">
+<dt id="py_trees_ros.mock.action_server.ActionServer">
+<em class="property">class </em><code class="descclassname">py_trees_ros.mock.action_server.</code><code class="descname">ActionServer</code><span class="sig-paren">(</span><em>action_name</em>, <em>action_type</em>, <em>worker</em>, <em>duration=5</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/py_trees_ros/mock/action_server.html#ActionServer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#py_trees_ros.mock.action_server.ActionServer" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="http://docs.python.org/library/functions.html#object" title="(in Python v2.7)"><code class="xref py py-class docutils literal"><span class="pre">object</span></code></a></p>
+<p>Generic action server that can be subclassed to quickly create action
+servers of varying types in a mock simulation.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>action_name</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><code class="xref py py-obj docutils literal"><span class="pre">str</span></code></a>) &#8211; name of the action server (e.g. move_base)</li>
+<li><strong>action_type</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#any" title="(in Python v2.7)"><code class="xref py py-obj docutils literal"><span class="pre">any</span></code></a>) &#8211; type of the action server (e.g. move_base_msgs.msg.MoveBaseAction</li>
+<li><strong>worker</strong> (<code class="xref py py-obj docutils literal"><span class="pre">func</span></code>) &#8211; callback to be executed inside the execute loop, no args</li>
+<li><strong>duration</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#int" title="(in Python v2.7)"><code class="xref py py-obj docutils literal"><span class="pre">int</span></code></a>) &#8211; time for a goal to complete (seconds)</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<dl class="attribute">
+<dt id="py_trees_ros.mock.action_server.ActionServer.__weakref__">
+<code class="descname">__weakref__</code><a class="headerlink" href="#py_trees_ros.mock.action_server.ActionServer.__weakref__" title="Permalink to this definition">¶</a></dt>
+<dd><p>list of weak references to the object (if defined)</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="py_trees_ros.mock.action_server.ActionServer.execute">
+<code class="descname">execute</code><span class="sig-paren">(</span><em>goal</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/py_trees_ros/mock/action_server.html#ActionServer.execute"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#py_trees_ros.mock.action_server.ActionServer.execute" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check for pre-emption, but otherwise just spin around gradually incrementing
+a hypothetical &#8216;percent&#8217; done.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>goal</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#any" title="(in Python v2.7)"><code class="xref py py-obj docutils literal"><span class="pre">any</span></code></a>) &#8211; goal of type specified by the action_type in the constructor.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="py_trees_ros.mock.action_server.ActionServer.start">
+<code class="descname">start</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/py_trees_ros/mock/action_server.html#ActionServer.start"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#py_trees_ros.mock.action_server.ActionServer.start" title="Permalink to this definition">¶</a></dt>
+<dd><p>Start the action server.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-py_trees_ros.mock.battery">
+<span id="py-trees-ros-mock-battery"></span><h2>py_trees_ros.mock.battery<a class="headerlink" href="#module-py_trees_ros.mock.battery" title="Permalink to this headline">¶</a></h2>
+<p>Mocks a battery provider.</p>
+<dl class="class">
+<dt id="py_trees_ros.mock.battery.Battery">
+<em class="property">class </em><code class="descclassname">py_trees_ros.mock.battery.</code><code class="descname">Battery</code><a class="reference internal" href="_modules/py_trees_ros/mock/battery.html#Battery"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#py_trees_ros.mock.battery.Battery" title="Permalink to this definition">¶</a></dt>
+<dd><p>Mocks the processed battery state for a robot (/battery/sensor_state)
+as well as a possible charging source (/battery/charging_source).</p>
+<dl class="docutils">
+<dt>ROS Publishers:</dt>
+<dd><ul class="first last simple">
+<li><strong>~state</strong> (<code class="xref py py-class docutils literal"><span class="pre">sensor_msgs.msg.BatteryState</span></code>)<ul>
+<li>full battery state information</li>
+</ul>
+</li>
+</ul>
+</dd>
+<dt>Dynamic Reconfigure:</dt>
+<dd><ul class="first last simple">
+<li><strong>~charging_percentage</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#float" title="(in Python v2.7)"><code class="xref py py-obj docutils literal"><span class="pre">float</span></code></a>)<ul>
+<li>one-step setting of the current battery percentage</li>
+</ul>
+</li>
+<li><strong>~charging</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#bool" title="(in Python v2.7)"><code class="xref py py-obj docutils literal"><span class="pre">bool</span></code></a>)<ul>
+<li>whether it is currently charging or not</li>
+</ul>
+</li>
+<li><strong>~charging_increment</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#float" title="(in Python v2.7)"><code class="xref py py-obj docutils literal"><span class="pre">float</span></code></a>)<ul>
+<li>how fast it charges/discharges</li>
+</ul>
+</li>
+</ul>
+</dd>
+</dl>
+<p>On startup it is in a DISCHARGING state. Use <code class="docutils literal"><span class="pre">rqt_reconfigure</span></code> to change the battery state.</p>
+<dl class="method">
+<dt id="py_trees_ros.mock.battery.Battery.dynamic_reconfigure_callback">
+<code class="descname">dynamic_reconfigure_callback</code><span class="sig-paren">(</span><em>config</em>, <em>level</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/py_trees_ros/mock/battery.html#Battery.dynamic_reconfigure_callback"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#py_trees_ros.mock.battery.Battery.dynamic_reconfigure_callback" title="Permalink to this definition">¶</a></dt>
+<dd><p>Don&#8217;t use the incoming config except as a read only
+tool. If we write variables, make sure to use
+the server&#8217;s update_configuration, which will trigger
+this callback here.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>config</strong> (<code class="xref py py-obj docutils literal"><span class="pre">dynamic_reconfigure.encoding.Config</span></code>) &#8211; incoming configuration</li>
+<li><strong>level</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#int" title="(in Python v2.7)"><code class="xref py py-obj docutils literal"><span class="pre">int</span></code></a>) &#8211; </li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="py_trees_ros.mock.battery.Battery.spin">
+<code class="descname">spin</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/py_trees_ros/mock/battery.html#Battery.spin"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#py_trees_ros.mock.battery.Battery.spin" title="Permalink to this definition">¶</a></dt>
+<dd><p>Spin around, updating battery state and publishing the result.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-py_trees_ros.mock.move_base">
+<span id="py-trees-ros-mock-move-base"></span><h2>py_trees_ros.mock.move_base<a class="headerlink" href="#module-py_trees_ros.mock.move_base" title="Permalink to this headline">¶</a></h2>
+<p>Mocks the move base action server of the ROS navigation stack.</p>
+<dl class="class">
+<dt id="py_trees_ros.mock.move_base.MoveBase">
+<em class="property">class </em><code class="descclassname">py_trees_ros.mock.move_base.</code><code class="descname">MoveBase</code><span class="sig-paren">(</span><em>odometry_topic='/odom'</em>, <em>pose_topic='/pose'</em>, <em>duration=5</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/py_trees_ros/mock/move_base.html#MoveBase"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#py_trees_ros.mock.move_base.MoveBase" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#py_trees_ros.mock.action_server.ActionServer" title="py_trees_ros.mock.action_server.ActionServer"><code class="xref py py-class docutils literal"><span class="pre">py_trees_ros.mock.action_server.ActionServer</span></code></a></p>
+<p>Simulates:</p>
+<ul class="simple">
+<li>move base interface</li>
+<li>publishing on /odom (nav_msgs.msg.Odometry)</li>
+<li>publishing on /pose (geometry_msgs.msg.PoseWithCovarianceStamped)</li>
+</ul>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>odometry_topic</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><code class="xref py py-obj docutils literal"><span class="pre">str</span></code></a>) &#8211; name of the odometry topic</li>
+<li><strong>pose_topic</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><code class="xref py py-obj docutils literal"><span class="pre">str</span></code></a>) &#8211; name of the pose (with covariance stamped) topic</li>
+<li><strong>duration</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#int" title="(in Python v2.7)"><code class="xref py py-obj docutils literal"><span class="pre">int</span></code></a>) &#8211; time for a goal to complete (seconds)</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="py_trees_ros.mock.move_base.MoveBase.publish">
+<code class="descname">publish</code><span class="sig-paren">(</span><em>unused_event</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/py_trees_ros/mock/move_base.html#MoveBase.publish"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#py_trees_ros.mock.move_base.MoveBase.publish" title="Permalink to this definition">¶</a></dt>
+<dd><p>Most things expect a continous stream of odometry/pose messages, so we
+run this in a background thread.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="py_trees_ros.mock.move_base.MoveBase.worker">
+<code class="descname">worker</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/py_trees_ros/mock/move_base.html#MoveBase.worker"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#py_trees_ros.mock.move_base.MoveBase.worker" title="Permalink to this definition">¶</a></dt>
+<dd><p>Increment the odometry and pose towards the goal.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-py_trees_ros.mock.rotate">
+<span id="py-trees-ros-mock-rotate"></span><h2>py_trees_ros.mock.rotate<a class="headerlink" href="#module-py_trees_ros.mock.rotate" title="Permalink to this headline">¶</a></h2>
+<p>Mocks a simple action server that rotates the robot 360 degrees.</p>
+<dl class="class">
+<dt id="py_trees_ros.mock.rotate.Rotate">
+<em class="property">class </em><code class="descclassname">py_trees_ros.mock.rotate.</code><code class="descname">Rotate</code><span class="sig-paren">(</span><em>rotation_rate=0.87</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/py_trees_ros/mock/rotate.html#Rotate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#py_trees_ros.mock.rotate.Rotate" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#py_trees_ros.mock.action_server.ActionServer" title="py_trees_ros.mock.action_server.ActionServer"><code class="xref py py-class docutils literal"><span class="pre">py_trees_ros.mock.action_server.ActionServer</span></code></a></p>
+<p>Simple server that controls a full rotation of the robot.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>odometry_topic</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><code class="xref py py-obj docutils literal"><span class="pre">str</span></code></a>) &#8211; name of the odometry topic</li>
+<li><strong>pose_topic</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><code class="xref py py-obj docutils literal"><span class="pre">str</span></code></a>) &#8211; name of the pose (with covariance stamped) topic</li>
+<li><strong>duration</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#int" title="(in Python v2.7)"><code class="xref py py-obj docutils literal"><span class="pre">int</span></code></a>) &#8211; time for a goal to complete (seconds)</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="py_trees_ros.mock.rotate.Rotate.worker">
+<code class="descname">worker</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/py_trees_ros/mock/rotate.html#Rotate.worker"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#py_trees_ros.mock.rotate.Rotate.worker" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create some appropriate feedback.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-py_trees_ros.tutorials">
+<span id="py-trees-ros-tutorials"></span><h2>py_trees_ros.tutorials<a class="headerlink" href="#module-py_trees_ros.tutorials" title="Permalink to this headline">¶</a></h2>
+<p>Entry points to the tutorials</p>
+</div>
+<div class="section" id="module-py_trees_ros.tutorials.behaviours">
+<span id="py-trees-ros-tutorials-behaviours"></span><h2>py_trees_ros.tutorials.behaviours<a class="headerlink" href="#module-py_trees_ros.tutorials.behaviours" title="Permalink to this headline">¶</a></h2>
+<p>A few behaviours to support the tutorials.</p>
+<dl class="class">
+<dt id="py_trees_ros.tutorials.behaviours.FlashLedStrip">
+<em class="property">class </em><code class="descclassname">py_trees_ros.tutorials.behaviours.</code><code class="descname">FlashLedStrip</code><span class="sig-paren">(</span><em>name</em>, <em>topic_name='/led_strip/command'</em>, <em>colour='red'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/py_trees_ros/tutorials/behaviours.html#FlashLedStrip"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#py_trees_ros.tutorials.behaviours.FlashLedStrip" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="http://py-trees.readthedocs.io/en/devel/modules.html#py_trees.behaviour.Behaviour" title="(in py_trees v0.5.7)"><code class="xref py py-class docutils literal"><span class="pre">py_trees.behaviour.Behaviour</span></code></a></p>
+<p>This behavoiur simply shoots a command off to the LEDStrip to flash
+a certain colour and returns <a class="reference external" href="http://py-trees.readthedocs.io/en/devel/modules.html#py_trees.common.Status.RUNNING" title="(in py_trees v0.5.7)"><code class="xref py py-attr docutils literal"><span class="pre">RUNNING</span></code></a>.
+Note that this behaviour will never return with
+<a class="reference external" href="http://py-trees.readthedocs.io/en/devel/modules.html#py_trees.common.Status.SUCCESS" title="(in py_trees v0.5.7)"><code class="xref py py-attr docutils literal"><span class="pre">SUCCESS</span></code></a> but will send a clearing
+command to the LEDStrip if it is cancelled or interrupted by a higher
+priority behaviour.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>name</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><code class="xref py py-obj docutils literal"><span class="pre">str</span></code></a>) &#8211; name of the behaviour</li>
+<li><strong>topic_name</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><code class="xref py py-obj docutils literal"><span class="pre">str</span></code></a>) &#8211; name of the battery state topic</li>
+<li><strong>colour</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><code class="xref py py-obj docutils literal"><span class="pre">str</span></code></a>) &#8211; colour to flash [&#8216;red&#8217;, &#8216;green&#8217;, blue&#8217;]</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="py_trees_ros.tutorials.behaviours.FlashLedStrip.setup">
+<code class="descname">setup</code><span class="sig-paren">(</span><em>timeout</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/py_trees_ros/tutorials/behaviours.html#FlashLedStrip.setup"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#py_trees_ros.tutorials.behaviours.FlashLedStrip.setup" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>timeout</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#float" title="(in Python v2.7)"><code class="xref py py-obj docutils literal"><span class="pre">float</span></code></a>) &#8211; time to wait (0.0 is blocking forever)</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">whether it timed out trying to setup</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="http://docs.python.org/library/functions.html#bool" title="(in Python v2.7)"><code class="xref py py-obj docutils literal"><span class="pre">bool</span></code></a></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="py_trees_ros.tutorials.behaviours.FlashLedStrip.terminate">
+<code class="descname">terminate</code><span class="sig-paren">(</span><em>new_status</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/py_trees_ros/tutorials/behaviours.html#FlashLedStrip.terminate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#py_trees_ros.tutorials.behaviours.FlashLedStrip.terminate" title="Permalink to this definition">¶</a></dt>
+<dd><p>Shoot off a clearing command to the led strip.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>new_status</strong> (<a class="reference external" href="http://py-trees.readthedocs.io/en/devel/modules.html#py_trees.common.Status" title="(in py_trees v0.5.7)"><code class="xref py py-class docutils literal"><span class="pre">Status</span></code></a>) &#8211; the behaviour is transitioning to this new status</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="py_trees_ros.tutorials.behaviours.FlashLedStrip.update">
+<code class="descname">update</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/py_trees_ros/tutorials/behaviours.html#FlashLedStrip.update"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#py_trees_ros.tutorials.behaviours.FlashLedStrip.update" title="Permalink to this definition">¶</a></dt>
+<dd><p>Annoy the led strip to keep firing every time it ticks over (the led strip will clear itself
+if no command is forthcoming within a certain period of time). This behaviour will only finish if it
+is terminated or interrupted from above.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-py_trees_ros.tutorials.qt">
+<span id="py-trees-ros-tutorials-qt"></span><h2>py_trees_ros.tutorials.qt<a class="headerlink" href="#module-py_trees_ros.tutorials.qt" title="Permalink to this headline">¶</a></h2>
+<p>Qt support for the tutorials.</p>
+</div>
+</div>
+
+
+           </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="changelog.html" class="btn btn-neutral float-right" title="Changelog" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="programs.html" class="btn btn-neutral" title="Programs" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+
+    </p>
+  </div> 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'./',
+            VERSION:'0.5.0',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="_static/jquery.js"></script>
+      <script type="text/javascript" src="_static/underscore.js"></script>
+      <script type="text/javascript" src="_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

@@ -1,0 +1,1289 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Tutorials &mdash; py_trees_ros 0.5.0 documentation</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+    <link rel="top" title="py_trees_ros 0.5.0 documentation" href="index.html"/>
+        <link rel="next" title="Terminology" href="terminology.html"/>
+        <link rel="prev" title="New and Shiny" href="new_and_shiny.html"/> 
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="index.html" class="icon icon-home"> py_trees_ros
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.5.0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+    
+            
+            
+                <p class="caption"><span class="caption-text">Guide</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="background.html">Background</a></li>
+<li class="toctree-l1"><a class="reference internal" href="new_and_shiny.html">New and Shiny</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="">Tutorials</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#dependencies">Dependencies</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#the-mock-robot">The Mock Robot</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-py_trees_ros.tutorials.one">Tutorial 1 - Data Gathering</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#about">About</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#tree">Tree</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#behaviours">Behaviours</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#running">Running</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#module-py_trees_ros.tutorials.two">Tutorial 2 - Adding a Battery Check</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id1">About</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id2">Tree</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id3">Behaviours</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id4">Running</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#tutorial-3-blackboards">Tutorial 3 - Blackboards!</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id5">About</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id6">Running</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#tutorial-4-introspecting-the-tree">Tutorial 4 - Introspecting the Tree</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id7">About</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id8">Running</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#module-py_trees_ros.tutorials.five">Tutorial 5 - Action Clients</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id9">About</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id10">Tree</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id11">Behaviours</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id12">Running</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#tutorial-6-global-abort-branch">Tutorial 6 - Global Abort Branch</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#tutorial-7-dynamic-priority-branches">Tutorial 7 - Dynamic Priority Branches</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#tutorial-8-bags">Tutorial 8 - Bags</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="terminology.html">Terminology</a></li>
+<li class="toctree-l1"><a class="reference internal" href="faq.html">FAQ</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Reference</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="programs.html">Programs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="modules.html">Module API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="changelog.html">Changelog</a></li>
+</ul>
+
+            
+          
+    <a href="genindex.html">Index</a>
+    <a href="py-modindex.html">Module Index</a>
+  
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="index.html">py_trees_ros</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+ 
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="index.html">Docs</a> &raquo;</li>
+      
+    <li>Tutorials</li>
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            <a href="_sources/tutorials.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="tutorials">
+<span id="py-trees-ros-tutorials-section"></span><h1>Tutorials<a class="headerlink" href="#tutorials" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="dependencies">
+<h2>Dependencies<a class="headerlink" href="#dependencies" title="Permalink to this headline">¶</a></h2>
+<p>The tutorials require installation of a few graphical dependencies that
+would otherwise unnecessarily explode the requirements of the core package
+and modules. e.g. for kinetic:</p>
+<div class="highlight-bash"><div class="highlight"><pre>sudo apt install ros-kinetic-rqt-py-trees ros-kinetic-rqt-reconfigure
+</pre></div>
+</div>
+</div>
+<div class="section" id="the-mock-robot">
+<h2>The Mock Robot<a class="headerlink" href="#the-mock-robot" title="Permalink to this headline">¶</a></h2>
+<p>The tutorials here all run atop a very simple <a class="reference internal" href="terminology.html#term-mock"><span class="xref std std-term">mock</span></a> robot with the
+following features:</p>
+<ul class="simple">
+<li>Battery</li>
+<li>LED Strip</li>
+<li>Move Base Action Server</li>
+<li>Rotation Action Server</li>
+</ul>
+<p>This <a class="reference internal" href="terminology.html#term-mock"><span class="xref std std-term">mock</span></a> robot could just as easily be replaced by a gazebo
+simulated robot or even real robot with the same ROS API
+abstraction layer.</p>
+<p>The tutorials take care of launching the mock robot, but it can be
+launched on its own with:</p>
+<div class="literal-block-wrapper container" id="py-trees-ros-launch-mock-robot-launch">
+<div class="code-block-caption"><span class="caption-text">py_trees_ros/launch/mock_robot.launch</span><a class="headerlink" href="#py-trees-ros-launch-mock-robot-launch" title="Permalink to this code">¶</a></div>
+<div class="highlight-xml"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1
+2
+3
+4
+5
+6</pre></div></td><td class="code"><div class="highlight"><pre><span class="nt">&lt;launch&gt;</span>
+  <span class="nt">&lt;node</span> <span class="na">pkg=</span><span class="s">&quot;py_trees_ros&quot;</span> <span class="na">name=</span><span class="s">&quot;move_base&quot;</span> <span class="na">type=</span><span class="s">&quot;mock_component&quot;</span> <span class="na">args=</span><span class="s">&quot;move_base.MoveBase&quot;</span><span class="nt">/&gt;</span>
+  <span class="nt">&lt;node</span> <span class="na">pkg=</span><span class="s">&quot;py_trees_ros&quot;</span> <span class="na">name=</span><span class="s">&quot;rotate&quot;</span>    <span class="na">type=</span><span class="s">&quot;mock_component&quot;</span> <span class="na">args=</span><span class="s">&quot;rotate.Rotate&quot;</span><span class="nt">/&gt;</span>
+  <span class="nt">&lt;node</span> <span class="na">pkg=</span><span class="s">&quot;py_trees_ros&quot;</span> <span class="na">name=</span><span class="s">&quot;battery&quot;</span>   <span class="na">type=</span><span class="s">&quot;mock_battery&quot;</span><span class="nt">/&gt;</span>
+  <span class="nt">&lt;node</span> <span class="na">pkg=</span><span class="s">&quot;py_trees_ros&quot;</span> <span class="na">name=</span><span class="s">&quot;led_strip&quot;</span> <span class="na">type=</span><span class="s">&quot;mock_led_strip&quot;</span><span class="nt">/&gt;</span>
+<span class="nt">&lt;/launch&gt;</span>
+</pre></div>
+</td></tr></table></div>
+</div>
+</div>
+<div class="section" id="module-py_trees_ros.tutorials.one">
+<span id="tutorial-1-data-gathering"></span><span id="tutorial-one"></span><h2>Tutorial 1 - Data Gathering<a class="headerlink" href="#module-py_trees_ros.tutorials.one" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="about">
+<h3>About<a class="headerlink" href="#about" title="Permalink to this headline">¶</a></h3>
+<p>In this, the first of the tutorials, we start out by using a behaviour to
+collect battery data from a ros subscribers and cache the result on the
+blackboard for other behaviours to utilise.</p>
+<p>This is a fairly common thing to do - it takes the asynchronicity out of
+the subscriber callbacks and when it comes to sharing the data, it is
+far simpler to access the blackboard than to manage multiple subscribers
+from all over the behaviour tree. Usually you will end up with a collection
+of data gatherers at the front end of your behaviour tree which will always
+run and will happen before any decision branching can occur in the tree.</p>
+</div>
+<div class="section" id="tree">
+<h3>Tree<a class="headerlink" href="#tree" title="Permalink to this headline">¶</a></h3>
+<p class="graphviz">
+<img src="_images/graphviz-ca9683b4f79e9e7859b938aa9648f1a381a1c24c.png" alt="digraph tutorial {
+graph [fontname=&quot;times-roman&quot;];
+node [fontname=&quot;times-roman&quot;];
+edge [fontname=&quot;times-roman&quot;];
+Tutorial [fillcolor=gold, fontcolor=black, fontsize=11, shape=note, style=filled];
+Topics2BB [fillcolor=orange, fontcolor=black, fontsize=11, shape=box, style=filled];
+Tutorial -&gt; Topics2BB;
+Battery2BB [fillcolor=gray, fontcolor=black, fontsize=11, shape=ellipse, style=filled];
+Topics2BB -&gt; Battery2BB;
+Priorities [fillcolor=cyan, fontcolor=black, fontsize=11, shape=octagon, style=filled];
+Tutorial -&gt; Priorities;
+Idle [fillcolor=gray, fontcolor=black, fontsize=11, shape=ellipse, style=filled];
+Priorities -&gt; Idle;
+}" />
+</p>
+<div class="literal-block-wrapper container" id="py-trees-ros-tutorials-one-py">
+<div class="code-block-caption"><span class="caption-text">py_trees_ros/tutorials/one.py</span><a class="headerlink" href="#py-trees-ros-tutorials-one-py" title="Permalink to this code">¶</a></div>
+<div class="highlight-python"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre> 1
+ 2
+ 3
+ 4
+ 5
+ 6
+ 7
+ 8
+ 9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23</pre></div></td><td class="code"><div class="highlight"><pre><span class="k">def</span> <span class="nf">create_root</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Create a basic tree and start a &#39;Topics2BB&#39; work sequence that</span>
+<span class="sd">    takes the asynchronicity out of subscription.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        :class:`~py_trees.behaviour.Behaviour`: the root of the tree</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">root</span> <span class="o">=</span> <span class="n">py_trees</span><span class="o">.</span><span class="n">composites</span><span class="o">.</span><span class="n">Parallel</span><span class="p">(</span><span class="s2">&quot;Tutorial&quot;</span><span class="p">)</span>
+
+    <span class="n">topics2bb</span> <span class="o">=</span> <span class="n">py_trees</span><span class="o">.</span><span class="n">composites</span><span class="o">.</span><span class="n">Sequence</span><span class="p">(</span><span class="s2">&quot;Topics2BB&quot;</span><span class="p">)</span>
+    <span class="n">battery2bb</span> <span class="o">=</span> <span class="n">py_trees_ros</span><span class="o">.</span><span class="n">battery</span><span class="o">.</span><span class="n">ToBlackboard</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;Battery2BB&quot;</span><span class="p">,</span>
+                                                   <span class="n">topic_name</span><span class="o">=</span><span class="s2">&quot;/battery/state&quot;</span><span class="p">,</span>
+                                                   <span class="n">threshold</span><span class="o">=</span><span class="mf">30.0</span>
+                                                   <span class="p">)</span>
+    <span class="n">priorities</span> <span class="o">=</span> <span class="n">py_trees</span><span class="o">.</span><span class="n">composites</span><span class="o">.</span><span class="n">Selector</span><span class="p">(</span><span class="s2">&quot;Priorities&quot;</span><span class="p">)</span>
+    <span class="n">idle</span> <span class="o">=</span> <span class="n">py_trees</span><span class="o">.</span><span class="n">behaviours</span><span class="o">.</span><span class="n">Running</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;Idle&quot;</span><span class="p">)</span>
+
+    <span class="n">root</span><span class="o">.</span><span class="n">add_child</span><span class="p">(</span><span class="n">topics2bb</span><span class="p">)</span>
+    <span class="n">topics2bb</span><span class="o">.</span><span class="n">add_child</span><span class="p">(</span><span class="n">battery2bb</span><span class="p">)</span>
+    <span class="n">root</span><span class="o">.</span><span class="n">add_child</span><span class="p">(</span><span class="n">priorities</span><span class="p">)</span>
+    <span class="n">priorities</span><span class="o">.</span><span class="n">add_child</span><span class="p">(</span><span class="n">idle</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">root</span>
+</pre></div>
+</td></tr></table></div>
+</div>
+<p>Along with the data gathering side, you&#8217;ll also notice the dummy branch for
+priority jobs (complete with idle behaviour that is always
+<a class="reference external" href="http://py-trees.readthedocs.io/en/devel/modules.html#py_trees.common.Status.RUNNING" title="(in py_trees v0.5.7)"><code class="xref py py-attr docutils literal"><span class="pre">RUNNING</span></code></a>). This configuration is typical
+of the <a class="reference internal" href="terminology.html#term-data-gathering"><span class="xref std std-term">data gathering</span></a> pattern.</p>
+</div>
+<div class="section" id="behaviours">
+<h3>Behaviours<a class="headerlink" href="#behaviours" title="Permalink to this headline">¶</a></h3>
+<p>The tree makes use of the <a class="reference internal" href="modules.html#py_trees_ros.battery.ToBlackboard" title="py_trees_ros.battery.ToBlackboard"><code class="xref py py-class docutils literal"><span class="pre">py_trees_ros.battery.ToBlackboard</span></code></a> behaviour.</p>
+<div class="literal-block-wrapper container" id="py-trees-ros-battery-py">
+<div class="code-block-caption"><span class="caption-text">py_trees_ros/battery.py</span><a class="headerlink" href="#py-trees-ros-battery-py" title="Permalink to this code">¶</a></div>
+<div class="highlight-python"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre> 1
+ 2
+ 3
+ 4
+ 5
+ 6
+ 7
+ 8
+ 9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31
+32
+33
+34
+35
+36
+37
+38
+39
+40
+41
+42
+43
+44
+45
+46
+47
+48
+49
+50
+51</pre></div></td><td class="code"><div class="highlight"><pre><span class="k">class</span> <span class="nc">ToBlackboard</span><span class="p">(</span><span class="n">subscribers</span><span class="o">.</span><span class="n">ToBlackboard</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Subscribes to the battery message and writes battery data to the blackboard.</span>
+<span class="sd">    Also adds a warning flag to the blackboard if the battery</span>
+<span class="sd">    is low - note that it does some buffering against ping-pong problems so the warning</span>
+<span class="sd">    doesn&#39;t trigger on/off rapidly when close to the threshold.</span>
+
+<span class="sd">    When ticking, updates with :attr:`~py_trees.common.Status.RUNNING` if it got no data,</span>
+<span class="sd">    :attr:`~py_trees.common.Status.SUCCESS` otherwise.</span>
+
+<span class="sd">    Blackboard Variables:</span>
+<span class="sd">        * battery (:class:`sensor_msgs.msg.BatteryState`)[w]: the raw battery message</span>
+<span class="sd">        * battery_low_warning (:obj:`bool`)[w]: False if battery is ok, True if critically low</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        name (:obj:`str`): name of the behaviour</span>
+<span class="sd">        topic_name (:obj:`str`) : name of the battery state topic</span>
+<span class="sd">        threshold (:obj:`float`) : percentage level threshold for flagging as low (0-100)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">topic_name</span><span class="o">=</span><span class="s2">&quot;/battery/state&quot;</span><span class="p">,</span> <span class="n">threshold</span><span class="o">=</span><span class="mf">30.0</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">ToBlackboard</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span>
+                                           <span class="n">topic_name</span><span class="o">=</span><span class="n">topic_name</span><span class="p">,</span>
+                                           <span class="n">topic_type</span><span class="o">=</span><span class="n">sensor_msgs</span><span class="o">.</span><span class="n">BatteryState</span><span class="p">,</span>
+                                           <span class="n">blackboard_variables</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;battery&quot;</span><span class="p">:</span> <span class="bp">None</span><span class="p">},</span>
+                                           <span class="n">clearing_policy</span><span class="o">=</span><span class="n">py_trees</span><span class="o">.</span><span class="n">common</span><span class="o">.</span><span class="n">ClearingPolicy</span><span class="o">.</span><span class="n">NEVER</span>
+                                           <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">blackboard</span> <span class="o">=</span> <span class="n">py_trees</span><span class="o">.</span><span class="n">blackboard</span><span class="o">.</span><span class="n">Blackboard</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">blackboard</span><span class="o">.</span><span class="n">battery</span> <span class="o">=</span> <span class="n">sensor_msgs</span><span class="o">.</span><span class="n">BatteryState</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">blackboard</span><span class="o">.</span><span class="n">battery</span><span class="o">.</span><span class="n">percentage</span> <span class="o">=</span> <span class="mf">0.0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">blackboard</span><span class="o">.</span><span class="n">battery</span><span class="o">.</span><span class="n">power_supply_status</span> <span class="o">=</span> <span class="n">sensor_msgs</span><span class="o">.</span><span class="n">BatteryState</span><span class="o">.</span><span class="n">POWER_SUPPLY_STATUS_UNKNOWN</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">blackboard</span><span class="o">.</span><span class="n">battery_low_warning</span> <span class="o">=</span> <span class="bp">False</span>   <span class="c1"># decision making</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">threshold</span> <span class="o">=</span> <span class="n">threshold</span>
+
+    <span class="k">def</span> <span class="nf">update</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Call the parent to write the raw data to the blackboard and then check against the</span>
+<span class="sd">        threshold to determine if the low warning flag should also be updated.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">%s</span><span class="s2">.update()&quot;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">__class__</span><span class="o">.</span><span class="n">__name__</span><span class="p">)</span>
+        <span class="n">status</span> <span class="o">=</span> <span class="nb">super</span><span class="p">(</span><span class="n">ToBlackboard</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">update</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">status</span> <span class="o">!=</span> <span class="n">py_trees</span><span class="o">.</span><span class="n">common</span><span class="o">.</span><span class="n">Status</span><span class="o">.</span><span class="n">RUNNING</span><span class="p">:</span>
+            <span class="c1"># we got something</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">blackboard</span><span class="o">.</span><span class="n">battery</span><span class="o">.</span><span class="n">percentage</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">threshold</span> <span class="o">+</span> <span class="mf">5.0</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">blackboard</span><span class="o">.</span><span class="n">battery_low_warning</span> <span class="o">=</span> <span class="bp">False</span>
+            <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">blackboard</span><span class="o">.</span><span class="n">battery</span><span class="o">.</span><span class="n">percentage</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">threshold</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">blackboard</span><span class="o">.</span><span class="n">battery_low_warning</span> <span class="o">=</span> <span class="bp">True</span>
+                    <span class="n">rospy</span><span class="o">.</span><span class="n">logwarn_throttle</span><span class="p">(</span><span class="mi">60</span><span class="p">,</span> <span class="s2">&quot;</span><span class="si">%s</span><span class="s2">: battery level is low!&quot;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+            <span class="c1"># else don&#39;t do anything in between - i.e. avoid the ping pong problems</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">feedback_message</span> <span class="o">=</span> <span class="s2">&quot;Battery level is low&quot;</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">blackboard</span><span class="o">.</span><span class="n">battery_low_warning</span> <span class="k">else</span> <span class="s2">&quot;Battery level is ok&quot;</span>
+        <span class="k">return</span> <span class="n">status</span>
+</pre></div>
+</td></tr></table></div>
+</div>
+<p>This behaviour will cause the entire tree will tick over with
+<a class="reference external" href="http://py-trees.readthedocs.io/en/devel/modules.html#py_trees.common.Status.SUCCESS" title="(in py_trees v0.5.7)"><code class="xref py py-attr docutils literal"><span class="pre">SUCCESS</span></code></a> so long as there is data incoming.
+If there is no data incoming, it will simply
+<a class="reference internal" href="terminology.html#term-block"><span class="xref std std-term">block</span></a> and prevent the rest of the tree from acting.</p>
+</div>
+<div class="section" id="running">
+<h3>Running<a class="headerlink" href="#running" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-bash"><div class="highlight"><pre>$ roslaunch py_trees_ros tutorial_one.launch --screen
+</pre></div>
+</div>
+<p>A glimpse of the blackboard with battery updates:</p>
+<img alt="_images/tutorial-one-blackboard.gif" src="_images/tutorial-one-blackboard.gif" />
+</div>
+</div>
+<div class="section" id="module-py_trees_ros.tutorials.two">
+<span id="tutorial-2-adding-a-battery-check"></span><span id="tutorial-two"></span><h2>Tutorial 2 - Adding a Battery Check<a class="headerlink" href="#module-py_trees_ros.tutorials.two" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="id1">
+<h3>About<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h3>
+<p>Here we add the first decision. What to do if the battery is low?
+For this, we&#8217;ll get the robot to flash it&#8217;s led strip.</p>
+</div>
+<div class="section" id="id2">
+<h3>Tree<a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h3>
+<p class="graphviz">
+<img src="_images/graphviz-7770bd116a310d71f3d2218d1edda422c272923b.png" alt="digraph tutorial {
+graph [fontname=&quot;times-roman&quot;];
+node [fontname=&quot;times-roman&quot;];
+edge [fontname=&quot;times-roman&quot;];
+Tutorial [fillcolor=gold, fontcolor=black, fontsize=11, shape=note, style=filled];
+Topics2BB [fillcolor=orange, fontcolor=black, fontsize=11, shape=box, style=filled];
+Tutorial -&gt; Topics2BB;
+Battery2BB [fillcolor=gray, fontcolor=black, fontsize=11, shape=ellipse, style=filled];
+Topics2BB -&gt; Battery2BB;
+Priorities [fillcolor=cyan, fontcolor=black, fontsize=11, shape=octagon, style=filled];
+Tutorial -&gt; Priorities;
+&quot;Battery Emergency&quot; [fillcolor=ghostwhite, fontcolor=black, fontsize=11, shape=ellipse, style=filled];
+Priorities -&gt; &quot;Battery Emergency&quot;;
+&quot;Battery Ok?&quot; [fillcolor=gray, fontcolor=black, fontsize=11, shape=ellipse, style=filled];
+&quot;Battery Emergency&quot; -&gt; &quot;Battery Ok?&quot;;
+FlashLEDs [fillcolor=gray, fontcolor=black, fontsize=11, shape=ellipse, style=filled];
+&quot;Battery Emergency&quot; -&gt; FlashLEDs;
+Idle [fillcolor=gray, fontcolor=black, fontsize=11, shape=ellipse, style=filled];
+Priorities -&gt; Idle;
+}" />
+</p>
+<p>The white coloured ellipse shown here is a decorated behaviour (in this
+case a <a class="reference external" href="http://py-trees.readthedocs.io/en/devel/modules.html#py_trees.composites.Selector" title="(in py_trees v0.5.7)"><code class="xref py py-class docutils literal"><span class="pre">Selector</span></code></a> with the <a class="reference external" href="http://py-trees.readthedocs.io/en/devel/modules.html#py_trees.meta.success_is_failure" title="(in py_trees v0.5.7)"><code class="xref py py-func docutils literal"><span class="pre">success_is_failure()</span></code></a>
+decorator (looking forward to better visualisations for this in the future).</p>
+<div class="literal-block-wrapper container" id="py-trees-ros-tutorials-two-py">
+<div class="code-block-caption"><span class="caption-text">py_trees_ros/tutorials/two.py</span><a class="headerlink" href="#py-trees-ros-tutorials-two-py" title="Permalink to this code">¶</a></div>
+<div class="highlight-python"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre> 1
+ 2
+ 3
+ 4
+ 5
+ 6
+ 7
+ 8
+ 9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26</pre></div></td><td class="code"><div class="highlight"><pre><span class="k">def</span> <span class="nf">create_root</span><span class="p">():</span>
+    <span class="c1"># behaviours</span>
+    <span class="n">root</span> <span class="o">=</span> <span class="n">py_trees</span><span class="o">.</span><span class="n">composites</span><span class="o">.</span><span class="n">Parallel</span><span class="p">(</span><span class="s2">&quot;Tutorial&quot;</span><span class="p">)</span>
+    <span class="n">topics2bb</span> <span class="o">=</span> <span class="n">py_trees</span><span class="o">.</span><span class="n">composites</span><span class="o">.</span><span class="n">Sequence</span><span class="p">(</span><span class="s2">&quot;Topics2BB&quot;</span><span class="p">)</span>
+    <span class="n">battery2bb</span> <span class="o">=</span> <span class="n">py_trees_ros</span><span class="o">.</span><span class="n">battery</span><span class="o">.</span><span class="n">ToBlackboard</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;Battery2BB&quot;</span><span class="p">,</span>
+                                                   <span class="n">topic_name</span><span class="o">=</span><span class="s2">&quot;/battery/state&quot;</span><span class="p">,</span>
+                                                   <span class="n">threshold</span><span class="o">=</span><span class="mf">30.0</span>
+                                                   <span class="p">)</span>
+    <span class="n">priorities</span> <span class="o">=</span> <span class="n">py_trees</span><span class="o">.</span><span class="n">composites</span><span class="o">.</span><span class="n">Selector</span><span class="p">(</span><span class="s2">&quot;Priorities&quot;</span><span class="p">)</span>
+    <span class="n">battery_check</span> <span class="o">=</span> <span class="n">py_trees</span><span class="o">.</span><span class="n">meta</span><span class="o">.</span><span class="n">success_is_failure</span><span class="p">(</span><span class="n">py_trees</span><span class="o">.</span><span class="n">composites</span><span class="o">.</span><span class="n">Selector</span><span class="p">)(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;Battery Emergency&quot;</span><span class="p">)</span>
+    <span class="n">is_battery_ok</span> <span class="o">=</span> <span class="n">py_trees</span><span class="o">.</span><span class="n">blackboard</span><span class="o">.</span><span class="n">CheckBlackboardVariable</span><span class="p">(</span>
+        <span class="n">name</span><span class="o">=</span><span class="s2">&quot;Battery Ok?&quot;</span><span class="p">,</span>
+        <span class="n">variable_name</span><span class="o">=</span><span class="s1">&#39;battery_low_warning&#39;</span><span class="p">,</span>
+        <span class="n">expected_value</span><span class="o">=</span><span class="bp">False</span>
+    <span class="p">)</span>
+    <span class="n">flash_led_strip</span> <span class="o">=</span> <span class="n">py_trees_ros</span><span class="o">.</span><span class="n">tutorials</span><span class="o">.</span><span class="n">behaviours</span><span class="o">.</span><span class="n">FlashLedStrip</span><span class="p">(</span>
+        <span class="n">name</span><span class="o">=</span><span class="s2">&quot;FlashLEDs&quot;</span><span class="p">,</span>
+        <span class="n">colour</span><span class="o">=</span><span class="s2">&quot;red&quot;</span><span class="p">)</span>
+    <span class="n">idle</span> <span class="o">=</span> <span class="n">py_trees</span><span class="o">.</span><span class="n">behaviours</span><span class="o">.</span><span class="n">Running</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;Idle&quot;</span><span class="p">)</span>
+
+    <span class="c1"># tree</span>
+    <span class="n">root</span><span class="o">.</span><span class="n">add_children</span><span class="p">([</span><span class="n">topics2bb</span><span class="p">,</span> <span class="n">priorities</span><span class="p">])</span>
+    <span class="n">topics2bb</span><span class="o">.</span><span class="n">add_child</span><span class="p">(</span><span class="n">battery2bb</span><span class="p">)</span>
+    <span class="n">priorities</span><span class="o">.</span><span class="n">add_children</span><span class="p">([</span><span class="n">battery_check</span><span class="p">,</span> <span class="n">idle</span><span class="p">])</span>
+    <span class="n">battery_check</span><span class="o">.</span><span class="n">add_children</span><span class="p">([</span><span class="n">is_battery_ok</span><span class="p">,</span> <span class="n">flash_led_strip</span><span class="p">])</span>
+    <span class="k">return</span> <span class="n">root</span>
+</pre></div>
+</td></tr></table></div>
+</div>
+<p>Here we&#8217;ve added a high priority branch for
+dealing with a low battery that causes the hardware strip to flash.</p>
+<p>An important point here is to make sure that the flashing behaviour gets
+invalidated as soon as the battery becomes ok again. This will trigger the
+flashing behaviour&#8217;s terminate method (see below) to send off a command to
+clear the request. To do this we&#8217;ve made use of a higher priority &#8216;Is Battery Ok?&#8217;
+check underneath the selector, but also had to decorate the selector with
+<a class="reference external" href="http://py-trees.readthedocs.io/en/devel/modules.html#py_trees.meta.success_is_failure" title="(in py_trees v0.5.7)"><code class="xref py py-func docutils literal"><span class="pre">success_is_failure()</span></code></a> to make sure the priority branch is chosen appropriately.</p>
+<p>You could have also designed this particular subtree with sequences and parallels
+instead of the selector and decorator here.</p>
+<div class="admonition tip">
+<p class="first admonition-title">Tip</p>
+<p>When designing, it&#8217;s very useful to get a visual on what you are
+doing, even before you actually execute or implement
+anything more than a tree of skeleton behaviours. For this tutorial,
+you can render with:</p>
+<div class="last highlight-python"><div class="highlight"><pre><span class="n">py</span><span class="o">-</span><span class="n">trees</span><span class="o">-</span><span class="n">render</span> <span class="n">py_trees_ros</span><span class="o">.</span><span class="n">tutorials</span><span class="o">.</span><span class="n">two</span><span class="o">.</span><span class="n">create_root</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="id3">
+<h3>Behaviours<a class="headerlink" href="#id3" title="Permalink to this headline">¶</a></h3>
+<p>Introducing the flashing behaviour!</p>
+<div class="literal-block-wrapper container" id="py-trees-ros-tutorials-behaviours-py-flashing">
+<div class="code-block-caption"><span class="caption-text">py_trees_ros/tutorials/behaviours.py#Flashing</span><a class="headerlink" href="#py-trees-ros-tutorials-behaviours-py-flashing" title="Permalink to this code">¶</a></div>
+<div class="highlight-python"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre> 1
+ 2
+ 3
+ 4
+ 5
+ 6
+ 7
+ 8
+ 9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31
+32
+33
+34
+35
+36
+37
+38
+39
+40
+41
+42
+43
+44
+45
+46
+47
+48
+49
+50
+51</pre></div></td><td class="code"><div class="highlight"><pre><span class="k">class</span> <span class="nc">FlashLedStrip</span><span class="p">(</span><span class="n">py_trees</span><span class="o">.</span><span class="n">behaviour</span><span class="o">.</span><span class="n">Behaviour</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    This behavoiur simply shoots a command off to the LEDStrip to flash</span>
+<span class="sd">    a certain colour and returns :attr:`~py_trees.common.Status.RUNNING`.</span>
+<span class="sd">    Note that this behaviour will never return with</span>
+<span class="sd">    :attr:`~py_trees.common.Status.SUCCESS` but will send a clearing</span>
+<span class="sd">    command to the LEDStrip if it is cancelled or interrupted by a higher</span>
+<span class="sd">    priority behaviour.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        name (:obj:`str`): name of the behaviour</span>
+<span class="sd">        topic_name (:obj:`str`) : name of the battery state topic</span>
+<span class="sd">        colour (:obj:`str`) : colour to flash [&#39;red&#39;, &#39;green&#39;, blue&#39;]</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">topic_name</span><span class="o">=</span><span class="s2">&quot;/led_strip/command&quot;</span><span class="p">,</span> <span class="n">colour</span><span class="o">=</span><span class="s2">&quot;red&quot;</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">FlashLedStrip</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">topic_name</span> <span class="o">=</span> <span class="n">topic_name</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">colour</span> <span class="o">=</span> <span class="n">colour</span>
+
+    <span class="k">def</span> <span class="nf">setup</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">timeout</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Args:</span>
+<span class="sd">            timeout (:obj:`float`): time to wait (0.0 is blocking forever)</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            :obj:`bool`: whether it timed out trying to setup</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">publisher</span> <span class="o">=</span> <span class="n">rospy</span><span class="o">.</span><span class="n">Publisher</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">topic_name</span><span class="p">,</span> <span class="n">std_msgs</span><span class="o">.</span><span class="n">String</span><span class="p">,</span> <span class="n">queue_size</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">latch</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">feedback_message</span> <span class="o">=</span> <span class="s2">&quot;setup&quot;</span>
+        <span class="k">return</span> <span class="bp">True</span>
+
+    <span class="k">def</span> <span class="nf">update</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Annoy the led strip to keep firing every time it ticks over (the led strip will clear itself</span>
+<span class="sd">        if no command is forthcoming within a certain period of time). This behaviour will only finish if it</span>
+<span class="sd">        is terminated or interrupted from above.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">%s</span><span class="s2">.update()&quot;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">__class__</span><span class="o">.</span><span class="n">__name__</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">publisher</span><span class="o">.</span><span class="n">publish</span><span class="p">(</span><span class="n">std_msgs</span><span class="o">.</span><span class="n">String</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">colour</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">feedback_message</span> <span class="o">=</span> <span class="s2">&quot;flashing {0}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">colour</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">py_trees</span><span class="o">.</span><span class="n">common</span><span class="o">.</span><span class="n">Status</span><span class="o">.</span><span class="n">RUNNING</span>
+
+    <span class="k">def</span> <span class="nf">terminate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">new_status</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Shoot off a clearing command to the led strip.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            new_status (:class:`~py_trees.common.Status`): the behaviour is transitioning to this new status</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">publisher</span><span class="o">.</span><span class="n">publish</span><span class="p">(</span><span class="n">std_msgs</span><span class="o">.</span><span class="n">String</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">feedback_message</span> <span class="o">=</span> <span class="s2">&quot;cleared&quot;</span>
+</pre></div>
+</td></tr></table></div>
+</div>
+<p>A new feature here is the way it uses the terminate method to put a &#8216;fullstop&#8217;
+to the commands sent when ticking. Note also that it is permanently in the
+<a class="reference external" href="http://py-trees.readthedocs.io/en/devel/modules.html#py_trees.common.Status.RUNNING" title="(in py_trees v0.5.7)"><code class="xref py py-attr docutils literal"><span class="pre">RUNNING</span></code></a> state while ticking. Behaviours do
+not <em>have</em> to return <a class="reference external" href="http://py-trees.readthedocs.io/en/devel/modules.html#py_trees.common.Status.SUCCESS" title="(in py_trees v0.5.7)"><code class="xref py py-attr docutils literal"><span class="pre">SUCCESS</span></code></a> or
+<a class="reference external" href="http://py-trees.readthedocs.io/en/devel/modules.html#py_trees.common.Status.FAILURE" title="(in py_trees v0.5.7)"><code class="xref py py-attr docutils literal"><span class="pre">FAILURE</span></code></a>, they can be just as involved in the
+decision making via the way they behave when cancelled or interrupted.</p>
+</div>
+<div class="section" id="id4">
+<h3>Running<a class="headerlink" href="#id4" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-bash"><div class="highlight"><pre>$ roslaunch py_trees_ros tutorial_two.launch --screen
+</pre></div>
+</div>
+<p>Then play around with the battery level in dynamic reconfigure to trigger the
+decision branching:</p>
+<img alt="_images/tutorial-two-battery-ok.png" src="_images/tutorial-two-battery-ok.png" />
+<img alt="_images/tutorial-two-battery-low.png" src="_images/tutorial-two-battery-low.png" />
+</div>
+</div>
+<div class="section" id="tutorial-3-blackboards">
+<span id="tutorial-three"></span><h2>Tutorial 3 - Blackboards!<a class="headerlink" href="#tutorial-3-blackboards" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="id5">
+<h3>About<a class="headerlink" href="#id5" title="Permalink to this headline">¶</a></h3>
+<p>Tutorial three is a repeat of <a class="reference internal" href="#tutorial-two"><span>Tutorial 2 - Adding a Battery Check</span></a>. The purpose of this
+tutorial however is to introduce the publishers and services provided to
+allow introspection of the blackboard from ROS. Publishers and services
+are provided by the <a class="reference internal" href="modules.html#py_trees_ros.blackboard.Exchange" title="py_trees_ros.blackboard.Exchange"><code class="xref py py-class docutils literal"><span class="pre">Blackboard</span> <span class="pre">Exchange</span></code></a>
+embedded in the <a class="reference internal" href="modules.html#py_trees_ros.trees.BehaviourTree" title="py_trees_ros.trees.BehaviourTree"><code class="xref py py-class docutils literal"><span class="pre">ROS</span> <span class="pre">Behaviour</span> <span class="pre">Tree</span></code></a>
+and interaction via the <a class="reference internal" href="programs.html#py-trees-blackboard-watcher"><span>py-trees-blackboard-watcher</span></a> command line utility.</p>
+</div>
+<div class="section" id="id6">
+<h3>Running<a class="headerlink" href="#id6" title="Permalink to this headline">¶</a></h3>
+<p>Launch the tutorial:</p>
+<div class="highlight-bash"><div class="highlight"><pre>$ roslaunch py_trees_ros tutorial_three.launch --screen
+</pre></div>
+</div>
+<p>In another shell:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span class="c1"># check the entire board</span>
+$ rostopic <span class="nb">echo</span> /tree/blackboard
+<span class="c1"># determine what you may stream</span>
+$ py-trees-blackboard-watcher --list-variables
+<span class="c1"># pull a simple variable</span>
+$ py-trees-blackboard-watcher battery_low_warning
+<span class="c1"># drill down to get a variable</span>
+$ py-trees-blackboard-watcher battery/percentage
+</pre></div>
+</div>
+<img alt="_images/tutorial-three-blackboards.gif" src="_images/tutorial-three-blackboards.gif" />
+</div>
+</div>
+<div class="section" id="tutorial-4-introspecting-the-tree">
+<span id="tutorial-four"></span><h2>Tutorial 4 - Introspecting the Tree<a class="headerlink" href="#tutorial-4-introspecting-the-tree" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="id7">
+<h3>About<a class="headerlink" href="#id7" title="Permalink to this headline">¶</a></h3>
+<p>Again, this is a repeat of <a class="reference internal" href="#tutorial-two"><span>Tutorial 2 - Adding a Battery Check</span></a>. The
+<a class="reference internal" href="modules.html#py_trees_ros.trees.BehaviourTree" title="py_trees_ros.trees.BehaviourTree"><code class="xref py py-class docutils literal"><span class="pre">ROS</span> <span class="pre">Behaviour</span> <span class="pre">Tree</span></code></a> used in these
+tutorials provide several ROS connections for tree introspection. We will walkthrough
+several of these here:</p>
+</div>
+<div class="section" id="id8">
+<h3>Running<a class="headerlink" href="#id8" title="Permalink to this headline">¶</a></h3>
+<p><strong>Launch</strong></p>
+<div class="highlight-bash"><div class="highlight"><pre>$ roslaunch py_trees_ros tutorial_four.launch --screen
+</pre></div>
+</div>
+<p><strong>Shell Introspection</strong></p>
+<div class="highlight-bash"><div class="highlight"><pre><span class="c1"># identify the tree publishers</span>
+$ rostopic list <span class="p">|</span> grep tree
+<span class="c1"># a static ascii view of the tree</span>
+$ rostopic <span class="nb">echo</span> /tree/ascii/tree
+<span class="c1"># a dynamic view of the tree, with current states and feedback messages</span>
+<span class="c1"># rostopic echo /tree/ascii/snaphots</span>
+$ at what behaviour did decision making turn around and why? often useful <span class="k">for</span> other programs to know
+<span class="c1"># rostopic echo /tree/tip</span>
+</pre></div>
+</div>
+<p>and of course the blackboard topics, but they were covered in tutorial three.</p>
+<img alt="_images/tutorial-four-topics.gif" src="_images/tutorial-four-topics.gif" />
+<p><strong>RQT Visualisation</strong></p>
+<p>There is one more topic that provides the complete set of data for a tree state, that is <cite>~/log/tree</cite>.
+This is not very human readable (typically very large), but can be used for other tools such as
+<code class="docutils literal"><span class="pre">rqt-py-trees</span></code>.</p>
+<p>While not in this package itself, it&#8217;s worth taking some time out to discover what it can do here.</p>
+<ul class="simple">
+<li><em>Coloured States</em> : GREEN for <a class="reference external" href="http://py-trees.readthedocs.io/en/devel/modules.html#py_trees.common.Status.SUCCESS" title="(in py_trees v0.5.7)"><code class="xref py py-attr docutils literal"><span class="pre">SUCCESS</span></code></a>, RED for <a class="reference external" href="http://py-trees.readthedocs.io/en/devel/modules.html#py_trees.common.Status.FAILURE" title="(in py_trees v0.5.7)"><code class="xref py py-attr docutils literal"><span class="pre">FAILURE</span></code></a>, BLUE for <a class="reference external" href="http://py-trees.readthedocs.io/en/devel/modules.html#py_trees.common.Status.RUNNING" title="(in py_trees v0.5.7)"><code class="xref py py-attr docutils literal"><span class="pre">RUNNING</span></code></a> and GREY for unvisited.</li>
+<li><em>Tooltips</em> : hover over a behaviour to catch name, type, status and feedback message information</li>
+<li><em>Timeline</em> : rewind as you wish, note the bars indicating where important events occured</li>
+<li><em>Fit</em> : disable auto-resizing by unchecking the &#8216;Fit&#8217; button to handle large trees which become unreadable in a small window</li>
+</ul>
+<img alt="_images/tutorial-four-rqt.png" src="_images/tutorial-four-rqt.png" />
+</div>
+</div>
+<div class="section" id="module-py_trees_ros.tutorials.five">
+<span id="tutorial-5-action-clients"></span><span id="tutorial-actions"></span><h2>Tutorial 5 - Action Clients<a class="headerlink" href="#module-py_trees_ros.tutorials.five" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="id9">
+<h3>About<a class="headerlink" href="#id9" title="Permalink to this headline">¶</a></h3>
+<p>A few new items arriving in tantalising bowls of flying spaghetti here:</p>
+<ul class="simple">
+<li>A gui for manually triggering events</li>
+<li>A gui (same one) for visualising the led strip status</li>
+<li>A lower priority work branch triggered from the gui</li>
+<li>A first action client behaviour</li>
+<li>A kind of pre-emption, via behaviour tree decision logic</li>
+</ul>
+</div>
+<div class="section" id="id10">
+<h3>Tree<a class="headerlink" href="#id10" title="Permalink to this headline">¶</a></h3>
+<p class="graphviz">
+<img src="_images/graphviz-e5d042ff0ca77c3beeff8c286b8afddbc7e8a960.png" alt="digraph tutorial {
+graph [fontname=&quot;times-roman&quot;];
+node [fontname=&quot;times-roman&quot;];
+edge [fontname=&quot;times-roman&quot;];
+Tutorial [fillcolor=gold, fontcolor=black, fontsize=11, shape=note, style=filled];
+Topics2BB [fillcolor=orange, fontcolor=black, fontsize=11, shape=box, style=filled];
+Tutorial -&gt; Topics2BB;
+Scan2BB [fillcolor=gray, fontcolor=black, fontsize=11, shape=ellipse, style=filled];
+Topics2BB -&gt; Scan2BB;
+Battery2BB [fillcolor=gray, fontcolor=black, fontsize=11, shape=ellipse, style=filled];
+Topics2BB -&gt; Battery2BB;
+Priorities [fillcolor=cyan, fontcolor=black, fontsize=11, shape=octagon, style=filled];
+Tutorial -&gt; Priorities;
+&quot;Battery Emergency&quot; [fillcolor=ghostwhite, fontcolor=black, fontsize=11, shape=ellipse, style=filled];
+Priorities -&gt; &quot;Battery Emergency&quot;;
+&quot;Battery Ok?&quot; [fillcolor=gray, fontcolor=black, fontsize=11, shape=ellipse, style=filled];
+&quot;Battery Emergency&quot; -&gt; &quot;Battery Ok?&quot;;
+&quot;Flash Red&quot; [fillcolor=gray, fontcolor=black, fontsize=11, shape=ellipse, style=filled];
+&quot;Battery Emergency&quot; -&gt; &quot;Flash Red&quot;;
+Scan [fillcolor=orange, fontcolor=black, fontsize=11, shape=box, style=filled];
+Priorities -&gt; Scan;
+&quot;Scan?&quot; [fillcolor=gray, fontcolor=black, fontsize=11, shape=ellipse, style=filled];
+Scan -&gt; &quot;Scan?&quot;;
+&quot;Preempt?&quot; [fillcolor=cyan, fontcolor=black, fontsize=11, shape=octagon, style=filled];
+Scan -&gt; &quot;Preempt?&quot;;
+&quot;Scan?*&quot; [fillcolor=gray, fontcolor=black, fontsize=11, shape=ellipse, style=filled];
+&quot;Preempt?&quot; -&gt; &quot;Scan?*&quot;;
+Scanning [fillcolor=gold, fontcolor=black, fontsize=11, shape=note, style=filled];
+&quot;Preempt?&quot; -&gt; Scanning;
+Rotate [fillcolor=gray, fontcolor=black, fontsize=11, shape=ellipse, style=filled];
+Scanning -&gt; Rotate;
+&quot;Flash Blue&quot; [fillcolor=gray, fontcolor=black, fontsize=11, shape=ellipse, style=filled];
+Scanning -&gt; &quot;Flash Blue&quot;;
+Celebrate [fillcolor=gold, fontcolor=black, fontsize=11, shape=note, style=filled];
+Scan -&gt; Celebrate;
+&quot;Flash Green&quot; [fillcolor=gray, fontcolor=black, fontsize=11, shape=ellipse, style=filled];
+Celebrate -&gt; &quot;Flash Green&quot;;
+Pause [fillcolor=gray, fontcolor=black, fontsize=11, shape=ellipse, style=filled];
+Celebrate -&gt; Pause;
+Idle [fillcolor=gray, fontcolor=black, fontsize=11, shape=ellipse, style=filled];
+Priorities -&gt; Idle;
+}" />
+</p>
+<div class="literal-block-wrapper container" id="py-trees-ros-tutorials-five-py-create-root">
+<div class="code-block-caption"><span class="caption-text">py_trees_ros/tutorials/five.py#create_root</span><a class="headerlink" href="#py-trees-ros-tutorials-five-py-create-root" title="Permalink to this code">¶</a></div>
+<div class="highlight-python"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre> 1
+ 2
+ 3
+ 4
+ 5
+ 6
+ 7
+ 8
+ 9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31
+32
+33
+34
+35
+36
+37
+38
+39
+40
+41
+42
+43
+44
+45
+46
+47
+48
+49
+50
+51
+52
+53
+54
+55
+56
+57
+58</pre></div></td><td class="code"><div class="highlight"><pre><span class="k">def</span> <span class="nf">create_root</span><span class="p">():</span>
+    <span class="c1"># behaviours</span>
+    <span class="n">root</span> <span class="o">=</span> <span class="n">py_trees</span><span class="o">.</span><span class="n">composites</span><span class="o">.</span><span class="n">Parallel</span><span class="p">(</span><span class="s2">&quot;Tutorial&quot;</span><span class="p">)</span>
+    <span class="n">topics2bb</span> <span class="o">=</span> <span class="n">py_trees</span><span class="o">.</span><span class="n">composites</span><span class="o">.</span><span class="n">Sequence</span><span class="p">(</span><span class="s2">&quot;Topics2BB&quot;</span><span class="p">)</span>
+    <span class="n">scan2bb</span> <span class="o">=</span> <span class="n">py_trees_ros</span><span class="o">.</span><span class="n">subscribers</span><span class="o">.</span><span class="n">EventToBlackboard</span><span class="p">(</span>
+        <span class="n">name</span><span class="o">=</span><span class="s2">&quot;Scan2BB&quot;</span><span class="p">,</span>
+        <span class="n">topic_name</span><span class="o">=</span><span class="s2">&quot;/dashboard/scan&quot;</span><span class="p">,</span>
+        <span class="n">variable_name</span><span class="o">=</span><span class="s2">&quot;event_scan_button&quot;</span>
+    <span class="p">)</span>
+    <span class="n">battery2bb</span> <span class="o">=</span> <span class="n">py_trees_ros</span><span class="o">.</span><span class="n">battery</span><span class="o">.</span><span class="n">ToBlackboard</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;Battery2BB&quot;</span><span class="p">,</span>
+                                                   <span class="n">topic_name</span><span class="o">=</span><span class="s2">&quot;/battery/state&quot;</span><span class="p">,</span>
+                                                   <span class="n">threshold</span><span class="o">=</span><span class="mf">30.0</span>
+                                                   <span class="p">)</span>
+    <span class="n">priorities</span> <span class="o">=</span> <span class="n">py_trees</span><span class="o">.</span><span class="n">composites</span><span class="o">.</span><span class="n">Selector</span><span class="p">(</span><span class="s2">&quot;Priorities&quot;</span><span class="p">)</span>
+    <span class="n">battery_check</span> <span class="o">=</span> <span class="n">py_trees</span><span class="o">.</span><span class="n">meta</span><span class="o">.</span><span class="n">success_is_failure</span><span class="p">(</span><span class="n">py_trees</span><span class="o">.</span><span class="n">composites</span><span class="o">.</span><span class="n">Selector</span><span class="p">)(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;Battery Emergency&quot;</span><span class="p">)</span>
+    <span class="n">is_battery_ok</span> <span class="o">=</span> <span class="n">py_trees</span><span class="o">.</span><span class="n">blackboard</span><span class="o">.</span><span class="n">CheckBlackboardVariable</span><span class="p">(</span>
+        <span class="n">name</span><span class="o">=</span><span class="s2">&quot;Battery Ok?&quot;</span><span class="p">,</span>
+        <span class="n">variable_name</span><span class="o">=</span><span class="s1">&#39;battery_low_warning&#39;</span><span class="p">,</span>
+        <span class="n">expected_value</span><span class="o">=</span><span class="bp">False</span>
+    <span class="p">)</span>
+    <span class="n">flash_led_strip</span> <span class="o">=</span> <span class="n">py_trees_ros</span><span class="o">.</span><span class="n">tutorials</span><span class="o">.</span><span class="n">behaviours</span><span class="o">.</span><span class="n">FlashLedStrip</span><span class="p">(</span>
+        <span class="n">name</span><span class="o">=</span><span class="s2">&quot;Flash Red&quot;</span><span class="p">,</span>
+        <span class="n">colour</span><span class="o">=</span><span class="s2">&quot;red&quot;</span><span class="p">)</span>
+
+    <span class="n">scan</span> <span class="o">=</span> <span class="n">py_trees</span><span class="o">.</span><span class="n">composites</span><span class="o">.</span><span class="n">Sequence</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;Scan&quot;</span><span class="p">)</span>
+    <span class="n">is_scan_requested</span> <span class="o">=</span> <span class="n">py_trees</span><span class="o">.</span><span class="n">blackboard</span><span class="o">.</span><span class="n">CheckBlackboardVariable</span><span class="p">(</span>
+        <span class="n">name</span><span class="o">=</span><span class="s2">&quot;Scan?&quot;</span><span class="p">,</span>
+        <span class="n">variable_name</span><span class="o">=</span><span class="s1">&#39;event_scan_button&#39;</span><span class="p">,</span>
+        <span class="n">expected_value</span><span class="o">=</span><span class="bp">True</span>
+    <span class="p">)</span>
+    <span class="n">scan_preempt</span> <span class="o">=</span> <span class="n">py_trees</span><span class="o">.</span><span class="n">composites</span><span class="o">.</span><span class="n">Selector</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;Preempt?&quot;</span><span class="p">)</span>
+    <span class="n">is_scan_requested_two</span> <span class="o">=</span> <span class="n">py_trees</span><span class="o">.</span><span class="n">meta</span><span class="o">.</span><span class="n">success_is_running</span><span class="p">(</span><span class="n">py_trees</span><span class="o">.</span><span class="n">blackboard</span><span class="o">.</span><span class="n">CheckBlackboardVariable</span><span class="p">)(</span>
+        <span class="n">name</span><span class="o">=</span><span class="s2">&quot;Scan?&quot;</span><span class="p">,</span>
+        <span class="n">variable_name</span><span class="o">=</span><span class="s1">&#39;event_scan_button&#39;</span><span class="p">,</span>
+        <span class="n">expected_value</span><span class="o">=</span><span class="bp">True</span>
+    <span class="p">)</span>
+    <span class="n">scanning</span> <span class="o">=</span> <span class="n">py_trees</span><span class="o">.</span><span class="n">composites</span><span class="o">.</span><span class="n">Parallel</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;Scanning&quot;</span><span class="p">,</span> <span class="n">policy</span><span class="o">=</span><span class="n">py_trees</span><span class="o">.</span><span class="n">common</span><span class="o">.</span><span class="n">ParallelPolicy</span><span class="o">.</span><span class="n">SUCCESS_ON_ONE</span><span class="p">)</span>
+    <span class="n">scan_rotate</span> <span class="o">=</span> <span class="n">py_trees_ros</span><span class="o">.</span><span class="n">actions</span><span class="o">.</span><span class="n">ActionClient</span><span class="p">(</span>
+        <span class="n">name</span><span class="o">=</span><span class="s2">&quot;Rotate&quot;</span><span class="p">,</span>
+        <span class="n">action_namespace</span><span class="o">=</span><span class="s2">&quot;/rotate&quot;</span><span class="p">,</span>
+        <span class="n">action_spec</span><span class="o">=</span><span class="n">py_trees_msgs</span><span class="o">.</span><span class="n">RotateAction</span><span class="p">,</span>
+        <span class="n">action_goal</span><span class="o">=</span><span class="n">py_trees_msgs</span><span class="o">.</span><span class="n">RotateGoal</span><span class="p">()</span>
+    <span class="p">)</span>
+    <span class="n">scan_flash_blue</span> <span class="o">=</span> <span class="n">py_trees_ros</span><span class="o">.</span><span class="n">tutorials</span><span class="o">.</span><span class="n">behaviours</span><span class="o">.</span><span class="n">FlashLedStrip</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;Flash Blue&quot;</span><span class="p">,</span> <span class="n">colour</span><span class="o">=</span><span class="s2">&quot;blue&quot;</span><span class="p">)</span>
+    <span class="n">scan_celebrate</span> <span class="o">=</span> <span class="n">py_trees</span><span class="o">.</span><span class="n">composites</span><span class="o">.</span><span class="n">Parallel</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;Celebrate&quot;</span><span class="p">,</span> <span class="n">policy</span><span class="o">=</span><span class="n">py_trees</span><span class="o">.</span><span class="n">common</span><span class="o">.</span><span class="n">ParallelPolicy</span><span class="o">.</span><span class="n">SUCCESS_ON_ONE</span><span class="p">)</span>
+    <span class="n">scan_flash_green</span> <span class="o">=</span> <span class="n">py_trees_ros</span><span class="o">.</span><span class="n">tutorials</span><span class="o">.</span><span class="n">behaviours</span><span class="o">.</span><span class="n">FlashLedStrip</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;Flash Green&quot;</span><span class="p">,</span> <span class="n">colour</span><span class="o">=</span><span class="s2">&quot;green&quot;</span><span class="p">)</span>
+    <span class="n">scan_pause</span> <span class="o">=</span> <span class="n">py_trees</span><span class="o">.</span><span class="n">timers</span><span class="o">.</span><span class="n">Timer</span><span class="p">(</span><span class="s2">&quot;Pause&quot;</span><span class="p">,</span> <span class="n">duration</span><span class="o">=</span><span class="mf">3.0</span><span class="p">)</span>
+    <span class="n">idle</span> <span class="o">=</span> <span class="n">py_trees</span><span class="o">.</span><span class="n">behaviours</span><span class="o">.</span><span class="n">Running</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;Idle&quot;</span><span class="p">)</span>
+
+    <span class="c1"># tree</span>
+    <span class="n">root</span><span class="o">.</span><span class="n">add_children</span><span class="p">([</span><span class="n">topics2bb</span><span class="p">,</span> <span class="n">priorities</span><span class="p">])</span>
+    <span class="n">topics2bb</span><span class="o">.</span><span class="n">add_children</span><span class="p">([</span><span class="n">scan2bb</span><span class="p">,</span> <span class="n">battery2bb</span><span class="p">])</span>
+    <span class="n">priorities</span><span class="o">.</span><span class="n">add_children</span><span class="p">([</span><span class="n">battery_check</span><span class="p">,</span> <span class="n">scan</span><span class="p">,</span> <span class="n">idle</span><span class="p">])</span>
+    <span class="n">battery_check</span><span class="o">.</span><span class="n">add_children</span><span class="p">([</span><span class="n">is_battery_ok</span><span class="p">,</span> <span class="n">flash_led_strip</span><span class="p">])</span>
+    <span class="n">scan</span><span class="o">.</span><span class="n">add_children</span><span class="p">([</span><span class="n">is_scan_requested</span><span class="p">,</span> <span class="n">scan_preempt</span><span class="p">,</span> <span class="n">scan_celebrate</span><span class="p">])</span>
+    <span class="n">scan_preempt</span><span class="o">.</span><span class="n">add_children</span><span class="p">([</span><span class="n">is_scan_requested_two</span><span class="p">,</span> <span class="n">scanning</span><span class="p">])</span>
+    <span class="n">scanning</span><span class="o">.</span><span class="n">add_children</span><span class="p">([</span><span class="n">scan_rotate</span><span class="p">,</span> <span class="n">scan_flash_blue</span><span class="p">])</span>
+    <span class="n">scan_celebrate</span><span class="o">.</span><span class="n">add_children</span><span class="p">([</span><span class="n">scan_flash_green</span><span class="p">,</span> <span class="n">scan_pause</span><span class="p">])</span>
+</pre></div>
+</td></tr></table></div>
+</div>
+<p><strong>Guards</strong></p>
+<p class="graphviz">
+<img src="_images/graphviz-45597a02d828988c85c16d5d3fb7bb0c6fbce771.png" alt="digraph tutorial {
+graph [fontname=&quot;times-roman&quot;];
+node [fontname=&quot;times-roman&quot;];
+edge [fontname=&quot;times-roman&quot;];
+&quot;Scan (Guard)&quot; [fillcolor=orange, fontcolor=black, fontsize=11, shape=box, style=filled];
+&quot;Scan?&quot; [fillcolor=gray, fontcolor=black, fontsize=11, shape=ellipse, style=filled];
+&quot;Scan (Guard)&quot; -&gt; &quot;Scan?&quot;;
+&quot;Preempt?&quot; [fillcolor=gray20, fontcolor=dodgerblue, fontsize=11, shape=box, style=filled];
+&quot;Scan (Guard)&quot; -&gt; &quot;Preempt?&quot;;
+}" />
+</p>
+<p>The entire scan branch is protected by a <a class="reference internal" href="terminology.html#term-guard"><span class="xref std std-term">guard</span></a> (note that the blackbox
+in the above diagram is exactly that, a black box representing the lower
+part of the tree). Once the scan event is received, this branch gets to work
+until it either finishes, or is pre-empted by the higher priority low battery
+branch.</p>
+<p><strong>A Kind of Preemption</strong></p>
+<p class="graphviz">
+<img src="_images/graphviz-4f73368b57d239a9720988bcc379a280b04b4aca.png" alt="digraph tutorial {
+graph [fontname=&quot;times-roman&quot;];
+node [fontname=&quot;times-roman&quot;];
+edge [fontname=&quot;times-roman&quot;];
+&quot;Preempt?&quot; [fillcolor=cyan, fontcolor=black, fontsize=11, shape=octagon, style=filled];
+&quot;Scan?\n(Success is Running)&quot; [fillcolor=gray, fontcolor=black, fontsize=11, shape=ellipse, style=filled];
+&quot;Preempt?&quot; -&gt; &quot;Scan?\n(Success is Running)&quot;;
+Scanning [fillcolor=gold, fontcolor=black, fontsize=11, shape=note, style=filled];
+&quot;Preempt?&quot; -&gt; Scanning;
+Rotate [fillcolor=gray, fontcolor=black, fontsize=11, shape=ellipse, style=filled];
+Scanning -&gt; Rotate;
+&quot;Flash Blue&quot; [fillcolor=gray, fontcolor=black, fontsize=11, shape=ellipse, style=filled];
+Scanning -&gt; &quot;Flash Blue&quot;;
+}" />
+</p>
+<p>The second part of the tree enables a kind of pre-emption on the scanning action.
+If a new request comes in, it will trigger the secondary scan event check, invalidating
+whatever scanning action was currently running. This will clear the led command and
+cancel the rotate action. On the next tick, the scan event check will fail (it was
+consumed on the last tick) and the scanning will restart.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">This is not true pre-emption since it cancels the rotate action and restarts it. It is
+however, exactly the pattern that is required in many instances. For true pre-emption
+you could bundle both scan check and rotation action in the same behaviour or dynamically
+insert action goals on the fly from the parent class.</p>
+</div>
+<p><strong>Handling Failure</strong></p>
+<p>If the rotate action should fail, then the whole branch will also fail. Subsequently
+dropping the robot back to its idle state. A failure event could be generated by
+simply watching either the &#8216;Scanning&#8217; parallel or the <a class="reference external" href="http://py-trees.readthedocs.io/en/devel/modules.html#py_trees.trees.BehaviourTree.tip" title="(in py_trees v0.5.7)"><code class="xref py py-meth docutils literal"><span class="pre">tip()</span></code></a>
+of the tree and reacting to it&#8217;s state change.</p>
+</div>
+<div class="section" id="id11">
+<h3>Behaviours<a class="headerlink" href="#id11" title="Permalink to this headline">¶</a></h3>
+<p>Introducing the rotate action client behaviour!</p>
+<div class="literal-block-wrapper container" id="py-trees-ros-tutorials-five-py-action-client-instantiation">
+<div class="code-block-caption"><span class="caption-text">py_trees_ros/tutorials/five.py#action_client_instantiation</span><a class="headerlink" href="#py-trees-ros-tutorials-five-py-action-client-instantiation" title="Permalink to this code">¶</a></div>
+<div class="highlight-python"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1
+2
+3
+4
+5
+6</pre></div></td><td class="code"><div class="highlight"><pre>    <span class="n">scan_rotate</span> <span class="o">=</span> <span class="n">py_trees_ros</span><span class="o">.</span><span class="n">actions</span><span class="o">.</span><span class="n">ActionClient</span><span class="p">(</span>
+        <span class="n">name</span><span class="o">=</span><span class="s2">&quot;Rotate&quot;</span><span class="p">,</span>
+        <span class="n">action_namespace</span><span class="o">=</span><span class="s2">&quot;/rotate&quot;</span><span class="p">,</span>
+        <span class="n">action_spec</span><span class="o">=</span><span class="n">py_trees_msgs</span><span class="o">.</span><span class="n">RotateAction</span><span class="p">,</span>
+        <span class="n">action_goal</span><span class="o">=</span><span class="n">py_trees_msgs</span><span class="o">.</span><span class="n">RotateGoal</span><span class="p">()</span>
+    <span class="p">)</span>
+</pre></div>
+</td></tr></table></div>
+</div>
+<div class="literal-block-wrapper container" id="py-trees-ros-actions-py-actionclient">
+<div class="code-block-caption"><span class="caption-text">py_trees_ros/actions.py#ActionClient</span><a class="headerlink" href="#py-trees-ros-actions-py-actionclient" title="Permalink to this code">¶</a></div>
+<div class="highlight-python"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre> 1
+ 2
+ 3
+ 4
+ 5
+ 6
+ 7
+ 8
+ 9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31
+32
+33
+34
+35
+36
+37
+38
+39
+40
+41
+42
+43
+44
+45
+46
+47
+48
+49
+50
+51
+52
+53
+54
+55
+56
+57
+58
+59
+60
+61
+62
+63
+64
+65
+66
+67
+68
+69
+70
+71
+72
+73
+74
+75
+76
+77
+78
+79
+80
+81
+82
+83
+84
+85
+86
+87
+88
+89
+90
+91
+92
+93
+94</pre></div></td><td class="code"><div class="highlight"><pre><span class="k">class</span> <span class="nc">ActionClient</span><span class="p">(</span><span class="n">py_trees</span><span class="o">.</span><span class="n">behaviour</span><span class="o">.</span><span class="n">Behaviour</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    A generic action client interface. This simply sends a pre-configured</span>
+<span class="sd">    goal to the action client.</span>
+
+<span class="sd">    Cases where you might want to subclass and extend this behaviour:</span>
+
+<span class="sd">    * Update the goal data in :meth:`~py_trees_ros.actions.ActionClient.initialise()`</span>
+
+<span class="sd">      * e.g. use blackboard data to determine the new characteristics of your goal</span>
+<span class="sd">    * Trigger true pre-emption by sending a new goal in :meth:`~py_trees_ros.actions.ActionClient.update()`</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        name (:obj:`str`): name of the behaviour</span>
+<span class="sd">        action_spec (:obj:`any`): spec type for the action (e.g. move_base_msgs.msg.MoveBaseAction)</span>
+<span class="sd">        action_goal (:obj:`any`): preconfigured action goal (e.g. move_base_msgs.msg.MoveBaseGoal())</span>
+<span class="sd">        action_namespace (:obj:`str`): where you can find the action topics</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;Action Client&quot;</span><span class="p">,</span> <span class="n">action_spec</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">action_goal</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">action_namespace</span><span class="o">=</span><span class="s2">&quot;/action&quot;</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">ActionClient</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">action_client</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">sent_goal</span> <span class="o">=</span> <span class="bp">False</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">action_spec</span> <span class="o">=</span> <span class="n">action_spec</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">action_goal</span> <span class="o">=</span> <span class="n">action_goal</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">action_namespace</span> <span class="o">=</span> <span class="n">action_namespace</span>
+
+    <span class="k">def</span> <span class="nf">setup</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">timeout</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Args:</span>
+<span class="sd">            timeout (:obj:`float`): time to wait (0.0 is blocking forever)</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            :obj:`bool`: whether it timed out trying to setup</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">%s</span><span class="s2">.setup()&quot;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">__class__</span><span class="o">.</span><span class="n">__name__</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">action_client</span> <span class="o">=</span> <span class="n">actionlib</span><span class="o">.</span><span class="n">SimpleActionClient</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">action_namespace</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">action_spec</span>
+        <span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">action_client</span><span class="o">.</span><span class="n">wait_for_server</span><span class="p">(</span><span class="n">rospy</span><span class="o">.</span><span class="n">Duration</span><span class="p">(</span><span class="n">timeout</span><span class="p">)):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;{0}.setup() could not connect to the rotate action server at &#39;{1}&#39;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__class__</span><span class="o">.</span><span class="n">__name__</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">action_namespace</span><span class="p">))</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">action_client</span> <span class="o">=</span> <span class="bp">None</span>
+            <span class="k">return</span> <span class="bp">False</span>
+        <span class="k">return</span> <span class="bp">True</span>
+
+    <span class="k">def</span> <span class="nf">initialise</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Reset the internal variables.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;{0}.initialise()&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__class__</span><span class="o">.</span><span class="n">__name__</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">sent_goal</span> <span class="o">=</span> <span class="bp">False</span>
+
+    <span class="k">def</span> <span class="nf">update</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Check only to see whether the underlying action server has</span>
+<span class="sd">        succeeded, is running, or has cancelled/aborted for some reason and</span>
+<span class="sd">        map these to the usual behaviour return states.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;{0}.update()&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__class__</span><span class="o">.</span><span class="n">__name__</span><span class="p">))</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">action_client</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">feedback_message</span> <span class="o">=</span> <span class="s2">&quot;no action client, did you call setup() on your tree?&quot;</span>
+            <span class="k">return</span> <span class="n">py_trees</span><span class="o">.</span><span class="n">Status</span><span class="o">.</span><span class="n">INVALID</span>
+        <span class="c1"># pity there is no &#39;is_connected&#39; api like there is for c++</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">sent_goal</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">action_client</span><span class="o">.</span><span class="n">send_goal</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">action_goal</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">sent_goal</span> <span class="o">=</span> <span class="bp">True</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">feedback_message</span> <span class="o">=</span> <span class="s2">&quot;sent goal to the action server&quot;</span>
+            <span class="k">return</span> <span class="n">py_trees</span><span class="o">.</span><span class="n">Status</span><span class="o">.</span><span class="n">RUNNING</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">action_client</span><span class="o">.</span><span class="n">get_state</span><span class="p">()</span> <span class="o">==</span> <span class="n">actionlib_msgs</span><span class="o">.</span><span class="n">GoalStatus</span><span class="o">.</span><span class="n">ABORTED</span><span class="p">:</span>
+            <span class="n">result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">action_client</span><span class="o">.</span><span class="n">get_result</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">feedback_message</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">message</span>
+            <span class="k">return</span> <span class="n">py_trees</span><span class="o">.</span><span class="n">Status</span><span class="o">.</span><span class="n">FAILURE</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">action_client</span><span class="o">.</span><span class="n">get_result</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">result</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">feedback_message</span> <span class="o">=</span> <span class="s2">&quot;goal reached&quot;</span>
+            <span class="k">return</span> <span class="n">py_trees</span><span class="o">.</span><span class="n">Status</span><span class="o">.</span><span class="n">SUCCESS</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">feedback_message</span> <span class="o">=</span> <span class="s2">&quot;moving&quot;</span>
+            <span class="k">return</span> <span class="n">py_trees</span><span class="o">.</span><span class="n">Status</span><span class="o">.</span><span class="n">RUNNING</span>
+
+    <span class="k">def</span> <span class="nf">terminate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">new_status</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        If running and the current goal has not already succeeded, cancel it.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            new_status (:class:`~py_trees.common.Status`): the behaviour is transitioning to this new status</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">%s</span><span class="s2">.terminate(</span><span class="si">%s</span><span class="s2">)&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__class__</span><span class="o">.</span><span class="n">__name__</span><span class="p">,</span> <span class="s2">&quot;</span><span class="si">%s</span><span class="s2">-&gt;</span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">status</span><span class="p">,</span> <span class="n">new_status</span><span class="p">)</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">status</span> <span class="o">!=</span> <span class="n">new_status</span> <span class="k">else</span> <span class="s2">&quot;</span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">new_status</span><span class="p">))</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">action_client</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">sent_goal</span><span class="p">:</span>
+            <span class="n">motion_state</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">action_client</span><span class="o">.</span><span class="n">get_state</span><span class="p">()</span>
+            <span class="k">if</span> <span class="p">((</span><span class="n">motion_state</span> <span class="o">==</span> <span class="n">actionlib_msgs</span><span class="o">.</span><span class="n">GoalStatus</span><span class="o">.</span><span class="n">PENDING</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span><span class="n">motion_state</span> <span class="o">==</span> <span class="n">actionlib_msgs</span><span class="o">.</span><span class="n">GoalStatus</span><span class="o">.</span><span class="n">ACTIVE</span><span class="p">)</span> <span class="ow">or</span>
+               <span class="p">(</span><span class="n">motion_state</span> <span class="o">==</span> <span class="n">actionlib_msgs</span><span class="o">.</span><span class="n">GoalStatus</span><span class="o">.</span><span class="n">PREEMPTING</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span><span class="n">motion_state</span> <span class="o">==</span> <span class="n">actionlib_msgs</span><span class="o">.</span><span class="n">GoalStatus</span><span class="o">.</span><span class="n">RECALLING</span><span class="p">)):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">action_client</span><span class="o">.</span><span class="n">cancel_goal</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">sent_goal</span> <span class="o">=</span> <span class="bp">False</span>
+</pre></div>
+</td></tr></table></div>
+</div>
+<p>The <a class="reference internal" href="modules.html#py_trees_ros.actions.ActionClient" title="py_trees_ros.actions.ActionClient"><code class="xref py py-class docutils literal"><span class="pre">ActionClient</span></code></a> is a generic template that can be used as
+a drop-in for very simply monitoring the aborted/cancelled/running/success state of an
+underlying controller with a pre-configured goal. See the <a class="reference internal" href="modules.html#py_trees_ros.actions.ActionClient" title="py_trees_ros.actions.ActionClient"><code class="xref py py-class docutils literal"><span class="pre">api</span></code></a>
+for details on when/how you might wish to extend this.</p>
+</div>
+<div class="section" id="id12">
+<h3>Running<a class="headerlink" href="#id12" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-bash"><div class="highlight"><pre>$ roslaunch py_trees_ros tutorial_five.launch --screen
+</pre></div>
+</div>
+<p><strong>Playing with the Spaghetti</strong></p>
+<ul class="simple">
+<li>Press the scan button to start a scan</li>
+<li>Press the scan button again while mid-scanning to pre-empt</li>
+<li>Set battery low in reconfigure whilst mid-scanning to priority switch</li>
+</ul>
+<img alt="_images/tutorial-five-scanning.png" src="_images/tutorial-five-scanning.png" />
+</div>
+</div>
+<div class="section" id="tutorial-6-global-abort-branch">
+<span id="tutorial-abort"></span><h2>Tutorial 6 - Global Abort Branch<a class="headerlink" href="#tutorial-6-global-abort-branch" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="tutorial-7-dynamic-priority-branches">
+<span id="tutorial-dynamic"></span><h2>Tutorial 7 - Dynamic Priority Branches<a class="headerlink" href="#tutorial-7-dynamic-priority-branches" title="Permalink to this headline">¶</a></h2>
+<p>TODO</p>
+</div>
+<div class="section" id="tutorial-8-bags">
+<span id="tutorial-bags"></span><h2>Tutorial 8 - Bags<a class="headerlink" href="#tutorial-8-bags" title="Permalink to this headline">¶</a></h2>
+<p>TODO - Visualisation handles and bagging, replaying (in running section)</p>
+</div>
+</div>
+
+
+           </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="terminology.html" class="btn btn-neutral float-right" title="Terminology" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="new_and_shiny.html" class="btn btn-neutral" title="New and Shiny" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+
+    </p>
+  </div> 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'./',
+            VERSION:'0.5.0',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="_static/jquery.js"></script>
+      <script type="text/javascript" src="_static/underscore.js"></script>
+      <script type="text/javascript" src="_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

@@ -1,0 +1,312 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>py_trees_ros.visitors &mdash; py_trees_ros 0.5.0 documentation</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+    <link rel="top" title="py_trees_ros 0.5.0 documentation" href="../../index.html"/>
+        <link rel="up" title="Module code" href="../index.html"/> 
+
+  
+  <script src="../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../index.html" class="icon icon-home"> py_trees_ros
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.5.0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+    
+            
+            
+                <p class="caption"><span class="caption-text">Guide</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../background.html">Background</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../new_and_shiny.html">New and Shiny</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../tutorials.html">Tutorials</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../terminology.html">Terminology</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../faq.html">FAQ</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Reference</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../programs.html">Programs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../modules.html">Module API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../changelog.html">Changelog</a></li>
+</ul>
+
+            
+          
+    <a href="genindex.html">Index</a>
+    <a href="py-modindex.html">Module Index</a>
+  
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="../../index.html">py_trees_ros</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../../index.html">Docs</a> &raquo;</li>
+      
+          <li><a href="../index.html">Module code</a> &raquo;</li>
+      
+    <li>py_trees_ros.visitors</li>
+      <li class="wy-breadcrumbs-aside">
+        
+          
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for py_trees_ros.visitors</h1><div class="highlight"><pre>
+<span class="ch">#!/usr/bin/env python</span>
+<span class="c1">#</span>
+<span class="c1"># License: BSD</span>
+<span class="c1">#   https://raw.githubusercontent.com/stonier/py_trees/devel/LICENSE</span>
+<span class="c1">#</span>
+<span class="c1">##############################################################################</span>
+<span class="c1"># Documentation</span>
+<span class="c1">##############################################################################</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">ROS Visitors are entities that can be passed to a ROS tree implementation</span>
+<span class="sd">(e.g. :class:`~py_trees_ros.trees.BehaviourTree`) and used to either visit</span>
+<span class="sd">each and every behaviour in the tree, or visit behaviours as the tree is</span>
+<span class="sd">traversed in an executing tick. At each behaviour, the visitor</span>
+<span class="sd">runs its own method on the behaviour to do as it wishes - logging, introspecting).</span>
+
+<span class="sd">.. warning:: Visitors should not modify the behaviours they visit.</span>
+
+<span class="sd">.. seealso:: The base interface and core visitors in :mod:`py_trees.visitors`</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="c1">##############################################################################</span>
+<span class="c1"># Imports</span>
+<span class="c1">##############################################################################</span>
+
+<span class="kn">import</span> <span class="nn">py_trees</span>
+<span class="kn">import</span> <span class="nn">py_trees_msgs.msg</span> <span class="kn">as</span> <span class="nn">py_trees_msgs</span>
+<span class="kn">import</span> <span class="nn">rospy</span>
+
+<span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">conversions</span>
+
+<span class="c1">##############################################################################</span>
+<span class="c1"># Visitors</span>
+<span class="c1">##############################################################################</span>
+
+
+<div class="viewcode-block" id="SnapshotVisitor"><a class="viewcode-back" href="../../modules.html#py_trees_ros.visitors.SnapshotVisitor">[docs]</a><span class="k">class</span> <span class="nc">SnapshotVisitor</span><span class="p">(</span><span class="n">py_trees</span><span class="o">.</span><span class="n">visitors</span><span class="o">.</span><span class="n">VisitorBase</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Visits the tree in tick-tock, recording runtime information for publishing</span>
+<span class="sd">    the information as a snapshot view of the tree after the iteration has</span>
+<span class="sd">    finished.</span>
+
+<span class="sd">    Attributes:</span>
+<span class="sd">        nodes (dict): dictionary of behaviour id (uuid.UUID) and status (:class:`~py_trees.common.Status`) pairs</span>
+<span class="sd">        running_nodes([uuid.UUID]): list of id&#39;s for behaviours which were traversed in the current tick</span>
+<span class="sd">        previously_running_nodes([uuid.UUID]): list of id&#39;s for behaviours which were traversed in the last tick</span>
+
+<span class="sd">    .. seealso::</span>
+
+<span class="sd">        This visitor should be used with the :class:`~py_trees_ros.trees.BehaviourTree` class to collect</span>
+<span class="sd">        information to publish for both bagging and the rqt monitoring plugin.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">SnapshotVisitor</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">nodes</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">running_nodes</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">previously_running_nodes</span> <span class="o">=</span> <span class="p">[]</span>
+
+<div class="viewcode-block" id="SnapshotVisitor.initialise"><a class="viewcode-back" href="../../modules.html#py_trees_ros.visitors.SnapshotVisitor.initialise">[docs]</a>    <span class="k">def</span> <span class="nf">initialise</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Switch running to previously running and then reset all other variables. This will</span>
+<span class="sd">        get called before a tree ticks.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">nodes</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">previously_running_nodes</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">running_nodes</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">running_nodes</span> <span class="o">=</span> <span class="p">[]</span></div>
+
+<div class="viewcode-block" id="SnapshotVisitor.run"><a class="viewcode-back" href="../../modules.html#py_trees_ros.visitors.SnapshotVisitor.run">[docs]</a>    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">behaviour</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        This method gets run as each behaviour is ticked. Catch the id and status and store it.</span>
+<span class="sd">        Additionally add it to the running list if it is :data:`~py_trees.common.Status.RUNNING`.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            behaviour (:class:`~py_trees.behaviour.Behaviour`): behaviour that is ticking</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">nodes</span><span class="p">[</span><span class="n">behaviour</span><span class="o">.</span><span class="n">id</span><span class="p">]</span> <span class="o">=</span> <span class="n">behaviour</span><span class="o">.</span><span class="n">status</span>
+        <span class="k">if</span> <span class="n">behaviour</span><span class="o">.</span><span class="n">status</span> <span class="o">==</span> <span class="n">py_trees</span><span class="o">.</span><span class="n">common</span><span class="o">.</span><span class="n">Status</span><span class="o">.</span><span class="n">RUNNING</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">running_nodes</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">behaviour</span><span class="o">.</span><span class="n">id</span><span class="p">)</span></div></div>
+
+
+<div class="viewcode-block" id="LoggingVisitor"><a class="viewcode-back" href="../../modules.html#py_trees_ros.visitors.LoggingVisitor">[docs]</a><span class="k">class</span> <span class="nc">LoggingVisitor</span><span class="p">(</span><span class="n">py_trees</span><span class="o">.</span><span class="n">visitors</span><span class="o">.</span><span class="n">VisitorBase</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Visits the entire tree and gathers all behaviours as</span>
+<span class="sd">    messages for the tree logging publishers.</span>
+
+<span class="sd">    Attributes:</span>
+<span class="sd">        tree (:class:`py_trees_msgs.msg.BehaviourTree`): tree representation in message form</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">LoggingVisitor</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">full</span> <span class="o">=</span> <span class="bp">True</span>  <span class="c1"># examine all nodes</span>
+
+<div class="viewcode-block" id="LoggingVisitor.initialise"><a class="viewcode-back" href="../../modules.html#py_trees_ros.visitors.LoggingVisitor.initialise">[docs]</a>    <span class="k">def</span> <span class="nf">initialise</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Initialise and stamp a :class:`py_trees_msgs.msg.BehaviourTree`</span>
+<span class="sd">        instance.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">tree</span> <span class="o">=</span> <span class="n">py_trees_msgs</span><span class="o">.</span><span class="n">BehaviourTree</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">tree</span><span class="o">.</span><span class="n">header</span><span class="o">.</span><span class="n">stamp</span> <span class="o">=</span> <span class="n">rospy</span><span class="o">.</span><span class="n">Time</span><span class="o">.</span><span class="n">now</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="LoggingVisitor.run"><a class="viewcode-back" href="../../modules.html#py_trees_ros.visitors.LoggingVisitor.run">[docs]</a>    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">behaviour</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Convert the behaviour into a message and appendd it to the tree.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            behaviour (:class:`~py_trees.behaviour.Behaviour`): behaviour to convert</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">tree</span><span class="o">.</span><span class="n">behaviours</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">conversions</span><span class="o">.</span><span class="n">behaviour_to_msg</span><span class="p">(</span><span class="n">behaviour</span><span class="p">))</span></div></div>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+
+    </p>
+  </div> 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../',
+            VERSION:'0.5.0',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

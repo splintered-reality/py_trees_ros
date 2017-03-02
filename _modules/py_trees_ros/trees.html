@@ -1,0 +1,406 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>py_trees_ros.trees &mdash; py_trees_ros 0.5.0 documentation</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+    <link rel="top" title="py_trees_ros 0.5.0 documentation" href="../../index.html"/>
+        <link rel="up" title="Module code" href="../index.html"/> 
+
+  
+  <script src="../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../index.html" class="icon icon-home"> py_trees_ros
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.5.0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+    
+            
+            
+                <p class="caption"><span class="caption-text">Guide</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../background.html">Background</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../new_and_shiny.html">New and Shiny</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../tutorials.html">Tutorials</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../terminology.html">Terminology</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../faq.html">FAQ</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Reference</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../programs.html">Programs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../modules.html">Module API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../changelog.html">Changelog</a></li>
+</ul>
+
+            
+          
+    <a href="genindex.html">Index</a>
+    <a href="py-modindex.html">Module Index</a>
+  
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="../../index.html">py_trees_ros</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../../index.html">Docs</a> &raquo;</li>
+      
+          <li><a href="../index.html">Module code</a> &raquo;</li>
+      
+    <li>py_trees_ros.trees</li>
+      <li class="wy-breadcrumbs-aside">
+        
+          
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for py_trees_ros.trees</h1><div class="highlight"><pre>
+<span class="ch">#!/usr/bin/env python</span>
+<span class="c1">#</span>
+<span class="c1"># License: BSD</span>
+<span class="c1">#   https://raw.github.com/stonier/py_trees_ros/license/LICENSE</span>
+<span class="c1">#</span>
+<span class="c1">##############################################################################</span>
+<span class="c1"># Documentation</span>
+<span class="c1">##############################################################################</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">The :class:`ROS Behaviour Tree &lt;py_trees_ros.trees.BehaviourTree&gt;`</span>
+<span class="sd">extends the core :class:`Behaviour Tree &lt;py_trees.trees.BehaviourTree&gt;` class</span>
+<span class="sd">with a few ROS style adornments. The major features currently include:</span>
+
+<span class="sd">* Publishers for ascii/dot tree visualisations and the blackboard</span>
+<span class="sd">* A publisher which dumps the entire tree at every change for the rqt plugin</span>
+<span class="sd">* Bagging of the tree for offline visualisation and debugging</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="c1">##############################################################################</span>
+<span class="c1"># Imports</span>
+<span class="c1">##############################################################################</span>
+
+<span class="kn">import</span> <span class="nn">datetime</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">py_trees</span>
+<span class="kn">import</span> <span class="nn">py_trees_msgs.msg</span> <span class="kn">as</span> <span class="nn">py_trees_msgs</span>
+<span class="kn">import</span> <span class="nn">rosbag</span>
+<span class="kn">import</span> <span class="nn">rospkg</span>
+<span class="kn">import</span> <span class="nn">rospy</span>
+<span class="kn">import</span> <span class="nn">std_msgs.msg</span> <span class="kn">as</span> <span class="nn">std_msgs</span>
+<span class="kn">import</span> <span class="nn">threading</span>
+<span class="kn">import</span> <span class="nn">unique_id</span>
+
+<span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">blackboard</span>
+<span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">conversions</span>
+<span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">utilities</span>
+<span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">visitors</span>
+
+<span class="c1">##############################################################################</span>
+<span class="c1"># ROS Trees</span>
+<span class="c1">##############################################################################</span>
+
+
+<div class="viewcode-block" id="BehaviourTree"><a class="viewcode-back" href="../../modules.html#py_trees_ros.trees.BehaviourTree">[docs]</a><span class="k">class</span> <span class="nc">BehaviourTree</span><span class="p">(</span><span class="n">py_trees</span><span class="o">.</span><span class="n">trees</span><span class="o">.</span><span class="n">BehaviourTree</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Extend the :class:`py_trees.trees.BehaviourTree` class with</span>
+<span class="sd">    a few bells and whistles for ROS:</span>
+
+<span class="sd">    * ros publishers with snapshot ascii/dot graph views of the tree</span>
+<span class="sd">    * ros publisher with data representation of the entire tree for monitoring/bagging</span>
+<span class="sd">    * ros publisher showing what the current tip is</span>
+<span class="sd">    * a blackboard exchange with introspection and watcher services</span>
+
+
+<span class="sd">    ROS Publishers:</span>
+<span class="sd">        * **~ascii/tree** (:class:`std_msgs.msg.String`)</span>
+
+<span class="sd">          * static view of the entire tree (debugging)</span>
+<span class="sd">        * **~ascii/snapshot** (:class:`std_msgs.msg.String`)</span>
+
+<span class="sd">          * runtime ascii snapshot view of the ticking tree (debugging)</span>
+<span class="sd">        * **~dot/tree** (:class:`std_msgs.msg.String`)</span>
+
+<span class="sd">          * static dot graph of the entire tree (debugging)</span>
+<span class="sd">        * **~log/tree** (:class:`py_trees_msgs.msg.BehaviourTree`)</span>
+
+<span class="sd">          * representation of the entire tree in message form for rqt/bagging</span>
+<span class="sd">        * **~tip** (:class:`py_trees_msgs.msg.Behaviour`)</span>
+
+<span class="sd">          * the tip of the tree after the last tick</span>
+
+<span class="sd">    .. seealso::</span>
+<span class="sd">        It also exposes publishers and services from the blackboard exchange</span>
+<span class="sd">        in it&#39;s private namespace. Refer to :class:`~py_trees_ros.blackboard.Exchange` for details.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        root (:class:`~py_trees.behaviour.Behaviour`): root node of the tree</span>
+
+<span class="sd">    Raises:</span>
+<span class="sd">        AssertionError: if incoming root variable is not the correct type</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">root</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Initialise the tree with a root.</span>
+
+<span class="sd">        :param root: root node of the tree.</span>
+<span class="sd">        :type root: instance or descendant of :py:class:`Behaviour &lt;py_trees.behaviours.Behaviour&gt;`</span>
+<span class="sd">        :raises AssertionError: if incoming root variable is not the correct type.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">BehaviourTree</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="n">root</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">snapshot_visitor</span> <span class="o">=</span> <span class="n">visitors</span><span class="o">.</span><span class="n">SnapshotVisitor</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logging_visitor</span> <span class="o">=</span> <span class="n">visitors</span><span class="o">.</span><span class="n">LoggingVisitor</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">visitors</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">snapshot_visitor</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">visitors</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">logging_visitor</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_bag_closed</span> <span class="o">=</span> <span class="bp">False</span>
+
+        <span class="n">now</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span>
+        <span class="n">topdir</span> <span class="o">=</span> <span class="n">rospkg</span><span class="o">.</span><span class="n">get_ros_home</span><span class="p">()</span> <span class="o">+</span> <span class="s1">&#39;/behaviour_trees&#39;</span>
+        <span class="n">subdir</span> <span class="o">=</span> <span class="n">topdir</span> <span class="o">+</span> <span class="s1">&#39;/&#39;</span> <span class="o">+</span> <span class="n">now</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s1">&#39;%Y-%m-</span><span class="si">%d</span><span class="s1">&#39;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">topdir</span><span class="p">):</span>
+            <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">topdir</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">subdir</span><span class="p">):</span>
+            <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">subdir</span><span class="p">)</span>
+
+        <span class="c1"># opens in ros home directory for the user</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">bag</span> <span class="o">=</span> <span class="n">rosbag</span><span class="o">.</span><span class="n">Bag</span><span class="p">(</span><span class="n">subdir</span> <span class="o">+</span> <span class="s1">&#39;/behaviour_tree_&#39;</span> <span class="o">+</span> <span class="n">now</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s2">&quot;%H-%M-%S&quot;</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;.bag&#39;</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">last_tree</span> <span class="o">=</span> <span class="n">py_trees_msgs</span><span class="o">.</span><span class="n">BehaviourTree</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">lock</span> <span class="o">=</span> <span class="n">threading</span><span class="o">.</span><span class="n">Lock</span><span class="p">()</span>
+
+        <span class="c1"># delay the publishers so we can instantiate this class without connecting to ros (private names need init_node)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">publishers</span> <span class="o">=</span> <span class="bp">None</span>
+
+        <span class="c1"># _cleanup must come last as it assumes the existence of the bag</span>
+        <span class="n">rospy</span><span class="o">.</span><span class="n">on_shutdown</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_cleanup</span><span class="p">)</span>
+
+<div class="viewcode-block" id="BehaviourTree.setup"><a class="viewcode-back" href="../../modules.html#py_trees_ros.trees.BehaviourTree.setup">[docs]</a>    <span class="k">def</span> <span class="nf">setup</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">timeout</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Setup the publishers, exechange and add ros-relevant pre/post tick handlers to the tree.</span>
+<span class="sd">        Ultimately relays this call down to all the behaviours in the tree.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            timeout (:obj:`float`): time to wait (0.0 is blocking forever)</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            :obj:`bool`: suceess or failure of the operation</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_setup_publishers</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">blackboard_exchange</span> <span class="o">=</span> <span class="n">blackboard</span><span class="o">.</span><span class="n">Exchange</span><span class="p">()</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">blackboard_exchange</span><span class="o">.</span><span class="n">setup</span><span class="p">(</span><span class="n">timeout</span><span class="p">):</span>
+            <span class="k">return</span> <span class="bp">False</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">post_tick_handlers</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_publish_tree_snapshots</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">post_tick_handlers</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">blackboard_exchange</span><span class="o">.</span><span class="n">publish_blackboard</span><span class="p">)</span>
+        <span class="k">return</span> <span class="nb">super</span><span class="p">(</span><span class="n">BehaviourTree</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">setup</span><span class="p">(</span><span class="n">timeout</span><span class="p">)</span></div>
+
+    <span class="k">def</span> <span class="nf">_setup_publishers</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">latched</span> <span class="o">=</span> <span class="bp">True</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">publishers</span> <span class="o">=</span> <span class="n">utilities</span><span class="o">.</span><span class="n">Publishers</span><span class="p">(</span>
+            <span class="p">[</span>
+                <span class="p">(</span><span class="s2">&quot;ascii_tree&quot;</span><span class="p">,</span> <span class="s2">&quot;~ascii/tree&quot;</span><span class="p">,</span> <span class="n">std_msgs</span><span class="o">.</span><span class="n">String</span><span class="p">,</span> <span class="n">latched</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span>
+                <span class="p">(</span><span class="s2">&quot;ascii_snapshot&quot;</span><span class="p">,</span> <span class="s2">&quot;~ascii/snapshot&quot;</span><span class="p">,</span> <span class="n">std_msgs</span><span class="o">.</span><span class="n">String</span><span class="p">,</span> <span class="n">latched</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span>
+                <span class="p">(</span><span class="s2">&quot;dot_tree&quot;</span><span class="p">,</span> <span class="s2">&quot;~dot/tree&quot;</span><span class="p">,</span> <span class="n">std_msgs</span><span class="o">.</span><span class="n">String</span><span class="p">,</span> <span class="n">latched</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span>
+                <span class="p">(</span><span class="s2">&quot;log_tree&quot;</span><span class="p">,</span> <span class="s2">&quot;~log/tree&quot;</span><span class="p">,</span> <span class="n">py_trees_msgs</span><span class="o">.</span><span class="n">BehaviourTree</span><span class="p">,</span> <span class="n">latched</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span>
+                <span class="p">(</span><span class="s2">&quot;tip&quot;</span><span class="p">,</span> <span class="s2">&quot;~tip&quot;</span><span class="p">,</span> <span class="n">py_trees_msgs</span><span class="o">.</span><span class="n">Behaviour</span><span class="p">,</span> <span class="n">latched</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+            <span class="p">]</span>
+        <span class="p">)</span>
+
+        <span class="c1"># publish current state</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_publish_tree_modifications</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">root</span><span class="p">)</span>
+        <span class="c1"># set a handler to publish future modifiactions</span>
+        <span class="c1"># tree_update_handler is in the base class, set this to the callback function here.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">tree_update_handler</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_publish_tree_modifications</span>
+
+    <span class="k">def</span> <span class="nf">_publish_tree_modifications</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tree</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Publishes updates when the whole tree has been modified.</span>
+
+<span class="sd">        This function is passed in as a visitor to the underlying behaviour tree and triggered</span>
+<span class="sd">        when there has been a change.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">publishers</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="n">rospy</span><span class="o">.</span><span class="n">logerr</span><span class="p">(</span><span class="s2">&quot;BehaviourTree: call setup() on this tree to initialise the ros components&quot;</span><span class="p">)</span>
+            <span class="k">return</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">publishers</span><span class="o">.</span><span class="n">ascii_tree</span><span class="o">.</span><span class="n">publish</span><span class="p">(</span><span class="n">std_msgs</span><span class="o">.</span><span class="n">String</span><span class="p">(</span><span class="n">py_trees</span><span class="o">.</span><span class="n">display</span><span class="o">.</span><span class="n">ascii_tree</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">root</span><span class="p">)))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">publishers</span><span class="o">.</span><span class="n">dot_tree</span><span class="o">.</span><span class="n">publish</span><span class="p">(</span><span class="n">std_msgs</span><span class="o">.</span><span class="n">String</span><span class="p">(</span><span class="n">py_trees</span><span class="o">.</span><span class="n">display</span><span class="o">.</span><span class="n">stringify_dot_tree</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">root</span><span class="p">)))</span>
+
+    <span class="k">def</span> <span class="nf">_publish_tree_snapshots</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tree</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Callback that runs on a :class:`BehaviourTree &lt;py_trees.trees.BehaviourTree&gt;` after</span>
+<span class="sd">        it has ticked.</span>
+
+<span class="sd">        :param tree: the behaviour tree</span>
+<span class="sd">        :type tree: :py:class:`BehaviourTree &lt;py_trees.trees.BehaviourTree&gt;`</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">publishers</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="n">rospy</span><span class="o">.</span><span class="n">logerr</span><span class="p">(</span><span class="s2">&quot;BehaviourTree: call setup() on this tree to initialise the ros components&quot;</span><span class="p">)</span>
+            <span class="k">return</span>
+        <span class="n">snapshot</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="se">\n\n</span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">py_trees</span><span class="o">.</span><span class="n">display</span><span class="o">.</span><span class="n">ascii_tree</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">root</span><span class="p">,</span> <span class="n">snapshot_information</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">snapshot_visitor</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">publishers</span><span class="o">.</span><span class="n">ascii_snapshot</span><span class="o">.</span><span class="n">publish</span><span class="p">(</span><span class="n">std_msgs</span><span class="o">.</span><span class="n">String</span><span class="p">(</span><span class="n">snapshot</span><span class="p">))</span>
+
+        <span class="k">for</span> <span class="n">behaviour</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">logging_visitor</span><span class="o">.</span><span class="n">tree</span><span class="o">.</span><span class="n">behaviours</span><span class="p">:</span>
+            <span class="n">behaviour</span><span class="o">.</span><span class="n">is_active</span> <span class="o">=</span> <span class="bp">True</span> <span class="k">if</span> <span class="n">unique_id</span><span class="o">.</span><span class="n">fromMsg</span><span class="p">(</span><span class="n">behaviour</span><span class="o">.</span><span class="n">own_id</span><span class="p">)</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">snapshot_visitor</span><span class="o">.</span><span class="n">nodes</span> <span class="k">else</span> <span class="bp">False</span>
+        <span class="c1"># We&#39;re not interested in sending every single tree - only send a</span>
+        <span class="c1"># message when the tree changes.</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">logging_visitor</span><span class="o">.</span><span class="n">tree</span><span class="o">.</span><span class="n">behaviours</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">last_tree</span><span class="o">.</span><span class="n">behaviours</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">root</span><span class="o">.</span><span class="n">tip</span><span class="p">()</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+                <span class="n">rospy</span><span class="o">.</span><span class="n">logerr</span><span class="p">(</span><span class="s2">&quot;Behaviours: your tree is returning in an INVALID state (should always be FAILURE, RUNNING or SUCCESS)&quot;</span><span class="p">)</span>
+                <span class="k">return</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">publishers</span><span class="o">.</span><span class="n">tip</span><span class="o">.</span><span class="n">publish</span><span class="p">(</span><span class="n">conversions</span><span class="o">.</span><span class="n">behaviour_to_msg</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">root</span><span class="o">.</span><span class="n">tip</span><span class="p">()))</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">publishers</span><span class="o">.</span><span class="n">log_tree</span><span class="o">.</span><span class="n">publish</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">logging_visitor</span><span class="o">.</span><span class="n">tree</span><span class="p">)</span>
+            <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">lock</span><span class="p">:</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_bag_closed</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">bag</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">publishers</span><span class="o">.</span><span class="n">log_tree</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">logging_visitor</span><span class="o">.</span><span class="n">tree</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">last_tree</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">logging_visitor</span><span class="o">.</span><span class="n">tree</span>
+
+    <span class="k">def</span> <span class="nf">_cleanup</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">lock</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">bag</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">interrupt_tick_tocking</span> <span class="o">=</span> <span class="bp">True</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_bag_closed</span> <span class="o">=</span> <span class="bp">True</span></div>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+
+    </p>
+  </div> 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../',
+            VERSION:'0.5.0',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

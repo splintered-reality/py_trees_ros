@@ -1,0 +1,264 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>New and Shiny &mdash; py_trees_ros 0.5.0 documentation</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+    <link rel="top" title="py_trees_ros 0.5.0 documentation" href="index.html"/>
+        <link rel="next" title="Tutorials" href="tutorials.html"/>
+        <link rel="prev" title="Background" href="background.html"/> 
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="index.html" class="icon icon-home"> py_trees_ros
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.5.0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+    
+            
+            
+                <p class="caption"><span class="caption-text">Guide</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="background.html">Background</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="">New and Shiny</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#behaviours">Behaviours</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#blackboards">Blackboards</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#trees">Trees</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#visualisation">Visualisation</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="tutorials.html">Tutorials</a></li>
+<li class="toctree-l1"><a class="reference internal" href="terminology.html">Terminology</a></li>
+<li class="toctree-l1"><a class="reference internal" href="faq.html">FAQ</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Reference</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="programs.html">Programs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="modules.html">Module API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="changelog.html">Changelog</a></li>
+</ul>
+
+            
+          
+    <a href="genindex.html">Index</a>
+    <a href="py-modindex.html">Module Index</a>
+  
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="index.html">py_trees_ros</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+ 
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="index.html">Docs</a> &raquo;</li>
+      
+    <li>New and Shiny</li>
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            <a href="_sources/new_and_shiny.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="new-and-shiny">
+<h1>New and Shiny<a class="headerlink" href="#new-and-shiny" title="Permalink to this headline">¶</a></h1>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last">The <a class="reference internal" href="tutorials.html#py-trees-ros-tutorials-section"><span>Tutorials</span></a> where most, if not
+all of what is introduced below is demonstrated in use.</p>
+</div>
+<div class="section" id="behaviours">
+<h2>Behaviours<a class="headerlink" href="#behaviours" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li><a class="reference internal" href="modules.html#py_trees_ros.actions.ActionClient" title="py_trees_ros.actions.ActionClient"><code class="xref py py-class docutils literal"><span class="pre">py_trees_ros.actions.ActionClient</span></code></a></li>
+<li><a class="reference internal" href="modules.html#py_trees_ros.battery.ToBlackboard" title="py_trees_ros.battery.ToBlackboard"><code class="xref py py-class docutils literal"><span class="pre">py_trees_ros.battery.ToBlackboard</span></code></a></li>
+<li><a class="reference internal" href="modules.html#py_trees_ros.subscribers.CheckData" title="py_trees_ros.subscribers.CheckData"><code class="xref py py-class docutils literal"><span class="pre">py_trees_ros.subscribers.CheckData</span></code></a></li>
+<li><a class="reference internal" href="modules.html#py_trees_ros.subscribers.ToBlackboard" title="py_trees_ros.subscribers.ToBlackboard"><code class="xref py py-class docutils literal"><span class="pre">py_trees_ros.subscribers.ToBlackboard</span></code></a></li>
+<li><a class="reference internal" href="modules.html#py_trees_ros.subscribers.WaitForData" title="py_trees_ros.subscribers.WaitForData"><code class="xref py py-class docutils literal"><span class="pre">py_trees_ros.subscribers.WaitForData</span></code></a></li>
+</ul>
+</div>
+<div class="section" id="blackboards">
+<h2>Blackboards<a class="headerlink" href="#blackboards" title="Permalink to this headline">¶</a></h2>
+<p>The <a class="reference internal" href="modules.html#py_trees_ros.blackboard.Exchange" title="py_trees_ros.blackboard.Exchange"><code class="xref py py-class docutils literal"><span class="pre">Blackboard</span> <span class="pre">Exchange</span></code></a> wraps a
+<a class="reference external" href="http://py-trees.readthedocs.io/en/devel/blackboards.html#blackboards-section" title="(in py_trees v0.5.7)"><span class="xref std std-ref">Blackboard</span></a> with a ROS API to provide easy
+introspection of a blackboard from outside the tree. This includes both
+lazily publishing of the entire board when there&#8217;s a change as well as
+services to open windows onto parts of the blackboard for when the
+entirity becomes too noisy to track.</p>
+<p>You get this for free in the
+<a class="reference internal" href="modules.html#py_trees_ros.trees.BehaviourTree" title="py_trees_ros.trees.BehaviourTree"><code class="xref py py-class docutils literal"><span class="pre">ROS</span> <span class="pre">Behaviour</span> <span class="pre">Tree</span></code></a> manager and the
+<a class="reference internal" href="programs.html#py-trees-blackboard-watcher"><span>py-trees-blackboard-watcher</span></a> command line utility provides a convenient
+means of interacting with the watching services.</p>
+</div>
+<div class="section" id="trees">
+<h2>Trees<a class="headerlink" href="#trees" title="Permalink to this headline">¶</a></h2>
+<p>The <a class="reference internal" href="modules.html#py_trees_ros.trees.BehaviourTree" title="py_trees_ros.trees.BehaviourTree"><code class="xref py py-class docutils literal"><span class="pre">ROS</span> <span class="pre">Behaviour</span> <span class="pre">Tree</span></code></a>
+extends the core <a class="reference external" href="http://py-trees.readthedocs.io/en/devel/modules.html#py_trees.trees.BehaviourTree" title="(in py_trees v0.5.7)"><code class="xref py py-class docutils literal"><span class="pre">Behaviour</span> <span class="pre">Tree</span></code></a> class
+with a few ROS style adornments. The major features currently include:</p>
+<ul class="simple">
+<li>Publishers for ascii/dot tree visualisations and the blackboard</li>
+<li>A publisher which dumps the entire tree at every change for the rqt plugin</li>
+<li>Bagging of the tree for offline visualisation and debugging</li>
+</ul>
+</div>
+<div class="section" id="visualisation">
+<h2>Visualisation<a class="headerlink" href="#visualisation" title="Permalink to this headline">¶</a></h2>
+</div>
+</div>
+
+
+           </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="tutorials.html" class="btn btn-neutral float-right" title="Tutorials" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="background.html" class="btn btn-neutral" title="Background" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+
+    </p>
+  </div> 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'./',
+            VERSION:'0.5.0',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="_static/jquery.js"></script>
+      <script type="text/javascript" src="_static/underscore.js"></script>
+      <script type="text/javascript" src="_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

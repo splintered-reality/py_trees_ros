@@ -1,0 +1,273 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Changelog &mdash; py_trees_ros 0.5.0 documentation</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+    <link rel="top" title="py_trees_ros 0.5.0 documentation" href="index.html"/>
+        <link rel="prev" title="Module API" href="modules.html"/> 
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="index.html" class="icon icon-home"> py_trees_ros
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.5.0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+    
+            
+            
+                <p class="caption"><span class="caption-text">Guide</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="background.html">Background</a></li>
+<li class="toctree-l1"><a class="reference internal" href="new_and_shiny.html">New and Shiny</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorials.html">Tutorials</a></li>
+<li class="toctree-l1"><a class="reference internal" href="terminology.html">Terminology</a></li>
+<li class="toctree-l1"><a class="reference internal" href="faq.html">FAQ</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Reference</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="programs.html">Programs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="modules.html">Module API</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="">Changelog</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#id1">0.5.0 (2017-02-21)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#indigo-kinetic-changelist">Indigo -&gt; Kinetic Changelist</a></li>
+</ul>
+</li>
+</ul>
+
+            
+          
+    <a href="genindex.html">Index</a>
+    <a href="py-modindex.html">Module Index</a>
+  
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="index.html">py_trees_ros</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+ 
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="index.html">Docs</a> &raquo;</li>
+      
+    <li>Changelog</li>
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            <a href="_sources/changelog.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="changelog">
+<h1>Changelog<a class="headerlink" href="#changelog" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="id1">
+<h2>0.5.0 (2017-02-21)<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li>[docs] new and shiny index added</li>
+<li>[tutorials] qt dashboard support</li>
+<li>[tutorials] 5 - tree scanning added</li>
+<li>[tutorials] 4 - tree introspection added</li>
+<li>[tutorials] 3 - blackboards added</li>
+<li>[tutorials] 2 - battery low branch added</li>
+<li>[tutorials] 1 - data gathering added</li>
+<li>[mock] a mock robot for tutorials and testing</li>
+<li>[behaviours] action client, battery behaviours added</li>
+<li>[infra] refactoring for kinetic</li>
+</ul>
+</div>
+<div class="section" id="indigo-kinetic-changelist">
+<h2>Indigo -&gt; Kinetic Changelist<a class="headerlink" href="#indigo-kinetic-changelist" title="Permalink to this headline">¶</a></h2>
+<p><strong>Py Trees ROS API</strong></p>
+<ul class="simple">
+<li><strong>subscribers</strong><ul>
+<li>py_trees.subscribers.SubscriberHandler -&gt; py_trees_ros.subscribers.Handler</li>
+<li>py_trees.subscribers.CheckSubscriberVariable -&gt; py_trees_ros.subscribers.CheckData</li>
+<li>py_trees.subscribers.WaitForSubscriberData -&gt; py_trees_ros.subscribers.WaitForData</li>
+</ul>
+</li>
+<li><strong>conversions</strong><ul>
+<li>py_trees.converters.convert_type -&gt; py_trees_ros.converters.behaviour_type_to_msg_constant</li>
+<li>py_trees.converters.convert_status -&gt; py_trees_ros.converters.status_enum_to_msg_constant</li>
+<li>py_trees.converters.convert_blackbox -&gt; py_trees_ros.converters.blackbox_enum_to_msg_constant</li>
+</ul>
+</li>
+<li><strong>blackboard</strong><ul>
+<li>py_trees.ros.blackboard -&gt; py_trees_ros.blackboard.Exchange</li>
+<li>~list_blackboard_variables -&gt; ~get_blackboard_variables</li>
+<li>~spawn_blackboard_watcher -&gt; ~open_blackboard_watcher</li>
+<li>~destroy_blackboard_watcher -&gt; ~close_blackboard_watcher</li>
+</ul>
+</li>
+<li><strong>visitors</strong> : classes moved from py_trees.trees -&gt; py_trees_ros.visitors</li>
+</ul>
+<p><strong>Py Trees ROS Msgs API</strong></p>
+<ul class="simple">
+<li><strong>blackboard services</strong><ul>
+<li>py_trees.msgs.srv.BlackboardVariables -&gt; py_trees_msgs.srv.GetBlackboardVariables</li>
+<li>py_trees.msgs.srv.SpawnBlackboardWatcher -&gt; py_trees_msgs.srv.OpenBlackboardWatcher</li>
+<li>py_trees.msgs.srv.DestroyBlackboardWatcher -&gt; py_trees_msgs.srv.CloseBlackboardWatcher</li>
+</ul>
+</li>
+</ul>
+<p><strong>Py Trees</strong></p>
+<ul class="simple">
+<li><strong>program</strong> : py-trees-render added</li>
+<li><strong>imposter</strong> : bugfix to permit visitors to the children of a composite original</li>
+<li><strong>visitors</strong> : py_trees.trees -&gt; py_trees.visitors</li>
+</ul>
+</div>
+</div>
+
+
+           </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+      
+        <a href="modules.html" class="btn btn-neutral" title="Module API" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+
+    </p>
+  </div> 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'./',
+            VERSION:'0.5.0',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="_static/jquery.js"></script>
+      <script type="text/javascript" src="_static/underscore.js"></script>
+      <script type="text/javascript" src="_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>
