@@ -3,4 +3,5 @@
   <node pkg="py_trees_ros" name="rotate"    type="mock_component" args="rotate.Rotate"/>
   <node pkg="py_trees_ros" name="battery"   type="mock_battery"/>
   <node pkg="py_trees_ros" name="led_strip" type="mock_led_strip"/>
+  <node pkg="py_trees_ros" name="safety_sensors"   type="mock_safety_sensors"/>
 </launch>
