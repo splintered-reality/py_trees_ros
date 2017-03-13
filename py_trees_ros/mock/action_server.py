@@ -16,7 +16,10 @@ Mocks the move base action server of the ROS navigation stack.
 ##############################################################################
 
 import actionlib
+import dynamic_reconfigure.server
 import rospy
+
+from py_trees_msgs.cfg import MockActionServerConfig
 
 ##############################################################################
 # Classes
@@ -28,14 +31,18 @@ class ActionServer(object):
     Generic action server that can be subclassed to quickly create action
     servers of varying types in a mock simulation.
 
+    Dynamic Reconfigure:
+        * **~duration** (:obj:`float`)
+
+          * reonfigure the duration to be used for the next goal execution
+
     Args:
         action_name (:obj:`str`): name of the action server (e.g. move_base)
         action_type (:obj:`any`): type of the action server (e.g. move_base_msgs.msg.MoveBaseAction
         worker (:obj:`func`): callback to be executed inside the execute loop, no args
-        duration (:obj:`int`): time for a goal to complete (seconds)
+        duration (:obj:`float`): forcibly override the dyn reconf time for a goal to complete (seconds)
     """
-    def __init__(self, action_name, action_type, worker, duration=5):
-        self.duration = duration
+    def __init__(self, action_name, action_type, worker, duration=None):
         self.worker = worker
         self.action_server = actionlib.SimpleActionServer(action_name,
                                                           action_type,
@@ -45,6 +52,27 @@ class ActionServer(object):
         self.percent_completed = 0
         self.title = action_name.replace('_', ' ').title()
         self.action = action_type()
+
+        # dynamic reconfigure
+        self.parameters = None
+        # note this instantiation will automatically trigger the callback, so
+        # self.parameters *will* get initialised
+        self.dynamic_reconfigure_server = dynamic_reconfigure.server.Server(
+            MockActionServerConfig,
+            self.dynamic_reconfigure_callback
+        )
+        # forcibly override the default/rosparam configured duration
+        if duration is not None:
+            self.dynamic_reconfigure_server.update_configuration({"duration": duration})
+
+    def dynamic_reconfigure_callback(self, config, unused_level):
+        """
+        Args:
+            config (:obj:`dynamic_reconfigure.encoding.Config`): incoming configuration
+            level (:obj:`int`):
+        """
+        self.parameters = config
+        return config
 
     def start(self):
         """
@@ -62,7 +90,7 @@ class ActionServer(object):
         """
         # goal.target_pose = don't care
         frequency = 3.0  # hz
-        increment = 100 / (frequency * self.duration)
+        increment = 100 / (frequency * self.parameters.duration)
         self.percent_completed = 0
         rate = rospy.Rate(frequency)  # hz
         rospy.loginfo("{title}: received a goal".format(title=self.title))

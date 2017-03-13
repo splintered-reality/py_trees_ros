@@ -34,7 +34,7 @@ class Rotate(action_server.ActionServer):
         pose_topic (:obj:`str`): name of the pose (with covariance stamped) topic
         duration (:obj:`int`): time for a goal to complete (seconds)
     """
-    def __init__(self, rotation_rate=0.87):
+    def __init__(self, rotation_rate=0.78):
         super(Rotate, self).__init__(action_name="rotate",
                                      action_type=py_trees_msgs.RotateAction,
                                      worker=self.worker,
