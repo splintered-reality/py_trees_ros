@@ -1,7 +1,7 @@
 # Py Trees for ROS
 
-[ ![License] [license-image] ] [license]
-[ ![0.5.x-Release] [0.5.x-release-image] ] [0.5.x-releases]
+[![License][license-image]][license]
+[![0.5.x-Release][0.5.x-release-image]][0.5.x-releases]
 
 [license-image]: https://img.shields.io/badge/License-BSD%203--Clause-orange.svg?style=plastic
 [license]: LICENSE
