@@ -20,3 +20,4 @@ from . import qt
 from . import one
 from . import two
 from . import five
+from . import six

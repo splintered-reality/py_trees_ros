@@ -161,6 +161,9 @@ Tutorial 5 - Action Clients
 Tutorial 6 - Context Switching
 ------------------------------
 
+.. automodule:: py_trees_ros.tutorials.six
+    :synopsis: adding a context switch around an action(s)
+
 .. _tutorial-dynamic:
 
 Tutorial 7 - Dynamic Priority Branches
