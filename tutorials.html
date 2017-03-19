@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Tutorials &mdash; py_trees_ros 0.5.0 documentation</title>
+  <title>Tutorials &mdash; py_trees_ros 0.5.2 documentation</title>
   
 
   
@@ -30,7 +30,7 @@
   
 
   
-    <link rel="top" title="py_trees_ros 0.5.0 documentation" href="index.html"/>
+    <link rel="top" title="py_trees_ros 0.5.2 documentation" href="index.html"/>
         <link rel="next" title="Terminology" href="terminology.html"/>
         <link rel="prev" title="New and Shiny" href="new_and_shiny.html"/> 
 
@@ -60,7 +60,7 @@
             
             
               <div class="version">
-                0.5.0
+                0.5.2
               </div>
             
           
@@ -120,7 +120,13 @@
 <li class="toctree-l3"><a class="reference internal" href="#id12">Running</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="#tutorial-6-global-abort-branch">Tutorial 6 - Global Abort Branch</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-py_trees_ros.tutorials.six">Tutorial 6 - Context Switching</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id13">About</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id14">Tree</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id15">Behaviours</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id16">Running</a></li>
+</ul>
+</li>
 <li class="toctree-l2"><a class="reference internal" href="#tutorial-7-dynamic-priority-branches">Tutorial 7 - Dynamic Priority Branches</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#tutorial-8-bags">Tutorial 8 - Bags</a></li>
 </ul>
@@ -200,6 +206,7 @@ following features:</p>
 <li>LED Strip</li>
 <li>Move Base Action Server</li>
 <li>Rotation Action Server</li>
+<li>Safety Sensors Pipeline</li>
 </ul>
 <p>This <a class="reference internal" href="terminology.html#term-mock"><span class="xref std std-term">mock</span></a> robot could just as easily be replaced by a gazebo
 simulated robot or even real robot with the same ROS API
@@ -213,11 +220,13 @@ launched on its own with:</p>
 3
 4
 5
-6</pre></div></td><td class="code"><div class="highlight"><pre><span class="nt">&lt;launch&gt;</span>
+6
+7</pre></div></td><td class="code"><div class="highlight"><pre><span class="nt">&lt;launch&gt;</span>
   <span class="nt">&lt;node</span> <span class="na">pkg=</span><span class="s">&quot;py_trees_ros&quot;</span> <span class="na">name=</span><span class="s">&quot;move_base&quot;</span> <span class="na">type=</span><span class="s">&quot;mock_component&quot;</span> <span class="na">args=</span><span class="s">&quot;move_base.MoveBase&quot;</span><span class="nt">/&gt;</span>
   <span class="nt">&lt;node</span> <span class="na">pkg=</span><span class="s">&quot;py_trees_ros&quot;</span> <span class="na">name=</span><span class="s">&quot;rotate&quot;</span>    <span class="na">type=</span><span class="s">&quot;mock_component&quot;</span> <span class="na">args=</span><span class="s">&quot;rotate.Rotate&quot;</span><span class="nt">/&gt;</span>
   <span class="nt">&lt;node</span> <span class="na">pkg=</span><span class="s">&quot;py_trees_ros&quot;</span> <span class="na">name=</span><span class="s">&quot;battery&quot;</span>   <span class="na">type=</span><span class="s">&quot;mock_battery&quot;</span><span class="nt">/&gt;</span>
   <span class="nt">&lt;node</span> <span class="na">pkg=</span><span class="s">&quot;py_trees_ros&quot;</span> <span class="na">name=</span><span class="s">&quot;led_strip&quot;</span> <span class="na">type=</span><span class="s">&quot;mock_led_strip&quot;</span><span class="nt">/&gt;</span>
+  <span class="nt">&lt;node</span> <span class="na">pkg=</span><span class="s">&quot;py_trees_ros&quot;</span> <span class="na">name=</span><span class="s">&quot;safety_sensors&quot;</span>   <span class="na">type=</span><span class="s">&quot;mock_safety_sensors&quot;</span><span class="nt">/&gt;</span>
 <span class="nt">&lt;/launch&gt;</span>
 </pre></div>
 </td></tr></table></div>
@@ -307,7 +316,7 @@ Priorities -&gt; Idle;
 </div>
 <p>Along with the data gathering side, you&#8217;ll also notice the dummy branch for
 priority jobs (complete with idle behaviour that is always
-<a class="reference external" href="http://py-trees.readthedocs.io/en/devel/modules.html#py_trees.common.Status.RUNNING" title="(in py_trees v0.5.7)"><code class="xref py py-attr docutils literal"><span class="pre">RUNNING</span></code></a>). This configuration is typical
+<a class="reference external" href="http://py-trees.readthedocs.io/en/devel/modules.html#py_trees.common.Status.RUNNING" title="(in py_trees v0.5.8)"><code class="xref py py-attr docutils literal"><span class="pre">RUNNING</span></code></a>). This configuration is typical
 of the <a class="reference internal" href="terminology.html#term-data-gathering"><span class="xref std std-term">data gathering</span></a> pattern.</p>
 </div>
 <div class="section" id="behaviours">
@@ -420,7 +429,7 @@ of the <a class="reference internal" href="terminology.html#term-data-gathering"
 </td></tr></table></div>
 </div>
 <p>This behaviour will cause the entire tree will tick over with
-<a class="reference external" href="http://py-trees.readthedocs.io/en/devel/modules.html#py_trees.common.Status.SUCCESS" title="(in py_trees v0.5.7)"><code class="xref py py-attr docutils literal"><span class="pre">SUCCESS</span></code></a> so long as there is data incoming.
+<a class="reference external" href="http://py-trees.readthedocs.io/en/devel/modules.html#py_trees.common.Status.SUCCESS" title="(in py_trees v0.5.8)"><code class="xref py py-attr docutils literal"><span class="pre">SUCCESS</span></code></a> so long as there is data incoming.
 If there is no data incoming, it will simply
 <a class="reference internal" href="terminology.html#term-block"><span class="xref std std-term">block</span></a> and prevent the rest of the tree from acting.</p>
 </div>
@@ -465,7 +474,7 @@ Priorities -&gt; Idle;
 }" />
 </p>
 <p>The white coloured ellipse shown here is a decorated behaviour (in this
-case a <a class="reference external" href="http://py-trees.readthedocs.io/en/devel/modules.html#py_trees.composites.Selector" title="(in py_trees v0.5.7)"><code class="xref py py-class docutils literal"><span class="pre">Selector</span></code></a> with the <a class="reference external" href="http://py-trees.readthedocs.io/en/devel/modules.html#py_trees.meta.success_is_failure" title="(in py_trees v0.5.7)"><code class="xref py py-func docutils literal"><span class="pre">success_is_failure()</span></code></a>
+case a <a class="reference external" href="http://py-trees.readthedocs.io/en/devel/modules.html#py_trees.composites.Selector" title="(in py_trees v0.5.8)"><code class="xref py py-class docutils literal"><span class="pre">Selector</span></code></a> with the <a class="reference external" href="http://py-trees.readthedocs.io/en/devel/modules.html#py_trees.meta.success_is_failure" title="(in py_trees v0.5.8)"><code class="xref py py-func docutils literal"><span class="pre">success_is_failure()</span></code></a>
 decorator (looking forward to better visualisations for this in the future).</p>
 <div class="literal-block-wrapper container" id="py-trees-ros-tutorials-two-py">
 <div class="code-block-caption"><span class="caption-text">py_trees_ros/tutorials/two.py</span><a class="headerlink" href="#py-trees-ros-tutorials-two-py" title="Permalink to this code">¶</a></div>
@@ -530,7 +539,7 @@ invalidated as soon as the battery becomes ok again. This will trigger the
 flashing behaviour&#8217;s terminate method (see below) to send off a command to
 clear the request. To do this we&#8217;ve made use of a higher priority &#8216;Is Battery Ok?&#8217;
 check underneath the selector, but also had to decorate the selector with
-<a class="reference external" href="http://py-trees.readthedocs.io/en/devel/modules.html#py_trees.meta.success_is_failure" title="(in py_trees v0.5.7)"><code class="xref py py-func docutils literal"><span class="pre">success_is_failure()</span></code></a> to make sure the priority branch is chosen appropriately.</p>
+<a class="reference external" href="http://py-trees.readthedocs.io/en/devel/modules.html#py_trees.meta.success_is_failure" title="(in py_trees v0.5.8)"><code class="xref py py-func docutils literal"><span class="pre">success_is_failure()</span></code></a> to make sure the priority branch is chosen appropriately.</p>
 <p>You could have also designed this particular subtree with sequences and parallels
 instead of the selector and decorator here.</p>
 <div class="admonition tip">
@@ -599,7 +608,8 @@ you can render with:</p>
 48
 49
 50
-51</pre></div></td><td class="code"><div class="highlight"><pre><span class="k">class</span> <span class="nc">FlashLedStrip</span><span class="p">(</span><span class="n">py_trees</span><span class="o">.</span><span class="n">behaviour</span><span class="o">.</span><span class="n">Behaviour</span><span class="p">):</span>
+51</pre></div></td><td class="code"><div class="highlight"><pre>
+<span class="k">class</span> <span class="nc">FlashLedStrip</span><span class="p">(</span><span class="n">py_trees</span><span class="o">.</span><span class="n">behaviour</span><span class="o">.</span><span class="n">Behaviour</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    This behavoiur simply shoots a command off to the LEDStrip to flash</span>
 <span class="sd">    a certain colour and returns :attr:`~py_trees.common.Status.RUNNING`.</span>
@@ -649,15 +659,14 @@ you can render with:</p>
 <span class="sd">            new_status (:class:`~py_trees.common.Status`): the behaviour is transitioning to this new status</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">publisher</span><span class="o">.</span><span class="n">publish</span><span class="p">(</span><span class="n">std_msgs</span><span class="o">.</span><span class="n">String</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">))</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">feedback_message</span> <span class="o">=</span> <span class="s2">&quot;cleared&quot;</span>
 </pre></div>
 </td></tr></table></div>
 </div>
 <p>A new feature here is the way it uses the terminate method to put a &#8216;fullstop&#8217;
 to the commands sent when ticking. Note also that it is permanently in the
-<a class="reference external" href="http://py-trees.readthedocs.io/en/devel/modules.html#py_trees.common.Status.RUNNING" title="(in py_trees v0.5.7)"><code class="xref py py-attr docutils literal"><span class="pre">RUNNING</span></code></a> state while ticking. Behaviours do
-not <em>have</em> to return <a class="reference external" href="http://py-trees.readthedocs.io/en/devel/modules.html#py_trees.common.Status.SUCCESS" title="(in py_trees v0.5.7)"><code class="xref py py-attr docutils literal"><span class="pre">SUCCESS</span></code></a> or
-<a class="reference external" href="http://py-trees.readthedocs.io/en/devel/modules.html#py_trees.common.Status.FAILURE" title="(in py_trees v0.5.7)"><code class="xref py py-attr docutils literal"><span class="pre">FAILURE</span></code></a>, they can be just as involved in the
+<a class="reference external" href="http://py-trees.readthedocs.io/en/devel/modules.html#py_trees.common.Status.RUNNING" title="(in py_trees v0.5.8)"><code class="xref py py-attr docutils literal"><span class="pre">RUNNING</span></code></a> state while ticking. Behaviours do
+not <em>have</em> to return <a class="reference external" href="http://py-trees.readthedocs.io/en/devel/modules.html#py_trees.common.Status.SUCCESS" title="(in py_trees v0.5.8)"><code class="xref py py-attr docutils literal"><span class="pre">SUCCESS</span></code></a> or
+<a class="reference external" href="http://py-trees.readthedocs.io/en/devel/modules.html#py_trees.common.Status.FAILURE" title="(in py_trees v0.5.8)"><code class="xref py py-attr docutils literal"><span class="pre">FAILURE</span></code></a>, they can be just as involved in the
 decision making via the way they behave when cancelled or interrupted.</p>
 </div>
 <div class="section" id="id4">
@@ -736,7 +745,7 @@ This is not very human readable (typically very large), but can be used for othe
 <code class="docutils literal"><span class="pre">rqt-py-trees</span></code>.</p>
 <p>While not in this package itself, it&#8217;s worth taking some time out to discover what it can do here.</p>
 <ul class="simple">
-<li><em>Coloured States</em> : GREEN for <a class="reference external" href="http://py-trees.readthedocs.io/en/devel/modules.html#py_trees.common.Status.SUCCESS" title="(in py_trees v0.5.7)"><code class="xref py py-attr docutils literal"><span class="pre">SUCCESS</span></code></a>, RED for <a class="reference external" href="http://py-trees.readthedocs.io/en/devel/modules.html#py_trees.common.Status.FAILURE" title="(in py_trees v0.5.7)"><code class="xref py py-attr docutils literal"><span class="pre">FAILURE</span></code></a>, BLUE for <a class="reference external" href="http://py-trees.readthedocs.io/en/devel/modules.html#py_trees.common.Status.RUNNING" title="(in py_trees v0.5.7)"><code class="xref py py-attr docutils literal"><span class="pre">RUNNING</span></code></a> and GREY for unvisited.</li>
+<li><em>Coloured States</em> : GREEN for <a class="reference external" href="http://py-trees.readthedocs.io/en/devel/modules.html#py_trees.common.Status.SUCCESS" title="(in py_trees v0.5.8)"><code class="xref py py-attr docutils literal"><span class="pre">SUCCESS</span></code></a>, RED for <a class="reference external" href="http://py-trees.readthedocs.io/en/devel/modules.html#py_trees.common.Status.FAILURE" title="(in py_trees v0.5.8)"><code class="xref py py-attr docutils literal"><span class="pre">FAILURE</span></code></a>, BLUE for <a class="reference external" href="http://py-trees.readthedocs.io/en/devel/modules.html#py_trees.common.Status.RUNNING" title="(in py_trees v0.5.8)"><code class="xref py py-attr docutils literal"><span class="pre">RUNNING</span></code></a> and GREY for unvisited.</li>
 <li><em>Tooltips</em> : hover over a behaviour to catch name, type, status and feedback message information</li>
 <li><em>Timeline</em> : rewind as you wish, note the bars indicating where important events occured</li>
 <li><em>Fit</em> : disable auto-resizing by unchecking the &#8216;Fit&#8217; button to handle large trees which become unreadable in a small window</li>
@@ -973,7 +982,7 @@ insert action goals on the fly from the parent class.</p>
 <p><strong>Handling Failure</strong></p>
 <p>If the rotate action should fail, then the whole branch will also fail. Subsequently
 dropping the robot back to its idle state. A failure event could be generated by
-simply watching either the &#8216;Scanning&#8217; parallel or the <a class="reference external" href="http://py-trees.readthedocs.io/en/devel/modules.html#py_trees.trees.BehaviourTree.tip" title="(in py_trees v0.5.7)"><code class="xref py py-meth docutils literal"><span class="pre">tip()</span></code></a>
+simply watching either the &#8216;Scanning&#8217; parallel or the <a class="reference external" href="http://py-trees.readthedocs.io/en/devel/modules.html#py_trees.trees.BehaviourTree.tip" title="(in py_trees v0.5.8)"><code class="xref py py-meth docutils literal"><span class="pre">tip()</span></code></a>
 of the tree and reacting to it&#8217;s state change.</p>
 </div>
 <div class="section" id="id11">
@@ -1206,8 +1215,422 @@ for details on when/how you might wish to extend this.</p>
 <img alt="_images/tutorial-five-scanning.png" src="_images/tutorial-five-scanning.png" />
 </div>
 </div>
-<div class="section" id="tutorial-6-global-abort-branch">
-<span id="tutorial-abort"></span><h2>Tutorial 6 - Global Abort Branch<a class="headerlink" href="#tutorial-6-global-abort-branch" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="module-py_trees_ros.tutorials.six">
+<span id="tutorial-6-context-switching"></span><span id="tutorial-context-switching"></span><h2>Tutorial 6 - Context Switching<a class="headerlink" href="#module-py_trees_ros.tutorials.six" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="id13">
+<h3>About<a class="headerlink" href="#id13" title="Permalink to this headline">¶</a></h3>
+<p>This tutorial inserts a context switching behaviour to run in tandem
+with the scan rotation. It will reconfigure the rotation speed (to be
+slower) and enable a hypothetical safety sensor pipeline immediately
+prior to running the rotate action and subsequently reset the context
+to what it was before commencing upon termination (success/failure or
+interruption from above) of the scan.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">This context switch could have easily been bundled into the
+scan behaviour itself, however keeping it separate
+promotes visibility and allows the scan behaviour to remain
+eminently reusable. Context switches can tend to be quite
+specific to a use case (i.e. not a behaviour).</p>
+</div>
+</div>
+<div class="section" id="id14">
+<h3>Tree<a class="headerlink" href="#id14" title="Permalink to this headline">¶</a></h3>
+<p class="graphviz">
+<img src="_images/graphviz-7d207ca75915f157e26302b3abb43a1ade5936c8.png" alt="digraph tutorial {
+graph [fontname=&quot;times-roman&quot;];
+node [fontname=&quot;times-roman&quot;];
+edge [fontname=&quot;times-roman&quot;];
+Tutorial [fillcolor=gold, fontcolor=black, fontsize=11, shape=note, style=filled];
+Topics2BB [fillcolor=orange, fontcolor=black, fontsize=11, shape=box, style=filled];
+Tutorial -&gt; Topics2BB;
+Scan2BB [fillcolor=gray, fontcolor=black, fontsize=11, shape=ellipse, style=filled];
+Topics2BB -&gt; Scan2BB;
+Battery2BB [fillcolor=gray, fontcolor=black, fontsize=11, shape=ellipse, style=filled];
+Topics2BB -&gt; Battery2BB;
+Priorities [fillcolor=cyan, fontcolor=black, fontsize=11, shape=octagon, style=filled];
+Tutorial -&gt; Priorities;
+&quot;Battery Emergency&quot; [fillcolor=ghostwhite, fontcolor=black, fontsize=11, shape=ellipse, style=filled];
+Priorities -&gt; &quot;Battery Emergency&quot;;
+&quot;Battery Ok?&quot; [fillcolor=gray, fontcolor=black, fontsize=11, shape=ellipse, style=filled];
+&quot;Battery Emergency&quot; -&gt; &quot;Battery Ok?&quot;;
+&quot;Flash Red&quot; [fillcolor=gray, fontcolor=black, fontsize=11, shape=ellipse, style=filled];
+&quot;Battery Emergency&quot; -&gt; &quot;Flash Red&quot;;
+Scan [fillcolor=orange, fontcolor=black, fontsize=11, shape=box, style=filled];
+Priorities -&gt; Scan;
+&quot;Scan?&quot; [fillcolor=gray, fontcolor=black, fontsize=11, shape=ellipse, style=filled];
+Scan -&gt; &quot;Scan?&quot;;
+&quot;Preempt?&quot; [fillcolor=cyan, fontcolor=black, fontsize=11, shape=octagon, style=filled];
+Scan -&gt; &quot;Preempt?&quot;;
+&quot;Scan?*&quot; [fillcolor=gray, fontcolor=black, fontsize=11, shape=ellipse, style=filled];
+&quot;Preempt?&quot; -&gt; &quot;Scan?*&quot;;
+Scanning [fillcolor=gold, fontcolor=black, fontsize=11, shape=note, style=filled];
+&quot;Preempt?&quot; -&gt; Scanning;
+&quot;Context Switch&quot; [fillcolor=gray, fontcolor=black, fontsize=11, shape=ellipse, style=filled];
+Scanning -&gt; &quot;Context Switch&quot;;
+Rotate [fillcolor=gray, fontcolor=black, fontsize=11, shape=ellipse, style=filled];
+Scanning -&gt; Rotate;
+&quot;Flash Blue&quot; [fillcolor=gray, fontcolor=black, fontsize=11, shape=ellipse, style=filled];
+Scanning -&gt; &quot;Flash Blue&quot;;
+Celebrate [fillcolor=gold, fontcolor=black, fontsize=11, shape=note, style=filled];
+Scan -&gt; Celebrate;
+&quot;Flash Green&quot; [fillcolor=gray, fontcolor=black, fontsize=11, shape=ellipse, style=filled];
+Celebrate -&gt; &quot;Flash Green&quot;;
+Pause [fillcolor=gray, fontcolor=black, fontsize=11, shape=ellipse, style=filled];
+Celebrate -&gt; Pause;
+Idle [fillcolor=gray, fontcolor=black, fontsize=11, shape=ellipse, style=filled];
+Priorities -&gt; Idle;
+}" />
+</p>
+<div class="literal-block-wrapper container" id="py-trees-ros-tutorials-six-py-create-root">
+<div class="code-block-caption"><span class="caption-text">py_trees_ros/tutorials/six.py#create_root</span><a class="headerlink" href="#py-trees-ros-tutorials-six-py-create-root" title="Permalink to this code">¶</a></div>
+<div class="highlight-python"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre> 1
+ 2
+ 3
+ 4
+ 5
+ 6
+ 7
+ 8
+ 9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31
+32
+33
+34
+35
+36
+37
+38
+39
+40
+41
+42
+43
+44
+45
+46
+47
+48
+49
+50
+51
+52
+53
+54
+55
+56
+57
+58
+59
+60</pre></div></td><td class="code"><div class="highlight"><pre><span class="c1">##############################################################################</span>
+
+
+<span class="k">def</span> <span class="nf">create_root</span><span class="p">():</span>
+    <span class="c1"># behaviours</span>
+    <span class="n">root</span> <span class="o">=</span> <span class="n">py_trees</span><span class="o">.</span><span class="n">composites</span><span class="o">.</span><span class="n">Parallel</span><span class="p">(</span><span class="s2">&quot;Tutorial&quot;</span><span class="p">)</span>
+    <span class="n">topics2bb</span> <span class="o">=</span> <span class="n">py_trees</span><span class="o">.</span><span class="n">composites</span><span class="o">.</span><span class="n">Sequence</span><span class="p">(</span><span class="s2">&quot;Topics2BB&quot;</span><span class="p">)</span>
+    <span class="n">scan2bb</span> <span class="o">=</span> <span class="n">py_trees_ros</span><span class="o">.</span><span class="n">subscribers</span><span class="o">.</span><span class="n">EventToBlackboard</span><span class="p">(</span>
+        <span class="n">name</span><span class="o">=</span><span class="s2">&quot;Scan2BB&quot;</span><span class="p">,</span>
+        <span class="n">topic_name</span><span class="o">=</span><span class="s2">&quot;/dashboard/scan&quot;</span><span class="p">,</span>
+        <span class="n">variable_name</span><span class="o">=</span><span class="s2">&quot;event_scan_button&quot;</span>
+    <span class="p">)</span>
+    <span class="n">battery2bb</span> <span class="o">=</span> <span class="n">py_trees_ros</span><span class="o">.</span><span class="n">battery</span><span class="o">.</span><span class="n">ToBlackboard</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;Battery2BB&quot;</span><span class="p">,</span>
+                                                   <span class="n">topic_name</span><span class="o">=</span><span class="s2">&quot;/battery/state&quot;</span><span class="p">,</span>
+                                                   <span class="n">threshold</span><span class="o">=</span><span class="mf">30.0</span>
+                                                   <span class="p">)</span>
+    <span class="n">priorities</span> <span class="o">=</span> <span class="n">py_trees</span><span class="o">.</span><span class="n">composites</span><span class="o">.</span><span class="n">Selector</span><span class="p">(</span><span class="s2">&quot;Priorities&quot;</span><span class="p">)</span>
+    <span class="n">battery_check</span> <span class="o">=</span> <span class="n">py_trees</span><span class="o">.</span><span class="n">meta</span><span class="o">.</span><span class="n">success_is_failure</span><span class="p">(</span><span class="n">py_trees</span><span class="o">.</span><span class="n">composites</span><span class="o">.</span><span class="n">Selector</span><span class="p">)(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;Battery Emergency&quot;</span><span class="p">)</span>
+    <span class="n">is_battery_ok</span> <span class="o">=</span> <span class="n">py_trees</span><span class="o">.</span><span class="n">blackboard</span><span class="o">.</span><span class="n">CheckBlackboardVariable</span><span class="p">(</span>
+        <span class="n">name</span><span class="o">=</span><span class="s2">&quot;Battery Ok?&quot;</span><span class="p">,</span>
+        <span class="n">variable_name</span><span class="o">=</span><span class="s1">&#39;battery_low_warning&#39;</span><span class="p">,</span>
+        <span class="n">expected_value</span><span class="o">=</span><span class="bp">False</span>
+    <span class="p">)</span>
+    <span class="n">flash_led_strip</span> <span class="o">=</span> <span class="n">py_trees_ros</span><span class="o">.</span><span class="n">tutorials</span><span class="o">.</span><span class="n">behaviours</span><span class="o">.</span><span class="n">FlashLedStrip</span><span class="p">(</span>
+        <span class="n">name</span><span class="o">=</span><span class="s2">&quot;Flash Red&quot;</span><span class="p">,</span>
+        <span class="n">colour</span><span class="o">=</span><span class="s2">&quot;red&quot;</span><span class="p">)</span>
+
+    <span class="n">scan</span> <span class="o">=</span> <span class="n">py_trees</span><span class="o">.</span><span class="n">composites</span><span class="o">.</span><span class="n">Sequence</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;Scan&quot;</span><span class="p">)</span>
+    <span class="n">is_scan_requested</span> <span class="o">=</span> <span class="n">py_trees</span><span class="o">.</span><span class="n">blackboard</span><span class="o">.</span><span class="n">CheckBlackboardVariable</span><span class="p">(</span>
+        <span class="n">name</span><span class="o">=</span><span class="s2">&quot;Scan?&quot;</span><span class="p">,</span>
+        <span class="n">variable_name</span><span class="o">=</span><span class="s1">&#39;event_scan_button&#39;</span><span class="p">,</span>
+        <span class="n">expected_value</span><span class="o">=</span><span class="bp">True</span>
+    <span class="p">)</span>
+    <span class="n">scan_preempt</span> <span class="o">=</span> <span class="n">py_trees</span><span class="o">.</span><span class="n">composites</span><span class="o">.</span><span class="n">Selector</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;Preempt?&quot;</span><span class="p">)</span>
+    <span class="n">is_scan_requested_two</span> <span class="o">=</span> <span class="n">py_trees</span><span class="o">.</span><span class="n">meta</span><span class="o">.</span><span class="n">success_is_running</span><span class="p">(</span><span class="n">py_trees</span><span class="o">.</span><span class="n">blackboard</span><span class="o">.</span><span class="n">CheckBlackboardVariable</span><span class="p">)(</span>
+        <span class="n">name</span><span class="o">=</span><span class="s2">&quot;Scan?&quot;</span><span class="p">,</span>
+        <span class="n">variable_name</span><span class="o">=</span><span class="s1">&#39;event_scan_button&#39;</span><span class="p">,</span>
+<span class="hll">        <span class="n">expected_value</span><span class="o">=</span><span class="bp">True</span>
+</span>    <span class="p">)</span>
+    <span class="n">scanning</span> <span class="o">=</span> <span class="n">py_trees</span><span class="o">.</span><span class="n">composites</span><span class="o">.</span><span class="n">Parallel</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;Scanning&quot;</span><span class="p">,</span> <span class="n">policy</span><span class="o">=</span><span class="n">py_trees</span><span class="o">.</span><span class="n">common</span><span class="o">.</span><span class="n">ParallelPolicy</span><span class="o">.</span><span class="n">SUCCESS_ON_ONE</span><span class="p">)</span>
+    <span class="n">scan_context_switch</span> <span class="o">=</span> <span class="n">py_trees_ros</span><span class="o">.</span><span class="n">tutorials</span><span class="o">.</span><span class="n">behaviours</span><span class="o">.</span><span class="n">ScanContext</span><span class="p">(</span><span class="s2">&quot;Context Switch&quot;</span><span class="p">)</span>
+    <span class="n">scan_rotate</span> <span class="o">=</span> <span class="n">py_trees_ros</span><span class="o">.</span><span class="n">actions</span><span class="o">.</span><span class="n">ActionClient</span><span class="p">(</span>
+        <span class="n">name</span><span class="o">=</span><span class="s2">&quot;Rotate&quot;</span><span class="p">,</span>
+        <span class="n">action_namespace</span><span class="o">=</span><span class="s2">&quot;/rotate&quot;</span><span class="p">,</span>
+        <span class="n">action_spec</span><span class="o">=</span><span class="n">py_trees_msgs</span><span class="o">.</span><span class="n">RotateAction</span><span class="p">,</span>
+        <span class="n">action_goal</span><span class="o">=</span><span class="n">py_trees_msgs</span><span class="o">.</span><span class="n">RotateGoal</span><span class="p">()</span>
+    <span class="p">)</span>
+    <span class="n">scan_flash_blue</span> <span class="o">=</span> <span class="n">py_trees_ros</span><span class="o">.</span><span class="n">tutorials</span><span class="o">.</span><span class="n">behaviours</span><span class="o">.</span><span class="n">FlashLedStrip</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;Flash Blue&quot;</span><span class="p">,</span> <span class="n">colour</span><span class="o">=</span><span class="s2">&quot;blue&quot;</span><span class="p">)</span>
+    <span class="n">scan_celebrate</span> <span class="o">=</span> <span class="n">py_trees</span><span class="o">.</span><span class="n">composites</span><span class="o">.</span><span class="n">Parallel</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;Celebrate&quot;</span><span class="p">,</span> <span class="n">policy</span><span class="o">=</span><span class="n">py_trees</span><span class="o">.</span><span class="n">common</span><span class="o">.</span><span class="n">ParallelPolicy</span><span class="o">.</span><span class="n">SUCCESS_ON_ONE</span><span class="p">)</span>
+    <span class="n">scan_flash_green</span> <span class="o">=</span> <span class="n">py_trees_ros</span><span class="o">.</span><span class="n">tutorials</span><span class="o">.</span><span class="n">behaviours</span><span class="o">.</span><span class="n">FlashLedStrip</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;Flash Green&quot;</span><span class="p">,</span> <span class="n">colour</span><span class="o">=</span><span class="s2">&quot;green&quot;</span><span class="p">)</span>
+    <span class="n">scan_pause</span> <span class="o">=</span> <span class="n">py_trees</span><span class="o">.</span><span class="n">timers</span><span class="o">.</span><span class="n">Timer</span><span class="p">(</span><span class="s2">&quot;Pause&quot;</span><span class="p">,</span> <span class="n">duration</span><span class="o">=</span><span class="mf">3.0</span><span class="p">)</span>
+    <span class="n">idle</span> <span class="o">=</span> <span class="n">py_trees</span><span class="o">.</span><span class="n">behaviours</span><span class="o">.</span><span class="n">Running</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;Idle&quot;</span><span class="p">)</span>
+
+    <span class="c1"># tree</span>
+    <span class="n">root</span><span class="o">.</span><span class="n">add_children</span><span class="p">([</span><span class="n">topics2bb</span><span class="p">,</span> <span class="n">priorities</span><span class="p">])</span>
+    <span class="n">topics2bb</span><span class="o">.</span><span class="n">add_children</span><span class="p">([</span><span class="n">scan2bb</span><span class="p">,</span> <span class="n">battery2bb</span><span class="p">])</span>
+    <span class="n">priorities</span><span class="o">.</span><span class="n">add_children</span><span class="p">([</span><span class="n">battery_check</span><span class="p">,</span> <span class="n">scan</span><span class="p">,</span> <span class="n">idle</span><span class="p">])</span>
+<span class="hll">    <span class="n">battery_check</span><span class="o">.</span><span class="n">add_children</span><span class="p">([</span><span class="n">is_battery_ok</span><span class="p">,</span> <span class="n">flash_led_strip</span><span class="p">])</span>
+</span>    <span class="n">scan</span><span class="o">.</span><span class="n">add_children</span><span class="p">([</span><span class="n">is_scan_requested</span><span class="p">,</span> <span class="n">scan_preempt</span><span class="p">,</span> <span class="n">scan_celebrate</span><span class="p">])</span>
+    <span class="n">scan_preempt</span><span class="o">.</span><span class="n">add_children</span><span class="p">([</span><span class="n">is_scan_requested_two</span><span class="p">,</span> <span class="n">scanning</span><span class="p">])</span>
+</pre></div>
+</td></tr></table></div>
+</div>
+<p><strong>Context Switch</strong></p>
+<p class="graphviz">
+<img src="_images/graphviz-679f71eb4daa71340ff067b4b398ee92b0148ccd.png" alt="digraph tutorial {
+graph [fontname=&quot;times-roman&quot;];
+node [fontname=&quot;times-roman&quot;];
+edge [fontname=&quot;times-roman&quot;];
+Scanning [fillcolor=gold, fontcolor=black, fontsize=11, shape=note, style=filled];
+&quot;Context Switch&quot; [fillcolor=gray, fontcolor=black, fontsize=11, shape=ellipse, style=filled];
+Scanning -&gt; &quot;Context Switch&quot;;
+Rotate [fillcolor=gray, fontcolor=black, fontsize=11, shape=ellipse, style=filled];
+Scanning -&gt; Rotate;
+&quot;Flash Blue&quot; [fillcolor=gray, fontcolor=black, fontsize=11, shape=ellipse, style=filled];
+Scanning -&gt; &quot;Flash Blue&quot;;
+}" />
+</p>
+<p>The context switch is embedded beneath a parallel. Context will be cached
+and reconfigured upon entry to the context and reset when the parallel
+finalises or is interrupted from above.</p>
+</div>
+<div class="section" id="id15">
+<h3>Behaviours<a class="headerlink" href="#id15" title="Permalink to this headline">¶</a></h3>
+<p>Introducing the scan context behaviour!</p>
+<div class="literal-block-wrapper container" id="py-trees-ros-tutorials-behaviours-py-scan-context">
+<div class="code-block-caption"><span class="caption-text">py_trees_ros/tutorials/behaviours.py#scan_context</span><a class="headerlink" href="#py-trees-ros-tutorials-behaviours-py-scan-context" title="Permalink to this code">¶</a></div>
+<div class="highlight-python"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre> 1
+ 2
+ 3
+ 4
+ 5
+ 6
+ 7
+ 8
+ 9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31
+32
+33
+34
+35
+36
+37
+38
+39
+40
+41
+42
+43
+44
+45
+46
+47
+48
+49
+50
+51
+52
+53
+54
+55
+56
+57
+58
+59
+60
+61
+62
+63
+64
+65
+66
+67
+68
+69
+70
+71
+72
+73
+74
+75
+76
+77
+78
+79
+80
+81
+82
+83
+84
+85
+86
+87
+88</pre></div></td><td class="code"><div class="highlight"><pre><span class="k">class</span> <span class="nc">ScanContext</span><span class="p">(</span><span class="n">py_trees</span><span class="o">.</span><span class="n">behaviour</span><span class="o">.</span><span class="n">Behaviour</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    This behavoiur simply shoots a command off to the LEDStrip to flash</span>
+<span class="sd">    a certain colour and returns :attr:`~py_trees.common.Status.RUNNING`.</span>
+<span class="sd">    Note that this behaviour will never return with</span>
+<span class="sd">    :attr:`~py_trees.common.Status.SUCCESS` but will send a clearing</span>
+<span class="sd">    command to the LEDStrip if it is cancelled or interrupted by a higher</span>
+<span class="sd">    priority behaviour.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        name (:obj:`str`): name of the behaviour</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">ScanContext</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">initialised</span> <span class="o">=</span> <span class="bp">False</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_namespaces</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;safety_sensors&quot;</span><span class="p">,</span>
+                            <span class="s2">&quot;rotate&quot;</span><span class="p">,</span>
+                            <span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_dynamic_reconfigure_clients</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_namespaces</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_dynamic_reconfigure_clients</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_dynamic_reconfigure_configurations</span> <span class="o">=</span> <span class="p">{}</span>
+
+    <span class="k">def</span> <span class="nf">setup</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">timeout</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Try and connect to the dynamic reconfigure server on the various namespaces.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">%s</span><span class="s2">.setup()&quot;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">__class__</span><span class="o">.</span><span class="n">__name__</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">namespace</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_namespaces</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_dynamic_reconfigure_clients</span><span class="p">[</span><span class="n">namespace</span><span class="p">]:</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_dynamic_reconfigure_clients</span><span class="p">[</span><span class="n">namespace</span><span class="p">]</span> <span class="o">=</span> <span class="n">dynamic_reconfigure</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">Client</span><span class="p">(</span>
+                        <span class="n">name</span><span class="o">=</span><span class="n">namespace</span><span class="p">,</span>
+                        <span class="n">timeout</span><span class="o">=</span><span class="n">timeout</span>
+                    <span class="p">)</span>
+                <span class="k">except</span> <span class="n">rospy</span><span class="o">.</span><span class="n">ROSException</span><span class="p">:</span>
+                    <span class="n">rospy</span><span class="o">.</span><span class="n">logwarn</span><span class="p">(</span><span class="s2">&quot;ScanContext [</span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">+</span> <span class="s2">&quot;]: could not connect to dynamic reconfigure server [</span><span class="si">%s</span><span class="s2">][</span><span class="si">%s</span><span class="s2"> secs]&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">namespace</span><span class="p">,</span> <span class="n">timeout</span><span class="p">))</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">feedback_message</span> <span class="o">=</span> <span class="s2">&quot;could not connect to dynamic reconfigure server [</span><span class="si">%s</span><span class="s2">][</span><span class="si">%s</span><span class="s2"> secs]&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">namespace</span><span class="p">,</span> <span class="n">timeout</span><span class="p">)</span>
+                    <span class="k">return</span> <span class="bp">False</span>
+        <span class="k">return</span> <span class="bp">True</span>
+
+    <span class="k">def</span> <span class="nf">initialise</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get various dyn reconf configurations and cache/set the new variables.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">%s</span><span class="s2">.initialise()&quot;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">__class__</span><span class="o">.</span><span class="n">__name__</span><span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">client</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_dynamic_reconfigure_clients</span><span class="o">.</span><span class="n">iteritems</span><span class="p">():</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_dynamic_reconfigure_configurations</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">get_configuration</span><span class="p">()</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">safety_sensors_enable</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_dynamic_reconfigure_configurations</span><span class="p">[</span><span class="s2">&quot;safety_sensors&quot;</span><span class="p">][</span><span class="s2">&quot;enable&quot;</span><span class="p">]</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_dynamic_reconfigure_clients</span><span class="p">[</span><span class="s2">&quot;safety_sensors&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">update_configuration</span><span class="p">({</span><span class="s2">&quot;enable&quot;</span><span class="p">:</span> <span class="bp">True</span><span class="p">})</span>
+        <span class="k">except</span> <span class="n">dynamic_reconfigure</span><span class="o">.</span><span class="n">DynamicReconfigureParameterException</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">feedback_message</span> <span class="o">=</span> <span class="s2">&quot;failed to configure the &#39;enable&#39; parameter [safety_sensors]&quot;</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">initialised</span> <span class="o">=</span> <span class="bp">False</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">rotate_duration</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_dynamic_reconfigure_configurations</span><span class="p">[</span><span class="s2">&quot;rotate&quot;</span><span class="p">][</span><span class="s2">&quot;duration&quot;</span><span class="p">]</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_dynamic_reconfigure_clients</span><span class="p">[</span><span class="s2">&quot;rotate&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">update_configuration</span><span class="p">({</span><span class="s2">&quot;duration&quot;</span><span class="p">:</span> <span class="mf">8.0</span><span class="p">})</span>
+        <span class="k">except</span> <span class="n">dynamic_reconfigure</span><span class="o">.</span><span class="n">DynamicReconfigureParameterException</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">feedback_message</span> <span class="o">=</span> <span class="s2">&quot;failed to configure the &#39;duration&#39; parameter [rotate]&quot;</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">initialised</span> <span class="o">=</span> <span class="bp">False</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">initialised</span> <span class="o">=</span> <span class="bp">True</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">feedback_message</span> <span class="o">=</span> <span class="s2">&quot;reconfigured the context for scanning&quot;</span>
+
+    <span class="k">def</span> <span class="nf">update</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">%s</span><span class="s2">.update()&quot;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">__class__</span><span class="o">.</span><span class="n">__name__</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">initialised</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">py_trees</span><span class="o">.</span><span class="n">common</span><span class="o">.</span><span class="n">Status</span><span class="o">.</span><span class="n">FAILURE</span>
+        <span class="c1"># used under a parallel, never returns success</span>
+        <span class="k">return</span> <span class="n">py_trees</span><span class="o">.</span><span class="n">common</span><span class="o">.</span><span class="n">Status</span><span class="o">.</span><span class="n">RUNNING</span>
+
+    <span class="k">def</span> <span class="nf">terminate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">new_status</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Regardless of whether it succeeed or failed or is getting set to invalid we have to be absolutely</span>
+<span class="sd">        sure to reset the navi context.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">%s</span><span class="s2">.terminate(</span><span class="si">%s</span><span class="s2">)&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__class__</span><span class="o">.</span><span class="n">__name__</span><span class="p">,</span> <span class="s2">&quot;</span><span class="si">%s</span><span class="s2">-&gt;</span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">status</span><span class="p">,</span> <span class="n">new_status</span><span class="p">)</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">status</span> <span class="o">!=</span> <span class="n">new_status</span> <span class="k">else</span> <span class="s2">&quot;</span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">new_status</span><span class="p">))</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">initialised</span><span class="p">:</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_dynamic_reconfigure_clients</span><span class="p">[</span><span class="s2">&quot;safety_sensors&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">update_configuration</span><span class="p">({</span><span class="s2">&quot;enable&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">safety_sensors_enable</span><span class="p">})</span>
+            <span class="k">except</span> <span class="n">dynamic_reconfigure</span><span class="o">.</span><span class="n">DynamicReconfigureParameterException</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">feedback_message</span> <span class="o">=</span> <span class="s2">&quot;failed to reset the &#39;enable&#39; parameter [safety_sensors]&quot;</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_dynamic_reconfigure_clients</span><span class="p">[</span><span class="s2">&quot;rotate&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">update_configuration</span><span class="p">({</span><span class="s2">&quot;duration&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">rotate_duration</span><span class="p">})</span>
+            <span class="k">except</span> <span class="n">dynamic_reconfigure</span><span class="o">.</span><span class="n">DynamicReconfigureParameterException</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">feedback_message</span> <span class="o">=</span> <span class="s2">&quot;failed to reset the &#39;duration&#39; parameter [rotate]&quot;</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">initialised</span> <span class="o">=</span> <span class="bp">False</span>
+</pre></div>
+</td></tr></table></div>
+</div>
+<p>As you can see, all the action is happening in the <a class="reference external" href="http://py-trees.readthedocs.io/en/devel/modules.html#py_trees.behaviour.Behaviour.initialise" title="(in py_trees v0.5.8)"><code class="xref py py-meth docutils literal"><span class="pre">initialise()</span></code></a>
+and <a class="reference external" href="http://py-trees.readthedocs.io/en/devel/modules.html#py_trees.behaviour.Behaviour.terminate" title="(in py_trees v0.5.8)"><code class="xref py py-meth docutils literal"><span class="pre">terminate()</span></code></a> methods. This class is intended for use
+underneath a parallel with the action(s) that are designed to run in this context. This guarantees
+that the context is reset no matter whether the action(s) succeed or fail, or the parallel itself
+is interrupted from above.</p>
+</div>
+<div class="section" id="id16">
+<h3>Running<a class="headerlink" href="#id16" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-bash"><div class="highlight"><pre>$ roslaunch py_trees_ros tutorial_six.launch --screen
+</pre></div>
+</div>
+<p><strong>Playing with the Spaghetti</strong></p>
+<ul class="simple">
+<li>Watch the the rotate and safety_sensor namespaces in rqt_reconfigure</li>
+<li>Press the scan button to start a scan</li>
+<li>The <em>enable</em> and <em>duration</em> variables should change while running</li>
+<li>The <em>enable</em> and <em>duration</em> variables should reset to initial values when finished</li>
+</ul>
+<p>You can see in the diagrams below the relevant dynamic reconfigure variables
+switching as the context runs.</p>
+<img alt="_images/tutorial-six-before.png" src="_images/tutorial-six-before.png" />
+<img alt="_images/tutorial-six-during.png" src="_images/tutorial-six-during.png" />
+</div>
 </div>
 <div class="section" id="tutorial-7-dynamic-priority-branches">
 <span id="tutorial-dynamic"></span><h2>Tutorial 7 - Dynamic Priority Branches<a class="headerlink" href="#tutorial-7-dynamic-priority-branches" title="Permalink to this headline">¶</a></h2>
@@ -1258,7 +1681,7 @@ for details on when/how you might wish to extend this.</p>
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'./',
-            VERSION:'0.5.0',
+            VERSION:'0.5.2',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
             HAS_SOURCE:  true

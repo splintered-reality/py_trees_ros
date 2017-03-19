@@ -24,6 +24,7 @@ following features:
 * LED Strip
 * Move Base Action Server
 * Rotation Action Server
+* Safety Sensors Pipeline
 
 This :term:`mock` robot could just as easily be replaced by a gazebo
 simulated robot or even real robot with the same ROS API
@@ -155,10 +156,13 @@ Tutorial 5 - Action Clients
     :synopsis: action client behaviours and a manually triggered work priority branch
 
 
-.. _tutorial-abort:
+.. _tutorial-context-switching:
 
-Tutorial 6 - Global Abort Branch
---------------------------------
+Tutorial 6 - Context Switching
+------------------------------
+
+.. automodule:: py_trees_ros.tutorials.six
+    :synopsis: adding a context switch around an action(s)
 
 .. _tutorial-dynamic:
 

@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>py_trees_ros.mock.action_server &mdash; py_trees_ros 0.5.0 documentation</title>
+  <title>py_trees_ros.mock.action_server &mdash; py_trees_ros 0.5.2 documentation</title>
   
 
   
@@ -30,7 +30,7 @@
   
 
   
-    <link rel="top" title="py_trees_ros 0.5.0 documentation" href="../../../index.html"/>
+    <link rel="top" title="py_trees_ros 0.5.2 documentation" href="../../../index.html"/>
         <link rel="up" title="Module code" href="../../index.html"/> 
 
   
@@ -59,7 +59,7 @@
             
             
               <div class="version">
-                0.5.0
+                0.5.2
               </div>
             
           
@@ -160,7 +160,10 @@
 <span class="c1">##############################################################################</span>
 
 <span class="kn">import</span> <span class="nn">actionlib</span>
+<span class="kn">import</span> <span class="nn">dynamic_reconfigure.server</span>
 <span class="kn">import</span> <span class="nn">rospy</span>
+
+<span class="kn">from</span> <span class="nn">py_trees_msgs.cfg</span> <span class="kn">import</span> <span class="n">MockActionServerConfig</span>
 
 <span class="c1">##############################################################################</span>
 <span class="c1"># Classes</span>
@@ -172,14 +175,18 @@
 <span class="sd">    Generic action server that can be subclassed to quickly create action</span>
 <span class="sd">    servers of varying types in a mock simulation.</span>
 
+<span class="sd">    Dynamic Reconfigure:</span>
+<span class="sd">        * **~duration** (:obj:`float`)</span>
+
+<span class="sd">          * reonfigure the duration to be used for the next goal execution</span>
+
 <span class="sd">    Args:</span>
 <span class="sd">        action_name (:obj:`str`): name of the action server (e.g. move_base)</span>
 <span class="sd">        action_type (:obj:`any`): type of the action server (e.g. move_base_msgs.msg.MoveBaseAction</span>
 <span class="sd">        worker (:obj:`func`): callback to be executed inside the execute loop, no args</span>
-<span class="sd">        duration (:obj:`int`): time for a goal to complete (seconds)</span>
+<span class="sd">        duration (:obj:`float`): forcibly override the dyn reconf time for a goal to complete (seconds)</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">action_name</span><span class="p">,</span> <span class="n">action_type</span><span class="p">,</span> <span class="n">worker</span><span class="p">,</span> <span class="n">duration</span><span class="o">=</span><span class="mi">5</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">duration</span> <span class="o">=</span> <span class="n">duration</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">action_name</span><span class="p">,</span> <span class="n">action_type</span><span class="p">,</span> <span class="n">worker</span><span class="p">,</span> <span class="n">duration</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">worker</span> <span class="o">=</span> <span class="n">worker</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">action_server</span> <span class="o">=</span> <span class="n">actionlib</span><span class="o">.</span><span class="n">SimpleActionServer</span><span class="p">(</span><span class="n">action_name</span><span class="p">,</span>
                                                           <span class="n">action_type</span><span class="p">,</span>
@@ -189,6 +196,27 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">percent_completed</span> <span class="o">=</span> <span class="mi">0</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">title</span> <span class="o">=</span> <span class="n">action_name</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;_&#39;</span><span class="p">,</span> <span class="s1">&#39; &#39;</span><span class="p">)</span><span class="o">.</span><span class="n">title</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">action</span> <span class="o">=</span> <span class="n">action_type</span><span class="p">()</span>
+
+        <span class="c1"># dynamic reconfigure</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="c1"># note this instantiation will automatically trigger the callback, so</span>
+        <span class="c1"># self.parameters *will* get initialised</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dynamic_reconfigure_server</span> <span class="o">=</span> <span class="n">dynamic_reconfigure</span><span class="o">.</span><span class="n">server</span><span class="o">.</span><span class="n">Server</span><span class="p">(</span>
+            <span class="n">MockActionServerConfig</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">dynamic_reconfigure_callback</span>
+        <span class="p">)</span>
+        <span class="c1"># forcibly override the default/rosparam configured duration</span>
+        <span class="k">if</span> <span class="n">duration</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">dynamic_reconfigure_server</span><span class="o">.</span><span class="n">update_configuration</span><span class="p">({</span><span class="s2">&quot;duration&quot;</span><span class="p">:</span> <span class="n">duration</span><span class="p">})</span>
+
+<div class="viewcode-block" id="ActionServer.dynamic_reconfigure_callback"><a class="viewcode-back" href="../../../modules.html#py_trees_ros.mock.action_server.ActionServer.dynamic_reconfigure_callback">[docs]</a>    <span class="k">def</span> <span class="nf">dynamic_reconfigure_callback</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config</span><span class="p">,</span> <span class="n">unused_level</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Args:</span>
+<span class="sd">            config (:obj:`dynamic_reconfigure.encoding.Config`): incoming configuration</span>
+<span class="sd">            level (:obj:`int`):</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span> <span class="o">=</span> <span class="n">config</span>
+        <span class="k">return</span> <span class="n">config</span></div>
 
 <div class="viewcode-block" id="ActionServer.start"><a class="viewcode-back" href="../../../modules.html#py_trees_ros.mock.action_server.ActionServer.start">[docs]</a>    <span class="k">def</span> <span class="nf">start</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -206,7 +234,7 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="c1"># goal.target_pose = don&#39;t care</span>
         <span class="n">frequency</span> <span class="o">=</span> <span class="mf">3.0</span>  <span class="c1"># hz</span>
-        <span class="n">increment</span> <span class="o">=</span> <span class="mi">100</span> <span class="o">/</span> <span class="p">(</span><span class="n">frequency</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">duration</span><span class="p">)</span>
+        <span class="n">increment</span> <span class="o">=</span> <span class="mi">100</span> <span class="o">/</span> <span class="p">(</span><span class="n">frequency</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">duration</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">percent_completed</span> <span class="o">=</span> <span class="mi">0</span>
         <span class="n">rate</span> <span class="o">=</span> <span class="n">rospy</span><span class="o">.</span><span class="n">Rate</span><span class="p">(</span><span class="n">frequency</span><span class="p">)</span>  <span class="c1"># hz</span>
         <span class="n">rospy</span><span class="o">.</span><span class="n">loginfo</span><span class="p">(</span><span class="s2">&quot;{title}: received a goal&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">title</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">title</span><span class="p">))</span>
@@ -261,7 +289,7 @@
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'../../../',
-            VERSION:'0.5.0',
+            VERSION:'0.5.2',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
             HAS_SOURCE:  true

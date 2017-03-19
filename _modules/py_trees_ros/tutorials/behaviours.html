@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>py_trees_ros.tutorials.behaviours &mdash; py_trees_ros 0.5.0 documentation</title>
+  <title>py_trees_ros.tutorials.behaviours &mdash; py_trees_ros 0.5.2 documentation</title>
   
 
   
@@ -30,7 +30,7 @@
   
 
   
-    <link rel="top" title="py_trees_ros 0.5.0 documentation" href="../../../index.html"/>
+    <link rel="top" title="py_trees_ros 0.5.2 documentation" href="../../../index.html"/>
         <link rel="up" title="Module code" href="../../index.html"/> 
 
   
@@ -59,7 +59,7 @@
             
             
               <div class="version">
-                0.5.0
+                0.5.2
               </div>
             
           
@@ -159,6 +159,7 @@
 <span class="c1"># Imports</span>
 <span class="c1">##############################################################################</span>
 
+<span class="kn">import</span> <span class="nn">dynamic_reconfigure.client</span>
 <span class="kn">import</span> <span class="nn">py_trees</span>
 <span class="kn">import</span> <span class="nn">rospy</span>
 <span class="kn">import</span> <span class="nn">std_msgs.msg</span> <span class="kn">as</span> <span class="nn">std_msgs</span>
@@ -219,6 +220,96 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">publisher</span><span class="o">.</span><span class="n">publish</span><span class="p">(</span><span class="n">std_msgs</span><span class="o">.</span><span class="n">String</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">))</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">feedback_message</span> <span class="o">=</span> <span class="s2">&quot;cleared&quot;</span></div></div>
+
+
+<div class="viewcode-block" id="ScanContext"><a class="viewcode-back" href="../../../modules.html#py_trees_ros.tutorials.behaviours.ScanContext">[docs]</a><span class="k">class</span> <span class="nc">ScanContext</span><span class="p">(</span><span class="n">py_trees</span><span class="o">.</span><span class="n">behaviour</span><span class="o">.</span><span class="n">Behaviour</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    This behavoiur simply shoots a command off to the LEDStrip to flash</span>
+<span class="sd">    a certain colour and returns :attr:`~py_trees.common.Status.RUNNING`.</span>
+<span class="sd">    Note that this behaviour will never return with</span>
+<span class="sd">    :attr:`~py_trees.common.Status.SUCCESS` but will send a clearing</span>
+<span class="sd">    command to the LEDStrip if it is cancelled or interrupted by a higher</span>
+<span class="sd">    priority behaviour.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        name (:obj:`str`): name of the behaviour</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">ScanContext</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">initialised</span> <span class="o">=</span> <span class="bp">False</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_namespaces</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;safety_sensors&quot;</span><span class="p">,</span>
+                            <span class="s2">&quot;rotate&quot;</span><span class="p">,</span>
+                            <span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_dynamic_reconfigure_clients</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_namespaces</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_dynamic_reconfigure_clients</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_dynamic_reconfigure_configurations</span> <span class="o">=</span> <span class="p">{}</span>
+
+<div class="viewcode-block" id="ScanContext.setup"><a class="viewcode-back" href="../../../modules.html#py_trees_ros.tutorials.behaviours.ScanContext.setup">[docs]</a>    <span class="k">def</span> <span class="nf">setup</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">timeout</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Try and connect to the dynamic reconfigure server on the various namespaces.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">%s</span><span class="s2">.setup()&quot;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">__class__</span><span class="o">.</span><span class="n">__name__</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">namespace</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_namespaces</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_dynamic_reconfigure_clients</span><span class="p">[</span><span class="n">namespace</span><span class="p">]:</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_dynamic_reconfigure_clients</span><span class="p">[</span><span class="n">namespace</span><span class="p">]</span> <span class="o">=</span> <span class="n">dynamic_reconfigure</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">Client</span><span class="p">(</span>
+                        <span class="n">name</span><span class="o">=</span><span class="n">namespace</span><span class="p">,</span>
+                        <span class="n">timeout</span><span class="o">=</span><span class="n">timeout</span>
+                    <span class="p">)</span>
+                <span class="k">except</span> <span class="n">rospy</span><span class="o">.</span><span class="n">ROSException</span><span class="p">:</span>
+                    <span class="n">rospy</span><span class="o">.</span><span class="n">logwarn</span><span class="p">(</span><span class="s2">&quot;ScanContext [</span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">+</span> <span class="s2">&quot;]: could not connect to dynamic reconfigure server [</span><span class="si">%s</span><span class="s2">][</span><span class="si">%s</span><span class="s2"> secs]&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">namespace</span><span class="p">,</span> <span class="n">timeout</span><span class="p">))</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">feedback_message</span> <span class="o">=</span> <span class="s2">&quot;could not connect to dynamic reconfigure server [</span><span class="si">%s</span><span class="s2">][</span><span class="si">%s</span><span class="s2"> secs]&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">namespace</span><span class="p">,</span> <span class="n">timeout</span><span class="p">)</span>
+                    <span class="k">return</span> <span class="bp">False</span>
+        <span class="k">return</span> <span class="bp">True</span></div>
+
+<div class="viewcode-block" id="ScanContext.initialise"><a class="viewcode-back" href="../../../modules.html#py_trees_ros.tutorials.behaviours.ScanContext.initialise">[docs]</a>    <span class="k">def</span> <span class="nf">initialise</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get various dyn reconf configurations and cache/set the new variables.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">%s</span><span class="s2">.initialise()&quot;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">__class__</span><span class="o">.</span><span class="n">__name__</span><span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">client</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_dynamic_reconfigure_clients</span><span class="o">.</span><span class="n">iteritems</span><span class="p">():</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_dynamic_reconfigure_configurations</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">get_configuration</span><span class="p">()</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">safety_sensors_enable</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_dynamic_reconfigure_configurations</span><span class="p">[</span><span class="s2">&quot;safety_sensors&quot;</span><span class="p">][</span><span class="s2">&quot;enable&quot;</span><span class="p">]</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_dynamic_reconfigure_clients</span><span class="p">[</span><span class="s2">&quot;safety_sensors&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">update_configuration</span><span class="p">({</span><span class="s2">&quot;enable&quot;</span><span class="p">:</span> <span class="bp">True</span><span class="p">})</span>
+        <span class="k">except</span> <span class="n">dynamic_reconfigure</span><span class="o">.</span><span class="n">DynamicReconfigureParameterException</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">feedback_message</span> <span class="o">=</span> <span class="s2">&quot;failed to configure the &#39;enable&#39; parameter [safety_sensors]&quot;</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">initialised</span> <span class="o">=</span> <span class="bp">False</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">rotate_duration</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_dynamic_reconfigure_configurations</span><span class="p">[</span><span class="s2">&quot;rotate&quot;</span><span class="p">][</span><span class="s2">&quot;duration&quot;</span><span class="p">]</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_dynamic_reconfigure_clients</span><span class="p">[</span><span class="s2">&quot;rotate&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">update_configuration</span><span class="p">({</span><span class="s2">&quot;duration&quot;</span><span class="p">:</span> <span class="mf">8.0</span><span class="p">})</span>
+        <span class="k">except</span> <span class="n">dynamic_reconfigure</span><span class="o">.</span><span class="n">DynamicReconfigureParameterException</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">feedback_message</span> <span class="o">=</span> <span class="s2">&quot;failed to configure the &#39;duration&#39; parameter [rotate]&quot;</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">initialised</span> <span class="o">=</span> <span class="bp">False</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">initialised</span> <span class="o">=</span> <span class="bp">True</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">feedback_message</span> <span class="o">=</span> <span class="s2">&quot;reconfigured the context for scanning&quot;</span></div>
+
+    <span class="k">def</span> <span class="nf">update</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">%s</span><span class="s2">.update()&quot;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">__class__</span><span class="o">.</span><span class="n">__name__</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">initialised</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">py_trees</span><span class="o">.</span><span class="n">common</span><span class="o">.</span><span class="n">Status</span><span class="o">.</span><span class="n">FAILURE</span>
+        <span class="c1"># used under a parallel, never returns success</span>
+        <span class="k">return</span> <span class="n">py_trees</span><span class="o">.</span><span class="n">common</span><span class="o">.</span><span class="n">Status</span><span class="o">.</span><span class="n">RUNNING</span>
+
+<div class="viewcode-block" id="ScanContext.terminate"><a class="viewcode-back" href="../../../modules.html#py_trees_ros.tutorials.behaviours.ScanContext.terminate">[docs]</a>    <span class="k">def</span> <span class="nf">terminate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">new_status</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Regardless of whether it succeeed or failed or is getting set to invalid we have to be absolutely</span>
+<span class="sd">        sure to reset the navi context.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">%s</span><span class="s2">.terminate(</span><span class="si">%s</span><span class="s2">)&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__class__</span><span class="o">.</span><span class="n">__name__</span><span class="p">,</span> <span class="s2">&quot;</span><span class="si">%s</span><span class="s2">-&gt;</span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">status</span><span class="p">,</span> <span class="n">new_status</span><span class="p">)</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">status</span> <span class="o">!=</span> <span class="n">new_status</span> <span class="k">else</span> <span class="s2">&quot;</span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">new_status</span><span class="p">))</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">initialised</span><span class="p">:</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_dynamic_reconfigure_clients</span><span class="p">[</span><span class="s2">&quot;safety_sensors&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">update_configuration</span><span class="p">({</span><span class="s2">&quot;enable&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">safety_sensors_enable</span><span class="p">})</span>
+            <span class="k">except</span> <span class="n">dynamic_reconfigure</span><span class="o">.</span><span class="n">DynamicReconfigureParameterException</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">feedback_message</span> <span class="o">=</span> <span class="s2">&quot;failed to reset the &#39;enable&#39; parameter [safety_sensors]&quot;</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_dynamic_reconfigure_clients</span><span class="p">[</span><span class="s2">&quot;rotate&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">update_configuration</span><span class="p">({</span><span class="s2">&quot;duration&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">rotate_duration</span><span class="p">})</span>
+            <span class="k">except</span> <span class="n">dynamic_reconfigure</span><span class="o">.</span><span class="n">DynamicReconfigureParameterException</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">feedback_message</span> <span class="o">=</span> <span class="s2">&quot;failed to reset the &#39;duration&#39; parameter [rotate]&quot;</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">initialised</span> <span class="o">=</span> <span class="bp">False</span></div></div>
 </pre></div>
 
            </div>
@@ -250,7 +341,7 @@
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'../../../',
-            VERSION:'0.5.0',
+            VERSION:'0.5.2',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
             HAS_SOURCE:  true
