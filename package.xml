@@ -34,6 +34,8 @@
   <exec_depend>sensor_msgs</exec_depend>
 
   <!-- core dependencies -->
+  <exec_depend>actionlib</exec_depend>
+  <exec_depend>actionlib_msgs</exec_depend>
   <exec_depend>py_trees_msgs</exec_depend>
   <exec_depend>python-rospkg</exec_depend>
   <exec_depend>rosbag</exec_depend>
