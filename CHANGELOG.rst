@@ -1,6 +1,10 @@
 Changelog
 =========
 
+0.5.2 (2017-03-19)
+------------------
+* [infra] add missing actionlib dependencies
+
 0.5.1 (2017-03-19)
 ------------------
 * [tutorials] 6 - context switching
