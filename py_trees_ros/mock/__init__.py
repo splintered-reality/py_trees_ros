@@ -18,3 +18,4 @@ from . import battery
 from . import led_strip
 from . import move_base
 from . import rotate
+from . import safety_sensors

@@ -1,0 +1,32 @@
+#!/usr/bin/env python
+#
+# License: BSD
+#   https://raw.githubusercontent.com/stonier/py_trees_ros/devel/LICENSE
+#
+##############################################################################
+# Documentation
+##############################################################################
+"""
+Instantiates a mock battery provider that can be controlled via
+dynamic reconfigure.
+"""
+##############################################################################
+# Imports
+##############################################################################
+
+import argparse
+import py_trees_ros
+import rospy
+import sys
+
+##############################################################################
+# Main
+##############################################################################
+
+if __name__ == '__main__':
+    parser = argparse.ArgumentParser(description='Mock a safety sensor pipeline')
+    command_line_args = rospy.myargv(argv=sys.argv)[1:]
+    unused_args = parser.parse_args(command_line_args)
+    rospy.init_node("safety_sensors")
+    safety_sensors = py_trees_ros.mock.safety_sensors.SafetySensors()
+    rospy.spin()

@@ -1,6 +1,0 @@
-<!--
-  To be used with py-trees-blackboard-watcher
--->
-<launch>
-  <node pkg="py_trees_ros" type="demo_exchange" name="demo_exchange"/>
-</launch>

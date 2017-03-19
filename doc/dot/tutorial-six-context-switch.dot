@@ -1,0 +1,12 @@
+digraph tutorial {
+graph [fontname="times-roman"];
+node [fontname="times-roman"];
+edge [fontname="times-roman"];
+Scanning [fillcolor=gold, fontcolor=black, fontsize=11, shape=note, style=filled];
+"Context Switch" [fillcolor=gray, fontcolor=black, fontsize=11, shape=ellipse, style=filled];
+Scanning -> "Context Switch";
+Rotate [fillcolor=gray, fontcolor=black, fontsize=11, shape=ellipse, style=filled];
+Scanning -> Rotate;
+"Flash Blue" [fillcolor=gray, fontcolor=black, fontsize=11, shape=ellipse, style=filled];
+Scanning -> "Flash Blue";
+}
