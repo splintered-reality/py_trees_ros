@@ -1,5 +1,5 @@
-New and Shiny
-=============
+Features
+========
 
 .. seealso::
     The :ref:`Tutorials <py-trees-ros-tutorials-section>` where most, if not

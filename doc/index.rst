@@ -15,7 +15,7 @@ Contents:
    :caption: Guide
 
    background
-   new_and_shiny
+   features
    tutorials
    terminology
    faq
