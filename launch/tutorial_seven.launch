@@ -1,0 +1,8 @@
+<launch>
+  <include file="$(find py_trees_ros)/launch/mock_robot.launch"/>
+  <node pkg="rqt_reconfigure" name="rqt_reconfigure" type="rqt_reconfigure"/>
+  <node pkg="rqt_py_trees" name="rqt_py_trees" type="rqt_py_trees"/>
+  <node pkg="py_trees_ros" name="dashboard" type="tutorial_dashboard"/>
+
+  <node pkg="py_trees_ros" name="tree" type="tutorial_tree" args="seven"/>
+</launch>

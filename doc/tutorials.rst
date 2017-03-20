@@ -22,6 +22,7 @@ following features:
 
 * Battery
 * LED Strip
+* Docking Action Server
 * Move Base Action Server
 * Rotation Action Server
 * Safety Sensors Pipeline
@@ -164,16 +165,24 @@ Tutorial 6 - Context Switching
 .. automodule:: py_trees_ros.tutorials.six
     :synopsis: adding a context switch around an action(s)
 
+.. _tutorial-full-scenario:
+
+Tutorial 7 - Docking, Cancelling & Failing
+------------------------------------------
+
+.. automodule:: py_trees_ros.tutorials.seven
+    :synopsis: full job subtree with docking, cancelling and failure notifications
+
 .. _tutorial-dynamic:
 
-Tutorial 7 - Dynamic Priority Branches
+Tutorial 8 - Dynamic Priority Branches
 --------------------------------------
 
 TODO
 
 .. _tutorial-bags:
 
-Tutorial 8 - Bags
+Tutorial 9 - Bags
 -----------------
 
 TODO - Visualisation handles and bagging, replaying (in running section)
