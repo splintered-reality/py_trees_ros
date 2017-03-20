@@ -28,7 +28,7 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Start one of the tutorials')
     parser.add_argument('name', action='store', nargs='?',
                         default='one',
-                        choices=['one', 'two', 'five', 'six'],
+                        choices=['one', 'two', 'five', 'six', 'seven', 'eight'],
                         help='name of the tutorial to start')
     command_line_args = rospy.myargv(argv=sys.argv)[1:]
     args = parser.parse_args(command_line_args)

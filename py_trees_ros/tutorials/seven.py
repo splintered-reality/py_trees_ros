@@ -11,84 +11,59 @@
 About
 ^^^^^
 
-This tutorial inserts a context switching behaviour to run in tandem
-with the scan rotation. It will reconfigure the rotation speed (to be
-slower) and enable a hypothetical safety sensor pipeline immediately
-prior to running the rotate action and subsequently reset the context
-to what it was before commencing upon termination (success/failure or
-interruption from above) of the scan.
+Round out the scan job subtree with:
 
-.. note::
+* docking/undocking
+* moving out and back to home on either side of the scan
+* cancel request handlers
+* failure notifications (flashing red)
 
-   This context switch could have easily been bundled into the
-   scan behaviour itself, however keeping it separate
-   promotes visibility and allows the scan behaviour to remain
-   eminently reusable. Context switches can tend to be quite
-   specific to a use case (i.e. not a behaviour).
+Nothing new here technically, this serves as a reasonable template from which
+to start your own job subtrees.
 
 Tree
 ^^^^
 
-.. graphviz:: dot/tutorial-six.dot
+.. graphviz:: dot/tutorial-seven.dot
 
-.. literalinclude:: ../py_trees_ros/tutorials/six.py
+.. literalinclude:: ../py_trees_ros/tutorials/seven.py
    :language: python
    :linenos:
-   :lines: 102-161
-   :emphasize-lines: 38,58
-   :caption: py_trees_ros/tutorials/six.py#create_root
+   :lines: 80-184
+   :caption: py_trees_ros/tutorials/seven.py#create_root
 
-**Context Switch**
+Tree Status Reports
+^^^^^^^^^^^^^^^^^^^
 
-.. graphviz:: dot/tutorial-six-context-switch.dot
+Of interest also here is the use of a post tick handler to do
+tree introspection and publish a status report. In this example
+the status report is very simple, it merely publishes whether
+it is "scanning", "cancelling" or is "idle'.
 
-The context switch is embedded beneath a parallel. Context will be cached
-and reconfigured upon entry to the context and reset when the parallel
-finalises or is interrupted from above.
-
-Behaviours
-^^^^^^^^^^
-
-Introducing the scan context behaviour!
-
-.. literalinclude:: ../py_trees_ros/tutorials/behaviours.py
+.. literalinclude:: ../py_trees_ros/tutorials/seven.py
    :language: python
    :linenos:
-   :lines: 81-168
-   :caption: py_trees_ros/tutorials/behaviours.py#scan_context
-
-As you can see, all the action is happening in the :meth:`~py_trees.behaviour.Behaviour.initialise`
-and :meth:`~py_trees.behaviour.Behaviour.terminate` methods. This class is intended for use
-underneath a parallel with the action(s) that are designed to run in this context. This guarantees
-that the context is reset no matter whether the action(s) succeed or fail, or the parallel itself
-is interrupted from above.
+   :lines: 187-211
+   :caption: py_trees_ros/tutorials/seven.py#reality_report
 
 Running
 ^^^^^^^
 
 .. code-block:: bash
 
-    $ roslaunch py_trees_ros tutorial_six.launch --screen
+    $ roslaunch py_trees_ros tutorial_seven.launch --screen
 
 **Playing with the Spaghetti**
 
-* Watch the the rotate and safety_sensor namespaces in rqt_reconfigure
 * Press the scan button to start a scan
-* The *enable* and *duration* variables should change while running
-* The *enable* and *duration* variables should reset to initial values when finished
-
-You can see in the diagrams below the relevant dynamic reconfigure variables
-switching as the context runs.
-
-.. image:: images/tutorial-six-before.png
-
-.. image:: images/tutorial-six-during.png
+* Pre-empting no longer works, press the cancel button to interrupt a scan
 """
 
 ##############################################################################
 # Imports
 ##############################################################################
 
+import move_base_msgs.msg as move_base_msgs
 import py_trees
 import py_trees_ros
 import py_trees.console as console
@@ -111,6 +86,11 @@ def create_root():
         topic_name="/dashboard/scan",
         variable_name="event_scan_button"
     )
+    cancel2bb = py_trees_ros.subscribers.EventToBlackboard(
+        name="Cancel2BB",
+        topic_name="/dashboard/cancel",
+        variable_name="event_cancel_button"
+    )
     battery2bb = py_trees_ros.battery.ToBlackboard(name="Battery2BB",
                                                    topic_name="/battery/state",
                                                    threshold=30.0
@@ -125,18 +105,42 @@ def create_root():
     flash_led_strip = py_trees_ros.tutorials.behaviours.FlashLedStrip(
         name="Flash Red",
         colour="red")
-
     scan = py_trees.composites.Sequence(name="Scan")
     is_scan_requested = py_trees.blackboard.CheckBlackboardVariable(
         name="Scan?",
         variable_name='event_scan_button',
         expected_value=True
     )
-    scan_preempt = py_trees.composites.Selector(name="Preempt?")
-    is_scan_requested_two = py_trees.meta.success_is_running(py_trees.blackboard.CheckBlackboardVariable)(
-        name="Scan?",
-        variable_name='event_scan_button',
+    scan_or_die = py_trees.composites.Selector(name="Scan or Die")
+    die = py_trees_ros.tutorials.behaviours.FlashLedStrip(
+        name="Uh Oh",
+        colour="red")
+    ere_we_go = py_trees.composites.Sequence(name="Ere we Go")
+    undock = py_trees_ros.actions.ActionClient(
+        name="UnDock",
+        action_namespace="/dock",
+        action_spec=py_trees_msgs.DockAction,
+        action_goal=py_trees_msgs.DockGoal(False)
+    )
+    scan_or_be_cancelled = py_trees.composites.Selector("Scan or Be Cancelled")
+    cancelling = py_trees.composites.Sequence("Cancelling?")
+    is_cancel_requested = py_trees.blackboard.CheckBlackboardVariable(
+        name="Cancel?",
+        variable_name='event_cancel_button',
         expected_value=True
+    )
+    move_home_after_cancel = py_trees_ros.actions.ActionClient(
+        name="Move Home",
+        action_namespace="/move_base",
+        action_spec=move_base_msgs.MoveBaseAction,
+        action_goal=move_base_msgs.MoveBaseGoal()
+    )
+    move_out_and_scan = py_trees.composites.Sequence("Move Out and Scan")
+    move_base = py_trees_ros.actions.ActionClient(
+        name="Move Out",
+        action_namespace="/move_base",
+        action_spec=move_base_msgs.MoveBaseAction,
+        action_goal=move_base_msgs.MoveBaseGoal()
     )
     scanning = py_trees.composites.Parallel(name="Scanning", policy=py_trees.common.ParallelPolicy.SUCCESS_ON_ONE)
     scan_context_switch = py_trees_ros.tutorials.behaviours.ScanContext("Context Switch")
@@ -147,20 +151,36 @@ def create_root():
         action_goal=py_trees_msgs.RotateGoal()
     )
     scan_flash_blue = py_trees_ros.tutorials.behaviours.FlashLedStrip(name="Flash Blue", colour="blue")
-    scan_celebrate = py_trees.composites.Parallel(name="Celebrate", policy=py_trees.common.ParallelPolicy.SUCCESS_ON_ONE)
-    scan_flash_green = py_trees_ros.tutorials.behaviours.FlashLedStrip(name="Flash Green", colour="green")
-    scan_pause = py_trees.timers.Timer("Pause", duration=3.0)
+    move_home_after_scan = py_trees_ros.actions.ActionClient(
+        name="Move Home",
+        action_namespace="/move_base",
+        action_spec=move_base_msgs.MoveBaseAction,
+        action_goal=move_base_msgs.MoveBaseGoal()
+    )
+    celebrate = py_trees.composites.Parallel(name="Celebrate", policy=py_trees.common.ParallelPolicy.SUCCESS_ON_ONE)
+    celebrate_flash_green = py_trees_ros.tutorials.behaviours.FlashLedStrip(name="Flash Green", colour="green")
+    celebrate_pause = py_trees.timers.Timer("Pause", duration=3.0)
+    dock = py_trees_ros.actions.ActionClient(
+        name="Dock",
+        action_namespace="/dock",
+        action_spec=py_trees_msgs.DockAction,
+        action_goal=py_trees_msgs.DockGoal(True)
+    )
     idle = py_trees.behaviours.Running(name="Idle")
 
     # tree
     root.add_children([topics2bb, priorities])
-    topics2bb.add_children([scan2bb, battery2bb])
+    topics2bb.add_children([scan2bb, cancel2bb, battery2bb])
     priorities.add_children([battery_check, scan, idle])
     battery_check.add_children([is_battery_ok, flash_led_strip])
-    scan.add_children([is_scan_requested, scan_preempt, scan_celebrate])
-    scan_preempt.add_children([is_scan_requested_two, scanning])
+    scan.add_children([is_scan_requested, scan_or_die])
+    scan_or_die.add_children([ere_we_go, die])
+    ere_we_go.add_children([undock, scan_or_be_cancelled, dock, celebrate])
+    scan_or_be_cancelled.add_children([cancelling, move_out_and_scan])
+    cancelling.add_children([is_cancel_requested, move_home_after_cancel])
+    move_out_and_scan.add_children([move_base, scanning, move_home_after_scan])
     scanning.add_children([scan_context_switch, scan_rotate, scan_flash_blue])
-    scan_celebrate.add_children([scan_flash_green, scan_pause])
+    celebrate.add_children([celebrate_flash_green, celebrate_pause])
     return root
 
 
@@ -177,6 +197,8 @@ class SplinteredReality(object):
     def publish_reality_report(self, tree):
         if tree.tip().has_parent_with_name("Battery Emergency"):
             self.report_publsiher.publish("battery")
+        elif tree.tip().has_parent_with_name("Cancelling?"):
+            self.report_publisher.publish("cancelling")
         elif tree.tip().has_parent_with_name("Scan"):
             self.report_publisher.publish("scanning")
         else:

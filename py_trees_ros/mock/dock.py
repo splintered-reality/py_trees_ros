@@ -8,14 +8,13 @@
 ##############################################################################
 
 """
-Mocks a simple action server that rotates the robot 360 degrees.
+Mocks a docking controller.
 """
 
 ##############################################################################
 # Imports
 ##############################################################################
 
-import math
 import py_trees_msgs.msg as py_trees_msgs
 
 from . import action_server
@@ -25,23 +24,27 @@ from . import action_server
 ##############################################################################
 
 
-class Rotate(action_server.ActionServer):
+class Dock(action_server.ActionServer):
     """
-    Simple server that controls a full rotation of the robot.
-
-    Args:
-        rotation_rate (:obj:`float`): rate of rotation )rad/s)
+    Simple server that docks if the goal is true, undocks otherwise.
     """
-    def __init__(self, rotation_rate=1.57):
-        super(Rotate, self).__init__(action_name="rotate",
-                                     action_type=py_trees_msgs.RotateAction,
-                                     worker=self.worker,
-                                     duration=2.0 * math.pi / rotation_rate
-                                     )
+    def __init__(self):
+        super(Dock, self).__init__(action_name="dock",
+                                   action_type=py_trees_msgs.DockAction,
+                                   worker=self.worker,
+                                   goal_received_callback=self.goal_received_callback,
+                                   duration=2.0
+                                   )
         self.start()
+
+    def goal_received_callback(self, goal):
+        if goal.dock:
+            self.title = "Dock"
+        else:
+            self.title = "UnDock"
 
     def worker(self):
         """
         Create some appropriate feedback.
         """
-        self.action.action_feedback = 2 * math.pi * self.percent_completed / 100.0
+        self.action.action_feedback = py_trees_msgs.DockFeedback(self.percent_completed)

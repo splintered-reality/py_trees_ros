@@ -40,10 +40,12 @@ class ActionServer(object):
         action_name (:obj:`str`): name of the action server (e.g. move_base)
         action_type (:obj:`any`): type of the action server (e.g. move_base_msgs.msg.MoveBaseAction
         worker (:obj:`func`): callback to be executed inside the execute loop, no args
+        goal_recieved_callback(:obj:`func`): callback to be executed immediately upon receiving a goal
         duration (:obj:`float`): forcibly override the dyn reconf time for a goal to complete (seconds)
     """
-    def __init__(self, action_name, action_type, worker, duration=None):
+    def __init__(self, action_name, action_type, worker, goal_received_callback=None, duration=None):
         self.worker = worker
+        self.goal_received_callback = goal_received_callback
         self.action_server = actionlib.SimpleActionServer(action_name,
                                                           action_type,
                                                           execute_cb=self.execute,
@@ -88,6 +90,8 @@ class ActionServer(object):
         Args:
             goal (:obj:`any`): goal of type specified by the action_type in the constructor.
         """
+        if self.goal_received_callback:
+            self.goal_received_callback(goal)
         # goal.target_pose = don't care
         frequency = 3.0  # hz
         increment = 100 / (frequency * self.parameters.duration)

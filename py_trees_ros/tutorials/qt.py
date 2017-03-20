@@ -31,8 +31,8 @@ from python_qt_binding.QtWidgets import QWidget, QPushButton, QGridLayout, QSize
 
 class Dashboard(QWidget):
 
-    _go_button_led = Signal(bool)
-    _stop_button_led = Signal(bool)
+    _scan_button_led = Signal(bool)
+    _cancel_button_led = Signal(bool)
 
     def __init__(self):
         super(Dashboard, self).__init__()
@@ -41,26 +41,20 @@ class Dashboard(QWidget):
         # latched = True
         self.publishers = py_trees_ros.utilities.Publishers(
             [
-                ('go', "~go", std_msgs.Empty, not_latched, 1),
                 ('scan', "~scan", std_msgs.Empty, not_latched, 1),
-                ('abort', "~abort", std_msgs.Empty, not_latched, 1),
+                ('cancel', "~cancel", std_msgs.Empty, not_latched, 1),
             ]
         )
-
-        self.go_push_button = QPushButton("Go")
-        self.go_push_button.setStyleSheet("QPushButton { font-size: 30pt; }")
-        self.go_push_button.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
-        self.go_push_button.pressed.connect(functools.partial(self.publish_button_message, self.publishers.go))
 
         self.scan_push_button = QPushButton("Scan")
         self.scan_push_button.setStyleSheet("QPushButton { font-size: 30pt; }")
         self.scan_push_button.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
         self.scan_push_button.pressed.connect(functools.partial(self.publish_button_message, self.publishers.scan))
 
-        self.abort_push_button = QPushButton("Abort")
-        self.abort_push_button.setStyleSheet("QPushButton { font-size: 30pt; }")
-        self.abort_push_button.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
-        self.abort_push_button.pressed.connect(functools.partial(self.publish_button_message, self.publishers.abort))
+        self.cancel_push_button = QPushButton("Cancel")
+        self.cancel_push_button.setStyleSheet("QPushButton { font-size: 30pt; }")
+        self.cancel_push_button.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
+        self.cancel_push_button.pressed.connect(functools.partial(self.publish_button_message, self.publishers.cancel))
 
         self.led_strip_flashing = False
         self.led_strip_on_count = 1
@@ -75,13 +69,13 @@ class Dashboard(QWidget):
         self.led_strip_label.setStyleSheet("background-color: %s; font-size: 30pt;" % self.led_strip_colour)
 
         self.hbox_layout = QGridLayout(self)
-        self.hbox_layout.addWidget(self.go_push_button)
         self.hbox_layout.addWidget(self.scan_push_button)
-        self.hbox_layout.addWidget(self.abort_push_button)
+        self.hbox_layout.addWidget(self.cancel_push_button)
         self.hbox_layout.addWidget(self.led_strip_label)
 
         self.subscribers = py_trees_ros.utilities.Subscribers(
             [
+                ("report", "/tree/report", std_msgs.String, self.reality_report_callback),
                 ("led_strip", "/led_strip/display", std_msgs.String, self.led_strip_display_callback)
             ]
         )
@@ -89,6 +83,32 @@ class Dashboard(QWidget):
 
     def publish_button_message(self, publisher):
         publisher.publish(std_msgs.Empty())
+
+    def reality_report_callback(self, msg):
+        if msg.data == "cancelling":
+            self.set_scanning_colour(False)
+            self.set_cancelling_colour(True)
+            self.cancel_push_button.setEnabled(True)
+        elif msg.data == "scanning":
+            self.set_scanning_colour(True)
+            self.set_cancelling_colour(False)
+            self.cancel_push_button.setEnabled(True)
+        else:
+            self.set_scanning_colour(False)
+            self.set_cancelling_colour(False)
+            self.cancel_push_button.setEnabled(False)
+
+    def set_cancelling_colour(self, val):
+        if val:
+            self.cancel_push_button.setStyleSheet("QPushButton { font-size: 30pt; background-color: red}")
+        else:
+            self.cancel_push_button.setStyleSheet("QPushButton { font-size: 30pt; }")
+
+    def set_scanning_colour(self, val):
+        if val:
+            self.scan_push_button.setStyleSheet("QPushButton { font-size: 30pt; background-color: green}")
+        else:
+            self.scan_push_button.setStyleSheet("QPushButton { font-size: 30pt; }")
 
     def led_strip_display_callback(self, msg):
         with self.led_strip_lock:
