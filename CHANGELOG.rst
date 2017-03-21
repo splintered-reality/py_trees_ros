@@ -1,6 +1,11 @@
 Changelog
 =========
 
+0.5.3 (2017-03-21)
+------------------
+* [tutorials] 8 - dynamic loading, insertion and execution
+* [tutorials] 7 - docking, undocking, cancelling and recovery
+
 0.5.2 (2017-03-19)
 ------------------
 * [infra] add missing actionlib dependencies
