@@ -175,10 +175,11 @@ Tutorial 7 - Docking, Cancelling & Failing
 
 .. _tutorial-dynamic:
 
-Tutorial 8 - Dynamic Priority Branches
---------------------------------------
+Tutorial 8 - Dynamic Job Handling
+---------------------------------
 
-TODO
+.. automodule:: py_trees_ros.tutorials.eight
+    :synopsis: loading jobs specified at runtime and dynamically inserting job subtrees
 
 .. _tutorial-bags:
 

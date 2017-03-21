@@ -1,0 +1,24 @@
+digraph tutorial {
+graph [fontname="times-roman"];
+node [fontname="times-roman"];
+edge [fontname="times-roman"];
+Tutorial [fillcolor=gold, fontcolor=black, fontsize=11, shape=note, style=filled];
+Topics2BB [fillcolor=orange, fontcolor=black, fontsize=11, shape=box, style=filled];
+Tutorial -> Topics2BB;
+Scan2BB [fillcolor=gray, fontcolor=black, fontsize=11, shape=ellipse, style=filled];
+Topics2BB -> Scan2BB;
+Cancel2BB [fillcolor=gray, fontcolor=black, fontsize=11, shape=ellipse, style=filled];
+Topics2BB -> Cancel2BB;
+Battery2BB [fillcolor=gray, fontcolor=black, fontsize=11, shape=ellipse, style=filled];
+Topics2BB -> Battery2BB;
+Priorities [fillcolor=cyan, fontcolor=black, fontsize=11, shape=octagon, style=filled];
+Tutorial -> Priorities;
+"Battery Emergency" [fillcolor=ghostwhite, fontcolor=black, fontsize=11, shape=ellipse, style=filled];
+Priorities -> "Battery Emergency";
+"Battery Ok?" [fillcolor=gray, fontcolor=black, fontsize=11, shape=ellipse, style=filled];
+"Battery Emergency" -> "Battery Ok?";
+"Flash Red" [fillcolor=gray, fontcolor=black, fontsize=11, shape=ellipse, style=filled];
+"Battery Emergency" -> "Flash Red";
+Idle [fillcolor=gray, fontcolor=black, fontsize=11, shape=ellipse, style=filled];
+Priorities -> Idle;
+}
