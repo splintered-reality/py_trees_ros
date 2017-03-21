@@ -46,13 +46,10 @@
   <exec_depend>unique_id</exec_depend>
   <exec_depend>uuid_msgs</exec_depend>
 
-  <!--
-  <exec_depend>rospy_tutorials</exec_depend>
- -->
-
+  <test_depend>py_trees</test_depend>
+  <test_depend>geometry_msgs</test_depend>
   <test_depend>rostest</test_depend>
   <test_depend>rosunit</test_depend>
-  <test_depend>geometry_msgs</test_depend>
 
   <export>
     <rosdoc config="rosdoc.yaml"/>
