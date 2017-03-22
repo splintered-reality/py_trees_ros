@@ -192,7 +192,7 @@ class SplinteredReality(object):
             job = self.priorities.children[-2]
             self.report_publisher.publish(self.current_job.create_report_string(job))
         elif tree.tip().has_parent_with_name("Battery Emergency"):
-            self.report_publsiher.publish("battery")
+            self.report_publisher.publish("battery")
         else:
             self.report_publisher.publish("idle")
 
