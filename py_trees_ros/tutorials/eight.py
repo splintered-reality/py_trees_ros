@@ -11,49 +11,46 @@
 About
 ^^^^^
 
-Whilst the previous tutorial works for running a job ('scanning'), it
-becomes untenable if you need to load many job handlers, or require the tree to
-support job handlers on different robots. i.e. you need to elimnate the dependency
-on the job handler code itself and dynamically load/insert and execute it.
+The previous tutorial enables execution of a specific job, 'scanning' upon request.
+However, as you start expanding the scope of your development,
+you will need to start handling use cases with increasing complexity.
+
+1. Multiple jobs at different priorities, Job A > Job B > Job C
+2. Multiple jobs but execution is exclusive, Job A, B, if Job A is running, reject requests for Job B
+3. Same core tree, but different jobs on different robots, Job A, B on Robot A, Job C on Robot B
+4. Alter the list of permitted jobs dynamically, Job A on Robot A, later Job A, B on Robot A
+
+The first use case is not as common as you'd expect - more often than not
+a robot must follow a job through from start to finish - higher
+priority switching does not support this.
+
+Here we demonstrate how to (naively) facilitate 2 and 3. A list of jobs destined to
+run will be loaded at launch time, but subtrees are not inserted until execution
+is requested, i.e. just in time. When an incoming request is received, the corresponding
+subtree will be inserted if anoother subtree is not currently running. Once a subtree runs
+through to completion, it will be pruned. Insertion and pruning happens in the window
+between ticks.
+
+An technical requirement that makes this implementation practical
+is to decouple the dependencies on job providers so that your launch does not
+become burdened by explicity dependencies on any and all jobs.
+Applications should depend on the application launcher, not the other way around.
 
 Tree
 ^^^^
 
+The core tree is identical to that used in :ref:`tutorial-full-scenario`, but with the
+job subtree removed.
+
 .. graphviz:: dot/tutorial-eight.dot
 
-Dynamic Loading
-^^^^^^^^^^^^^^^
+Job Handler
+^^^^^^^^^^^
 
-Loading job handlers via a string at runtime decouples
-the tree implementation from the job provider itself.
-Think of the job handlers as apps,
-and the core tree as the app launcher.
-
-.. literalinclude:: ../py_trees_ros/tutorials/eight.py
-   :language: python
-   :linenos:
-   :lines: 125-145
-   :emphasize-lines: 1,6-7,13-17
-   :caption: py_trees_ros/tutorials/eight.py#dynamic_loading
-
-Dynamic Subtrees
-^^^^^^^^^^^^^^^^
-
-The second feature of this tutorial is the insertion and deletion of
-the job subtree via the tree pre and post tick handlers when a new
-goal has arrived, or the currently running job has finished.
-
-This is done in the free time between ticks, but the checking/insertion/deletion
-logic could just as easily have been performed inside behaviours inside the tree.
-
-.. literalinclude:: ../py_trees_ros/tutorials/eight.py
-   :language: python
-   :linenos:
-   :lines: 155-197
-   :caption: py_trees_ros/tutorials/eight.py#dynamic_subtrees
-
-Job Handler - 'Scan'
-^^^^^^^^^^^^^^^^^^^^
+The job subtree create method is moved out into a separate class. Potentially this could be a class
+in another module, another package (i.e. decopuled from where the core subtree is defined.
+The class includes additional machinery listening for triggers to initiate job subtree insertion
+(and subsequently, execution).
 
 .. graphviz:: dot/tutorial-eight-scan.dot
 
@@ -62,6 +59,36 @@ Job Handler - 'Scan'
    :linenos:
    :lines: 32-160
    :caption: py_trees_ros/tutorials/jobs.py#scan
+
+Job Loading
+^^^^^^^^^^^
+
+Job handlers are loaded via a string at runtime. This ensures decoupling of the
+the tree implementation from the job providers. The SplinteredReality class here
+is responsible for setting up and tick tocking the tree.
+
+.. literalinclude:: ../py_trees_ros/tutorials/eight.py
+   :language: python
+   :linenos:
+   :lines: 152-171
+   :emphasize-lines: 3,8-9,15-19
+   :caption: py_trees_ros/tutorials/eight.py#job_loading
+
+Just in Time
+^^^^^^^^^^^^
+
+Job subtrees are inserted and pruned via the tree pre and post tick handlers.
+
+.. note::
+
+   This is done in the free window between ticks, but the checking/insertion/deletion
+   logic could alternatively have been achieved from behaviours inside the tree.
+
+.. literalinclude:: ../py_trees_ros/tutorials/eight.py
+   :language: python
+   :linenos:
+   :lines: 182-224
+   :caption: py_trees_ros/tutorials/eight.py#just_in_time
 
 Running
 ^^^^^^^
