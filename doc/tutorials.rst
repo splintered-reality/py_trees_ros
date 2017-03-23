@@ -186,4 +186,54 @@ Tutorial 8 - Dynamic Job Handling
 Tutorial 9 - Bags
 -----------------
 
-TODO - Visualisation handles and bagging, replaying (in running section)
+About
+^^^^^
+
+Tutorial nine is a repeat of :ref:`tutorial-dynamic` with some pointers
+illustrating how the bagging functionality of the :class:`~py_trees_ros.trees.BehaviourTree`.
+
+Running
+^^^^^^^
+
+.. code-block:: bash
+
+    $ roslaunch py_trees_ros tutorial_nine.launch --screen
+
+Bagging starts as soon as a :class:`~py_trees_ros.trees.BehaviourTree` is instantiated and
+will record something only when the tree changes, i.e.
+
+* behaviours are inserted or pruned from the tree
+* a behaviour changes state
+* the feedback message in a behaviour changes
+
+Messages recorded are exactly the same type as those used to feed the
+visual monitoring tool - rqt_py_trees. Trigger a scan and finally close down
+the launcher. The bags will be saved in:
+
+.. code-block:: bash
+
+   ${ROS_HOME}/behaviour_trees/<date>/behaviour_tree_<date>.bag
+
+Playback
+^^^^^^^^
+
+Restart the visual monitoring tool in playback mode on the latest
+saved bag:
+
+.. code-block:: bash
+
+   # in a first shell
+   roscore
+   # in a second shell
+   rqt_py_trees --latest-bag
+
+Move around the replay via the timeline widget at the bottom of the plugin window.
+
+Other Ideas
+^^^^^^^^^^^
+
+If you are executing *just in time* as in :ref:`tutorial-dynamic`, then an interesting
+alternative is to use :class:`~py_trees_ros.trees.BehaviourTree` to inspire your own
+behaviour tree manager that creates a bag that records for the duration of the job execution only.
+That is, start as the job subtree is inserted and close the bag as the job subtree is pruned.
+This provides small, modular bags for convenient storage and lookup.
