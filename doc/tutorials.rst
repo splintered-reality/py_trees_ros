@@ -17,8 +17,8 @@ and modules. e.g. for kinetic:
 The Mock Robot
 --------------
 
-The tutorials here all run atop a very simple :term:`mock` robot with the
-following features:
+The tutorials here all run atop a very simple :term:`mock` robot that
+encapsulates the following list of mocked components:
 
 * Battery
 * LED Strip

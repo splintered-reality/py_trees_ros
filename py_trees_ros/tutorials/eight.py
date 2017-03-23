@@ -64,7 +64,7 @@ Job Loading
 ^^^^^^^^^^^
 
 Job handlers are loaded via a string at runtime. This ensures decoupling of the
-the tree implementation from the job providers. The SplinteredReality class here
+the tree implementation from the job providers. **The SplinteredReality** class here
 is responsible for setting up and tick tocking the tree.
 
 .. literalinclude:: ../py_trees_ros/tutorials/eight.py

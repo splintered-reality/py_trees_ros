@@ -46,12 +46,20 @@ class Scan(object):
 
     @property
     def goal(self):
+        """
+        Getter for the variable indicating whether or not a goal has recently been received
+        but not yet handled. It simply makes sure it is wrapped with the appropriate locking.
+        """
         with self._lock:
             g = copy.copy(self._goal) or self._goal
         return g
 
     @goal.setter
     def goal(self, value):
+        """
+        Setter for the variable indicating whether or not a goal has recently been received
+        but not yet handled. It simply makes sure it is wrapped with the appropriate locking.
+        """
         with self._lock:
             self._goal = value
 

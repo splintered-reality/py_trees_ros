@@ -133,6 +133,15 @@ py_trees_ros.tutorials.behaviours
     :show-inheritance:
     :synopsis: behaviours crafted specifically for the tutorials
 
+py_trees_ros.tutorials.jobs
+---------------------------
+
+.. automodule:: py_trees_ros.tutorials.jobs
+    :members:
+    :special-members:
+    :show-inheritance:
+    :synopsis: behaviours crafted specifically for the tutorials
+
 py_trees_ros.tutorials.qt
 -------------------------
 
