@@ -69,7 +69,7 @@ class Runner(object):
 
     def tick_tock(self, number_of_iterations=py_trees.trees.CONTINUOUS_TICK_TOCK):
         rate = rospy.Rate(10)
-        while not rospy.is_shutdown() and self.root.count < number_of_iterations:
+        while not rospy.is_shutdown() and self.tree.count < number_of_iterations:
             self.tree.tick()
             if self.root.status == py_trees.Status.SUCCESS or self.root.status == py_trees.Status.FAILURE:
                 break

@@ -1,6 +1,13 @@
 Changelog
 =========
 
+Forthcoming
+-----------
+* [docs] faq added
+* [tutorials] 9 - bagging
+* [infra] various dependency fixes for tests and autodoc
+* [tests] fix broken subscrirber test
+
 0.5.3 (2017-03-21)
 ------------------
 * [tutorials] 8 - dynamic loading, insertion and execution
