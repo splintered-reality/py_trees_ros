@@ -1,8 +1,8 @@
 Changelog
 =========
 
-Forthcoming
------------
+0.5.4 (2017-03-25)
+------------------
 * [docs] faq added
 * [tutorials] 9 - bagging
 * [infra] various dependency fixes for tests and autodoc
