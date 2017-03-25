@@ -8,11 +8,14 @@ Features
 Behaviours
 ----------
 
-* :class:`py_trees_ros.actions.ActionClient`
-* :class:`py_trees_ros.battery.ToBlackboard`
-* :class:`py_trees_ros.subscribers.CheckData`
-* :class:`py_trees_ros.subscribers.ToBlackboard`
-* :class:`py_trees_ros.subscribers.WaitForData`
+.. autosummary::
+
+   py_trees_ros.actions.ActionClient
+   py_trees_ros.battery.ToBlackboard
+   py_trees_ros.subscribers.CheckData
+   py_trees_ros.subscribers.EventToBlackboard
+   py_trees_ros.subscribers.ToBlackboard
+   py_trees_ros.subscribers.WaitForData
 
 Blackboards
 -----------

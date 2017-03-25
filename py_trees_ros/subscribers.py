@@ -126,8 +126,9 @@ class Handler(py_trees.behaviour.Behaviour):
 
 class CheckData(Handler):
     """
-    Check a subscriber to see if it has received data
-    and optionally whether that data, or part of it has a specific value.
+    Check a subscriber to see if it has received data.
+
+    It optionally checks whether that data, or part of it has a specific value.
 
     **Usage Patterns**
 
