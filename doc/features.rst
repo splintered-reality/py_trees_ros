@@ -2,8 +2,8 @@ Features
 ========
 
 .. seealso::
-    The :ref:`Tutorials <py-trees-ros-tutorials-section>` where most, if not
-    all of what is introduced below is demonstrated in use.
+    The :ref:`Tutorials <py-trees-ros-tutorials-section>` where most of the following
+    is demonstrated.
 
 Behaviours
 ----------
@@ -37,6 +37,6 @@ You can visualise the trees in ROS via either the ascii tree publishers:
 
 .. image:: images/ascii-snapshot.png
 
-or the `rqt_py_trees_plugin` which tunes in to the `~log/tree` topic.
+or the `rqt_py_trees` plugin which tunes in to the `~log/tree` topic.
 
 .. image:: images/rqt-py-trees.png

@@ -14,7 +14,7 @@ Contents:
    :maxdepth: 2
    :caption: Guide
 
-   background
+   about
    features
    tutorials
    terminology
