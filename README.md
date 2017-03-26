@@ -7,7 +7,7 @@ with ROS.
 
 Refer to the [package documentation](https://stonier.github.io/py_trees_ros/) for more information.
 
-# Build Status
+## Build Status
 
 The currently supported ROS Distro is Kinetic.
 
