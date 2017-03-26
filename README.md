@@ -1,3 +1,16 @@
+# Py Trees for ROS
+
+## About
+
+Behaviours, trees and utilities that extend [py_trees](https://github.com/stonier/py_trees) for use
+with ROS.
+
+Refer to the [package documentation](https://stonier.github.io/py_trees_ros/) for more information.
+
+# Build Status
+
+The currently supported ROS Distro is Kinetic.
+
 | Devel | Kinetic |
 |:---:|:---:|
 | [![devel-Sources][devel-sources-image]][devel-sources] | [![0.5.x-Sources][0.5.x-sources-image]][0.5.x-sources] |
@@ -17,16 +30,7 @@
 [devel-docs-image]: https://img.shields.io/badge/docs-devel-brightgreen.svg?style=plastic
 [devel-docs]: https://stonier.github.io/py_trees_ros/
 
-# Py Trees for ROS
-
-## About
-
-Behaviours, trees and utilities that extend [py_trees](https://github.com/stonier/py_trees) for use
-with ROS.
-
-The currently supported ROS Distro is Kinetic.
-
-## The Py Trees Repositories
+## The ROS Py Trees Repositories
 
 * [py_trees](https://github.com/stonier/py_trees)
 * [py_trees_msgs](https://github.com/stonier/py_trees_msgs)
