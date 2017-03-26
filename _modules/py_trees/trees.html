@@ -1,0 +1,500 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>py_trees.trees &mdash; py_trees 0.5.8 documentation</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+    <link rel="top" title="py_trees 0.5.8 documentation" href="../../index.html"/>
+        <link rel="up" title="Module code" href="../index.html"/> 
+
+  
+  <script src="../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../index.html" class="icon icon-home"> py_trees
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.5.8
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+    
+            
+            
+                <p class="caption"><span class="caption-text">Guide</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../background.html">Background</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../behaviours.html">Behaviours</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../composites.html">Composites</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../blackboards.html">Blackboards</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../trees.html">Trees</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../visualisation.html">Visualisation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../the_crazy_hospital.html">Surviving the Crazy Hospital</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../terminology.html">Terminology</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../faq.html">FAQ</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Reference</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../demos.html">Demos</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../programs.html">Programs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../modules.html">Module API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../changelog.html">Changelog</a></li>
+</ul>
+
+            
+          
+    <a href="genindex.html">Index</a>
+    <a href="py-modindex.html">Module Index</a>
+  
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="../../index.html">py_trees</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../../index.html">Docs</a> &raquo;</li>
+      
+          <li><a href="../index.html">Module code</a> &raquo;</li>
+      
+    <li>py_trees.trees</li>
+      <li class="wy-breadcrumbs-aside">
+        
+          
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for py_trees.trees</h1><div class="highlight"><pre>
+<span class="ch">#!/usr/bin/env python</span>
+<span class="c1">#</span>
+<span class="c1"># License: BSD</span>
+<span class="c1">#   https://raw.githubusercontent.com/stonier/py_trees/devel/LICENSE</span>
+<span class="c1">#</span>
+<span class="c1">##############################################################################</span>
+<span class="c1"># Documentation</span>
+<span class="c1">##############################################################################</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">While a graph of connected behaviours and composites form a tree in their own right</span>
+<span class="sd">(i.e. it can be initialised and ticked), it is usually convenient to wrap your tree</span>
+<span class="sd">in another class to take care of alot of the housework and provide some extra bells</span>
+<span class="sd">and whistles that make your tree flourish.</span>
+
+<span class="sd">.. image:: images/yggdrasil.jpg</span>
+<span class="sd">   :width: 200px</span>
+<span class="sd">   :align: center</span>
+
+<span class="sd">This package provides a default reference implementation that is directly usable, but</span>
+<span class="sd">can also be easily used as inspiration for your own tree custodians.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="c1">##############################################################################</span>
+<span class="c1"># Imports</span>
+<span class="c1">##############################################################################</span>
+
+<span class="kn">import</span> <span class="nn">time</span>
+
+<span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">behaviour</span>
+<span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">composites</span>
+
+<span class="n">CONTINUOUS_TICK_TOCK</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
+
+<span class="c1">##############################################################################</span>
+<span class="c1"># Trees</span>
+<span class="c1">##############################################################################</span>
+
+
+<div class="viewcode-block" id="BehaviourTree"><a class="viewcode-back" href="../../trees.html#py_trees.trees.BehaviourTree">[docs]</a><span class="k">class</span> <span class="nc">BehaviourTree</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Grow, water, prune your behaviour tree with this, the default reference</span>
+<span class="sd">    implementation. It features a few enhancements to provide richer logging,</span>
+<span class="sd">    introspection and dynamic management of the tree itself:</span>
+
+<span class="sd">    * Pre and post tick handlers to execute code automatically before and after a tick</span>
+<span class="sd">    * Visitor access to the parts of the tree that were traversed in a tick</span>
+<span class="sd">    * Subtree pruning and insertion operations</span>
+<span class="sd">    * Continuous tick-tock support</span>
+
+<span class="sd">    .. seealso:: The :ref:`py-trees-demo-tree-stewardship-program` program demonstrates the above features.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        root (:class:`~py_trees.behaviour.Behaviour`): root node of the tree</span>
+
+<span class="sd">    Attributes:</span>
+<span class="sd">        count (:obj:`int`): number of times the tree has been ticked.</span>
+<span class="sd">        root (:class:`~py_trees.behaviour.Behaviour`): root node of the tree</span>
+<span class="sd">        visitors ([:mod:`~py_trees.visitors`]): entities that visit traversed parts of the tree when it ticks</span>
+<span class="sd">        pre_tick_handlers ([:obj:`func`]): functions that run before the entire tree is ticked</span>
+<span class="sd">        post_tick_handlers ([:obj:`func`]): functions that run after the entire tree is ticked</span>
+
+<span class="sd">    Raises:</span>
+<span class="sd">        AssertionError: if incoming root variable is not the correct type</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">root</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">count</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">assert</span> <span class="n">root</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">,</span> <span class="s2">&quot;root node must not be &#39;None&#39;&quot;</span>
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">root</span><span class="p">,</span> <span class="n">behaviour</span><span class="o">.</span><span class="n">Behaviour</span><span class="p">),</span> <span class="s2">&quot;root node must be an instance of or descendant of pytrees.behaviour.Behaviour&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">root</span> <span class="o">=</span> <span class="n">root</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">visitors</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">pre_tick_handlers</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">post_tick_handlers</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">interrupt_tick_tocking</span> <span class="o">=</span> <span class="bp">False</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">tree_update_handler</span> <span class="o">=</span> <span class="bp">None</span>  <span class="c1"># child classes can utilise this one</span>
+
+<div class="viewcode-block" id="BehaviourTree.add_pre_tick_handler"><a class="viewcode-back" href="../../modules.html#py_trees.trees.BehaviourTree.add_pre_tick_handler">[docs]</a>    <span class="k">def</span> <span class="nf">add_pre_tick_handler</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">handler</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Add a function to execute before the tree is ticked. The function must have</span>
+<span class="sd">        a single argument of type :class:`~py_trees.trees.BehaviourTree`.</span>
+
+<span class="sd">        Some ideas that are often used:</span>
+
+<span class="sd">        * logging (to file or stdout)</span>
+<span class="sd">        * modifications on the tree itself (e.g. starting a new plan)</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            handler (:obj:`func`): function</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">pre_tick_handlers</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">handler</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="BehaviourTree.add_post_tick_handler"><a class="viewcode-back" href="../../modules.html#py_trees.trees.BehaviourTree.add_post_tick_handler">[docs]</a>    <span class="k">def</span> <span class="nf">add_post_tick_handler</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">handler</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Add a function to execute after the tree has ticked. The function must have</span>
+<span class="sd">        a single argument of type :class:`~py_trees.trees.BehaviourTree`.</span>
+
+<span class="sd">        Some ideas that are often used:</span>
+
+<span class="sd">        * logging</span>
+<span class="sd">        * modifications on the tree itself (e.g. closing down a plan)</span>
+<span class="sd">        * sending data to visualisation tools</span>
+<span class="sd">        * introspect the state of the tree to make and send reports</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            handler (:obj:`func`): function</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">post_tick_handlers</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">handler</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="BehaviourTree.prune_subtree"><a class="viewcode-back" href="../../modules.html#py_trees.trees.BehaviourTree.prune_subtree">[docs]</a>    <span class="k">def</span> <span class="nf">prune_subtree</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">unique_id</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Prune a subtree given the unique id of the root of the subtree.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            unique_id (uuid.UUID): unique id of the subtree root</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            :obj:`bool`: success or failure of the operation</span>
+
+<span class="sd">        Raises:</span>
+<span class="sd">            AssertionError: if unique id is the behaviour tree&#39;s root node id</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">root</span><span class="o">.</span><span class="n">id</span> <span class="o">!=</span> <span class="n">unique_id</span><span class="p">,</span> <span class="s2">&quot;may not prune the root node&quot;</span>
+        <span class="k">for</span> <span class="n">child</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">root</span><span class="o">.</span><span class="n">iterate</span><span class="p">():</span>
+            <span class="k">if</span> <span class="n">child</span><span class="o">.</span><span class="n">id</span> <span class="o">==</span> <span class="n">unique_id</span><span class="p">:</span>
+                <span class="n">parent</span> <span class="o">=</span> <span class="n">child</span><span class="o">.</span><span class="n">parent</span>
+                <span class="k">if</span> <span class="n">parent</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+                    <span class="n">parent</span><span class="o">.</span><span class="n">remove_child</span><span class="p">(</span><span class="n">child</span><span class="p">)</span>
+                    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">tree_update_handler</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">tree_update_handler</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">root</span><span class="p">)</span>
+                    <span class="k">return</span> <span class="bp">True</span>
+        <span class="k">return</span> <span class="bp">False</span></div>
+
+<div class="viewcode-block" id="BehaviourTree.insert_subtree"><a class="viewcode-back" href="../../modules.html#py_trees.trees.BehaviourTree.insert_subtree">[docs]</a>    <span class="k">def</span> <span class="nf">insert_subtree</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">child</span><span class="p">,</span> <span class="n">unique_id</span><span class="p">,</span> <span class="n">index</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Insert a subtree as a child of the specified parent. If the parent</span>
+<span class="sd">        is found, this directly calls the parent&#39;s</span>
+<span class="sd">        :meth:`~py_trees.composites.Composite.insert_child`</span>
+<span class="sd">        method using the child and index arguments.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            child (:class:`~py_trees.behaviour.Behaviour`): subtree to insert</span>
+<span class="sd">            unique_id (uuid.UUID): unique id of the parent</span>
+<span class="sd">            index (:obj:`int`): insert the child at this index, pushing all children after it back one.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            :obj:`bool`: suceess or failure (parent not found) of the operation</span>
+
+<span class="sd">        Raises:</span>
+<span class="sd">            AssertionError: if the parent is not a :class:`~py_trees.composites.Composite`</span>
+
+<span class="sd">        .. todo::</span>
+
+<span class="sd">           Could use better, more informative error handling here. Especially if the insertion</span>
+<span class="sd">           has its own error handling (e.g. index out of range). Could also use a different api</span>
+<span class="sd">           that relies on the id of the sibling node it should be inserted before/after.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">node</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">root</span><span class="o">.</span><span class="n">iterate</span><span class="p">():</span>
+            <span class="k">if</span> <span class="n">node</span><span class="o">.</span><span class="n">id</span> <span class="o">==</span> <span class="n">unique_id</span><span class="p">:</span>
+                <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">node</span><span class="p">,</span> <span class="n">composites</span><span class="o">.</span><span class="n">Composite</span><span class="p">),</span> <span class="s2">&quot;parent must be a Composite behaviour.&quot;</span>
+                <span class="n">node</span><span class="o">.</span><span class="n">insert_child</span><span class="p">(</span><span class="n">child</span><span class="p">,</span> <span class="n">index</span><span class="p">)</span>
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">tree_update_handler</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">tree_update_handler</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">root</span><span class="p">)</span>
+                <span class="k">return</span> <span class="bp">True</span>
+        <span class="k">return</span> <span class="bp">False</span></div>
+
+<div class="viewcode-block" id="BehaviourTree.replace_subtree"><a class="viewcode-back" href="../../modules.html#py_trees.trees.BehaviourTree.replace_subtree">[docs]</a>    <span class="k">def</span> <span class="nf">replace_subtree</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">unique_id</span><span class="p">,</span> <span class="n">subtree</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Replace the subtree with the specified id for the new subtree.</span>
+<span class="sd">        This is a common pattern where we&#39;d like to swap out a whole sub-behaviour for another one.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            unique_id (uuid.UUID): unique id of the parent</span>
+<span class="sd">            subtree (:class:`~py_trees.behaviour.Behaviour`): root behaviour of the subtree</span>
+
+<span class="sd">        Raises</span>
+<span class="sd">            AssertionError: if unique id is the behaviour tree&#39;s root node id</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            :obj:`bool`: suceess or failure of the operation</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">root</span><span class="o">.</span><span class="n">id</span> <span class="o">!=</span> <span class="n">unique_id</span><span class="p">,</span> <span class="s2">&quot;may not replace the root node&quot;</span>
+        <span class="k">for</span> <span class="n">child</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">root</span><span class="o">.</span><span class="n">iterate</span><span class="p">():</span>
+            <span class="k">if</span> <span class="n">child</span><span class="o">.</span><span class="n">id</span> <span class="o">==</span> <span class="n">unique_id</span><span class="p">:</span>
+                <span class="n">parent</span> <span class="o">=</span> <span class="n">child</span><span class="o">.</span><span class="n">parent</span>
+                <span class="k">if</span> <span class="n">parent</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+                    <span class="n">parent</span><span class="o">.</span><span class="n">replace_child</span><span class="p">(</span><span class="n">child</span><span class="p">,</span> <span class="n">subtree</span><span class="p">)</span>
+                    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">tree_update_handler</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">tree_update_handler</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">root</span><span class="p">)</span>
+                    <span class="k">return</span> <span class="bp">True</span>
+        <span class="k">return</span> <span class="bp">False</span></div>
+
+<div class="viewcode-block" id="BehaviourTree.setup"><a class="viewcode-back" href="../../modules.html#py_trees.trees.BehaviourTree.setup">[docs]</a>    <span class="k">def</span> <span class="nf">setup</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">timeout</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">         Relays to calling the :meth:`~py_trees.behaviour.Behaviuor.setup` method</span>
+<span class="sd">         on the root behaviour. This in turn should get recursively called down through</span>
+<span class="sd">         the entire tree.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">             timeout (:obj:`float`): time to wait (0.0 is blocking forever)</span>
+
+<span class="sd">        Return:</span>
+<span class="sd">            :obj:`bool`: suceess or failure of the operation</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">root</span><span class="o">.</span><span class="n">setup</span><span class="p">(</span><span class="n">timeout</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="BehaviourTree.tick"><a class="viewcode-back" href="../../modules.html#py_trees.trees.BehaviourTree.tick">[docs]</a>    <span class="k">def</span> <span class="nf">tick</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pre_tick_handler</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">post_tick_handler</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Tick the tree just once and run any handlers before and after the tick.</span>
+<span class="sd">        This optionally accepts some one-shot handlers (c.f. those added by</span>
+<span class="sd">        :meth:`~py_trees.trees.BehaviourTree.add_pre_tick_handler` and :meth:`~py_trees.trees.BehaviourTree.add_post_tick_handler`</span>
+<span class="sd">        which will be automatically run every time).</span>
+
+<span class="sd">        The handler functions must have a single argument of type :class:`~py_trees.trees.BehaviourTree`.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            pre_tick_handler (:obj:`func`): function to execute before ticking</span>
+<span class="sd">            post_tick_handler (:obj:`func`): function to execute after ticking</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># pre</span>
+        <span class="k">for</span> <span class="n">handler</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">pre_tick_handlers</span><span class="p">:</span>
+            <span class="n">handler</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">pre_tick_handler</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="n">pre_tick_handler</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">visitor</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">visitors</span><span class="p">:</span>
+            <span class="n">visitor</span><span class="o">.</span><span class="n">initialise</span><span class="p">()</span>
+        <span class="c1"># tick</span>
+        <span class="k">for</span> <span class="n">node</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">root</span><span class="o">.</span><span class="n">tick</span><span class="p">():</span>
+            <span class="k">for</span> <span class="n">visitor</span> <span class="ow">in</span> <span class="p">[</span><span class="n">visitor</span> <span class="k">for</span> <span class="n">visitor</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">visitors</span> <span class="k">if</span> <span class="ow">not</span> <span class="n">visitor</span><span class="o">.</span><span class="n">full</span><span class="p">]:</span>
+                <span class="n">node</span><span class="o">.</span><span class="n">visit</span><span class="p">(</span><span class="n">visitor</span><span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">node</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">root</span><span class="o">.</span><span class="n">iterate</span><span class="p">():</span>
+            <span class="k">for</span> <span class="n">visitor</span> <span class="ow">in</span> <span class="p">[</span><span class="n">visitor</span> <span class="k">for</span> <span class="n">visitor</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">visitors</span> <span class="k">if</span> <span class="n">visitor</span><span class="o">.</span><span class="n">full</span><span class="p">]:</span>
+                <span class="n">node</span><span class="o">.</span><span class="n">visit</span><span class="p">(</span><span class="n">visitor</span><span class="p">)</span>
+
+        <span class="c1"># post</span>
+        <span class="k">for</span> <span class="n">handler</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">post_tick_handlers</span><span class="p">:</span>
+            <span class="n">handler</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">post_tick_handler</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="n">post_tick_handler</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">count</span> <span class="o">+=</span> <span class="mi">1</span></div>
+
+<div class="viewcode-block" id="BehaviourTree.tick_tock"><a class="viewcode-back" href="../../modules.html#py_trees.trees.BehaviourTree.tick_tock">[docs]</a>    <span class="k">def</span> <span class="nf">tick_tock</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sleep_ms</span><span class="p">,</span> <span class="n">number_of_iterations</span><span class="o">=</span><span class="n">CONTINUOUS_TICK_TOCK</span><span class="p">,</span> <span class="n">pre_tick_handler</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">post_tick_handler</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Tick continuously with a sleep interval as specified. This optionally accepts some handlers that will</span>
+<span class="sd">        be used for the duration of this tick tock (c.f. those added by</span>
+<span class="sd">        :meth:`~py_trees.trees.BehaviourTree.add_pre_tick_handler` and :meth:`~py_trees.trees.BehaviourTree.add_post_tick_handler`</span>
+<span class="sd">        which will be automatically run every time).</span>
+
+<span class="sd">        The handler functions must have a single argument of type :class:`~py_trees.trees.BehaviourTree`.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            sleep_ms (:obj:`float`): sleep this much between ticks (milliseconds)</span>
+<span class="sd">            number_of_iterations (:obj:`int`): number of iterations to tick-tock</span>
+<span class="sd">            pre_tick_handler (:obj:`func`): function to execute before ticking</span>
+<span class="sd">            post_tick_handler (:obj:`func`): function to execute after ticking</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">tick_tocks</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">while</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">interrupt_tick_tocking</span> <span class="ow">and</span> <span class="p">(</span><span class="n">tick_tocks</span> <span class="o">&lt;</span> <span class="n">number_of_iterations</span> <span class="ow">or</span> <span class="n">number_of_iterations</span> <span class="o">==</span> <span class="n">CONTINUOUS_TICK_TOCK</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">tick</span><span class="p">(</span><span class="n">pre_tick_handler</span><span class="p">,</span> <span class="n">post_tick_handler</span><span class="p">)</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="n">sleep_ms</span> <span class="o">/</span> <span class="mf">1000.0</span><span class="p">)</span>
+            <span class="k">except</span> <span class="ne">KeyboardInterrupt</span><span class="p">:</span>
+                <span class="k">break</span>
+            <span class="n">tick_tocks</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">interrupt_tick_tocking</span> <span class="o">=</span> <span class="bp">False</span></div>
+
+<div class="viewcode-block" id="BehaviourTree.tip"><a class="viewcode-back" href="../../modules.html#py_trees.trees.BehaviourTree.tip">[docs]</a>    <span class="k">def</span> <span class="nf">tip</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get the *tip* of the tree.</span>
+<span class="sd">        This corresponds to the the deepest node that was running before the</span>
+<span class="sd">        subtree traversal reversed direction and headed back to this node.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            :class:`~py_trees.behaviour.Behaviour` or :obj:`None`: child behaviour, itself or :obj:`None` if its status is :data:`~py_trees.common.Status.INVALID`</span>
+
+<span class="sd">        .. seealso:: :meth:`~py_trees.behaviour.Behaviour.tip`</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">root</span><span class="o">.</span><span class="n">tip</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="BehaviourTree.interrupt"><a class="viewcode-back" href="../../modules.html#py_trees.trees.BehaviourTree.interrupt">[docs]</a>    <span class="k">def</span> <span class="nf">interrupt</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Interrupt tick-tock if it is tick-tocking. Note that this will permit a currently</span>
+<span class="sd">        executing tick to finish before interrupting the tick-tock.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">interrupt_tick_tocking</span> <span class="o">=</span> <span class="bp">True</span></div>
+
+<div class="viewcode-block" id="BehaviourTree.destroy"><a class="viewcode-back" href="../../modules.html#py_trees.trees.BehaviourTree.destroy">[docs]</a>    <span class="k">def</span> <span class="nf">destroy</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Destroy the tree by stopping the root node.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">root</span><span class="o">.</span><span class="n">stop</span><span class="p">()</span></div></div>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+
+    </p>
+  </div> 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../',
+            VERSION:'0.5.8',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

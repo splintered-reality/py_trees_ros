@@ -1,0 +1,622 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>py_trees.blackboard &mdash; py_trees 0.5.8 documentation</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+    <link rel="top" title="py_trees 0.5.8 documentation" href="../../index.html"/>
+        <link rel="up" title="Module code" href="../index.html"/> 
+
+  
+  <script src="../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../index.html" class="icon icon-home"> py_trees
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.5.8
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+    
+            
+            
+                <p class="caption"><span class="caption-text">Guide</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../background.html">Background</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../behaviours.html">Behaviours</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../composites.html">Composites</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../blackboards.html">Blackboards</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../trees.html">Trees</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../visualisation.html">Visualisation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../the_crazy_hospital.html">Surviving the Crazy Hospital</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../terminology.html">Terminology</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../faq.html">FAQ</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Reference</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../demos.html">Demos</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../programs.html">Programs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../modules.html">Module API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../changelog.html">Changelog</a></li>
+</ul>
+
+            
+          
+    <a href="genindex.html">Index</a>
+    <a href="py-modindex.html">Module Index</a>
+  
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="../../index.html">py_trees</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../../index.html">Docs</a> &raquo;</li>
+      
+          <li><a href="../index.html">Module code</a> &raquo;</li>
+      
+    <li>py_trees.blackboard</li>
+      <li class="wy-breadcrumbs-aside">
+        
+          
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for py_trees.blackboard</h1><div class="highlight"><pre>
+<span class="ch">#!/usr/bin/env python</span>
+<span class="c1">#</span>
+<span class="c1"># License: BSD</span>
+<span class="c1">#   https://raw.githubusercontent.com/stonier/py_trees/devel/LICENSE</span>
+<span class="c1">#</span>
+<span class="c1">##############################################################################</span>
+<span class="c1"># Documentation</span>
+<span class="c1">##############################################################################</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Blackboards are not a necessary component, but are a fairly standard feature</span>
+<span class="sd">in most behaviour tree implementations. See, for example, the `design notes`_</span>
+<span class="sd">for blackboards in Unreal Engine.</span>
+
+<span class="sd">.. image:: images/blackboard.jpg</span>
+<span class="sd">   :width: 300px</span>
+<span class="sd">   :align: center</span>
+
+<span class="sd">Implementations however, tend to vary quite a bit depending on the needs of</span>
+<span class="sd">the framework using them. Some of the usual considerations include scope</span>
+<span class="sd">and sharing of blackboards across multiple tree instances.</span>
+
+<span class="sd">For this package, we&#39;ve decided to keep blackboards extremely simple to fit</span>
+<span class="sd">with the same &#39;rapid development for small scale systems&#39; principles</span>
+<span class="sd">that this library is designed for.</span>
+
+<span class="sd">* No sharing between tree instances</span>
+<span class="sd">* No locking for reading/writing</span>
+<span class="sd">* Global scope, i.e. any behaviour can access any variable</span>
+<span class="sd">* No external communications (e.g. to a database)</span>
+
+<span class="sd">.. include:: weblinks.rst</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="c1">##############################################################################</span>
+<span class="c1"># Imports</span>
+<span class="c1">##############################################################################</span>
+
+<span class="kn">import</span> <span class="nn">operator</span>
+
+<span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">behaviours</span>
+<span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">common</span>
+<span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">console</span>
+
+<span class="c1">##############################################################################</span>
+<span class="c1"># Classes</span>
+<span class="c1">##############################################################################</span>
+
+
+<div class="viewcode-block" id="Blackboard"><a class="viewcode-back" href="../../modules.html#py_trees.blackboard.Blackboard">[docs]</a><span class="k">class</span> <span class="nc">Blackboard</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    `Borg`_ style key-value store for sharing amongst behaviours.</span>
+
+<span class="sd">    .. _Borg: http://code.activestate.com/recipes/66531-singleton-we-dont-need-no-stinkin-singleton-the-bo/</span>
+
+<span class="sd">    Examples:</span>
+<span class="sd">        You can instantiate the blackboard from anywhere in your program. Even</span>
+<span class="sd">        disconnected calls will get access to the same data store. For example:</span>
+
+<span class="sd">        .. code-block:: python</span>
+
+<span class="sd">            def check_foo():</span>
+<span class="sd">                blackboard = Blackboard()</span>
+<span class="sd">                assert(blackboard.foo, &quot;bar&quot;)</span>
+
+<span class="sd">            if __name__ == &#39;__main__&#39;:</span>
+<span class="sd">                blackboard = Blackboard()</span>
+<span class="sd">                blackboard.foo = &quot;bar&quot;</span>
+<span class="sd">                check_foo()</span>
+
+<span class="sd">        If the key value you are interested in is only known at runtime, then</span>
+<span class="sd">        you can set/get from the blackboard without the convenient variable style</span>
+<span class="sd">        access:</span>
+
+<span class="sd">        .. code-block:: python</span>
+
+<span class="sd">            blackboard = Blackboard()</span>
+<span class="sd">            result = blackboard.set(&quot;foo&quot;, &quot;bar&quot;)</span>
+<span class="sd">            foo = blackboard.get(&quot;foo&quot;)</span>
+
+<span class="sd">        The blackboard can also be converted and printed (with highlighting)</span>
+<span class="sd">        as a string. This is useful for logging and debugging.</span>
+
+<span class="sd">        .. code-block:: python</span>
+
+<span class="sd">            print(Blackboard())</span>
+
+
+<span class="sd">    .. warning::</span>
+
+<span class="sd">       Be careful of key collisions. This implementation leaves this management up to the user.</span>
+
+<span class="sd">    .. seealso:: The :ref:`py-trees-demo-blackboard-program` program demos use of the blackboard along with a couple of the blackboard behaviours.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">__shared_state</span> <span class="o">=</span> <span class="p">{}</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__dict__</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__shared_state</span>
+
+<div class="viewcode-block" id="Blackboard.set"><a class="viewcode-back" href="../../modules.html#py_trees.blackboard.Blackboard.set">[docs]</a>    <span class="k">def</span> <span class="nf">set</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">overwrite</span><span class="o">=</span><span class="bp">True</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        For when you only have strings to identify and access the blackboard variables, this</span>
+<span class="sd">        provides a convenient setter.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            name (:obj:`str`): name of the variable to set</span>
+<span class="sd">            value (:obj:`any`): any variable type</span>
+<span class="sd">            overwrite(:obj:`bool`): whether to abort if the value is already present</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            :obj:`bool`: always True unless overwrite was set to False and a variable already exists</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">overwrite</span><span class="p">:</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span>
+                <span class="k">return</span> <span class="bp">False</span>
+            <span class="k">except</span> <span class="ne">AttributeError</span><span class="p">:</span>
+                <span class="k">pass</span>
+        <span class="nb">setattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">True</span></div>
+
+<div class="viewcode-block" id="Blackboard.get"><a class="viewcode-back" href="../../modules.html#py_trees.blackboard.Blackboard.get">[docs]</a>    <span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        For when you only have strings to identify and access the blackboard variables,</span>
+<span class="sd">        this provides a convenient accessor.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            name (:obj:`str`): name of the variable to set</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">return</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">AttributeError</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">None</span></div>
+
+<div class="viewcode-block" id="Blackboard.__str__"><a class="viewcode-back" href="../../modules.html#py_trees.blackboard.Blackboard.__str__">[docs]</a>    <span class="k">def</span> <span class="nf">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Express the blackboard contents as a string. Useful for debugging.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            :obj:`str`: blackboard contents</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">s</span> <span class="o">=</span> <span class="n">console</span><span class="o">.</span><span class="n">green</span> <span class="o">+</span> <span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__name__</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span> <span class="o">+</span> <span class="n">console</span><span class="o">.</span><span class="n">reset</span>
+        <span class="n">max_length</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">__dict__</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+            <span class="n">max_length</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">k</span><span class="p">)</span> <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">k</span><span class="p">)</span> <span class="o">&gt;</span> <span class="n">max_length</span> <span class="k">else</span> <span class="n">max_length</span>
+        <span class="n">keys</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__dict__</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">keys</span><span class="p">:</span>
+            <span class="n">value</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__dict__</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">value</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+                <span class="n">value_string</span> <span class="o">=</span> <span class="s2">&quot;-&quot;</span>
+                <span class="n">s</span> <span class="o">+=</span> <span class="n">console</span><span class="o">.</span><span class="n">cyan</span> <span class="o">+</span> <span class="s2">&quot;  &quot;</span> <span class="o">+</span> <span class="s1">&#39;{0: &lt;{1}}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">max_length</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">+</span> <span class="n">console</span><span class="o">.</span><span class="n">reset</span> <span class="o">+</span> <span class="s2">&quot;: &quot;</span> <span class="o">+</span> <span class="n">console</span><span class="o">.</span><span class="n">yellow</span> <span class="o">+</span> <span class="s2">&quot;{0}</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">value_string</span><span class="p">)</span> <span class="o">+</span> <span class="n">console</span><span class="o">.</span><span class="n">reset</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">lines</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;{0}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">value</span><span class="p">))</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+                <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">lines</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+                    <span class="n">s</span> <span class="o">+=</span> <span class="n">console</span><span class="o">.</span><span class="n">cyan</span> <span class="o">+</span> <span class="s2">&quot;  &quot;</span> <span class="o">+</span> <span class="s1">&#39;{0: &lt;{1}}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">max_length</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">+</span> <span class="n">console</span><span class="o">.</span><span class="n">reset</span> <span class="o">+</span> <span class="s2">&quot;:</span><span class="se">\n</span><span class="s2">&quot;</span>
+                    <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">lines</span><span class="p">:</span>
+                        <span class="n">s</span> <span class="o">+=</span> <span class="n">console</span><span class="o">.</span><span class="n">yellow</span> <span class="o">+</span> <span class="s2">&quot;    {0}</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">line</span><span class="p">)</span> <span class="o">+</span> <span class="n">console</span><span class="o">.</span><span class="n">reset</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">s</span> <span class="o">+=</span> <span class="n">console</span><span class="o">.</span><span class="n">cyan</span> <span class="o">+</span> <span class="s2">&quot;  &quot;</span> <span class="o">+</span> <span class="s1">&#39;{0: &lt;{1}}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">max_length</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">+</span> <span class="n">console</span><span class="o">.</span><span class="n">reset</span> <span class="o">+</span> <span class="s2">&quot;: &quot;</span> <span class="o">+</span> <span class="n">console</span><span class="o">.</span><span class="n">yellow</span> <span class="o">+</span> <span class="s1">&#39;{0}</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">value</span><span class="p">)</span> <span class="o">+</span> <span class="n">console</span><span class="o">.</span><span class="n">reset</span>
+        <span class="n">s</span> <span class="o">+=</span> <span class="n">console</span><span class="o">.</span><span class="n">reset</span>
+        <span class="k">return</span> <span class="n">s</span></div></div>
+
+
+<div class="viewcode-block" id="ClearBlackboardVariable"><a class="viewcode-back" href="../../modules.html#py_trees.blackboard.ClearBlackboardVariable">[docs]</a><span class="k">class</span> <span class="nc">ClearBlackboardVariable</span><span class="p">(</span><span class="n">behaviours</span><span class="o">.</span><span class="n">Success</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Clear the specified value from the blackboard.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        name (:obj:`str`): name of the behaviour</span>
+<span class="sd">        variable_name (:obj:`str`): name of the variable to clear</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+                 <span class="n">name</span><span class="o">=</span><span class="s2">&quot;Clear Blackboard Variable&quot;</span><span class="p">,</span>
+                 <span class="n">variable_name</span><span class="o">=</span><span class="s2">&quot;dummy&quot;</span><span class="p">,</span>
+                 <span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">ClearBlackboardVariable</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">variable_name</span> <span class="o">=</span> <span class="n">variable_name</span>
+
+<div class="viewcode-block" id="ClearBlackboardVariable.initialise"><a class="viewcode-back" href="../../modules.html#py_trees.blackboard.ClearBlackboardVariable.initialise">[docs]</a>    <span class="k">def</span> <span class="nf">initialise</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Delete the variable from the blackboard.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">blackboard</span> <span class="o">=</span> <span class="n">Blackboard</span><span class="p">()</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="nb">delattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">blackboard</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">variable_name</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">AttributeError</span><span class="p">:</span>
+            <span class="k">pass</span></div></div>
+
+
+<div class="viewcode-block" id="SetBlackboardVariable"><a class="viewcode-back" href="../../modules.html#py_trees.blackboard.SetBlackboardVariable">[docs]</a><span class="k">class</span> <span class="nc">SetBlackboardVariable</span><span class="p">(</span><span class="n">behaviours</span><span class="o">.</span><span class="n">Success</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Set the specified variable on the blackboard.</span>
+<span class="sd">    Usually we set variables from inside other behaviours, but can</span>
+<span class="sd">    be convenient to set them from a behaviour of their own sometimes so you</span>
+<span class="sd">    don&#39;t get blackboard logic mixed up with more atomic behaviours.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        name (:obj:`str`): name of the behaviour</span>
+<span class="sd">        variable_name (:obj:`str`): name of the variable to set</span>
+<span class="sd">        variable_value (:obj:`any`): value of the variable to set</span>
+
+<span class="sd">    .. todo:: overwrite option, leading to possible failure/success logic.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+                 <span class="n">name</span><span class="o">=</span><span class="s2">&quot;Set Blackboard Variable&quot;</span><span class="p">,</span>
+                 <span class="n">variable_name</span><span class="o">=</span><span class="s2">&quot;dummy&quot;</span><span class="p">,</span>
+                 <span class="n">variable_value</span><span class="o">=</span><span class="bp">None</span>
+                 <span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        :param name: name of the behaviour</span>
+<span class="sd">        :param variable_name: name of the variable to set</span>
+<span class="sd">        :param value_name: value of the variable to set</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">SetBlackboardVariable</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">variable_name</span> <span class="o">=</span> <span class="n">variable_name</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">variable_value</span> <span class="o">=</span> <span class="n">variable_value</span>
+
+    <span class="k">def</span> <span class="nf">initialise</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">blackboard</span> <span class="o">=</span> <span class="n">Blackboard</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">blackboard</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">variable_name</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">variable_value</span><span class="p">,</span> <span class="n">overwrite</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="CheckBlackboardVariable"><a class="viewcode-back" href="../../modules.html#py_trees.blackboard.CheckBlackboardVariable">[docs]</a><span class="k">class</span> <span class="nc">CheckBlackboardVariable</span><span class="p">(</span><span class="n">behaviours</span><span class="o">.</span><span class="n">Behaviour</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Check the blackboard to see if it has a specific variable</span>
+<span class="sd">    and optionally whether that variable has an expected value.</span>
+<span class="sd">    It is a binary behaviour, always updating it&#39;s status</span>
+<span class="sd">    with either :data:`~py_trees.common.Status.SUCCESS` or</span>
+<span class="sd">    :data:`~py_trees.common.Status.FAILURE` at each tick.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        name (:obj:`str`): name of the behaviour</span>
+<span class="sd">        variable_name (:obj:`str`): name of the variable to set</span>
+<span class="sd">        expected_value (:obj:`any`): expected value to find (if `None`, check for existence only)</span>
+<span class="sd">        comparison_operator (:obj:`func`): one from the python `operator module`_</span>
+<span class="sd">        clearing_policy (:obj:`any`): when to clear the match result, see :py:class:`~py_trees.common.ClearingPolicy`</span>
+
+<span class="sd">    .. tip::</span>
+<span class="sd">        If just checking for existence, use the default argument `expected_value=None`.</span>
+
+<span class="sd">    .. tip::</span>
+<span class="sd">        There are times when you want to get the expected match once and then save</span>
+<span class="sd">        that result thereafter. For example, to flag once a system has reached a</span>
+<span class="sd">        subgoal. Use the :data:`~py_trees.common.ClearingPolicy.NEVER` flag to do this.</span>
+
+<span class="sd">    .. include:: weblinks.rst</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+                 <span class="n">name</span><span class="p">,</span>
+                 <span class="n">variable_name</span><span class="o">=</span><span class="s2">&quot;dummy&quot;</span><span class="p">,</span>
+                 <span class="n">expected_value</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
+                 <span class="n">comparison_operator</span><span class="o">=</span><span class="n">operator</span><span class="o">.</span><span class="n">eq</span><span class="p">,</span>
+                 <span class="n">clearing_policy</span><span class="o">=</span><span class="n">common</span><span class="o">.</span><span class="n">ClearingPolicy</span><span class="o">.</span><span class="n">ON_INITIALISE</span>
+                 <span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">CheckBlackboardVariable</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">blackboard</span> <span class="o">=</span> <span class="n">Blackboard</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">variable_name</span> <span class="o">=</span> <span class="n">variable_name</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">expected_value</span> <span class="o">=</span> <span class="n">expected_value</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">comparison_operator</span> <span class="o">=</span> <span class="n">comparison_operator</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">matching_result</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">clearing_policy</span> <span class="o">=</span> <span class="n">clearing_policy</span>
+
+<div class="viewcode-block" id="CheckBlackboardVariable.initialise"><a class="viewcode-back" href="../../modules.html#py_trees.blackboard.CheckBlackboardVariable.initialise">[docs]</a>    <span class="k">def</span> <span class="nf">initialise</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Clears the internally stored message ready for a new run</span>
+<span class="sd">        if ``old_data_is_valid`` wasn&#39;t set.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">%s</span><span class="s2">.initialise()&quot;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">__class__</span><span class="o">.</span><span class="n">__name__</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">clearing_policy</span> <span class="o">==</span> <span class="n">common</span><span class="o">.</span><span class="n">ClearingPolicy</span><span class="o">.</span><span class="n">ON_INITIALISE</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">matching_result</span> <span class="o">=</span> <span class="bp">None</span></div>
+
+<div class="viewcode-block" id="CheckBlackboardVariable.update"><a class="viewcode-back" href="../../modules.html#py_trees.blackboard.CheckBlackboardVariable.update">[docs]</a>    <span class="k">def</span> <span class="nf">update</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Check for existence, or the appropriate match on the expected value.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">             :class:`~py_trees.common.Status`: :data:`~py_trees.common.Status.FAILURE` if not matched, :data:`~py_trees.common.Status.SUCCESS` otherwise.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">%s</span><span class="s2">.update()&quot;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">__class__</span><span class="o">.</span><span class="n">__name__</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">matching_result</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">matching_result</span>
+
+        <span class="n">result</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="n">check_attr</span> <span class="o">=</span> <span class="n">operator</span><span class="o">.</span><span class="n">attrgetter</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">variable_name</span><span class="p">)</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">value</span> <span class="o">=</span> <span class="n">check_attr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">blackboard</span><span class="p">)</span>
+            <span class="c1"># if existence check required only</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">expected_value</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">feedback_message</span> <span class="o">=</span> <span class="s2">&quot;&#39;</span><span class="si">%s</span><span class="s2">&#39; exists on the blackboard (as required)&quot;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">variable_name</span>
+                <span class="n">result</span> <span class="o">=</span> <span class="n">common</span><span class="o">.</span><span class="n">Status</span><span class="o">.</span><span class="n">SUCCESS</span>
+        <span class="k">except</span> <span class="ne">AttributeError</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">feedback_message</span> <span class="o">=</span> <span class="s1">&#39;blackboard variable {0} did not exist&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">variable_name</span><span class="p">)</span>
+            <span class="n">result</span> <span class="o">=</span> <span class="n">common</span><span class="o">.</span><span class="n">Status</span><span class="o">.</span><span class="n">FAILURE</span>
+
+        <span class="k">if</span> <span class="n">result</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="c1"># expected value matching</span>
+            <span class="c1"># value = getattr(self.blackboard, self.variable_name)</span>
+            <span class="n">success</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">comparison_operator</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">expected_value</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">success</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">feedback_message</span> <span class="o">=</span> <span class="s2">&quot;&#39;</span><span class="si">%s</span><span class="s2">&#39; comparison succeeded [v: </span><span class="si">%s</span><span class="s2">][e: </span><span class="si">%s</span><span class="s2">]&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">variable_name</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">expected_value</span><span class="p">)</span>
+                <span class="n">result</span> <span class="o">=</span> <span class="n">common</span><span class="o">.</span><span class="n">Status</span><span class="o">.</span><span class="n">SUCCESS</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">feedback_message</span> <span class="o">=</span> <span class="s2">&quot;&#39;</span><span class="si">%s</span><span class="s2">&#39; comparison failed [v: </span><span class="si">%s</span><span class="s2">][e: </span><span class="si">%s</span><span class="s2">]&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">variable_name</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">expected_value</span><span class="p">)</span>
+                <span class="n">result</span> <span class="o">=</span> <span class="n">common</span><span class="o">.</span><span class="n">Status</span><span class="o">.</span><span class="n">FAILURE</span>
+
+        <span class="k">if</span> <span class="n">result</span> <span class="o">==</span> <span class="n">common</span><span class="o">.</span><span class="n">Status</span><span class="o">.</span><span class="n">SUCCESS</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">clearing_policy</span> <span class="o">==</span> <span class="n">common</span><span class="o">.</span><span class="n">ClearingPolicy</span><span class="o">.</span><span class="n">ON_SUCCESS</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">matching_result</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">matching_result</span> <span class="o">=</span> <span class="n">result</span>
+        <span class="k">return</span> <span class="n">result</span></div>
+
+<div class="viewcode-block" id="CheckBlackboardVariable.terminate"><a class="viewcode-back" href="../../modules.html#py_trees.blackboard.CheckBlackboardVariable.terminate">[docs]</a>    <span class="k">def</span> <span class="nf">terminate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">new_status</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Always discard the matching result if it was invalidated by a parent or</span>
+<span class="sd">        higher priority interrupt.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">%s</span><span class="s2">.terminate(</span><span class="si">%s</span><span class="s2">)&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__class__</span><span class="o">.</span><span class="n">__name__</span><span class="p">,</span> <span class="s2">&quot;</span><span class="si">%s</span><span class="s2">-&gt;</span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">status</span><span class="p">,</span> <span class="n">new_status</span><span class="p">)</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">status</span> <span class="o">!=</span> <span class="n">new_status</span> <span class="k">else</span> <span class="s2">&quot;</span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">new_status</span><span class="p">))</span>
+        <span class="k">if</span> <span class="n">new_status</span> <span class="o">==</span> <span class="n">common</span><span class="o">.</span><span class="n">Status</span><span class="o">.</span><span class="n">INVALID</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">matching_result</span> <span class="o">=</span> <span class="bp">None</span></div></div>
+
+
+<div class="viewcode-block" id="WaitForBlackboardVariable"><a class="viewcode-back" href="../../modules.html#py_trees.blackboard.WaitForBlackboardVariable">[docs]</a><span class="k">class</span> <span class="nc">WaitForBlackboardVariable</span><span class="p">(</span><span class="n">behaviours</span><span class="o">.</span><span class="n">Behaviour</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Check the blackboard to see if it has a specific variable</span>
+<span class="sd">    and optionally whether that variable has a specific value.</span>
+<span class="sd">    Unlike :py:class:`~py_trees.blackboard.CheckBlackboardVariable`</span>
+<span class="sd">    this class will be in a :data:`~py_trees.common.Status.SUCCESS` state until the variable appears</span>
+<span class="sd">    and (optionally) is matched.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        name (:obj:`str`): name of the behaviour</span>
+<span class="sd">        variable_name (:obj:`str`): name of the variable to set</span>
+<span class="sd">        expected_value (:obj:`any`): expected value to find (if `None`, check for existence only)</span>
+<span class="sd">        comparison_operator (:obj:`func`): one from the python `operator module`_</span>
+<span class="sd">        clearing_policy (:obj:`any`): when to clear the match result, see :py:class:`~py_trees.common.ClearingPolicy`</span>
+
+<span class="sd">    .. seealso:: :class:`~py_trees.blackboard.CheckBlackboardVariable`</span>
+
+<span class="sd">    .. include:: weblinks.rst</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+                 <span class="n">name</span><span class="p">,</span>
+                 <span class="n">variable_name</span><span class="o">=</span><span class="s2">&quot;dummy&quot;</span><span class="p">,</span>
+                 <span class="n">expected_value</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
+                 <span class="n">comparison_operator</span><span class="o">=</span><span class="n">operator</span><span class="o">.</span><span class="n">eq</span><span class="p">,</span>
+                 <span class="n">clearing_policy</span><span class="o">=</span><span class="n">common</span><span class="o">.</span><span class="n">ClearingPolicy</span><span class="o">.</span><span class="n">ON_INITIALISE</span>
+                 <span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">WaitForBlackboardVariable</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">blackboard</span> <span class="o">=</span> <span class="n">Blackboard</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">variable_name</span> <span class="o">=</span> <span class="n">variable_name</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">expected_value</span> <span class="o">=</span> <span class="n">expected_value</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">comparison_operator</span> <span class="o">=</span> <span class="n">comparison_operator</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">clearing_policy</span> <span class="o">=</span> <span class="n">clearing_policy</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">matching_result</span> <span class="o">=</span> <span class="bp">None</span>
+
+<div class="viewcode-block" id="WaitForBlackboardVariable.initialise"><a class="viewcode-back" href="../../modules.html#py_trees.blackboard.WaitForBlackboardVariable.initialise">[docs]</a>    <span class="k">def</span> <span class="nf">initialise</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Clears the internally stored message ready for a new run</span>
+<span class="sd">        if ``old_data_is_valid`` wasn&#39;t set.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">%s</span><span class="s2">.initialise()&quot;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">__class__</span><span class="o">.</span><span class="n">__name__</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">clearing_policy</span> <span class="o">==</span> <span class="n">common</span><span class="o">.</span><span class="n">ClearingPolicy</span><span class="o">.</span><span class="n">ON_INITIALISE</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">matching_result</span> <span class="o">=</span> <span class="bp">None</span></div>
+
+<div class="viewcode-block" id="WaitForBlackboardVariable.update"><a class="viewcode-back" href="../../modules.html#py_trees.blackboard.WaitForBlackboardVariable.update">[docs]</a>    <span class="k">def</span> <span class="nf">update</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Check for existence, or the appropriate match on the expected value.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">             :class:`~py_trees.common.Status`: :data:`~py_trees.common.Status.FAILURE` if not matched, :data:`~py_trees.common.Status.SUCCESS` otherwise.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">%s</span><span class="s2">.update()&quot;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">__class__</span><span class="o">.</span><span class="n">__name__</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">matching_result</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">matching_result</span>
+
+        <span class="c1"># existence failure check</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">blackboard</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">variable_name</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">feedback_message</span> <span class="o">=</span> <span class="s1">&#39;blackboard variable {0} did not exist&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">variable_name</span><span class="p">)</span>
+            <span class="n">result</span> <span class="o">=</span> <span class="n">common</span><span class="o">.</span><span class="n">Status</span><span class="o">.</span><span class="n">RUNNING</span>
+
+        <span class="c1"># if existence check required only</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">expected_value</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">feedback_message</span> <span class="o">=</span> <span class="s2">&quot;&#39;</span><span class="si">%s</span><span class="s2">&#39; exists on the blackboard (as required)&quot;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">variable_name</span>
+            <span class="n">result</span> <span class="o">=</span> <span class="n">common</span><span class="o">.</span><span class="n">Status</span><span class="o">.</span><span class="n">SUCCESS</span>
+
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># expected value matching</span>
+            <span class="n">value</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">blackboard</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">variable_name</span><span class="p">)</span>
+            <span class="n">success</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">comparison_operator</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">expected_value</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">success</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">feedback_message</span> <span class="o">=</span> <span class="s2">&quot;&#39;</span><span class="si">%s</span><span class="s2">&#39; comparison succeeded [v: </span><span class="si">%s</span><span class="s2">][e: </span><span class="si">%s</span><span class="s2">]&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">variable_name</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">expected_value</span><span class="p">)</span>
+                <span class="n">result</span> <span class="o">=</span> <span class="n">common</span><span class="o">.</span><span class="n">Status</span><span class="o">.</span><span class="n">SUCCESS</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">feedback_message</span> <span class="o">=</span> <span class="s2">&quot;&#39;</span><span class="si">%s</span><span class="s2">&#39; comparison failed [v: </span><span class="si">%s</span><span class="s2">][e: </span><span class="si">%s</span><span class="s2">]&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">variable_name</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">expected_value</span><span class="p">)</span>
+                <span class="n">result</span> <span class="o">=</span> <span class="n">common</span><span class="o">.</span><span class="n">Status</span><span class="o">.</span><span class="n">RUNNING</span>
+
+        <span class="k">if</span> <span class="n">result</span> <span class="o">==</span> <span class="n">common</span><span class="o">.</span><span class="n">Status</span><span class="o">.</span><span class="n">SUCCESS</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">clearing_policy</span> <span class="o">==</span> <span class="n">common</span><span class="o">.</span><span class="n">ClearingPolicy</span><span class="o">.</span><span class="n">ON_SUCCESS</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">matching_result</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="k">elif</span> <span class="n">result</span> <span class="o">!=</span> <span class="n">common</span><span class="o">.</span><span class="n">Status</span><span class="o">.</span><span class="n">RUNNING</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">matching_result</span> <span class="o">=</span> <span class="n">result</span>
+        <span class="k">return</span> <span class="n">result</span></div>
+
+<div class="viewcode-block" id="WaitForBlackboardVariable.terminate"><a class="viewcode-back" href="../../modules.html#py_trees.blackboard.WaitForBlackboardVariable.terminate">[docs]</a>    <span class="k">def</span> <span class="nf">terminate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">new_status</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Always discard the matching result if it was invalidated by a parent or</span>
+<span class="sd">        higher priority interrupt.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">%s</span><span class="s2">.terminate(</span><span class="si">%s</span><span class="s2">)&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__class__</span><span class="o">.</span><span class="n">__name__</span><span class="p">,</span> <span class="s2">&quot;</span><span class="si">%s</span><span class="s2">-&gt;</span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">status</span><span class="p">,</span> <span class="n">new_status</span><span class="p">)</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">status</span> <span class="o">!=</span> <span class="n">new_status</span> <span class="k">else</span> <span class="s2">&quot;</span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">new_status</span><span class="p">))</span>
+        <span class="k">if</span> <span class="n">new_status</span> <span class="o">==</span> <span class="n">common</span><span class="o">.</span><span class="n">Status</span><span class="o">.</span><span class="n">INVALID</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">matching_result</span> <span class="o">=</span> <span class="bp">None</span></div></div>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+
+    </p>
+  </div> 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../',
+            VERSION:'0.5.8',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

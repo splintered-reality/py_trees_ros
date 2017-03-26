@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Terminology &mdash; py_trees_ros 0.5.2 documentation</title>
+  <title>Terminology &mdash; py_trees 0.5.8 documentation</title>
   
 
   
@@ -30,9 +30,9 @@
   
 
   
-    <link rel="top" title="py_trees_ros 0.5.2 documentation" href="index.html"/>
+    <link rel="top" title="py_trees 0.5.8 documentation" href="index.html"/>
         <link rel="next" title="FAQ" href="faq.html"/>
-        <link rel="prev" title="Tutorials" href="tutorials.html"/> 
+        <link rel="prev" title="Surviving the Crazy Hospital" href="the_crazy_hospital.html"/> 
 
   
   <script src="_static/js/modernizr.min.js"></script>
@@ -50,7 +50,7 @@
           
 
           
-            <a href="index.html" class="icon icon-home"> py_trees_ros
+            <a href="index.html" class="icon icon-home"> py_trees
           
 
           
@@ -60,7 +60,7 @@
             
             
               <div class="version">
-                0.5.2
+                0.5.8
               </div>
             
           
@@ -85,13 +85,18 @@
                 <p class="caption"><span class="caption-text">Guide</span></p>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="background.html">Background</a></li>
-<li class="toctree-l1"><a class="reference internal" href="new_and_shiny.html">New and Shiny</a></li>
-<li class="toctree-l1"><a class="reference internal" href="tutorials.html">Tutorials</a></li>
+<li class="toctree-l1"><a class="reference internal" href="behaviours.html">Behaviours</a></li>
+<li class="toctree-l1"><a class="reference internal" href="composites.html">Composites</a></li>
+<li class="toctree-l1"><a class="reference internal" href="blackboards.html">Blackboards</a></li>
+<li class="toctree-l1"><a class="reference internal" href="trees.html">Trees</a></li>
+<li class="toctree-l1"><a class="reference internal" href="visualisation.html">Visualisation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="the_crazy_hospital.html">Surviving the Crazy Hospital</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="">Terminology</a></li>
 <li class="toctree-l1"><a class="reference internal" href="faq.html">FAQ</a></li>
 </ul>
 <p class="caption"><span class="caption-text">Reference</span></p>
 <ul>
+<li class="toctree-l1"><a class="reference internal" href="demos.html">Demos</a></li>
 <li class="toctree-l1"><a class="reference internal" href="programs.html">Programs</a></li>
 <li class="toctree-l1"><a class="reference internal" href="modules.html">Module API</a></li>
 <li class="toctree-l1"><a class="reference internal" href="changelog.html">Changelog</a></li>
@@ -111,7 +116,7 @@
       
       <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
         <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-        <a href="index.html">py_trees_ros</a>
+        <a href="index.html">py_trees</a>
       </nav>
 
 
@@ -145,48 +150,43 @@
   <div class="section" id="terminology">
 <h1>Terminology<a class="headerlink" href="#terminology" title="Permalink to this headline">¶</a></h1>
 <dl class="glossary docutils">
-<dt id="term-data-gathering">data gathering</dt>
-<dd><p class="first">Caching events, notifications, or incoming data arriving asynchronously on the blackboard.
-This is a fairly common practice for behaviour trees which exist inside a complex system.
-In the ROS world, it is most likely you will catch data coming in on subscribers in this way.</p>
-<p>In most cases, data gathering is done at the front end of your tree under a parallel
-directly alongside your priority work selector.</p>
-<div class="last admonition seealso">
-<p class="first admonition-title">See also</p>
-<p class="last"><a class="reference internal" href="tutorials.html#tutorial-one"><span>Tutorial 1 - Data Gathering</span></a></p>
-</div>
-</dd>
-<dt id="term-block"><span id="term-blocking"></span>block<br />blocking</dt>
+<dt id="term-blocking">blocking</dt>
 <dd>A behaviour is sometimes referred to as a &#8216;blocking&#8217; behaviour. Technically, the execution
 of a behaviour should be non-blocking (i.e. the tick part), however when it&#8217;s progress from
 &#8216;RUNNING&#8217; to &#8216;FAILURE/SUCCESS&#8217; takes more than one tick, we say that the behaviour itself
 is blocking. In short, <cite>blocking == RUNNING</cite>.</dd>
-<dt id="term-guard">guard</dt>
-<dd>A guard is a behaviour at the start of a work sequence that checks for a particular condition
-(e.g. is battery low?). If the check succeeds, then the door is opened to the rest of the
-work sequence.</dd>
-<dt id="term-mock"><span id="term-mocking"></span>mock<br />mocking</dt>
-<dd><p class="first">A very useful paradigm to accelerate development and testing of your behaviour trees
-is to mock your robot with very simple stubs that provide the same ROS API as the real
-robot. The actual behaviour underneath that ROS API need only be very roughly connected
-to the real thing.</p>
-<div class="admonition note">
-<p class="first admonition-title">Note</p>
-<p class="last">The key here is to test the decision making in your behaviour tree.</p>
+<dt id="term-fsm"><span id="term-flying-spaghetti-monster"></span>fsm<br />flying spaghetti monster</dt>
+<dd><p class="first">Whilst a serious religous entity in his own right (see <a class="reference external" href="http://www.venganza.org/">pastafarianism</a>), it&#8217;s also
+very easy to imagine your code become a spiritual flying spaghetti monster if left
+unchecked:</p>
+<div class="last highlight-python"><div class="highlight"><pre>  _  _(o)_(o)_  _
+._\`:_ F S M _:&#39; \_,
+    / (`---&#39;\ `-.
+ ,-`  _)    (_,
+</pre></div>
 </div>
-<p>In most cases this has very little to do with the kinematics, dynamics or sensor
-fidelity of a full simulation.</p>
-<p>Mocking the bits and pieces takes far less time and you&#8217;ll also be able to
-insert handles that can help you force decision making to
-branch to where you want to test. For example, using dynamic reconfigure in
-<a class="reference internal" href="modules.html#py_trees_ros.mock.battery.Battery" title="py_trees_ros.mock.battery.Battery"><code class="xref py py-class docutils literal"><span class="pre">py_trees_ros.mock.battery.Battery</span></code></a> to abruptly force charging/discharging and at
-varying rates. Additionally, if you set up the mock well, you&#8217;ll find it executes far faster
-than a full simulation (you can montage - no need to endure travel time).</p>
-<p class="last">t will also make your web team happier (for apps that sit astride the behaiviour tree).
-These apps typically require thorough testing of decision making branches that are not
-often traversed e.g. battery low recovery handling, or cancelling procedures.
-This is far easier to do in a mock. They&#8217;ll also appreciate not having to setup the
-entire infrastructure necessary for a dynamic simulation.</p>
+</dd>
+<dt id="term-tick"><span id="term-ticks"></span><span id="term-ticking"></span>tick<br />ticks<br />ticking</dt>
+<dd><p class="first">A key feature of behaviours and their trees is in the way they <em>tick</em>. A tick
+is merely an execution slice, similar to calling a function once, or executing
+a loop in a control program once.</p>
+<p>When a <strong>behaviour</strong> ticks, it is executing a small, non-blocking chunk of code
+that checks a variable or triggers/monitors/returns the result of an external action.</p>
+<p>When a <strong>behaviour tree</strong> ticks, it traverses the behaviours (starting at the root of
+the tree), ticking each behaviour, catching its result and then using that result to
+make decisions on the direction the tree traversal will take. This is the decision part
+of the tree. Once the traversal ends back at the root, the tick is over.</p>
+<p>Once a tick is done..you can stop for breath! In this space you can pause to avoid
+eating the cpu, send some statistics out to a monitoring program, manipulate the
+underlying blackboard (data), ... At no point does the traversal of the tree get mired in
+execution - it&#8217;s just in and out and then stop for a coffee. This is absolutely awesome
+- without this it would be a concurrent mess of locks and threads.</p>
+<p>Always keep in mind that your behaviours&#8217; executions must be light. There is no
+parallelising here and your tick time needs to remain small. The tree should be solely
+about decision making, not doing any actual blocking work. Any blocking work should be
+happening somewhere else with a behaviour simply in charge of starting/monitoring and
+catching the result of that work.</p>
+<p class="last">Add an image of a ticking tree here.</p>
 </dd>
 </dl>
 </div>
@@ -201,7 +201,7 @@ entire infrastructure necessary for a dynamic simulation.</p>
         <a href="faq.html" class="btn btn-neutral float-right" title="FAQ" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
-        <a href="tutorials.html" class="btn btn-neutral" title="Tutorials" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+        <a href="the_crazy_hospital.html" class="btn btn-neutral" title="Surviving the Crazy Hospital" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   
@@ -230,7 +230,7 @@ entire infrastructure necessary for a dynamic simulation.</p>
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'./',
-            VERSION:'0.5.2',
+            VERSION:'0.5.8',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
             HAS_SOURCE:  true

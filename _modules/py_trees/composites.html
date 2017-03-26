@@ -1,0 +1,829 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>py_trees.composites &mdash; py_trees 0.5.8 documentation</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+    <link rel="top" title="py_trees 0.5.8 documentation" href="../../index.html"/>
+        <link rel="up" title="Module code" href="../index.html"/> 
+
+  
+  <script src="../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../index.html" class="icon icon-home"> py_trees
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.5.8
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+    
+            
+            
+                <p class="caption"><span class="caption-text">Guide</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../background.html">Background</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../behaviours.html">Behaviours</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../composites.html">Composites</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../blackboards.html">Blackboards</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../trees.html">Trees</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../visualisation.html">Visualisation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../the_crazy_hospital.html">Surviving the Crazy Hospital</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../terminology.html">Terminology</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../faq.html">FAQ</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Reference</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../demos.html">Demos</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../programs.html">Programs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../modules.html">Module API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../changelog.html">Changelog</a></li>
+</ul>
+
+            
+          
+    <a href="genindex.html">Index</a>
+    <a href="py-modindex.html">Module Index</a>
+  
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="../../index.html">py_trees</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../../index.html">Docs</a> &raquo;</li>
+      
+          <li><a href="../index.html">Module code</a> &raquo;</li>
+      
+    <li>py_trees.composites</li>
+      <li class="wy-breadcrumbs-aside">
+        
+          
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for py_trees.composites</h1><div class="highlight"><pre>
+<span class="ch">#!/usr/bin/env python</span>
+<span class="c1">#</span>
+<span class="c1"># License: BSD</span>
+<span class="c1">#   https://raw.githubusercontent.com/stonier/py_trees/devel/LICENSE</span>
+<span class="c1">#</span>
+<span class="c1">##############################################################################</span>
+<span class="c1"># Documentation</span>
+<span class="c1">##############################################################################</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Composites are the **factories** and **decision makers** of a</span>
+<span class="sd">behaviour tree. They are responsible for shaping the branches.</span>
+
+<span class="sd">.. graphviz:: dot/composites.dot</span>
+
+<span class="sd">.. tip:: You should never need to subclass or create new composites.</span>
+
+<span class="sd">Most patterns can be achieved with a combination of the above. Adding to this</span>
+<span class="sd">set exponentially increases the complexity and subsequently</span>
+<span class="sd">making it more difficult to design, introspect, visualise and debug the trees. Always try</span>
+<span class="sd">to find the combination you need to achieve your result before contemplating adding</span>
+<span class="sd">to this set. Actually, scratch that...just don&#39;t contemplate it!</span>
+
+<span class="sd">Composite behaviours typically manage children and apply some logic to the way</span>
+<span class="sd">they execute and return a result, but generally don&#39;t do anything themselves.</span>
+<span class="sd">Perform the checks or actions you need to do in the non-composite behaviours.</span>
+
+<span class="sd">* :class:`~py_trees.composites.Sequence`: execute children sequentially</span>
+<span class="sd">* :class:`~py_trees.composites.Selector`: select a path through the tree, interruptible by higher priorities</span>
+<span class="sd">* :class:`~py_trees.composites.Chooser`: like a selector, but commits to a path once started until it finishes</span>
+<span class="sd">* :class:`~py_trees.composites.Parallel`: manage children concurrently</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="c1">##############################################################################</span>
+<span class="c1"># Imports</span>
+<span class="c1">##############################################################################</span>
+
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">absolute_import</span>
+
+<span class="kn">import</span> <span class="nn">itertools</span>
+
+<span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">common</span>
+<span class="kn">from</span> <span class="nn">.behaviour</span> <span class="kn">import</span> <span class="n">Behaviour</span>
+<span class="kn">from</span> <span class="nn">.common</span> <span class="kn">import</span> <span class="n">Status</span>
+
+<span class="c1">##############################################################################</span>
+<span class="c1"># Composites</span>
+<span class="c1">##############################################################################</span>
+
+
+<div class="viewcode-block" id="Composite"><a class="viewcode-back" href="../../modules.html#py_trees.composites.Composite">[docs]</a><span class="k">class</span> <span class="nc">Composite</span><span class="p">(</span><span class="n">Behaviour</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    The parent class to all composite behaviours, i.e. those that</span>
+<span class="sd">    have children.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        name (:obj:`str`): the composite behaviour name</span>
+<span class="sd">        children ([:class:`~py_trees.behaviour.Behaviour`]): list of children to add</span>
+<span class="sd">        *args: variable length argument list</span>
+<span class="sd">        **kwargs: arbitrary keyword arguments</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">children</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">Composite</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">children</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="nb">map</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">add_child</span><span class="p">,</span> <span class="n">children</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">children</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="c1">############################################</span>
+    <span class="c1"># Worker Overrides</span>
+    <span class="c1">############################################</span>
+<div class="viewcode-block" id="Composite.setup"><a class="viewcode-back" href="../../modules.html#py_trees.composites.Composite.setup">[docs]</a>    <span class="k">def</span> <span class="nf">setup</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">timeout</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Relays to each child&#39;s :meth:`~py_trees.behaviour.Behaviuor.setup` method in turn.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">             timeout (:obj:`float`): time to wait (0.0 is blocking forever)</span>
+
+<span class="sd">        Return:</span>
+<span class="sd">            :obj:`bool`: suceess or failure of the operation</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">%s</span><span class="s2">.setup()&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__class__</span><span class="o">.</span><span class="n">__name__</span><span class="p">))</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="bp">True</span>
+        <span class="k">for</span> <span class="n">child</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">children</span><span class="p">:</span>
+            <span class="n">new_result</span> <span class="o">=</span> <span class="n">child</span><span class="o">.</span><span class="n">setup</span><span class="p">(</span><span class="n">timeout</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">new_result</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+                <span class="c1"># replace with py_trees exception!</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">%s</span><span class="s2">.setup()[&#39;</span><span class="si">%s</span><span class="s2">&#39;.setup() returned None (must be True||False)]&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__class__</span><span class="o">.</span><span class="n">__name__</span><span class="p">,</span> <span class="n">child</span><span class="o">.</span><span class="n">name</span><span class="p">))</span>
+            <span class="n">result</span> <span class="o">=</span> <span class="n">result</span> <span class="ow">and</span> <span class="n">new_result</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">result</span><span class="p">:</span>
+                <span class="k">break</span>
+        <span class="k">return</span> <span class="n">result</span></div>
+
+<div class="viewcode-block" id="Composite.stop"><a class="viewcode-back" href="../../modules.html#py_trees.composites.Composite.stop">[docs]</a>    <span class="k">def</span> <span class="nf">stop</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">new_status</span><span class="o">=</span><span class="n">Status</span><span class="o">.</span><span class="n">INVALID</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        There is generally two use cases that must be supported here.</span>
+
+<span class="sd">        1) Whenever the composite has gone to a recognised state (i.e. :data:`~py_trees.common.Status.FAILURE` or SUCCESS),</span>
+<span class="sd">        or 2) when a higher level parent calls on it to truly stop (INVALID).</span>
+
+<span class="sd">        In only the latter case will children need to be forcibly stopped as well. In the first case, they will</span>
+<span class="sd">        have stopped themselves appropriately already.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            new_status (:class:`~py_trees.common.Status`): behaviour will transition to this new status</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">%s</span><span class="s2">.stop()[</span><span class="si">%s</span><span class="s2">]&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__class__</span><span class="o">.</span><span class="n">__name__</span><span class="p">,</span> <span class="s2">&quot;</span><span class="si">%s</span><span class="s2">-&gt;</span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">status</span><span class="p">,</span> <span class="n">new_status</span><span class="p">)</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">status</span> <span class="o">!=</span> <span class="n">new_status</span> <span class="k">else</span> <span class="s2">&quot;</span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">new_status</span><span class="p">))</span>
+        <span class="k">if</span> <span class="n">new_status</span> <span class="o">==</span> <span class="n">Status</span><span class="o">.</span><span class="n">INVALID</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">child</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">children</span><span class="p">:</span>
+                <span class="n">child</span><span class="o">.</span><span class="n">stop</span><span class="p">(</span><span class="n">new_status</span><span class="p">)</span>
+        <span class="c1"># This part just replicates the Behaviour.stop function. We replicate it here so that</span>
+        <span class="c1"># the Behaviour logging doesn&#39;t duplicate the composite logging here, just a bit cleaner this way.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">terminate</span><span class="p">(</span><span class="n">new_status</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">status</span> <span class="o">=</span> <span class="n">new_status</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">iterator</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">tick</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="Composite.tip"><a class="viewcode-back" href="../../modules.html#py_trees.composites.Composite.tip">[docs]</a>    <span class="k">def</span> <span class="nf">tip</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Recursive function to extract the last running node of the tree.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            :class::`~py_trees.behaviour.Behaviour`: the tip function of the current child of this composite or None</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">current_child</span><span class="o">.</span><span class="n">tip</span><span class="p">()</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">current_child</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span> <span class="k">else</span> <span class="bp">None</span></div>
+
+    <span class="c1">############################################</span>
+    <span class="c1"># Children</span>
+    <span class="c1">############################################</span>
+
+<div class="viewcode-block" id="Composite.add_child"><a class="viewcode-back" href="../../modules.html#py_trees.composites.Composite.add_child">[docs]</a>    <span class="k">def</span> <span class="nf">add_child</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">child</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Adds a child.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            child (:class:`~py_trees.behaviour.Behaviour`): child to delete</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            uuid.UUID: unique id of the child</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">child</span><span class="p">,</span> <span class="n">Behaviour</span><span class="p">),</span> <span class="s2">&quot;children must be behaviours, but you passed in </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="nb">type</span><span class="p">(</span><span class="n">child</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">children</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">child</span><span class="p">)</span>
+        <span class="n">child</span><span class="o">.</span><span class="n">parent</span> <span class="o">=</span> <span class="bp">self</span>
+        <span class="k">return</span> <span class="n">child</span><span class="o">.</span><span class="n">id</span></div>
+
+<div class="viewcode-block" id="Composite.add_children"><a class="viewcode-back" href="../../modules.html#py_trees.composites.Composite.add_children">[docs]</a>    <span class="k">def</span> <span class="nf">add_children</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">children</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Append a list of children to the current list.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            children ([:class:`~py_trees.behaviour.Behaviour`]): list of children to add</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">child</span> <span class="ow">in</span> <span class="n">children</span><span class="p">:</span>
+            <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">child</span><span class="p">,</span> <span class="n">Behaviour</span><span class="p">),</span> <span class="s2">&quot;children must be behaviours, but you passed in </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="nb">type</span><span class="p">(</span><span class="n">child</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">children</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">child</span><span class="p">)</span>
+            <span class="n">child</span><span class="o">.</span><span class="n">parent</span> <span class="o">=</span> <span class="bp">self</span></div>
+
+<div class="viewcode-block" id="Composite.remove_child"><a class="viewcode-back" href="../../modules.html#py_trees.composites.Composite.remove_child">[docs]</a>    <span class="k">def</span> <span class="nf">remove_child</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">child</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Remove the child behaviour from this composite.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            child (:class:`~py_trees.behaviour.Behaviour`): child to delete</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            :obj:`int`: index of the child that was removed</span>
+
+<span class="sd">        .. todo:: Error handling for when child is not in this list</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">child</span><span class="o">.</span><span class="n">status</span> <span class="o">==</span> <span class="n">Status</span><span class="o">.</span><span class="n">RUNNING</span><span class="p">:</span>
+            <span class="n">child</span><span class="o">.</span><span class="n">stop</span><span class="p">(</span><span class="n">Status</span><span class="o">.</span><span class="n">INVALID</span><span class="p">)</span>
+        <span class="n">child_index</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">children</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">child</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">children</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">child</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">child_index</span></div>
+
+<div class="viewcode-block" id="Composite.remove_all_children"><a class="viewcode-back" href="../../modules.html#py_trees.composites.Composite.remove_all_children">[docs]</a>    <span class="k">def</span> <span class="nf">remove_all_children</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Remove all children. Makes sure to stop each child if necessary.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">child</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">children</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">child</span><span class="o">.</span><span class="n">status</span> <span class="o">==</span> <span class="n">Status</span><span class="o">.</span><span class="n">RUNNING</span><span class="p">:</span>
+                <span class="n">child</span><span class="o">.</span><span class="n">stop</span><span class="p">(</span><span class="n">Status</span><span class="o">.</span><span class="n">INVALID</span><span class="p">)</span>
+        <span class="c1"># makes sure to delete it for this class and all references to it</span>
+        <span class="c1">#   http://stackoverflow.com/questions/850795/clearing-python-lists</span>
+        <span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="n">children</span><span class="p">[:]</span></div>
+
+<div class="viewcode-block" id="Composite.replace_child"><a class="viewcode-back" href="../../modules.html#py_trees.composites.Composite.replace_child">[docs]</a>    <span class="k">def</span> <span class="nf">replace_child</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">child</span><span class="p">,</span> <span class="n">replacement</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Replace the child behaviour with another.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            child (:class:`~py_trees.behaviour.Behaviour`): child to delete</span>
+<span class="sd">            replacement (:class:`~py_trees.behaviour.Behaviour`): child to insert</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">child</span><span class="o">.</span><span class="n">status</span> <span class="o">==</span> <span class="n">Status</span><span class="o">.</span><span class="n">RUNNING</span><span class="p">:</span>
+            <span class="n">child</span><span class="o">.</span><span class="n">stop</span><span class="p">(</span><span class="n">Status</span><span class="o">.</span><span class="n">INVALID</span><span class="p">)</span>
+        <span class="n">child_index</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">children</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">child</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">%s</span><span class="s2">.replace_child()[</span><span class="si">%s</span><span class="s2">-&gt;</span><span class="si">%s</span><span class="s2">]&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__class__</span><span class="o">.</span><span class="n">__name__</span><span class="p">,</span> <span class="n">child</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">replacement</span><span class="o">.</span><span class="n">name</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">children</span><span class="p">[</span><span class="n">child_index</span><span class="p">]</span> <span class="o">=</span> <span class="n">replacement</span></div>
+
+<div class="viewcode-block" id="Composite.remove_child_by_id"><a class="viewcode-back" href="../../modules.html#py_trees.composites.Composite.remove_child_by_id">[docs]</a>    <span class="k">def</span> <span class="nf">remove_child_by_id</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">child_id</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Remove the child with the specified id.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            child_id (uuid.UUID): unique id of the child</span>
+
+<span class="sd">        Raises:</span>
+<span class="sd">            IndexError: if the child was not found</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">child</span> <span class="o">=</span> <span class="nb">next</span><span class="p">((</span><span class="n">c</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">children</span> <span class="k">if</span> <span class="n">c</span><span class="o">.</span><span class="n">id</span> <span class="o">==</span> <span class="n">child_id</span><span class="p">),</span> <span class="bp">None</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">child</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">child</span><span class="o">.</span><span class="n">status</span> <span class="o">==</span> <span class="n">Status</span><span class="o">.</span><span class="n">RUNNING</span><span class="p">:</span>
+                <span class="n">child</span><span class="o">.</span><span class="n">stop</span><span class="p">(</span><span class="n">Status</span><span class="o">.</span><span class="n">INVALID</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">children</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">child</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">IndexError</span><span class="p">(</span><span class="s1">&#39;child was not found with the specified id [</span><span class="si">%s</span><span class="s1">]&#39;</span> <span class="o">%</span> <span class="n">child_id</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Composite.prepend_child"><a class="viewcode-back" href="../../modules.html#py_trees.composites.Composite.prepend_child">[docs]</a>    <span class="k">def</span> <span class="nf">prepend_child</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">child</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Prepend the child before all other children.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            child (:class:`~py_trees.behaviour.Behaviour`): child to insert</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            uuid.UUID: unique id of the child</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">children</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">child</span><span class="p">)</span>
+        <span class="n">child</span><span class="o">.</span><span class="n">parent</span> <span class="o">=</span> <span class="bp">self</span>
+        <span class="k">return</span> <span class="n">child</span><span class="o">.</span><span class="n">id</span></div>
+
+<div class="viewcode-block" id="Composite.insert_child"><a class="viewcode-back" href="../../modules.html#py_trees.composites.Composite.insert_child">[docs]</a>    <span class="k">def</span> <span class="nf">insert_child</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">child</span><span class="p">,</span> <span class="n">index</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Insert child at the specified index. This simply directly calls</span>
+<span class="sd">        the python list&#39;s :obj:`insert` method using the child and index arguments.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            child (:class:`~py_trees.behaviour.Behaviour`): child to insert</span>
+<span class="sd">            index (:obj:`int`): index to insert it at</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            uuid.UUID: unique id of the child</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">children</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="n">index</span><span class="p">,</span> <span class="n">child</span><span class="p">)</span>
+        <span class="n">child</span><span class="o">.</span><span class="n">parent</span> <span class="o">=</span> <span class="bp">self</span>
+        <span class="k">return</span> <span class="n">child</span><span class="o">.</span><span class="n">id</span></div></div>
+
+<span class="c1">##############################################################################</span>
+<span class="c1"># Selector</span>
+<span class="c1">##############################################################################</span>
+
+
+<div class="viewcode-block" id="Selector"><a class="viewcode-back" href="../../modules.html#py_trees.composites.Selector">[docs]</a><span class="k">class</span> <span class="nc">Selector</span><span class="p">(</span><span class="n">Composite</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Selectors are the Decision Makers</span>
+
+<span class="sd">    .. graphviz:: dot/selector.dot</span>
+
+<span class="sd">    A selector executes each of its child behaviours in turn until one of them</span>
+<span class="sd">    succeeds (at which point it itself returns :data:`~py_trees.common.Status.RUNNING` or :data:`~py_trees.common.Status.SUCCESS`,</span>
+<span class="sd">    or it runs out of children at which point it itself returns :data:`~py_trees.common.Status.FAILURE`.</span>
+<span class="sd">    We usually refer to selecting children as a means of *choosing between priorities*.</span>
+<span class="sd">    Each child and its subtree represent a decreasingly lower priority path.</span>
+
+<span class="sd">    .. note::</span>
+
+<span class="sd">       Switching from a low -&gt; high priority branch causes a `stop(INVALID)` signal to be sent to the previously</span>
+<span class="sd">       executing low priority branch. This signal will percolate down that child&#39;s own subtree. Behaviours</span>
+<span class="sd">       should make sure that they catch this and *destruct* appropriately.</span>
+
+<span class="sd">    Make sure you do your appropriate cleanup in the :meth:`terminate()` methods! e.g. cancelling a running goal, or restoring a context.</span>
+
+<span class="sd">    .. seealso:: The :ref:`py-trees-demo-selector-program` program demos higher priority switching under a selector.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        name (:obj:`str`): the composite behaviour name</span>
+<span class="sd">        children ([:class:`~py_trees.behaviour.Behaviour`]): list of children to add</span>
+<span class="sd">        *args: variable length argument list</span>
+<span class="sd">        **kwargs: arbitrary keyword arguments</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;Selector&quot;</span><span class="p">,</span> <span class="n">children</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">Selector</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">children</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">current_child</span> <span class="o">=</span> <span class="bp">None</span>
+
+<div class="viewcode-block" id="Selector.tick"><a class="viewcode-back" href="../../modules.html#py_trees.composites.Selector.tick">[docs]</a>    <span class="k">def</span> <span class="nf">tick</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Run the tick behaviour for this selector. Note that the status</span>
+<span class="sd">        of the tick is always determined by its children, not</span>
+<span class="sd">        by the user customised update function.</span>
+
+<span class="sd">        Yields:</span>
+<span class="sd">            :class:`~py_trees.behaviour.Behaviour`: a reference to itself or one of its children</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">%s</span><span class="s2">.tick()&quot;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">__class__</span><span class="o">.</span><span class="n">__name__</span><span class="p">)</span>
+        <span class="c1"># Required behaviour for *all* behaviours and composites is</span>
+        <span class="c1"># for tick() to check if it isn&#39;t running and initialise</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">status</span> <span class="o">!=</span> <span class="n">Status</span><span class="o">.</span><span class="n">RUNNING</span><span class="p">:</span>
+            <span class="c1"># selectors dont do anything specific on initialisation</span>
+            <span class="c1">#   - the current child is managed by the update, never needs to be &#39;initialised&#39;</span>
+            <span class="c1"># run subclass (user) handles</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">initialise</span><span class="p">()</span>
+        <span class="c1"># run any work designated by a customised instance of this class</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">update</span><span class="p">()</span>
+        <span class="n">previous</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">current_child</span>
+        <span class="k">for</span> <span class="n">child</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">children</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">node</span> <span class="ow">in</span> <span class="n">child</span><span class="o">.</span><span class="n">tick</span><span class="p">():</span>
+                <span class="k">yield</span> <span class="n">node</span>
+                <span class="k">if</span> <span class="n">node</span> <span class="ow">is</span> <span class="n">child</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="n">node</span><span class="o">.</span><span class="n">status</span> <span class="o">==</span> <span class="n">Status</span><span class="o">.</span><span class="n">RUNNING</span> <span class="ow">or</span> <span class="n">node</span><span class="o">.</span><span class="n">status</span> <span class="o">==</span> <span class="n">Status</span><span class="o">.</span><span class="n">SUCCESS</span><span class="p">:</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">current_child</span> <span class="o">=</span> <span class="n">child</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">status</span> <span class="o">=</span> <span class="n">node</span><span class="o">.</span><span class="n">status</span>
+                        <span class="k">if</span> <span class="n">previous</span> <span class="ow">is</span> <span class="bp">None</span> <span class="ow">or</span> <span class="n">previous</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">current_child</span><span class="p">:</span>
+                            <span class="c1"># we interrupted, invalidate everything at a lower priority</span>
+                            <span class="n">passed</span> <span class="o">=</span> <span class="bp">False</span>
+                            <span class="k">for</span> <span class="n">child</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">children</span><span class="p">:</span>
+                                <span class="k">if</span> <span class="n">passed</span><span class="p">:</span>
+                                    <span class="k">if</span> <span class="n">child</span><span class="o">.</span><span class="n">status</span> <span class="o">!=</span> <span class="n">Status</span><span class="o">.</span><span class="n">INVALID</span><span class="p">:</span>
+                                        <span class="n">child</span><span class="o">.</span><span class="n">stop</span><span class="p">(</span><span class="n">Status</span><span class="o">.</span><span class="n">INVALID</span><span class="p">)</span>
+                                <span class="n">passed</span> <span class="o">=</span> <span class="bp">True</span> <span class="k">if</span> <span class="n">child</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">current_child</span> <span class="k">else</span> <span class="n">passed</span>
+                        <span class="k">yield</span> <span class="bp">self</span>
+                        <span class="k">return</span>
+        <span class="c1"># all children failed, set failure ourselves and current child to the last bugger who failed us</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">status</span> <span class="o">=</span> <span class="n">Status</span><span class="o">.</span><span class="n">FAILURE</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">current_child</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">children</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+        <span class="k">except</span> <span class="ne">IndexError</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">current_child</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="k">yield</span> <span class="bp">self</span></div>
+
+<div class="viewcode-block" id="Selector.stop"><a class="viewcode-back" href="../../modules.html#py_trees.composites.Selector.stop">[docs]</a>    <span class="k">def</span> <span class="nf">stop</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">new_status</span><span class="o">=</span><span class="n">Status</span><span class="o">.</span><span class="n">INVALID</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Stopping a selector requires setting the current child to none. Note that it</span>
+<span class="sd">        is important to implement this here instead of terminate, so users are free</span>
+<span class="sd">        to subclass this easily with their own terminate and not have to remember</span>
+<span class="sd">        that they need to call this function manually.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            new_status (:class:`~py_trees.common.Status`): the composite is transitioning to this new status</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># retain information about the last running child if the new status is</span>
+        <span class="c1"># SUCCESS or FAILURE</span>
+        <span class="k">if</span> <span class="n">new_status</span> <span class="o">==</span> <span class="n">Status</span><span class="o">.</span><span class="n">INVALID</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">current_child</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="n">Composite</span><span class="o">.</span><span class="n">stop</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">new_status</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Selector.__repr__"><a class="viewcode-back" href="../../modules.html#py_trees.composites.Selector.__repr__">[docs]</a>    <span class="k">def</span> <span class="nf">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Simple string representation of the object.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            :obj:`str`: string representation</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">s</span> <span class="o">=</span> <span class="s2">&quot;Name       : </span><span class="si">%s</span><span class="se">\n</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span>
+        <span class="n">s</span> <span class="o">+=</span> <span class="s2">&quot;  Status  : </span><span class="si">%s</span><span class="se">\n</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">status</span>
+        <span class="n">s</span> <span class="o">+=</span> <span class="s2">&quot;  Current : </span><span class="si">%s</span><span class="se">\n</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">current_child</span><span class="o">.</span><span class="n">name</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">current_child</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span> <span class="k">else</span> <span class="s2">&quot;none&quot;</span><span class="p">)</span>
+        <span class="n">s</span> <span class="o">+=</span> <span class="s2">&quot;  Children: </span><span class="si">%s</span><span class="se">\n</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">[</span><span class="n">child</span><span class="o">.</span><span class="n">name</span> <span class="k">for</span> <span class="n">child</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">children</span><span class="p">]</span>
+        <span class="k">return</span> <span class="n">s</span></div></div>
+
+
+<span class="c1">##############################################################################</span>
+<span class="c1"># Chooser</span>
+<span class="c1">##############################################################################</span>
+
+
+<div class="viewcode-block" id="Chooser"><a class="viewcode-back" href="../../modules.html#py_trees.composites.Chooser">[docs]</a><span class="k">class</span> <span class="nc">Chooser</span><span class="p">(</span><span class="n">Selector</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Choosers are Selectors with Commitment</span>
+
+<span class="sd">    .. graphviz:: dot/chooser.dot</span>
+
+<span class="sd">    A variant of the selector class. Once a child is selected, it</span>
+<span class="sd">    cannot be interrupted by higher priority siblings. As soon as the chosen child</span>
+<span class="sd">    itself has finished it frees the chooser for an alternative selection. i.e. priorities</span>
+<span class="sd">    only come into effect if the chooser wasn&#39;t running in the previous tick.</span>
+
+<span class="sd">    .. note::</span>
+<span class="sd">        This is the only composite in py_trees that is not a core composite in most behaviour tree implementations.</span>
+<span class="sd">        Nonetheless, this is useful in fields like robotics, where you have to ensure that your manipulator doesn&#39;t</span>
+<span class="sd">        drop it&#39;s payload mid-motion as soon as a higher interrupt arrives. Use this composite</span>
+<span class="sd">        sparingly and only if you can&#39;t find another way to easily create an elegant tree composition for your task.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        name (:obj:`str`): the composite behaviour name</span>
+<span class="sd">        children ([:class:`~py_trees.behaviour.Behaviour`]): list of children to add</span>
+<span class="sd">        *args: variable length argument list</span>
+<span class="sd">        **kwargs: arbitrary keyword arguments</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;Chooser&quot;</span><span class="p">,</span> <span class="n">children</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">Chooser</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">children</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+<div class="viewcode-block" id="Chooser.tick"><a class="viewcode-back" href="../../modules.html#py_trees.composites.Chooser.tick">[docs]</a>    <span class="k">def</span> <span class="nf">tick</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Run the tick behaviour for this chooser. Note that the status</span>
+<span class="sd">        of the tick is (for now) always determined by its children, not</span>
+<span class="sd">        by the user customised update function.</span>
+
+<span class="sd">        Yields:</span>
+<span class="sd">            :class:`~py_trees.behaviour.Behaviour`: a reference to itself or one of its children</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">%s</span><span class="s2">.tick()&quot;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">__class__</span><span class="o">.</span><span class="n">__name__</span><span class="p">)</span>
+        <span class="c1"># Required behaviour for *all* behaviours and composites is</span>
+        <span class="c1"># for tick() to check if it isn&#39;t running and initialise</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">status</span> <span class="o">!=</span> <span class="n">Status</span><span class="o">.</span><span class="n">RUNNING</span><span class="p">:</span>
+            <span class="c1"># chooser specific initialisation</span>
+            <span class="c1"># invalidate everything</span>
+            <span class="k">for</span> <span class="n">child</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">children</span><span class="p">:</span>
+                <span class="n">child</span><span class="o">.</span><span class="n">stop</span><span class="p">(</span><span class="n">Status</span><span class="o">.</span><span class="n">INVALID</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">current_child</span> <span class="o">=</span> <span class="bp">None</span>
+            <span class="c1"># run subclass (user) initialisation</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">initialise</span><span class="p">()</span>
+        <span class="c1"># run any work designated by a customised instance of this class</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">update</span><span class="p">()</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">current_child</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="c1"># run our child, and invalidate anyone else who may have been ticked last run</span>
+            <span class="c1"># (bit wasteful always checking for the latter)</span>
+            <span class="k">for</span> <span class="n">child</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">children</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">child</span> <span class="ow">is</span> <span class="bp">self</span><span class="o">.</span><span class="n">current_child</span><span class="p">:</span>
+                    <span class="k">for</span> <span class="n">node</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">current_child</span><span class="o">.</span><span class="n">tick</span><span class="p">():</span>
+                        <span class="k">yield</span> <span class="n">node</span>
+                <span class="k">elif</span> <span class="n">child</span><span class="o">.</span><span class="n">status</span> <span class="o">!=</span> <span class="n">Status</span><span class="o">.</span><span class="n">INVALID</span><span class="p">:</span>
+                    <span class="n">child</span><span class="o">.</span><span class="n">stop</span><span class="p">(</span><span class="n">Status</span><span class="o">.</span><span class="n">INVALID</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">child</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">children</span><span class="p">:</span>
+                <span class="k">for</span> <span class="n">node</span> <span class="ow">in</span> <span class="n">child</span><span class="o">.</span><span class="n">tick</span><span class="p">():</span>
+                    <span class="k">yield</span> <span class="n">node</span>
+                <span class="k">if</span> <span class="n">child</span><span class="o">.</span><span class="n">status</span> <span class="o">==</span> <span class="n">Status</span><span class="o">.</span><span class="n">RUNNING</span> <span class="ow">or</span> <span class="n">child</span><span class="o">.</span><span class="n">status</span> <span class="o">==</span> <span class="n">Status</span><span class="o">.</span><span class="n">SUCCESS</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">current_child</span> <span class="o">=</span> <span class="n">child</span>
+                    <span class="k">break</span>
+        <span class="n">new_status</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">current_child</span><span class="o">.</span><span class="n">status</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">current_child</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span> <span class="k">else</span> <span class="n">Status</span><span class="o">.</span><span class="n">FAILURE</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">stop</span><span class="p">(</span><span class="n">new_status</span><span class="p">)</span>
+        <span class="k">yield</span> <span class="bp">self</span></div></div>
+
+<span class="c1">##############################################################################</span>
+<span class="c1"># Sequence</span>
+<span class="c1">##############################################################################</span>
+
+
+<div class="viewcode-block" id="Sequence"><a class="viewcode-back" href="../../modules.html#py_trees.composites.Sequence">[docs]</a><span class="k">class</span> <span class="nc">Sequence</span><span class="p">(</span><span class="n">Composite</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Sequences are the factory lines of Behaviour Trees</span>
+
+<span class="sd">    .. graphviz:: dot/sequence.dot</span>
+
+<span class="sd">    A sequence will progressively tick over each of its children so long as</span>
+<span class="sd">    each child returns :data:`~py_trees.common.Status.SUCCESS`. If any child returns</span>
+<span class="sd">    :data:`~py_trees.common.Status.FAILURE` or :data:`~py_trees.common.Status.RUNNING` the sequence will halt and the parent will adopt</span>
+<span class="sd">    the result of this child. If it reaches the last child, it returns with</span>
+<span class="sd">    that result regardless.</span>
+
+<span class="sd">    .. note::</span>
+
+<span class="sd">       The sequence halts once it sees a child is RUNNING and then returns</span>
+<span class="sd">       the result. *It does not get stuck in the running behaviour*.</span>
+
+<span class="sd">    .. seealso:: The :ref:`py-trees-demo-sequence-program` program demos a simple sequence in action.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        name (:obj:`str`): the composite behaviour name</span>
+<span class="sd">        children ([:class:`~py_trees.behaviour.Behaviour`]): list of children to add</span>
+<span class="sd">        *args: variable length argument list</span>
+<span class="sd">        **kwargs: arbitrary keyword arguments</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;Sequence&quot;</span><span class="p">,</span> <span class="n">children</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">Sequence</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">children</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">current_index</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>  <span class="c1"># -1 indicates uninitialised</span>
+
+<div class="viewcode-block" id="Sequence.tick"><a class="viewcode-back" href="../../modules.html#py_trees.composites.Sequence.tick">[docs]</a>    <span class="k">def</span> <span class="nf">tick</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Tick over the children.</span>
+
+<span class="sd">        Yields:</span>
+<span class="sd">            :class:`~py_trees.behaviour.Behaviour`: a reference to itself or one of its children</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">%s</span><span class="s2">.tick()&quot;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">__class__</span><span class="o">.</span><span class="n">__name__</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">status</span> <span class="o">!=</span> <span class="n">Status</span><span class="o">.</span><span class="n">RUNNING</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">%s</span><span class="s2">.tick() [resetting]&quot;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">__class__</span><span class="o">.</span><span class="n">__name__</span><span class="p">)</span>
+            <span class="c1"># sequence specific handling</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">current_index</span> <span class="o">=</span> <span class="mi">0</span>
+            <span class="k">for</span> <span class="n">child</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">children</span><span class="p">:</span>
+                <span class="c1"># reset the children, this helps when introspecting the tree</span>
+                <span class="k">if</span> <span class="n">child</span><span class="o">.</span><span class="n">status</span> <span class="o">!=</span> <span class="n">Status</span><span class="o">.</span><span class="n">INVALID</span><span class="p">:</span>
+                    <span class="n">child</span><span class="o">.</span><span class="n">stop</span><span class="p">(</span><span class="n">Status</span><span class="o">.</span><span class="n">INVALID</span><span class="p">)</span>
+            <span class="c1"># subclass (user) handling</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">initialise</span><span class="p">()</span>
+        <span class="c1"># run any work designated by a customised instance of this class</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">update</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">child</span> <span class="ow">in</span> <span class="n">itertools</span><span class="o">.</span><span class="n">islice</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">children</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">current_index</span><span class="p">,</span> <span class="bp">None</span><span class="p">):</span>
+            <span class="k">for</span> <span class="n">node</span> <span class="ow">in</span> <span class="n">child</span><span class="o">.</span><span class="n">tick</span><span class="p">():</span>
+                <span class="k">yield</span> <span class="n">node</span>
+                <span class="k">if</span> <span class="n">node</span> <span class="ow">is</span> <span class="n">child</span> <span class="ow">and</span> <span class="n">node</span><span class="o">.</span><span class="n">status</span> <span class="o">!=</span> <span class="n">Status</span><span class="o">.</span><span class="n">SUCCESS</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">status</span> <span class="o">=</span> <span class="n">node</span><span class="o">.</span><span class="n">status</span>
+                    <span class="k">yield</span> <span class="bp">self</span>
+                    <span class="k">return</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">current_index</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="c1"># At this point, all children are happy with their SUCCESS, so we should be happy too</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">current_index</span> <span class="o">-=</span> <span class="mi">1</span>  <span class="c1"># went off the end of the list if we got to here</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">stop</span><span class="p">(</span><span class="n">Status</span><span class="o">.</span><span class="n">SUCCESS</span><span class="p">)</span>
+        <span class="k">yield</span> <span class="bp">self</span></div>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">current_child</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Have to check if there&#39;s anything actually running first.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            :class:`~py_trees.behaviour.Behaviour`: the child that is currently running, or None</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">current_index</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">None</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">children</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">current_index</span><span class="p">]</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">children</span> <span class="k">else</span> <span class="bp">None</span>
+
+<div class="viewcode-block" id="Sequence.stop"><a class="viewcode-back" href="../../modules.html#py_trees.composites.Sequence.stop">[docs]</a>    <span class="k">def</span> <span class="nf">stop</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">new_status</span><span class="o">=</span><span class="n">Status</span><span class="o">.</span><span class="n">INVALID</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Stopping a sequence requires taking care of the current index. Note that</span>
+<span class="sd">        is important to implement this here intead of terminate, so users are free</span>
+<span class="sd">        to subclass this easily with their own terminate and not have to remember</span>
+<span class="sd">        that they need to call this function manually.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            new_status (:class:`~py_trees.common.Status`): the composite is transitioning to this new status</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># retain information about the last running child if the new status is</span>
+        <span class="c1"># SUCCESS or FAILURE</span>
+        <span class="k">if</span> <span class="n">new_status</span> <span class="o">==</span> <span class="n">Status</span><span class="o">.</span><span class="n">INVALID</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">current_index</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
+        <span class="n">Composite</span><span class="o">.</span><span class="n">stop</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">new_status</span><span class="p">)</span></div></div>
+
+
+<span class="c1">##############################################################################</span>
+<span class="c1"># Parallel</span>
+<span class="c1">##############################################################################</span>
+
+
+<div class="viewcode-block" id="Parallel"><a class="viewcode-back" href="../../modules.html#py_trees.composites.Parallel">[docs]</a><span class="k">class</span> <span class="nc">Parallel</span><span class="p">(</span><span class="n">Composite</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Parallels enable a kind of concurrency</span>
+
+<span class="sd">    .. graphviz:: dot/parallel.dot</span>
+
+<span class="sd">    Ticks every child every time the parallel is run (a poor man&#39;s form of paralellism).</span>
+
+<span class="sd">    * Parallels will return :data:`~py_trees.common.Status.FAILURE` if any child returns :py:data:`~py_trees.common.Status.FAILURE`</span>
+<span class="sd">    * Parallels with policy :data:`~py_trees.common.ParallelPolicy.SUCCESS_ON_ONE` return :py:data:`~py_trees.common.Status.SUCCESS` if **at least one** child returns :py:data:`~py_trees.common.Status.SUCCESS` and others are :py:data:`~py_trees.common.Status.RUNNING`.</span>
+<span class="sd">    * Parallels with policy :data:`~py_trees.common.ParallelPolicy.SUCCESS_ON_ALL` only returns :py:data:`~py_trees.common.Status.SUCCESS` if **all** children return :py:data:`~py_trees.common.Status.SUCCESS`</span>
+
+<span class="sd">    .. seealso:: The :ref:`py-trees-demo-context-switching-program` program demos a parallel used to assist in a context switching scenario.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        name (:obj:`str`): the composite behaviour name</span>
+<span class="sd">        policy (:class:`~py_trees.common.ParallelPolicy`): policy to use for deciding success or otherwise</span>
+<span class="sd">        children ([:class:`~py_trees.behaviour.Behaviour`]): list of children to add</span>
+<span class="sd">        *args: variable length argument list</span>
+<span class="sd">        **kwargs: arbitrary keyword arguments</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;Parallel&quot;</span><span class="p">,</span> <span class="n">policy</span><span class="o">=</span><span class="n">common</span><span class="o">.</span><span class="n">ParallelPolicy</span><span class="o">.</span><span class="n">SUCCESS_ON_ALL</span><span class="p">,</span> <span class="n">children</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">Parallel</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">children</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">policy</span> <span class="o">=</span> <span class="n">policy</span>
+
+<div class="viewcode-block" id="Parallel.tick"><a class="viewcode-back" href="../../modules.html#py_trees.composites.Parallel.tick">[docs]</a>    <span class="k">def</span> <span class="nf">tick</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Tick over the children.</span>
+
+<span class="sd">        Yields:</span>
+<span class="sd">            :class:`~py_trees.behaviour.Behaviour`: a reference to itself or one of its children</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">status</span> <span class="o">!=</span> <span class="n">Status</span><span class="o">.</span><span class="n">RUNNING</span><span class="p">:</span>
+            <span class="c1"># subclass (user) handling</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">initialise</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">%s</span><span class="s2">.tick()&quot;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">__class__</span><span class="o">.</span><span class="n">__name__</span><span class="p">)</span>
+        <span class="c1"># process them all first</span>
+        <span class="k">for</span> <span class="n">child</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">children</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">node</span> <span class="ow">in</span> <span class="n">child</span><span class="o">.</span><span class="n">tick</span><span class="p">():</span>
+                <span class="k">yield</span> <span class="n">node</span>
+        <span class="c1"># new_status = Status.SUCCESS if self.policy == common.ParallelPolicy.SUCCESS_ON_ALL else Status.RUNNING</span>
+        <span class="n">new_status</span> <span class="o">=</span> <span class="n">Status</span><span class="o">.</span><span class="n">RUNNING</span>
+        <span class="k">if</span> <span class="nb">any</span><span class="p">([</span><span class="n">c</span><span class="o">.</span><span class="n">status</span> <span class="o">==</span> <span class="n">Status</span><span class="o">.</span><span class="n">FAILURE</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">children</span><span class="p">]):</span>
+            <span class="n">new_status</span> <span class="o">=</span> <span class="n">Status</span><span class="o">.</span><span class="n">FAILURE</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">policy</span> <span class="o">==</span> <span class="n">common</span><span class="o">.</span><span class="n">ParallelPolicy</span><span class="o">.</span><span class="n">SUCCESS_ON_ALL</span><span class="p">:</span>
+                <span class="k">if</span> <span class="nb">all</span><span class="p">([</span><span class="n">c</span><span class="o">.</span><span class="n">status</span> <span class="o">==</span> <span class="n">Status</span><span class="o">.</span><span class="n">SUCCESS</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">children</span><span class="p">]):</span>
+                    <span class="n">new_status</span> <span class="o">=</span> <span class="n">Status</span><span class="o">.</span><span class="n">SUCCESS</span>
+            <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">policy</span> <span class="o">==</span> <span class="n">common</span><span class="o">.</span><span class="n">ParallelPolicy</span><span class="o">.</span><span class="n">SUCCESS_ON_ONE</span><span class="p">:</span>
+                <span class="k">if</span> <span class="nb">any</span><span class="p">([</span><span class="n">c</span><span class="o">.</span><span class="n">status</span> <span class="o">==</span> <span class="n">Status</span><span class="o">.</span><span class="n">SUCCESS</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">children</span><span class="p">]):</span>
+                    <span class="n">new_status</span> <span class="o">=</span> <span class="n">Status</span><span class="o">.</span><span class="n">SUCCESS</span>
+        <span class="c1"># special case composite - this parallel may have children that are still running</span>
+        <span class="c1"># so if the parallel itself has reached a final status, then these running children</span>
+        <span class="c1"># need to be made aware of it too</span>
+        <span class="k">if</span> <span class="n">new_status</span> <span class="o">!=</span> <span class="n">Status</span><span class="o">.</span><span class="n">RUNNING</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">child</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">children</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">child</span><span class="o">.</span><span class="n">status</span> <span class="o">==</span> <span class="n">Status</span><span class="o">.</span><span class="n">RUNNING</span><span class="p">:</span>
+                    <span class="n">child</span><span class="o">.</span><span class="n">stop</span><span class="p">(</span><span class="n">new_status</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">stop</span><span class="p">(</span><span class="n">new_status</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">status</span> <span class="o">=</span> <span class="n">new_status</span>
+        <span class="k">yield</span> <span class="bp">self</span></div>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">current_child</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Have to check if there&#39;s anything actually running first.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            :class:`~py_trees.behaviour.Behaviour`: the child that is currently running, or None</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">status</span> <span class="o">==</span> <span class="n">Status</span><span class="o">.</span><span class="n">INVALID</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">None</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">status</span> <span class="o">==</span> <span class="n">Status</span><span class="o">.</span><span class="n">FAILURE</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">child</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">children</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">child</span><span class="o">.</span><span class="n">status</span> <span class="o">==</span> <span class="n">Status</span><span class="o">.</span><span class="n">FAILURE</span><span class="p">:</span>
+                    <span class="k">return</span> <span class="n">child</span>
+            <span class="c1"># shouldn&#39;t get here</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">status</span> <span class="o">==</span> <span class="n">Status</span><span class="o">.</span><span class="n">SUCCESS</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">policy</span> <span class="o">==</span> <span class="n">common</span><span class="o">.</span><span class="n">ParallelPolicy</span><span class="o">.</span><span class="n">SUCCESS_ON_ONE</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">child</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">children</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">child</span><span class="o">.</span><span class="n">status</span> <span class="o">==</span> <span class="n">Status</span><span class="o">.</span><span class="n">SUCCESS</span><span class="p">:</span>
+                    <span class="k">return</span> <span class="n">child</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">children</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span></div>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+
+    </p>
+  </div> 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../',
+            VERSION:'0.5.8',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

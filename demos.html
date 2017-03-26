@@ -1,0 +1,3085 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Demos &mdash; py_trees 0.5.8 documentation</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+    <link rel="top" title="py_trees 0.5.8 documentation" href="index.html"/>
+        <link rel="next" title="Programs" href="programs.html"/>
+        <link rel="prev" title="FAQ" href="faq.html"/> 
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="index.html" class="icon icon-home"> py_trees
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.5.8
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+    
+            
+            
+                <p class="caption"><span class="caption-text">Guide</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="background.html">Background</a></li>
+<li class="toctree-l1"><a class="reference internal" href="behaviours.html">Behaviours</a></li>
+<li class="toctree-l1"><a class="reference internal" href="composites.html">Composites</a></li>
+<li class="toctree-l1"><a class="reference internal" href="blackboards.html">Blackboards</a></li>
+<li class="toctree-l1"><a class="reference internal" href="trees.html">Trees</a></li>
+<li class="toctree-l1"><a class="reference internal" href="visualisation.html">Visualisation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="the_crazy_hospital.html">Surviving the Crazy Hospital</a></li>
+<li class="toctree-l1"><a class="reference internal" href="terminology.html">Terminology</a></li>
+<li class="toctree-l1"><a class="reference internal" href="faq.html">FAQ</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Reference</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="">Demos</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#module-py_trees.demos.action">py-trees-demo-action-behaviour</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-py_trees.demos.lifecycle">py-trees-demo-behaviour-lifecycle</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-py_trees.demos.blackboard">py-trees-demo-blackboard</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-py_trees.demos.context_switching">py-trees-demo-context-switching</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-py_trees.demos.dot_graphs">py-trees-demo-dot-graphs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-py_trees.demos.selector">py-trees-demo-selector</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-py_trees.demos.sequence">py-trees-demo-sequence</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-py_trees.demos.stewardship">py-trees-demo-tree-stewardship</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="programs.html">Programs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="modules.html">Module API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="changelog.html">Changelog</a></li>
+</ul>
+
+            
+          
+    <a href="genindex.html">Index</a>
+    <a href="py-modindex.html">Module Index</a>
+  
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="index.html">py_trees</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+ 
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="index.html">Docs</a> &raquo;</li>
+      
+    <li>Demos</li>
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            <a href="_sources/demos.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="demos">
+<span id="demos-section-label"></span><h1>Demos<a class="headerlink" href="#demos" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="module-py_trees.demos.action">
+<span id="py-trees-demo-action-behaviour"></span><span id="py-trees-demo-action-behaviour-program"></span><h2>py-trees-demo-action-behaviour<a class="headerlink" href="#module-py_trees.demos.action" title="Permalink to this headline">¶</a></h2>
+<p><p>Demonstrates the characteristics of a typical &#8216;action&#8217; behaviour.</p>
+<ul class="simple">
+<li>Mocks an external process and connects to it in the setup() method</li>
+<li>Kickstarts new goals with the external process in the initialise() method</li>
+<li>Monitors the ongoing goal status in the update() method</li>
+<li>Determines RUNNING/SUCCESS pending feedback from the external process</li>
+</ul>
+</p>
+<div class="highlight-python"><div class="highlight"><pre>usage: py-trees-demo-action-behaviour [-h]
+</pre></div>
+</div>
+<dl class="docutils">
+</dl>
+<img alt="_images/action.gif" src="_images/action.gif" />
+<dl class="class">
+<dt id="py_trees.demos.action.Action">
+<em class="property">class </em><code class="descclassname">py_trees.demos.action.</code><code class="descname">Action</code><span class="sig-paren">(</span><em>name='Action'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/py_trees/demos/action.html#Action"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#py_trees.demos.action.Action" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="modules.html#py_trees.behaviour.Behaviour" title="py_trees.behaviour.Behaviour"><code class="xref py py-class docutils literal"><span class="pre">py_trees.behaviour.Behaviour</span></code></a></p>
+<p>Connects to a subprocess to initiate a goal, and monitors the progress
+of that goal at each tick until the goal is completed, at which time
+the behaviour itself returns with success or failure (depending on
+success or failure of the goal itself).</p>
+<p>This is typical of a behaviour that is connected to an external process
+responsible for driving hardware, conducting a plan, or a long running
+processing pipeline (e.g. planning/vision).</p>
+<p>Key point - this behaviour itself should not be doing any work!</p>
+<dl class="method">
+<dt id="py_trees.demos.action.Action.__init__">
+<code class="descname">__init__</code><span class="sig-paren">(</span><em>name='Action'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/py_trees/demos/action.html#Action.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#py_trees.demos.action.Action.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default construction.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="py_trees.demos.action.Action.initialise">
+<code class="descname">initialise</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/py_trees/demos/action.html#Action.initialise"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#py_trees.demos.action.Action.initialise" title="Permalink to this definition">¶</a></dt>
+<dd><p>Reset a counter variable.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="py_trees.demos.action.Action.setup">
+<code class="descname">setup</code><span class="sig-paren">(</span><em>unused_timeout=15</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/py_trees/demos/action.html#Action.setup"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#py_trees.demos.action.Action.setup" title="Permalink to this definition">¶</a></dt>
+<dd><p>No delayed initialisation required for this example.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="py_trees.demos.action.Action.terminate">
+<code class="descname">terminate</code><span class="sig-paren">(</span><em>new_status</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/py_trees/demos/action.html#Action.terminate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#py_trees.demos.action.Action.terminate" title="Permalink to this definition">¶</a></dt>
+<dd><p>Nothing to clean up in this example.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="py_trees.demos.action.Action.update">
+<code class="descname">update</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/py_trees/demos/action.html#Action.update"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#py_trees.demos.action.Action.update" title="Permalink to this definition">¶</a></dt>
+<dd><p>Increment the counter and decide upon a new status result for the behaviour.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="function">
+<dt id="py_trees.demos.action.main">
+<code class="descclassname">py_trees.demos.action.</code><code class="descname">main</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/py_trees/demos/action.html#main"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#py_trees.demos.action.main" title="Permalink to this definition">¶</a></dt>
+<dd><p>Entry point for the demo script.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="py_trees.demos.action.planning">
+<code class="descclassname">py_trees.demos.action.</code><code class="descname">planning</code><span class="sig-paren">(</span><em>pipe_connection</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/py_trees/demos/action.html#planning"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#py_trees.demos.action.planning" title="Permalink to this definition">¶</a></dt>
+<dd><p>Emulates an external process which might accept long running planning jobs.</p>
+</dd></dl>
+
+<div class="literal-block-wrapper container" id="py-trees-demos-action-py">
+<div class="code-block-caption"><span class="caption-text">py_trees/demos/action.py</span><a class="headerlink" href="#py-trees-demos-action-py" title="Permalink to this code">¶</a></div>
+<div class="highlight-python"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>  1
+  2
+  3
+  4
+  5
+  6
+  7
+  8
+  9
+ 10
+ 11
+ 12
+ 13
+ 14
+ 15
+ 16
+ 17
+ 18
+ 19
+ 20
+ 21
+ 22
+ 23
+ 24
+ 25
+ 26
+ 27
+ 28
+ 29
+ 30
+ 31
+ 32
+ 33
+ 34
+ 35
+ 36
+ 37
+ 38
+ 39
+ 40
+ 41
+ 42
+ 43
+ 44
+ 45
+ 46
+ 47
+ 48
+ 49
+ 50
+ 51
+ 52
+ 53
+ 54
+ 55
+ 56
+ 57
+ 58
+ 59
+ 60
+ 61
+ 62
+ 63
+ 64
+ 65
+ 66
+ 67
+ 68
+ 69
+ 70
+ 71
+ 72
+ 73
+ 74
+ 75
+ 76
+ 77
+ 78
+ 79
+ 80
+ 81
+ 82
+ 83
+ 84
+ 85
+ 86
+ 87
+ 88
+ 89
+ 90
+ 91
+ 92
+ 93
+ 94
+ 95
+ 96
+ 97
+ 98
+ 99
+100
+101
+102
+103
+104
+105
+106
+107
+108
+109
+110
+111
+112
+113
+114
+115
+116
+117
+118
+119
+120
+121
+122
+123
+124
+125
+126
+127
+128
+129
+130
+131
+132
+133
+134
+135
+136
+137
+138
+139
+140
+141
+142
+143
+144
+145
+146
+147
+148
+149
+150
+151
+152
+153
+154
+155
+156
+157
+158
+159
+160
+161
+162
+163
+164
+165
+166
+167
+168
+169
+170
+171
+172
+173
+174
+175
+176
+177
+178
+179
+180</pre></div></td><td class="code"><div class="highlight"><pre><span class="ch">#!/usr/bin/env python</span>
+<span class="c1">#</span>
+<span class="c1"># License: BSD</span>
+<span class="c1">#   https://raw.githubusercontent.com/stonier/py_trees/devel/LICENSE</span>
+<span class="c1">#</span>
+<span class="c1">##############################################################################</span>
+<span class="c1"># Documentation</span>
+<span class="c1">##############################################################################</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">.. argparse::</span>
+<span class="sd">   :module: py_trees.demos.action</span>
+<span class="sd">   :func: command_line_argument_parser</span>
+<span class="sd">   :prog: py-trees-demo-action-behaviour</span>
+
+<span class="sd">.. image:: images/action.gif</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="c1">##############################################################################</span>
+<span class="c1"># Imports</span>
+<span class="c1">##############################################################################</span>
+
+<span class="kn">import</span> <span class="nn">argparse</span>
+<span class="kn">import</span> <span class="nn">atexit</span>
+<span class="kn">import</span> <span class="nn">multiprocessing</span>
+<span class="kn">import</span> <span class="nn">py_trees</span>
+<span class="kn">import</span> <span class="nn">time</span>
+
+<span class="kn">import</span> <span class="nn">py_trees.console</span> <span class="kn">as</span> <span class="nn">console</span>
+
+<span class="c1">##############################################################################</span>
+<span class="c1"># Classes</span>
+<span class="c1">##############################################################################</span>
+
+
+<span class="k">def</span> <span class="nf">description</span><span class="p">():</span>
+    <span class="n">content</span> <span class="o">=</span> <span class="s2">&quot;Demonstrates the characteristics of a typical &#39;action&#39; behaviour.</span><span class="se">\n</span><span class="s2">&quot;</span>
+    <span class="n">content</span> <span class="o">+=</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span>
+    <span class="n">content</span> <span class="o">+=</span> <span class="s2">&quot;* Mocks an external process and connects to it in the setup() method</span><span class="se">\n</span><span class="s2">&quot;</span>
+    <span class="n">content</span> <span class="o">+=</span> <span class="s2">&quot;* Kickstarts new goals with the external process in the initialise() method</span><span class="se">\n</span><span class="s2">&quot;</span>
+    <span class="n">content</span> <span class="o">+=</span> <span class="s2">&quot;* Monitors the ongoing goal status in the update() method</span><span class="se">\n</span><span class="s2">&quot;</span>
+    <span class="n">content</span> <span class="o">+=</span> <span class="s2">&quot;* Determines RUNNING/SUCCESS pending feedback from the external process</span><span class="se">\n</span><span class="s2">&quot;</span>
+
+    <span class="k">if</span> <span class="n">py_trees</span><span class="o">.</span><span class="n">console</span><span class="o">.</span><span class="n">has_colours</span><span class="p">:</span>
+        <span class="n">banner_line</span> <span class="o">=</span> <span class="n">console</span><span class="o">.</span><span class="n">green</span> <span class="o">+</span> <span class="s2">&quot;*&quot;</span> <span class="o">*</span> <span class="mi">79</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span> <span class="o">+</span> <span class="n">console</span><span class="o">.</span><span class="n">reset</span>
+        <span class="n">s</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span>
+        <span class="n">s</span> <span class="o">+=</span> <span class="n">banner_line</span>
+        <span class="n">s</span> <span class="o">+=</span> <span class="n">console</span><span class="o">.</span><span class="n">bold_white</span> <span class="o">+</span> <span class="s2">&quot;Action Behaviour&quot;</span><span class="o">.</span><span class="n">center</span><span class="p">(</span><span class="mi">79</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span> <span class="o">+</span> <span class="n">console</span><span class="o">.</span><span class="n">reset</span>
+        <span class="n">s</span> <span class="o">+=</span> <span class="n">banner_line</span>
+        <span class="n">s</span> <span class="o">+=</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span>
+        <span class="n">s</span> <span class="o">+=</span> <span class="n">content</span>
+        <span class="n">s</span> <span class="o">+=</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span>
+        <span class="n">s</span> <span class="o">+=</span> <span class="n">banner_line</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">s</span> <span class="o">=</span> <span class="n">content</span>
+    <span class="k">return</span> <span class="n">s</span>
+
+
+<span class="k">def</span> <span class="nf">epilog</span><span class="p">():</span>
+    <span class="k">if</span> <span class="n">py_trees</span><span class="o">.</span><span class="n">console</span><span class="o">.</span><span class="n">has_colours</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">console</span><span class="o">.</span><span class="n">cyan</span> <span class="o">+</span> <span class="s2">&quot;And his noodly appendage reached forth to tickle the blessed...</span><span class="se">\n</span><span class="s2">&quot;</span> <span class="o">+</span> <span class="n">console</span><span class="o">.</span><span class="n">reset</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">None</span>
+
+
+<span class="k">def</span> <span class="nf">command_line_argument_parser</span><span class="p">():</span>
+    <span class="k">return</span> <span class="n">argparse</span><span class="o">.</span><span class="n">ArgumentParser</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="n">description</span><span class="p">(),</span>
+                                   <span class="n">epilog</span><span class="o">=</span><span class="n">epilog</span><span class="p">(),</span>
+                                   <span class="n">formatter_class</span><span class="o">=</span><span class="n">argparse</span><span class="o">.</span><span class="n">RawDescriptionHelpFormatter</span><span class="p">,</span>
+                                   <span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">planning</span><span class="p">(</span><span class="n">pipe_connection</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Emulates an external process which might accept long running planning jobs.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">idle</span> <span class="o">=</span> <span class="bp">True</span>
+    <span class="n">percentage_complete</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="k">while</span><span class="p">(</span><span class="bp">True</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">pipe_connection</span><span class="o">.</span><span class="n">poll</span><span class="p">():</span>
+                <span class="n">pipe_connection</span><span class="o">.</span><span class="n">recv</span><span class="p">()</span>
+                <span class="n">percentage_complete</span> <span class="o">=</span> <span class="mi">0</span>
+                <span class="n">idle</span> <span class="o">=</span> <span class="bp">False</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">idle</span><span class="p">:</span>
+                <span class="n">percentage_complete</span> <span class="o">+=</span> <span class="mi">10</span>
+                <span class="n">pipe_connection</span><span class="o">.</span><span class="n">send</span><span class="p">([</span><span class="n">percentage_complete</span><span class="p">])</span>
+                <span class="k">if</span> <span class="n">percentage_complete</span> <span class="o">==</span> <span class="mi">100</span><span class="p">:</span>
+                    <span class="n">idle</span> <span class="o">=</span> <span class="bp">True</span>
+            <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mf">0.5</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">KeyboardInterrupt</span><span class="p">:</span>
+        <span class="k">pass</span>
+
+
+<span class="k">class</span> <span class="nc">Action</span><span class="p">(</span><span class="n">py_trees</span><span class="o">.</span><span class="n">behaviour</span><span class="o">.</span><span class="n">Behaviour</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Connects to a subprocess to initiate a goal, and monitors the progress</span>
+<span class="sd">    of that goal at each tick until the goal is completed, at which time</span>
+<span class="sd">    the behaviour itself returns with success or failure (depending on</span>
+<span class="sd">    success or failure of the goal itself).</span>
+
+<span class="sd">    This is typical of a behaviour that is connected to an external process</span>
+<span class="sd">    responsible for driving hardware, conducting a plan, or a long running</span>
+<span class="sd">    processing pipeline (e.g. planning/vision).</span>
+
+<span class="sd">    Key point - this behaviour itself should not be doing any work!</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;Action&quot;</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Default construction.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">Action</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">%s</span><span class="s2">.__init__()&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__class__</span><span class="o">.</span><span class="n">__name__</span><span class="p">))</span>
+
+    <span class="k">def</span> <span class="nf">setup</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">unused_timeout</span><span class="o">=</span><span class="mi">15</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        No delayed initialisation required for this example.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">%s</span><span class="s2">.setup()-&gt;connections to an external process&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__class__</span><span class="o">.</span><span class="n">__name__</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">parent_connection</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">child_connection</span> <span class="o">=</span> <span class="n">multiprocessing</span><span class="o">.</span><span class="n">Pipe</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">planning</span> <span class="o">=</span> <span class="n">multiprocessing</span><span class="o">.</span><span class="n">Process</span><span class="p">(</span><span class="n">target</span><span class="o">=</span><span class="n">planning</span><span class="p">,</span> <span class="n">args</span><span class="o">=</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">child_connection</span><span class="p">,))</span>
+        <span class="n">atexit</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">planning</span><span class="o">.</span><span class="n">terminate</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">planning</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+        <span class="k">return</span> <span class="bp">True</span>
+
+    <span class="k">def</span> <span class="nf">initialise</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Reset a counter variable.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">%s</span><span class="s2">.initialise()-&gt;sending new goal&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__class__</span><span class="o">.</span><span class="n">__name__</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">parent_connection</span><span class="o">.</span><span class="n">send</span><span class="p">([</span><span class="s1">&#39;new goal&#39;</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">percentage_completion</span> <span class="o">=</span> <span class="mi">0</span>
+
+    <span class="k">def</span> <span class="nf">update</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Increment the counter and decide upon a new status result for the behaviour.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">new_status</span> <span class="o">=</span> <span class="n">py_trees</span><span class="o">.</span><span class="n">Status</span><span class="o">.</span><span class="n">RUNNING</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">parent_connection</span><span class="o">.</span><span class="n">poll</span><span class="p">():</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">percentage_completion</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">parent_connection</span><span class="o">.</span><span class="n">recv</span><span class="p">()</span><span class="o">.</span><span class="n">pop</span><span class="p">()</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">percentage_completion</span> <span class="o">==</span> <span class="mi">100</span><span class="p">:</span>
+                <span class="n">new_status</span> <span class="o">=</span> <span class="n">py_trees</span><span class="o">.</span><span class="n">Status</span><span class="o">.</span><span class="n">SUCCESS</span>
+        <span class="k">if</span> <span class="n">new_status</span> <span class="o">==</span> <span class="n">py_trees</span><span class="o">.</span><span class="n">Status</span><span class="o">.</span><span class="n">SUCCESS</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">feedback_message</span> <span class="o">=</span> <span class="s2">&quot;Processing finished&quot;</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">%s</span><span class="s2">.update()[</span><span class="si">%s</span><span class="s2">-&gt;</span><span class="si">%s</span><span class="s2">][</span><span class="si">%s</span><span class="s2">]&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__class__</span><span class="o">.</span><span class="n">__name__</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">status</span><span class="p">,</span> <span class="n">new_status</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">feedback_message</span><span class="p">))</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">feedback_message</span> <span class="o">=</span> <span class="s2">&quot;{0}%&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">percentage_completion</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">%s</span><span class="s2">.update()[</span><span class="si">%s</span><span class="s2">][</span><span class="si">%s</span><span class="s2">]&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__class__</span><span class="o">.</span><span class="n">__name__</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">status</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">feedback_message</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">new_status</span>
+
+    <span class="k">def</span> <span class="nf">terminate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">new_status</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Nothing to clean up in this example.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">%s</span><span class="s2">.terminate()[</span><span class="si">%s</span><span class="s2">-&gt;</span><span class="si">%s</span><span class="s2">]&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__class__</span><span class="o">.</span><span class="n">__name__</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">status</span><span class="p">,</span> <span class="n">new_status</span><span class="p">))</span>
+
+
+<span class="c1">##############################################################################</span>
+<span class="c1"># Main</span>
+<span class="c1">##############################################################################</span>
+
+<span class="k">def</span> <span class="nf">main</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Entry point for the demo script.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">command_line_argument_parser</span><span class="p">()</span><span class="o">.</span><span class="n">parse_args</span><span class="p">()</span>
+
+    <span class="k">print</span><span class="p">(</span><span class="n">description</span><span class="p">())</span>
+
+    <span class="n">py_trees</span><span class="o">.</span><span class="n">logging</span><span class="o">.</span><span class="n">level</span> <span class="o">=</span> <span class="n">py_trees</span><span class="o">.</span><span class="n">logging</span><span class="o">.</span><span class="n">Level</span><span class="o">.</span><span class="n">DEBUG</span>
+
+    <span class="n">action</span> <span class="o">=</span> <span class="n">Action</span><span class="p">()</span>
+    <span class="n">action</span><span class="o">.</span><span class="n">setup</span><span class="p">()</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">unused_i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">12</span><span class="p">):</span>
+            <span class="n">action</span><span class="o">.</span><span class="n">tick_once</span><span class="p">()</span>
+            <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mf">0.5</span><span class="p">)</span>
+        <span class="k">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">KeyboardInterrupt</span><span class="p">:</span>
+        <span class="k">pass</span>
+</pre></div>
+</td></tr></table></div>
+</div>
+</div>
+<div class="section" id="module-py_trees.demos.lifecycle">
+<span id="py-trees-demo-behaviour-lifecycle"></span><span id="py-trees-demo-behaviour-lifecycle-program"></span><h2>py-trees-demo-behaviour-lifecycle<a class="headerlink" href="#module-py_trees.demos.lifecycle" title="Permalink to this headline">¶</a></h2>
+<p><p>Demonstrates a typical day in the life of a behaviour.</p>
+<p>This behaviour will count from 1 to 3 and then reset and repeat. As it does
+so, it logs and displays the methods as they are called - construction, setup,
+initialisation, ticking and termination.</p>
+</p>
+<div class="highlight-python"><div class="highlight"><pre>usage: py-trees-demo-behaviour-lifecycle [-h]
+</pre></div>
+</div>
+<dl class="docutils">
+</dl>
+<img alt="_images/lifecycle.gif" src="_images/lifecycle.gif" />
+<dl class="class">
+<dt id="py_trees.demos.lifecycle.Counter">
+<em class="property">class </em><code class="descclassname">py_trees.demos.lifecycle.</code><code class="descname">Counter</code><span class="sig-paren">(</span><em>name='Counter'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/py_trees/demos/lifecycle.html#Counter"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#py_trees.demos.lifecycle.Counter" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="modules.html#py_trees.behaviour.Behaviour" title="py_trees.behaviour.Behaviour"><code class="xref py py-class docutils literal"><span class="pre">py_trees.behaviour.Behaviour</span></code></a></p>
+<p>Simple counting behaviour that facilitates the demonstration of a behaviour in
+the demo behaviours lifecycle program.</p>
+<ul class="simple">
+<li>Increments a counter from zero at each tick</li>
+<li>Finishes with success if the counter reaches three</li>
+<li>Resets the counter in the initialise() method.</li>
+</ul>
+<dl class="method">
+<dt id="py_trees.demos.lifecycle.Counter.__init__">
+<code class="descname">__init__</code><span class="sig-paren">(</span><em>name='Counter'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/py_trees/demos/lifecycle.html#Counter.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#py_trees.demos.lifecycle.Counter.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default construction.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="py_trees.demos.lifecycle.Counter.initialise">
+<code class="descname">initialise</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/py_trees/demos/lifecycle.html#Counter.initialise"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#py_trees.demos.lifecycle.Counter.initialise" title="Permalink to this definition">¶</a></dt>
+<dd><p>Reset a counter variable.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="py_trees.demos.lifecycle.Counter.setup">
+<code class="descname">setup</code><span class="sig-paren">(</span><em>unused_timeout=15</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/py_trees/demos/lifecycle.html#Counter.setup"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#py_trees.demos.lifecycle.Counter.setup" title="Permalink to this definition">¶</a></dt>
+<dd><p>No delayed initialisation required for this example.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="py_trees.demos.lifecycle.Counter.terminate">
+<code class="descname">terminate</code><span class="sig-paren">(</span><em>new_status</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/py_trees/demos/lifecycle.html#Counter.terminate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#py_trees.demos.lifecycle.Counter.terminate" title="Permalink to this definition">¶</a></dt>
+<dd><p>Nothing to clean up in this example.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="py_trees.demos.lifecycle.Counter.update">
+<code class="descname">update</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/py_trees/demos/lifecycle.html#Counter.update"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#py_trees.demos.lifecycle.Counter.update" title="Permalink to this definition">¶</a></dt>
+<dd><p>Increment the counter and decide upon a new status result for the behaviour.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="function">
+<dt id="py_trees.demos.lifecycle.main">
+<code class="descclassname">py_trees.demos.lifecycle.</code><code class="descname">main</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/py_trees/demos/lifecycle.html#main"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#py_trees.demos.lifecycle.main" title="Permalink to this definition">¶</a></dt>
+<dd><p>Entry point for the demo script.</p>
+</dd></dl>
+
+<div class="literal-block-wrapper container" id="py-trees-demos-lifecycle-py">
+<div class="code-block-caption"><span class="caption-text">py_trees/demos/lifecycle.py</span><a class="headerlink" href="#py-trees-demos-lifecycle-py" title="Permalink to this code">¶</a></div>
+<div class="highlight-python"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>  1
+  2
+  3
+  4
+  5
+  6
+  7
+  8
+  9
+ 10
+ 11
+ 12
+ 13
+ 14
+ 15
+ 16
+ 17
+ 18
+ 19
+ 20
+ 21
+ 22
+ 23
+ 24
+ 25
+ 26
+ 27
+ 28
+ 29
+ 30
+ 31
+ 32
+ 33
+ 34
+ 35
+ 36
+ 37
+ 38
+ 39
+ 40
+ 41
+ 42
+ 43
+ 44
+ 45
+ 46
+ 47
+ 48
+ 49
+ 50
+ 51
+ 52
+ 53
+ 54
+ 55
+ 56
+ 57
+ 58
+ 59
+ 60
+ 61
+ 62
+ 63
+ 64
+ 65
+ 66
+ 67
+ 68
+ 69
+ 70
+ 71
+ 72
+ 73
+ 74
+ 75
+ 76
+ 77
+ 78
+ 79
+ 80
+ 81
+ 82
+ 83
+ 84
+ 85
+ 86
+ 87
+ 88
+ 89
+ 90
+ 91
+ 92
+ 93
+ 94
+ 95
+ 96
+ 97
+ 98
+ 99
+100
+101
+102
+103
+104
+105
+106
+107
+108
+109
+110
+111
+112
+113
+114
+115
+116
+117
+118
+119
+120
+121
+122
+123
+124
+125
+126
+127
+128
+129
+130
+131
+132
+133
+134
+135
+136
+137
+138
+139
+140
+141</pre></div></td><td class="code"><div class="highlight"><pre><span class="ch">#!/usr/bin/env python</span>
+<span class="c1">#</span>
+<span class="c1"># License: BSD</span>
+<span class="c1">#   https://raw.githubusercontent.com/stonier/py_trees/devel/LICENSE</span>
+<span class="c1">#</span>
+<span class="c1">##############################################################################</span>
+<span class="c1"># Documentation</span>
+<span class="c1">##############################################################################</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">.. argparse::</span>
+<span class="sd">   :module: py_trees.demos.lifecycle</span>
+<span class="sd">   :func: command_line_argument_parser</span>
+<span class="sd">   :prog: py-trees-demo-behaviour-lifecycle</span>
+
+<span class="sd">.. image:: images/lifecycle.gif</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="c1">##############################################################################</span>
+<span class="c1"># Imports</span>
+<span class="c1">##############################################################################</span>
+
+<span class="kn">import</span> <span class="nn">argparse</span>
+<span class="kn">import</span> <span class="nn">py_trees</span>
+<span class="kn">import</span> <span class="nn">time</span>
+
+<span class="kn">import</span> <span class="nn">py_trees.console</span> <span class="kn">as</span> <span class="nn">console</span>
+
+<span class="c1">##############################################################################</span>
+<span class="c1"># Classes</span>
+<span class="c1">##############################################################################</span>
+
+
+<span class="k">def</span> <span class="nf">description</span><span class="p">():</span>
+    <span class="n">content</span> <span class="o">=</span> <span class="s2">&quot;Demonstrates a typical day in the life of a behaviour.</span><span class="se">\n\n</span><span class="s2">&quot;</span>
+    <span class="n">content</span> <span class="o">+=</span> <span class="s2">&quot;This behaviour will count from 1 to 3 and then reset and repeat. As it does</span><span class="se">\n</span><span class="s2">&quot;</span>
+    <span class="n">content</span> <span class="o">+=</span> <span class="s2">&quot;so, it logs and displays the methods as they are called - construction, setup,</span><span class="se">\n</span><span class="s2">&quot;</span>
+    <span class="n">content</span> <span class="o">+=</span> <span class="s2">&quot;initialisation, ticking and termination.</span><span class="se">\n</span><span class="s2">&quot;</span>
+    <span class="k">if</span> <span class="n">py_trees</span><span class="o">.</span><span class="n">console</span><span class="o">.</span><span class="n">has_colours</span><span class="p">:</span>
+        <span class="n">banner_line</span> <span class="o">=</span> <span class="n">console</span><span class="o">.</span><span class="n">green</span> <span class="o">+</span> <span class="s2">&quot;*&quot;</span> <span class="o">*</span> <span class="mi">79</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span> <span class="o">+</span> <span class="n">console</span><span class="o">.</span><span class="n">reset</span>
+        <span class="n">s</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span>
+        <span class="n">s</span> <span class="o">+=</span> <span class="n">banner_line</span>
+        <span class="n">s</span> <span class="o">+=</span> <span class="n">console</span><span class="o">.</span><span class="n">bold_white</span> <span class="o">+</span> <span class="s2">&quot;Behaviour Lifecycle&quot;</span><span class="o">.</span><span class="n">center</span><span class="p">(</span><span class="mi">79</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span> <span class="o">+</span> <span class="n">console</span><span class="o">.</span><span class="n">reset</span>
+        <span class="n">s</span> <span class="o">+=</span> <span class="n">banner_line</span>
+        <span class="n">s</span> <span class="o">+=</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span>
+        <span class="n">s</span> <span class="o">+=</span> <span class="n">content</span>
+        <span class="n">s</span> <span class="o">+=</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span>
+        <span class="n">s</span> <span class="o">+=</span> <span class="n">banner_line</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">s</span> <span class="o">=</span> <span class="n">content</span>
+    <span class="k">return</span> <span class="n">s</span>
+
+
+<span class="k">def</span> <span class="nf">epilog</span><span class="p">():</span>
+    <span class="k">if</span> <span class="n">py_trees</span><span class="o">.</span><span class="n">console</span><span class="o">.</span><span class="n">has_colours</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">console</span><span class="o">.</span><span class="n">cyan</span> <span class="o">+</span> <span class="s2">&quot;And his noodly appendage reached forth to tickle the blessed...</span><span class="se">\n</span><span class="s2">&quot;</span> <span class="o">+</span> <span class="n">console</span><span class="o">.</span><span class="n">reset</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">None</span>
+
+
+<span class="k">def</span> <span class="nf">command_line_argument_parser</span><span class="p">():</span>
+    <span class="k">return</span> <span class="n">argparse</span><span class="o">.</span><span class="n">ArgumentParser</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="n">description</span><span class="p">(),</span>
+                                   <span class="n">epilog</span><span class="o">=</span><span class="n">epilog</span><span class="p">(),</span>
+                                   <span class="n">formatter_class</span><span class="o">=</span><span class="n">argparse</span><span class="o">.</span><span class="n">RawDescriptionHelpFormatter</span><span class="p">,</span>
+                                   <span class="p">)</span>
+
+
+<span class="k">class</span> <span class="nc">Counter</span><span class="p">(</span><span class="n">py_trees</span><span class="o">.</span><span class="n">behaviour</span><span class="o">.</span><span class="n">Behaviour</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Simple counting behaviour that facilitates the demonstration of a behaviour in</span>
+<span class="sd">    the demo behaviours lifecycle program.</span>
+
+<span class="sd">    * Increments a counter from zero at each tick</span>
+<span class="sd">    * Finishes with success if the counter reaches three</span>
+<span class="sd">    * Resets the counter in the initialise() method.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;Counter&quot;</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Default construction.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">Counter</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">%s</span><span class="s2">.__init__()&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__class__</span><span class="o">.</span><span class="n">__name__</span><span class="p">))</span>
+
+    <span class="k">def</span> <span class="nf">setup</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">unused_timeout</span><span class="o">=</span><span class="mi">15</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        No delayed initialisation required for this example.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">%s</span><span class="s2">.setup()&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__class__</span><span class="o">.</span><span class="n">__name__</span><span class="p">))</span>
+        <span class="k">return</span> <span class="bp">True</span>
+
+    <span class="k">def</span> <span class="nf">initialise</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Reset a counter variable.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">%s</span><span class="s2">.initialise()]&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__class__</span><span class="o">.</span><span class="n">__name__</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">counter</span> <span class="o">=</span> <span class="mi">0</span>
+
+    <span class="k">def</span> <span class="nf">update</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Increment the counter and decide upon a new status result for the behaviour.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">counter</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="n">new_status</span> <span class="o">=</span> <span class="n">py_trees</span><span class="o">.</span><span class="n">Status</span><span class="o">.</span><span class="n">SUCCESS</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">counter</span> <span class="o">==</span> <span class="mi">3</span> <span class="k">else</span> <span class="n">py_trees</span><span class="o">.</span><span class="n">Status</span><span class="o">.</span><span class="n">RUNNING</span>
+        <span class="k">if</span> <span class="n">new_status</span> <span class="o">==</span> <span class="n">py_trees</span><span class="o">.</span><span class="n">Status</span><span class="o">.</span><span class="n">SUCCESS</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">feedback_message</span> <span class="o">=</span> <span class="s2">&quot;counting...{0} - phew, thats enough for today&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">counter</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">feedback_message</span> <span class="o">=</span> <span class="s2">&quot;still counting&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">%s</span><span class="s2">.update()[</span><span class="si">%s</span><span class="s2">-&gt;</span><span class="si">%s</span><span class="s2">][</span><span class="si">%s</span><span class="s2">]&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__class__</span><span class="o">.</span><span class="n">__name__</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">status</span><span class="p">,</span> <span class="n">new_status</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">feedback_message</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">new_status</span>
+
+    <span class="k">def</span> <span class="nf">terminate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">new_status</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Nothing to clean up in this example.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">%s</span><span class="s2">.terminate()[</span><span class="si">%s</span><span class="s2">-&gt;</span><span class="si">%s</span><span class="s2">]&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__class__</span><span class="o">.</span><span class="n">__name__</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">status</span><span class="p">,</span> <span class="n">new_status</span><span class="p">))</span>
+
+
+<span class="c1">##############################################################################</span>
+<span class="c1"># Main</span>
+<span class="c1">##############################################################################</span>
+
+<span class="k">def</span> <span class="nf">main</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Entry point for the demo script.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">command_line_argument_parser</span><span class="p">()</span><span class="o">.</span><span class="n">parse_args</span><span class="p">()</span>
+
+    <span class="k">print</span><span class="p">(</span><span class="n">description</span><span class="p">())</span>
+
+    <span class="n">py_trees</span><span class="o">.</span><span class="n">logging</span><span class="o">.</span><span class="n">level</span> <span class="o">=</span> <span class="n">py_trees</span><span class="o">.</span><span class="n">logging</span><span class="o">.</span><span class="n">Level</span><span class="o">.</span><span class="n">DEBUG</span>
+
+    <span class="n">counter</span> <span class="o">=</span> <span class="n">Counter</span><span class="p">()</span>
+    <span class="n">counter</span><span class="o">.</span><span class="n">setup</span><span class="p">()</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">unused_i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">7</span><span class="p">):</span>
+            <span class="n">counter</span><span class="o">.</span><span class="n">tick_once</span><span class="p">()</span>
+            <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mf">0.5</span><span class="p">)</span>
+        <span class="k">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">KeyboardInterrupt</span><span class="p">:</span>
+        <span class="k">print</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
+        <span class="k">pass</span>
+</pre></div>
+</td></tr></table></div>
+</div>
+</div>
+<div class="section" id="module-py_trees.demos.blackboard">
+<span id="py-trees-demo-blackboard"></span><span id="py-trees-demo-blackboard-program"></span><h2>py-trees-demo-blackboard<a class="headerlink" href="#module-py_trees.demos.blackboard" title="Permalink to this headline">¶</a></h2>
+<p><p>Demonstrates usage of the blackboard and related behaviours.</p>
+<p>A sequence is populated with a default set blackboard variable
+behaviour, a custom write to blackboard behaviour that writes
+a more complicated structure, and finally a default check
+blackboard variable beheaviour that looks for the first variable.</p>
+</p>
+<div class="highlight-python"><div class="highlight"><pre>usage: py-trees-demo-blackboard [-h] [-r]
+</pre></div>
+</div>
+<dl class="docutils">
+<dt>Options:</dt>
+<dd><table class="first last docutils option-list" frame="void" rules="none">
+<col class="option" />
+<col class="description" />
+<tbody valign="top">
+<tr><td class="option-group" colspan="2">
+<kbd><span class="option">-r=False</span>, <span class="option">--render=False</span></kbd></td>
+</tr>
+<tr><td>&nbsp;</td><td>render dot tree to file</td></tr>
+</tbody>
+</table>
+</dd>
+</dl>
+<p class="graphviz">
+<img src="_images/graphviz-c8b0e6fb26c9ffd9647d6e1e06502ad187113f00.png" alt="digraph sequence {
+graph [fontname=&quot;times-roman&quot;];
+node [fontname=&quot;times-roman&quot;];
+edge [fontname=&quot;times-roman&quot;];
+Sequence [fillcolor=orange, fontcolor=black, fontsize=11, shape=box, style=filled];
+&quot;Set Foo&quot; [fillcolor=gray, fontcolor=black, fontsize=11, shape=ellipse, style=filled];
+Sequence -&gt; &quot;Set Foo&quot;;
+Writer [fillcolor=gray, fontcolor=black, fontsize=11, shape=ellipse, style=filled];
+Sequence -&gt; Writer;
+&quot;Check Foo&quot; [fillcolor=gray, fontcolor=black, fontsize=11, shape=ellipse, style=filled];
+Sequence -&gt; &quot;Check Foo&quot;;
+}" />
+</p>
+<img alt="_images/blackboard.gif" src="_images/blackboard.gif" />
+<dl class="class">
+<dt id="py_trees.demos.blackboard.BlackboardWriter">
+<em class="property">class </em><code class="descclassname">py_trees.demos.blackboard.</code><code class="descname">BlackboardWriter</code><span class="sig-paren">(</span><em>name='Writer'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/py_trees/demos/blackboard.html#BlackboardWriter"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#py_trees.demos.blackboard.BlackboardWriter" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="modules.html#py_trees.behaviour.Behaviour" title="py_trees.behaviour.Behaviour"><code class="xref py py-class docutils literal"><span class="pre">py_trees.behaviour.Behaviour</span></code></a></p>
+<p>Custom writer that submits a more complicated variable to the blackboard.</p>
+<dl class="method">
+<dt id="py_trees.demos.blackboard.BlackboardWriter.update">
+<code class="descname">update</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/py_trees/demos/blackboard.html#BlackboardWriter.update"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#py_trees.demos.blackboard.BlackboardWriter.update" title="Permalink to this definition">¶</a></dt>
+<dd><p>Write a dictionary to the blackboard and return <code class="xref py py-data docutils literal"><span class="pre">SUCCESS</span></code>.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="function">
+<dt id="py_trees.demos.blackboard.main">
+<code class="descclassname">py_trees.demos.blackboard.</code><code class="descname">main</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/py_trees/demos/blackboard.html#main"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#py_trees.demos.blackboard.main" title="Permalink to this definition">¶</a></dt>
+<dd><p>Entry point for the demo script.</p>
+</dd></dl>
+
+<div class="literal-block-wrapper container" id="py-trees-demos-blackboard-py">
+<div class="code-block-caption"><span class="caption-text">py_trees/demos/blackboard.py</span><a class="headerlink" href="#py-trees-demos-blackboard-py" title="Permalink to this code">¶</a></div>
+<div class="highlight-python"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>  1
+  2
+  3
+  4
+  5
+  6
+  7
+  8
+  9
+ 10
+ 11
+ 12
+ 13
+ 14
+ 15
+ 16
+ 17
+ 18
+ 19
+ 20
+ 21
+ 22
+ 23
+ 24
+ 25
+ 26
+ 27
+ 28
+ 29
+ 30
+ 31
+ 32
+ 33
+ 34
+ 35
+ 36
+ 37
+ 38
+ 39
+ 40
+ 41
+ 42
+ 43
+ 44
+ 45
+ 46
+ 47
+ 48
+ 49
+ 50
+ 51
+ 52
+ 53
+ 54
+ 55
+ 56
+ 57
+ 58
+ 59
+ 60
+ 61
+ 62
+ 63
+ 64
+ 65
+ 66
+ 67
+ 68
+ 69
+ 70
+ 71
+ 72
+ 73
+ 74
+ 75
+ 76
+ 77
+ 78
+ 79
+ 80
+ 81
+ 82
+ 83
+ 84
+ 85
+ 86
+ 87
+ 88
+ 89
+ 90
+ 91
+ 92
+ 93
+ 94
+ 95
+ 96
+ 97
+ 98
+ 99
+100
+101
+102
+103
+104
+105
+106
+107
+108
+109
+110
+111
+112
+113
+114
+115
+116
+117
+118
+119
+120
+121
+122
+123
+124
+125
+126
+127
+128
+129
+130
+131
+132</pre></div></td><td class="code"><div class="highlight"><pre><span class="ch">#!/usr/bin/env python</span>
+<span class="c1">#</span>
+<span class="c1"># License: BSD</span>
+<span class="c1">#   https://raw.githubusercontent.com/stonier/py_trees/devel/LICENSE</span>
+<span class="c1">#</span>
+<span class="c1">##############################################################################</span>
+<span class="c1"># Documentation</span>
+<span class="c1">##############################################################################</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">.. argparse::</span>
+<span class="sd">   :module: py_trees.demos.blackboard</span>
+<span class="sd">   :func: command_line_argument_parser</span>
+<span class="sd">   :prog: py-trees-demo-blackboard</span>
+
+<span class="sd">.. graphviz:: dot/demo-blackboard.dot</span>
+
+<span class="sd">.. image:: images/blackboard.gif</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="c1">##############################################################################</span>
+<span class="c1"># Imports</span>
+<span class="c1">##############################################################################</span>
+
+<span class="kn">import</span> <span class="nn">argparse</span>
+<span class="kn">import</span> <span class="nn">py_trees</span>
+<span class="kn">import</span> <span class="nn">sys</span>
+
+<span class="kn">import</span> <span class="nn">py_trees.console</span> <span class="kn">as</span> <span class="nn">console</span>
+
+<span class="c1">##############################################################################</span>
+<span class="c1"># Classes</span>
+<span class="c1">##############################################################################</span>
+
+
+<span class="k">def</span> <span class="nf">description</span><span class="p">():</span>
+    <span class="n">content</span> <span class="o">=</span> <span class="s2">&quot;Demonstrates usage of the blackboard and related behaviours.</span><span class="se">\n</span><span class="s2">&quot;</span>
+    <span class="n">content</span> <span class="o">+=</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span>
+    <span class="n">content</span> <span class="o">+=</span> <span class="s2">&quot;A sequence is populated with a default set blackboard variable</span><span class="se">\n</span><span class="s2">&quot;</span>
+    <span class="n">content</span> <span class="o">+=</span> <span class="s2">&quot;behaviour, a custom write to blackboard behaviour that writes</span><span class="se">\n</span><span class="s2">&quot;</span>
+    <span class="n">content</span> <span class="o">+=</span> <span class="s2">&quot;a more complicated structure, and finally a default check</span><span class="se">\n</span><span class="s2">&quot;</span>
+    <span class="n">content</span> <span class="o">+=</span> <span class="s2">&quot;blackboard variable beheaviour that looks for the first variable.</span><span class="se">\n</span><span class="s2">&quot;</span>
+
+    <span class="k">if</span> <span class="n">py_trees</span><span class="o">.</span><span class="n">console</span><span class="o">.</span><span class="n">has_colours</span><span class="p">:</span>
+        <span class="n">banner_line</span> <span class="o">=</span> <span class="n">console</span><span class="o">.</span><span class="n">green</span> <span class="o">+</span> <span class="s2">&quot;*&quot;</span> <span class="o">*</span> <span class="mi">79</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span> <span class="o">+</span> <span class="n">console</span><span class="o">.</span><span class="n">reset</span>
+        <span class="n">s</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span>
+        <span class="n">s</span> <span class="o">+=</span> <span class="n">banner_line</span>
+        <span class="n">s</span> <span class="o">+=</span> <span class="n">console</span><span class="o">.</span><span class="n">bold_white</span> <span class="o">+</span> <span class="s2">&quot;Blackboard&quot;</span><span class="o">.</span><span class="n">center</span><span class="p">(</span><span class="mi">79</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span> <span class="o">+</span> <span class="n">console</span><span class="o">.</span><span class="n">reset</span>
+        <span class="n">s</span> <span class="o">+=</span> <span class="n">banner_line</span>
+        <span class="n">s</span> <span class="o">+=</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span>
+        <span class="n">s</span> <span class="o">+=</span> <span class="n">content</span>
+        <span class="n">s</span> <span class="o">+=</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span>
+        <span class="n">s</span> <span class="o">+=</span> <span class="n">banner_line</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">s</span> <span class="o">=</span> <span class="n">content</span>
+    <span class="k">return</span> <span class="n">s</span>
+
+
+<span class="k">def</span> <span class="nf">epilog</span><span class="p">():</span>
+    <span class="k">if</span> <span class="n">py_trees</span><span class="o">.</span><span class="n">console</span><span class="o">.</span><span class="n">has_colours</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">console</span><span class="o">.</span><span class="n">cyan</span> <span class="o">+</span> <span class="s2">&quot;And his noodly appendage reached forth to tickle the blessed...</span><span class="se">\n</span><span class="s2">&quot;</span> <span class="o">+</span> <span class="n">console</span><span class="o">.</span><span class="n">reset</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">None</span>
+
+
+<span class="k">def</span> <span class="nf">command_line_argument_parser</span><span class="p">():</span>
+    <span class="n">parser</span> <span class="o">=</span> <span class="n">argparse</span><span class="o">.</span><span class="n">ArgumentParser</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="n">description</span><span class="p">(),</span>
+                                     <span class="n">epilog</span><span class="o">=</span><span class="n">epilog</span><span class="p">(),</span>
+                                     <span class="n">formatter_class</span><span class="o">=</span><span class="n">argparse</span><span class="o">.</span><span class="n">RawDescriptionHelpFormatter</span><span class="p">,</span>
+                                     <span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s1">&#39;-r&#39;</span><span class="p">,</span> <span class="s1">&#39;--render&#39;</span><span class="p">,</span> <span class="n">action</span><span class="o">=</span><span class="s1">&#39;store_true&#39;</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s1">&#39;render dot tree to file&#39;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">parser</span>
+
+
+<span class="k">class</span> <span class="nc">BlackboardWriter</span><span class="p">(</span><span class="n">py_trees</span><span class="o">.</span><span class="n">behaviour</span><span class="o">.</span><span class="n">Behaviour</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Custom writer that submits a more complicated variable to the blackboard.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;Writer&quot;</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">BlackboardWriter</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">%s</span><span class="s2">.__init__()&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__class__</span><span class="o">.</span><span class="n">__name__</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">blackboard</span> <span class="o">=</span> <span class="n">py_trees</span><span class="o">.</span><span class="n">blackboard</span><span class="o">.</span><span class="n">Blackboard</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">update</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Write a dictionary to the blackboard and return :data:`~py_trees.Status.SUCCESS`.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">%s</span><span class="s2">.update()&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__class__</span><span class="o">.</span><span class="n">__name__</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">blackboard</span><span class="o">.</span><span class="n">spaghetti</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;Gnocchi&quot;</span><span class="p">,</span> <span class="s2">&quot;quantity&quot;</span><span class="p">:</span> <span class="mi">2</span><span class="p">}</span>
+        <span class="k">return</span> <span class="n">py_trees</span><span class="o">.</span><span class="n">Status</span><span class="o">.</span><span class="n">SUCCESS</span>
+
+
+<span class="k">def</span> <span class="nf">create_tree</span><span class="p">():</span>
+    <span class="n">root</span> <span class="o">=</span> <span class="n">py_trees</span><span class="o">.</span><span class="n">composites</span><span class="o">.</span><span class="n">Sequence</span><span class="p">(</span><span class="s2">&quot;Sequence&quot;</span><span class="p">)</span>
+    <span class="n">set_blackboard_variable</span> <span class="o">=</span> <span class="n">py_trees</span><span class="o">.</span><span class="n">blackboard</span><span class="o">.</span><span class="n">SetBlackboardVariable</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;Set Foo&quot;</span><span class="p">,</span> <span class="n">variable_name</span><span class="o">=</span><span class="s2">&quot;foo&quot;</span><span class="p">,</span> <span class="n">variable_value</span><span class="o">=</span><span class="s2">&quot;bar&quot;</span><span class="p">)</span>
+    <span class="n">write_blackboard_variable</span> <span class="o">=</span> <span class="n">BlackboardWriter</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;Writer&quot;</span><span class="p">)</span>
+    <span class="n">check_blackboard_variable</span> <span class="o">=</span> <span class="n">py_trees</span><span class="o">.</span><span class="n">blackboard</span><span class="o">.</span><span class="n">CheckBlackboardVariable</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;Check Foo&quot;</span><span class="p">,</span> <span class="n">variable_name</span><span class="o">=</span><span class="s2">&quot;foo&quot;</span><span class="p">,</span> <span class="n">expected_value</span><span class="o">=</span><span class="s2">&quot;bar&quot;</span><span class="p">)</span>
+    <span class="n">root</span><span class="o">.</span><span class="n">add_children</span><span class="p">([</span><span class="n">set_blackboard_variable</span><span class="p">,</span> <span class="n">write_blackboard_variable</span><span class="p">,</span> <span class="n">check_blackboard_variable</span><span class="p">])</span>
+    <span class="k">return</span> <span class="n">root</span>
+
+
+<span class="c1">##############################################################################</span>
+<span class="c1"># Main</span>
+<span class="c1">##############################################################################</span>
+
+<span class="k">def</span> <span class="nf">main</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Entry point for the demo script.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">args</span> <span class="o">=</span> <span class="n">command_line_argument_parser</span><span class="p">()</span><span class="o">.</span><span class="n">parse_args</span><span class="p">()</span>
+    <span class="k">print</span><span class="p">(</span><span class="n">description</span><span class="p">())</span>
+    <span class="n">py_trees</span><span class="o">.</span><span class="n">logging</span><span class="o">.</span><span class="n">level</span> <span class="o">=</span> <span class="n">py_trees</span><span class="o">.</span><span class="n">logging</span><span class="o">.</span><span class="n">Level</span><span class="o">.</span><span class="n">DEBUG</span>
+
+    <span class="n">tree</span> <span class="o">=</span> <span class="n">create_tree</span><span class="p">()</span>
+
+    <span class="c1">####################</span>
+    <span class="c1"># Rendering</span>
+    <span class="c1">####################</span>
+    <span class="k">if</span> <span class="n">args</span><span class="o">.</span><span class="n">render</span><span class="p">:</span>
+        <span class="n">py_trees</span><span class="o">.</span><span class="n">display</span><span class="o">.</span><span class="n">render_dot_tree</span><span class="p">(</span><span class="n">tree</span><span class="p">)</span>
+        <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">()</span>
+
+    <span class="c1">####################</span>
+    <span class="c1"># Execute</span>
+    <span class="c1">####################</span>
+    <span class="n">tree</span><span class="o">.</span><span class="n">setup</span><span class="p">(</span><span class="n">timeout</span><span class="o">=</span><span class="mi">15</span><span class="p">)</span>
+    <span class="k">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">--------- Tick 0 ---------</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="n">tree</span><span class="o">.</span><span class="n">tick_once</span><span class="p">()</span>
+    <span class="k">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="n">py_trees</span><span class="o">.</span><span class="n">display</span><span class="o">.</span><span class="n">print_ascii_tree</span><span class="p">(</span><span class="n">tree</span><span class="p">,</span> <span class="n">show_status</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+    <span class="k">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="k">print</span><span class="p">(</span><span class="n">py_trees</span><span class="o">.</span><span class="n">blackboard</span><span class="o">.</span><span class="n">Blackboard</span><span class="p">())</span>
+</pre></div>
+</td></tr></table></div>
+</div>
+</div>
+<div class="section" id="module-py_trees.demos.context_switching">
+<span id="py-trees-demo-context-switching"></span><span id="py-trees-demo-context-switching-program"></span><h2>py-trees-demo-context-switching<a class="headerlink" href="#module-py_trees.demos.context_switching" title="Permalink to this headline">¶</a></h2>
+<p><p>Demonstrates context switching with parallels and sequences.</p>
+<p>A context switching behaviour is run in parallel with a work sequence.
+Switching the context occurs in the initialise() and terminate() methods
+of the context switching behaviour. Note that whether the sequence results
+in failure or success, the context switch behaviour will always call the
+terminate() method to restore the context. It will also call terminate()
+to restore the context in the event of a higher priority parent cancelling
+this parallel subtree.</p>
+</p>
+<div class="highlight-python"><div class="highlight"><pre>usage: py-trees-demo-context-switching [-h] [-r]
+</pre></div>
+</div>
+<dl class="docutils">
+<dt>Options:</dt>
+<dd><table class="first last docutils option-list" frame="void" rules="none">
+<col class="option" />
+<col class="description" />
+<tbody valign="top">
+<tr><td class="option-group" colspan="2">
+<kbd><span class="option">-r=False</span>, <span class="option">--render=False</span></kbd></td>
+</tr>
+<tr><td>&nbsp;</td><td>render dot tree to file</td></tr>
+</tbody>
+</table>
+</dd>
+</dl>
+<p class="graphviz">
+<img src="_images/graphviz-b3b201ef26449ee6f2c1d3471d308b62709b2e4d.png" alt="digraph parallel {
+graph [fontname=&quot;times-roman&quot;];
+node [fontname=&quot;times-roman&quot;];
+edge [fontname=&quot;times-roman&quot;];
+Parallel [fillcolor=gold, fontcolor=black, fontsize=11, shape=note, style=filled];
+Context [fillcolor=gray, fontcolor=black, fontsize=11, shape=ellipse, style=filled];
+Parallel -&gt; Context;
+Sequence [fillcolor=orange, fontcolor=black, fontsize=11, shape=box, style=filled];
+Parallel -&gt; Sequence;
+&quot;Action 1&quot; [fillcolor=gray, fontcolor=black, fontsize=11, shape=ellipse, style=filled];
+Sequence -&gt; &quot;Action 1&quot;;
+&quot;Action 2&quot; [fillcolor=gray, fontcolor=black, fontsize=11, shape=ellipse, style=filled];
+Sequence -&gt; &quot;Action 2&quot;;
+}" />
+</p>
+<img alt="_images/context_switching.gif" src="_images/context_switching.gif" />
+<dl class="class">
+<dt id="py_trees.demos.context_switching.ContextSwitch">
+<em class="property">class </em><code class="descclassname">py_trees.demos.context_switching.</code><code class="descname">ContextSwitch</code><span class="sig-paren">(</span><em>name='ContextSwitch'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/py_trees/demos/context_switching.html#ContextSwitch"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#py_trees.demos.context_switching.ContextSwitch" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="modules.html#py_trees.behaviour.Behaviour" title="py_trees.behaviour.Behaviour"><code class="xref py py-class docutils literal"><span class="pre">py_trees.behaviour.Behaviour</span></code></a></p>
+<p>An example of a context switching class that sets (in <code class="docutils literal"><span class="pre">initialise()</span></code>)
+and restores a context (in <code class="docutils literal"><span class="pre">terminate()</span></code>. Use in parallel with a
+sequence/subtree that does the work while in this context.</p>
+<div class="admonition attention">
+<p class="first admonition-title">Attention</p>
+<p class="last">Simply setting a pair of behaviours (set and reset context) on
+either end of a sequence will not suffice for context switching. In the case
+that one of the work behaviours in the sequence fails, the final reset context
+switch will never trigger.</p>
+</div>
+<dl class="method">
+<dt id="py_trees.demos.context_switching.ContextSwitch.initialise">
+<code class="descname">initialise</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/py_trees/demos/context_switching.html#ContextSwitch.initialise"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#py_trees.demos.context_switching.ContextSwitch.initialise" title="Permalink to this definition">¶</a></dt>
+<dd><p>Backup and set a new context.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="py_trees.demos.context_switching.ContextSwitch.terminate">
+<code class="descname">terminate</code><span class="sig-paren">(</span><em>new_status</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/py_trees/demos/context_switching.html#ContextSwitch.terminate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#py_trees.demos.context_switching.ContextSwitch.terminate" title="Permalink to this definition">¶</a></dt>
+<dd><p>Restore the context with the previously backed up context.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="py_trees.demos.context_switching.ContextSwitch.update">
+<code class="descname">update</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/py_trees/demos/context_switching.html#ContextSwitch.update"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#py_trees.demos.context_switching.ContextSwitch.update" title="Permalink to this definition">¶</a></dt>
+<dd><p>Just returns RUNNING while it waits for other activities to finish.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="function">
+<dt id="py_trees.demos.context_switching.main">
+<code class="descclassname">py_trees.demos.context_switching.</code><code class="descname">main</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/py_trees/demos/context_switching.html#main"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#py_trees.demos.context_switching.main" title="Permalink to this definition">¶</a></dt>
+<dd><p>Entry point for the demo script.</p>
+</dd></dl>
+
+<div class="literal-block-wrapper container" id="py-trees-demos-contex-switching-py">
+<div class="code-block-caption"><span class="caption-text">py_trees/demos/contex_switching.py</span><a class="headerlink" href="#py-trees-demos-contex-switching-py" title="Permalink to this code">¶</a></div>
+<div class="highlight-python"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>  1
+  2
+  3
+  4
+  5
+  6
+  7
+  8
+  9
+ 10
+ 11
+ 12
+ 13
+ 14
+ 15
+ 16
+ 17
+ 18
+ 19
+ 20
+ 21
+ 22
+ 23
+ 24
+ 25
+ 26
+ 27
+ 28
+ 29
+ 30
+ 31
+ 32
+ 33
+ 34
+ 35
+ 36
+ 37
+ 38
+ 39
+ 40
+ 41
+ 42
+ 43
+ 44
+ 45
+ 46
+ 47
+ 48
+ 49
+ 50
+ 51
+ 52
+ 53
+ 54
+ 55
+ 56
+ 57
+ 58
+ 59
+ 60
+ 61
+ 62
+ 63
+ 64
+ 65
+ 66
+ 67
+ 68
+ 69
+ 70
+ 71
+ 72
+ 73
+ 74
+ 75
+ 76
+ 77
+ 78
+ 79
+ 80
+ 81
+ 82
+ 83
+ 84
+ 85
+ 86
+ 87
+ 88
+ 89
+ 90
+ 91
+ 92
+ 93
+ 94
+ 95
+ 96
+ 97
+ 98
+ 99
+100
+101
+102
+103
+104
+105
+106
+107
+108
+109
+110
+111
+112
+113
+114
+115
+116
+117
+118
+119
+120
+121
+122
+123
+124
+125
+126
+127
+128
+129
+130
+131
+132
+133
+134
+135
+136
+137
+138
+139
+140
+141
+142
+143
+144
+145
+146
+147
+148
+149
+150
+151
+152
+153
+154
+155
+156
+157
+158
+159
+160
+161
+162
+163
+164
+165</pre></div></td><td class="code"><div class="highlight"><pre><span class="ch">#!/usr/bin/env python</span>
+<span class="c1">#</span>
+<span class="c1"># License: BSD</span>
+<span class="c1">#   https://raw.githubusercontent.com/stonier/py_trees/devel/LICENSE</span>
+<span class="c1">#</span>
+<span class="c1">##############################################################################</span>
+<span class="c1"># Documentation</span>
+<span class="c1">##############################################################################</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">.. argparse::</span>
+<span class="sd">   :module: py_trees.demos.context_switching</span>
+<span class="sd">   :func: command_line_argument_parser</span>
+<span class="sd">   :prog: py-trees-demo-context-switching</span>
+
+<span class="sd">.. graphviz:: dot/demo-context_switching.dot</span>
+
+<span class="sd">.. image:: images/context_switching.gif</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="c1">##############################################################################</span>
+<span class="c1"># Imports</span>
+<span class="c1">##############################################################################</span>
+
+<span class="kn">import</span> <span class="nn">argparse</span>
+<span class="kn">import</span> <span class="nn">py_trees</span>
+<span class="kn">import</span> <span class="nn">sys</span>
+<span class="kn">import</span> <span class="nn">time</span>
+
+<span class="kn">import</span> <span class="nn">py_trees.console</span> <span class="kn">as</span> <span class="nn">console</span>
+
+<span class="c1">##############################################################################</span>
+<span class="c1"># Classes</span>
+<span class="c1">##############################################################################</span>
+
+
+<span class="k">def</span> <span class="nf">description</span><span class="p">():</span>
+    <span class="n">content</span> <span class="o">=</span> <span class="s2">&quot;Demonstrates context switching with parallels and sequences.</span><span class="se">\n</span><span class="s2">&quot;</span>
+    <span class="n">content</span> <span class="o">+=</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span>
+    <span class="n">content</span> <span class="o">+=</span> <span class="s2">&quot;A context switching behaviour is run in parallel with a work sequence.</span><span class="se">\n</span><span class="s2">&quot;</span>
+    <span class="n">content</span> <span class="o">+=</span> <span class="s2">&quot;Switching the context occurs in the initialise() and terminate() methods</span><span class="se">\n</span><span class="s2">&quot;</span>
+    <span class="n">content</span> <span class="o">+=</span> <span class="s2">&quot;of the context switching behaviour. Note that whether the sequence results</span><span class="se">\n</span><span class="s2">&quot;</span>
+    <span class="n">content</span> <span class="o">+=</span> <span class="s2">&quot;in failure or success, the context switch behaviour will always call the</span><span class="se">\n</span><span class="s2">&quot;</span>
+    <span class="n">content</span> <span class="o">+=</span> <span class="s2">&quot;terminate() method to restore the context. It will also call terminate()</span><span class="se">\n</span><span class="s2">&quot;</span>
+    <span class="n">content</span> <span class="o">+=</span> <span class="s2">&quot;to restore the context in the event of a higher priority parent cancelling</span><span class="se">\n</span><span class="s2">&quot;</span>
+    <span class="n">content</span> <span class="o">+=</span> <span class="s2">&quot;this parallel subtree.</span><span class="se">\n</span><span class="s2">&quot;</span>
+    <span class="k">if</span> <span class="n">py_trees</span><span class="o">.</span><span class="n">console</span><span class="o">.</span><span class="n">has_colours</span><span class="p">:</span>
+        <span class="n">banner_line</span> <span class="o">=</span> <span class="n">console</span><span class="o">.</span><span class="n">green</span> <span class="o">+</span> <span class="s2">&quot;*&quot;</span> <span class="o">*</span> <span class="mi">79</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span> <span class="o">+</span> <span class="n">console</span><span class="o">.</span><span class="n">reset</span>
+        <span class="n">s</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span>
+        <span class="n">s</span> <span class="o">+=</span> <span class="n">banner_line</span>
+        <span class="n">s</span> <span class="o">+=</span> <span class="n">console</span><span class="o">.</span><span class="n">bold_white</span> <span class="o">+</span> <span class="s2">&quot;Context Switching&quot;</span><span class="o">.</span><span class="n">center</span><span class="p">(</span><span class="mi">79</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span> <span class="o">+</span> <span class="n">console</span><span class="o">.</span><span class="n">reset</span>
+        <span class="n">s</span> <span class="o">+=</span> <span class="n">banner_line</span>
+        <span class="n">s</span> <span class="o">+=</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span>
+        <span class="n">s</span> <span class="o">+=</span> <span class="n">content</span>
+        <span class="n">s</span> <span class="o">+=</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span>
+        <span class="n">s</span> <span class="o">+=</span> <span class="n">banner_line</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">s</span> <span class="o">=</span> <span class="n">content</span>
+    <span class="k">return</span> <span class="n">s</span>
+
+
+<span class="k">def</span> <span class="nf">epilog</span><span class="p">():</span>
+    <span class="k">if</span> <span class="n">py_trees</span><span class="o">.</span><span class="n">console</span><span class="o">.</span><span class="n">has_colours</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">console</span><span class="o">.</span><span class="n">cyan</span> <span class="o">+</span> <span class="s2">&quot;And his noodly appendage reached forth to tickle the blessed...</span><span class="se">\n</span><span class="s2">&quot;</span> <span class="o">+</span> <span class="n">console</span><span class="o">.</span><span class="n">reset</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">None</span>
+
+
+<span class="k">def</span> <span class="nf">command_line_argument_parser</span><span class="p">():</span>
+    <span class="n">parser</span> <span class="o">=</span> <span class="n">argparse</span><span class="o">.</span><span class="n">ArgumentParser</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="n">description</span><span class="p">(),</span>
+                                     <span class="n">epilog</span><span class="o">=</span><span class="n">epilog</span><span class="p">(),</span>
+                                     <span class="n">formatter_class</span><span class="o">=</span><span class="n">argparse</span><span class="o">.</span><span class="n">RawDescriptionHelpFormatter</span><span class="p">,</span>
+                                     <span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s1">&#39;-r&#39;</span><span class="p">,</span> <span class="s1">&#39;--render&#39;</span><span class="p">,</span> <span class="n">action</span><span class="o">=</span><span class="s1">&#39;store_true&#39;</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s1">&#39;render dot tree to file&#39;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">parser</span>
+
+
+<span class="k">class</span> <span class="nc">ContextSwitch</span><span class="p">(</span><span class="n">py_trees</span><span class="o">.</span><span class="n">behaviour</span><span class="o">.</span><span class="n">Behaviour</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    An example of a context switching class that sets (in ``initialise()``)</span>
+<span class="sd">    and restores a context (in ``terminate()``. Use in parallel with a</span>
+<span class="sd">    sequence/subtree that does the work while in this context.</span>
+
+<span class="sd">    .. attention:: Simply setting a pair of behaviours (set and reset context) on</span>
+<span class="sd">        either end of a sequence will not suffice for context switching. In the case</span>
+<span class="sd">        that one of the work behaviours in the sequence fails, the final reset context</span>
+<span class="sd">        switch will never trigger.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;ContextSwitch&quot;</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">ContextSwitch</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">feedback_message</span> <span class="o">=</span> <span class="s2">&quot;old context&quot;</span>
+
+    <span class="k">def</span> <span class="nf">initialise</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Backup and set a new context.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">%s</span><span class="s2">.initialise()[switch context]&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__class__</span><span class="o">.</span><span class="n">__name__</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">feedback_message</span> <span class="o">=</span> <span class="s2">&quot;new context&quot;</span>
+
+    <span class="k">def</span> <span class="nf">update</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Just returns RUNNING while it waits for other activities to finish.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">%s</span><span class="s2">.update()[RUNNING][</span><span class="si">%s</span><span class="s2">]&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__class__</span><span class="o">.</span><span class="n">__name__</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">feedback_message</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">py_trees</span><span class="o">.</span><span class="n">Status</span><span class="o">.</span><span class="n">RUNNING</span>
+
+    <span class="k">def</span> <span class="nf">terminate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">new_status</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Restore the context with the previously backed up context.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">%s</span><span class="s2">.terminate()[</span><span class="si">%s</span><span class="s2">-&gt;</span><span class="si">%s</span><span class="s2">][restore context]&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__class__</span><span class="o">.</span><span class="n">__name__</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">status</span><span class="p">,</span> <span class="n">new_status</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">feedback_message</span> <span class="o">=</span> <span class="s2">&quot;old context&quot;</span>
+
+
+<span class="k">def</span> <span class="nf">create_tree</span><span class="p">():</span>
+    <span class="n">root</span> <span class="o">=</span> <span class="n">py_trees</span><span class="o">.</span><span class="n">composites</span><span class="o">.</span><span class="n">Parallel</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;Parallel&quot;</span><span class="p">,</span> <span class="n">policy</span><span class="o">=</span><span class="n">py_trees</span><span class="o">.</span><span class="n">common</span><span class="o">.</span><span class="n">ParallelPolicy</span><span class="o">.</span><span class="n">SUCCESS_ON_ONE</span><span class="p">)</span>
+    <span class="n">context_switch</span> <span class="o">=</span> <span class="n">ContextSwitch</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;Context&quot;</span><span class="p">)</span>
+    <span class="n">sequence</span> <span class="o">=</span> <span class="n">py_trees</span><span class="o">.</span><span class="n">composites</span><span class="o">.</span><span class="n">Sequence</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;Sequence&quot;</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">job</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;Action 1&quot;</span><span class="p">,</span> <span class="s2">&quot;Action 2&quot;</span><span class="p">]:</span>
+        <span class="n">success_after_two</span> <span class="o">=</span> <span class="n">py_trees</span><span class="o">.</span><span class="n">behaviours</span><span class="o">.</span><span class="n">Count</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">job</span><span class="p">,</span>
+                                                      <span class="n">fail_until</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+                                                      <span class="n">running_until</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
+                                                      <span class="n">success_until</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
+        <span class="n">sequence</span><span class="o">.</span><span class="n">add_child</span><span class="p">(</span><span class="n">success_after_two</span><span class="p">)</span>
+    <span class="n">root</span><span class="o">.</span><span class="n">add_child</span><span class="p">(</span><span class="n">context_switch</span><span class="p">)</span>
+    <span class="n">root</span><span class="o">.</span><span class="n">add_child</span><span class="p">(</span><span class="n">sequence</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">root</span>
+
+
+<span class="c1">##############################################################################</span>
+<span class="c1"># Main</span>
+<span class="c1">##############################################################################</span>
+
+<span class="k">def</span> <span class="nf">main</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Entry point for the demo script.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">args</span> <span class="o">=</span> <span class="n">command_line_argument_parser</span><span class="p">()</span><span class="o">.</span><span class="n">parse_args</span><span class="p">()</span>
+    <span class="k">print</span><span class="p">(</span><span class="n">description</span><span class="p">())</span>
+    <span class="n">py_trees</span><span class="o">.</span><span class="n">logging</span><span class="o">.</span><span class="n">level</span> <span class="o">=</span> <span class="n">py_trees</span><span class="o">.</span><span class="n">logging</span><span class="o">.</span><span class="n">Level</span><span class="o">.</span><span class="n">DEBUG</span>
+
+    <span class="n">tree</span> <span class="o">=</span> <span class="n">create_tree</span><span class="p">()</span>
+
+    <span class="c1">####################</span>
+    <span class="c1"># Rendering</span>
+    <span class="c1">####################</span>
+    <span class="k">if</span> <span class="n">args</span><span class="o">.</span><span class="n">render</span><span class="p">:</span>
+        <span class="n">py_trees</span><span class="o">.</span><span class="n">display</span><span class="o">.</span><span class="n">render_dot_tree</span><span class="p">(</span><span class="n">tree</span><span class="p">)</span>
+        <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">()</span>
+
+    <span class="c1">####################</span>
+    <span class="c1"># Execute</span>
+    <span class="c1">####################</span>
+    <span class="n">tree</span><span class="o">.</span><span class="n">setup</span><span class="p">(</span><span class="n">timeout</span><span class="o">=</span><span class="mi">15</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">6</span><span class="p">):</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">--------- Tick {0} ---------</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">i</span><span class="p">))</span>
+            <span class="n">tree</span><span class="o">.</span><span class="n">tick_once</span><span class="p">()</span>
+            <span class="k">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="n">py_trees</span><span class="o">.</span><span class="n">display</span><span class="o">.</span><span class="n">print_ascii_tree</span><span class="p">(</span><span class="n">tree</span><span class="p">,</span> <span class="n">show_status</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+            <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mf">1.0</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">KeyboardInterrupt</span><span class="p">:</span>
+            <span class="k">break</span>
+    <span class="k">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</td></tr></table></div>
+</div>
+</div>
+<div class="section" id="module-py_trees.demos.dot_graphs">
+<span id="py-trees-demo-dot-graphs"></span><span id="py-trees-demo-dot-graphs-program"></span><h2>py-trees-demo-dot-graphs<a class="headerlink" href="#module-py_trees.demos.dot_graphs" title="Permalink to this headline">¶</a></h2>
+<p>Renders a dot graph for a simple tree, with blackboxes.</p>
+<div class="highlight-python"><div class="highlight"><pre>usage: py-trees-demo-dot-graphs [-h]
+                                [-l {all,fine_detail,detail,component,big_picture}]
+</pre></div>
+</div>
+<dl class="docutils">
+<dt>Options:</dt>
+<dd><table class="first last docutils option-list" frame="void" rules="none">
+<col class="option" />
+<col class="description" />
+<tbody valign="top">
+<tr><td class="option-group" colspan="2">
+<kbd><span class="option">-l=fine_detail</span>, <span class="option">--level=fine_detail</span></kbd></td>
+</tr>
+<tr><td>&nbsp;</td><td><p class="first">visibility level</p>
+<p class="last">Possible choices: all, fine_detail, detail, component, big_picture</p>
+</td></tr>
+</tbody>
+</table>
+</dd>
+</dl>
+<p class="graphviz">
+<img src="_images/graphviz-22b37e18dcd9df6b8e19e0025cbb072933d567ce.png" alt="digraph demo_dot_graphs_fine_detail {
+graph [fontname=&quot;times-roman&quot;];
+node [fontname=&quot;times-roman&quot;];
+edge [fontname=&quot;times-roman&quot;];
+&quot;Demo Dot Graphs fine_detail&quot; [fillcolor=cyan, fontcolor=black, fontsize=11, shape=octagon, style=filled];
+&quot;BlackBox 1&quot; [fillcolor=gray20, fontcolor=white, fontsize=11, shape=box, style=filled];
+&quot;Demo Dot Graphs fine_detail&quot; -&gt; &quot;BlackBox 1&quot;;
+Worker [fillcolor=gray, fontcolor=black, fontsize=11, shape=ellipse, style=filled];
+&quot;BlackBox 1&quot; -&gt; Worker;
+&quot;Worker*&quot; [fillcolor=gray, fontcolor=black, fontsize=11, shape=ellipse, style=filled];
+&quot;BlackBox 1&quot; -&gt; &quot;Worker*&quot;;
+&quot;Worker**&quot; [fillcolor=gray, fontcolor=black, fontsize=11, shape=ellipse, style=filled];
+&quot;BlackBox 1&quot; -&gt; &quot;Worker**&quot;;
+&quot;Blackbox 3&quot; [fillcolor=gray20, fontcolor=dodgerblue, fontsize=11, shape=box, style=filled];
+&quot;BlackBox 1&quot; -&gt; &quot;Blackbox 3&quot;;
+&quot;Worker***&quot; [fillcolor=gray, fontcolor=black, fontsize=11, shape=ellipse, style=filled];
+&quot;Blackbox 3&quot; -&gt; &quot;Worker***&quot;;
+&quot;Worker****&quot; [fillcolor=gray, fontcolor=black, fontsize=11, shape=ellipse, style=filled];
+&quot;Blackbox 3&quot; -&gt; &quot;Worker****&quot;;
+&quot;Worker*****&quot; [fillcolor=gray, fontcolor=black, fontsize=11, shape=ellipse, style=filled];
+&quot;Blackbox 3&quot; -&gt; &quot;Worker*****&quot;;
+&quot;Blackbox 2&quot; [fillcolor=gray20, fontcolor=lawngreen, fontsize=11, shape=box, style=filled];
+&quot;Demo Dot Graphs fine_detail&quot; -&gt; &quot;Blackbox 2&quot;;
+&quot;Worker******&quot; [fillcolor=gray, fontcolor=black, fontsize=11, shape=ellipse, style=filled];
+&quot;Blackbox 2&quot; -&gt; &quot;Worker******&quot;;
+&quot;Worker*******&quot; [fillcolor=gray, fontcolor=black, fontsize=11, shape=ellipse, style=filled];
+&quot;Blackbox 2&quot; -&gt; &quot;Worker*******&quot;;
+&quot;Worker********&quot; [fillcolor=gray, fontcolor=black, fontsize=11, shape=ellipse, style=filled];
+&quot;Blackbox 2&quot; -&gt; &quot;Worker********&quot;;
+}" />
+</p>
+<dl class="function">
+<dt id="py_trees.demos.dot_graphs.main">
+<code class="descclassname">py_trees.demos.dot_graphs.</code><code class="descname">main</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/py_trees/demos/dot_graphs.html#main"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#py_trees.demos.dot_graphs.main" title="Permalink to this definition">¶</a></dt>
+<dd><p>Entry point for the demo script.</p>
+</dd></dl>
+
+<div class="literal-block-wrapper container" id="py-trees-demos-dot-graphs-py">
+<div class="code-block-caption"><span class="caption-text">py_trees/demos/dot_graphs.py</span><a class="headerlink" href="#py-trees-demos-dot-graphs-py" title="Permalink to this code">¶</a></div>
+<div class="highlight-python"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>  1
+  2
+  3
+  4
+  5
+  6
+  7
+  8
+  9
+ 10
+ 11
+ 12
+ 13
+ 14
+ 15
+ 16
+ 17
+ 18
+ 19
+ 20
+ 21
+ 22
+ 23
+ 24
+ 25
+ 26
+ 27
+ 28
+ 29
+ 30
+ 31
+ 32
+ 33
+ 34
+ 35
+ 36
+ 37
+ 38
+ 39
+ 40
+ 41
+ 42
+ 43
+ 44
+ 45
+ 46
+ 47
+ 48
+ 49
+ 50
+ 51
+ 52
+ 53
+ 54
+ 55
+ 56
+ 57
+ 58
+ 59
+ 60
+ 61
+ 62
+ 63
+ 64
+ 65
+ 66
+ 67
+ 68
+ 69
+ 70
+ 71
+ 72
+ 73
+ 74
+ 75
+ 76
+ 77
+ 78
+ 79
+ 80
+ 81
+ 82
+ 83
+ 84
+ 85
+ 86
+ 87
+ 88
+ 89
+ 90
+ 91
+ 92
+ 93
+ 94
+ 95
+ 96
+ 97
+ 98
+ 99
+100
+101
+102
+103
+104
+105
+106
+107
+108
+109
+110
+111
+112
+113
+114
+115
+116
+117
+118
+119
+120
+121
+122
+123
+124
+125
+126
+127
+128
+129
+130
+131</pre></div></td><td class="code"><div class="highlight"><pre><span class="ch">#!/usr/bin/env python</span>
+<span class="c1">#</span>
+<span class="c1"># License: BSD</span>
+<span class="c1">#   https://raw.githubusercontent.com/stonier/py_trees/devel/LICENSE</span>
+<span class="c1">#</span>
+<span class="c1">##############################################################################</span>
+<span class="c1"># Documentation</span>
+<span class="c1">##############################################################################</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">.. argparse::</span>
+<span class="sd">   :module: py_trees.demos.dot_graphs</span>
+<span class="sd">   :func: command_line_argument_parser</span>
+<span class="sd">   :prog: py-trees-demo-dot-graphs</span>
+
+<span class="sd">.. graphviz:: dot/demo-dot-graphs.dot</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="c1">##############################################################################</span>
+<span class="c1"># Imports</span>
+<span class="c1">##############################################################################</span>
+
+<span class="kn">import</span> <span class="nn">argparse</span>
+<span class="kn">import</span> <span class="nn">subprocess</span>
+<span class="kn">import</span> <span class="nn">py_trees</span>
+
+<span class="kn">import</span> <span class="nn">py_trees.console</span> <span class="kn">as</span> <span class="nn">console</span>
+
+<span class="c1">##############################################################################</span>
+<span class="c1"># Classes</span>
+<span class="c1">##############################################################################</span>
+
+
+<span class="k">def</span> <span class="nf">description</span><span class="p">():</span>
+    <span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;py-trees-demo-dot-graphs&quot;</span>
+    <span class="n">content</span> <span class="o">=</span> <span class="s2">&quot;Renders a dot graph for a simple tree, with blackboxes.</span><span class="se">\n</span><span class="s2">&quot;</span>
+    <span class="k">if</span> <span class="n">py_trees</span><span class="o">.</span><span class="n">console</span><span class="o">.</span><span class="n">has_colours</span><span class="p">:</span>
+        <span class="n">banner_line</span> <span class="o">=</span> <span class="n">console</span><span class="o">.</span><span class="n">green</span> <span class="o">+</span> <span class="s2">&quot;*&quot;</span> <span class="o">*</span> <span class="mi">79</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span> <span class="o">+</span> <span class="n">console</span><span class="o">.</span><span class="n">reset</span>
+        <span class="n">s</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span>
+        <span class="n">s</span> <span class="o">+=</span> <span class="n">banner_line</span>
+        <span class="n">s</span> <span class="o">+=</span> <span class="n">console</span><span class="o">.</span><span class="n">bold_white</span> <span class="o">+</span> <span class="s2">&quot;Dot Graphs&quot;</span><span class="o">.</span><span class="n">center</span><span class="p">(</span><span class="mi">79</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span> <span class="o">+</span> <span class="n">console</span><span class="o">.</span><span class="n">reset</span>
+        <span class="n">s</span> <span class="o">+=</span> <span class="n">banner_line</span>
+        <span class="n">s</span> <span class="o">+=</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span>
+        <span class="n">s</span> <span class="o">+=</span> <span class="n">content</span>
+        <span class="n">s</span> <span class="o">+=</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span>
+        <span class="n">s</span> <span class="o">+=</span> <span class="n">console</span><span class="o">.</span><span class="n">white</span>
+        <span class="n">s</span> <span class="o">+=</span> <span class="n">console</span><span class="o">.</span><span class="n">bold</span> <span class="o">+</span> <span class="s2">&quot;    Generate Full Dot Graph&quot;</span> <span class="o">+</span> <span class="n">console</span><span class="o">.</span><span class="n">reset</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span>
+        <span class="n">s</span> <span class="o">+=</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span>
+        <span class="n">s</span> <span class="o">+=</span> <span class="n">console</span><span class="o">.</span><span class="n">cyan</span> <span class="o">+</span> <span class="s2">&quot;        {0}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">name</span><span class="p">)</span> <span class="o">+</span> <span class="n">console</span><span class="o">.</span><span class="n">reset</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span>
+        <span class="n">s</span> <span class="o">+=</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span>
+        <span class="n">s</span> <span class="o">+=</span> <span class="n">console</span><span class="o">.</span><span class="n">bold</span> <span class="o">+</span> <span class="s2">&quot;    With Varying Visibility Levels&quot;</span> <span class="o">+</span> <span class="n">console</span><span class="o">.</span><span class="n">reset</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span>
+        <span class="n">s</span> <span class="o">+=</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span>
+        <span class="n">s</span> <span class="o">+=</span> <span class="n">console</span><span class="o">.</span><span class="n">cyan</span> <span class="o">+</span> <span class="s2">&quot;        {0}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">name</span><span class="p">)</span> <span class="o">+</span> <span class="n">console</span><span class="o">.</span><span class="n">yellow</span> <span class="o">+</span> <span class="s2">&quot; --level=all&quot;</span> <span class="o">+</span> <span class="n">console</span><span class="o">.</span><span class="n">reset</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span>
+        <span class="n">s</span> <span class="o">+=</span> <span class="n">console</span><span class="o">.</span><span class="n">cyan</span> <span class="o">+</span> <span class="s2">&quot;        {0}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">name</span><span class="p">)</span> <span class="o">+</span> <span class="n">console</span><span class="o">.</span><span class="n">yellow</span> <span class="o">+</span> <span class="s2">&quot; --level=detail&quot;</span> <span class="o">+</span> <span class="n">console</span><span class="o">.</span><span class="n">reset</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span>
+        <span class="n">s</span> <span class="o">+=</span> <span class="n">console</span><span class="o">.</span><span class="n">cyan</span> <span class="o">+</span> <span class="s2">&quot;        {0}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">name</span><span class="p">)</span> <span class="o">+</span> <span class="n">console</span><span class="o">.</span><span class="n">yellow</span> <span class="o">+</span> <span class="s2">&quot; --level=component&quot;</span> <span class="o">+</span> <span class="n">console</span><span class="o">.</span><span class="n">reset</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span>
+        <span class="n">s</span> <span class="o">+=</span> <span class="n">console</span><span class="o">.</span><span class="n">cyan</span> <span class="o">+</span> <span class="s2">&quot;        {0}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">name</span><span class="p">)</span> <span class="o">+</span> <span class="n">console</span><span class="o">.</span><span class="n">yellow</span> <span class="o">+</span> <span class="s2">&quot; --level=big_picture&quot;</span> <span class="o">+</span> <span class="n">console</span><span class="o">.</span><span class="n">reset</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span>
+        <span class="n">s</span> <span class="o">+=</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span>
+        <span class="n">s</span> <span class="o">+=</span> <span class="n">banner_line</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">s</span> <span class="o">=</span> <span class="n">content</span>
+    <span class="k">return</span> <span class="n">s</span>
+
+
+<span class="k">def</span> <span class="nf">epilog</span><span class="p">():</span>
+    <span class="k">if</span> <span class="n">py_trees</span><span class="o">.</span><span class="n">console</span><span class="o">.</span><span class="n">has_colours</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">console</span><span class="o">.</span><span class="n">cyan</span> <span class="o">+</span> <span class="s2">&quot;And his noodly appendage reached forth to tickle the blessed...</span><span class="se">\n</span><span class="s2">&quot;</span> <span class="o">+</span> <span class="n">console</span><span class="o">.</span><span class="n">reset</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">None</span>
+
+
+<span class="k">def</span> <span class="nf">command_line_argument_parser</span><span class="p">():</span>
+    <span class="n">parser</span> <span class="o">=</span> <span class="n">argparse</span><span class="o">.</span><span class="n">ArgumentParser</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="n">description</span><span class="p">(),</span>
+                                     <span class="n">epilog</span><span class="o">=</span><span class="n">epilog</span><span class="p">(),</span>
+                                     <span class="n">formatter_class</span><span class="o">=</span><span class="n">argparse</span><span class="o">.</span><span class="n">RawDescriptionHelpFormatter</span><span class="p">,</span>
+                                     <span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s1">&#39;-l&#39;</span><span class="p">,</span> <span class="s1">&#39;--level&#39;</span><span class="p">,</span> <span class="n">action</span><span class="o">=</span><span class="s1">&#39;store&#39;</span><span class="p">,</span>
+                        <span class="n">default</span><span class="o">=</span><span class="s1">&#39;fine_detail&#39;</span><span class="p">,</span>
+                        <span class="n">choices</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;all&#39;</span><span class="p">,</span> <span class="s1">&#39;fine_detail&#39;</span><span class="p">,</span> <span class="s1">&#39;detail&#39;</span><span class="p">,</span> <span class="s1">&#39;component&#39;</span><span class="p">,</span> <span class="s1">&#39;big_picture&#39;</span><span class="p">],</span>
+                        <span class="n">help</span><span class="o">=</span><span class="s1">&#39;visibility level&#39;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">parser</span>
+
+
+<span class="k">def</span> <span class="nf">create_tree</span><span class="p">(</span><span class="n">level</span><span class="p">):</span>
+    <span class="n">root</span> <span class="o">=</span> <span class="n">py_trees</span><span class="o">.</span><span class="n">composites</span><span class="o">.</span><span class="n">Selector</span><span class="p">(</span><span class="s2">&quot;Demo Dot Graphs </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">level</span><span class="p">)</span>
+    <span class="n">first_blackbox</span> <span class="o">=</span> <span class="n">py_trees</span><span class="o">.</span><span class="n">composites</span><span class="o">.</span><span class="n">Sequence</span><span class="p">(</span><span class="s2">&quot;BlackBox 1&quot;</span><span class="p">)</span>
+    <span class="n">first_blackbox</span><span class="o">.</span><span class="n">add_child</span><span class="p">(</span><span class="n">py_trees</span><span class="o">.</span><span class="n">behaviours</span><span class="o">.</span><span class="n">Running</span><span class="p">(</span><span class="s2">&quot;Worker&quot;</span><span class="p">))</span>
+    <span class="n">first_blackbox</span><span class="o">.</span><span class="n">add_child</span><span class="p">(</span><span class="n">py_trees</span><span class="o">.</span><span class="n">behaviours</span><span class="o">.</span><span class="n">Running</span><span class="p">(</span><span class="s2">&quot;Worker&quot;</span><span class="p">))</span>
+    <span class="n">first_blackbox</span><span class="o">.</span><span class="n">add_child</span><span class="p">(</span><span class="n">py_trees</span><span class="o">.</span><span class="n">behaviours</span><span class="o">.</span><span class="n">Running</span><span class="p">(</span><span class="s2">&quot;Worker&quot;</span><span class="p">))</span>
+    <span class="n">first_blackbox</span><span class="o">.</span><span class="n">blackbox_level</span> <span class="o">=</span> <span class="n">py_trees</span><span class="o">.</span><span class="n">common</span><span class="o">.</span><span class="n">BlackBoxLevel</span><span class="o">.</span><span class="n">BIG_PICTURE</span>
+    <span class="n">second_blackbox</span> <span class="o">=</span> <span class="n">py_trees</span><span class="o">.</span><span class="n">composites</span><span class="o">.</span><span class="n">Sequence</span><span class="p">(</span><span class="s2">&quot;Blackbox 2&quot;</span><span class="p">)</span>
+    <span class="n">second_blackbox</span><span class="o">.</span><span class="n">add_child</span><span class="p">(</span><span class="n">py_trees</span><span class="o">.</span><span class="n">behaviours</span><span class="o">.</span><span class="n">Running</span><span class="p">(</span><span class="s2">&quot;Worker&quot;</span><span class="p">))</span>
+    <span class="n">second_blackbox</span><span class="o">.</span><span class="n">add_child</span><span class="p">(</span><span class="n">py_trees</span><span class="o">.</span><span class="n">behaviours</span><span class="o">.</span><span class="n">Running</span><span class="p">(</span><span class="s2">&quot;Worker&quot;</span><span class="p">))</span>
+    <span class="n">second_blackbox</span><span class="o">.</span><span class="n">add_child</span><span class="p">(</span><span class="n">py_trees</span><span class="o">.</span><span class="n">behaviours</span><span class="o">.</span><span class="n">Running</span><span class="p">(</span><span class="s2">&quot;Worker&quot;</span><span class="p">))</span>
+    <span class="n">second_blackbox</span><span class="o">.</span><span class="n">blackbox_level</span> <span class="o">=</span> <span class="n">py_trees</span><span class="o">.</span><span class="n">common</span><span class="o">.</span><span class="n">BlackBoxLevel</span><span class="o">.</span><span class="n">COMPONENT</span>
+    <span class="n">third_blackbox</span> <span class="o">=</span> <span class="n">py_trees</span><span class="o">.</span><span class="n">composites</span><span class="o">.</span><span class="n">Sequence</span><span class="p">(</span><span class="s2">&quot;Blackbox 3&quot;</span><span class="p">)</span>
+    <span class="n">third_blackbox</span><span class="o">.</span><span class="n">add_child</span><span class="p">(</span><span class="n">py_trees</span><span class="o">.</span><span class="n">behaviours</span><span class="o">.</span><span class="n">Running</span><span class="p">(</span><span class="s2">&quot;Worker&quot;</span><span class="p">))</span>
+    <span class="n">third_blackbox</span><span class="o">.</span><span class="n">add_child</span><span class="p">(</span><span class="n">py_trees</span><span class="o">.</span><span class="n">behaviours</span><span class="o">.</span><span class="n">Running</span><span class="p">(</span><span class="s2">&quot;Worker&quot;</span><span class="p">))</span>
+    <span class="n">third_blackbox</span><span class="o">.</span><span class="n">add_child</span><span class="p">(</span><span class="n">py_trees</span><span class="o">.</span><span class="n">behaviours</span><span class="o">.</span><span class="n">Running</span><span class="p">(</span><span class="s2">&quot;Worker&quot;</span><span class="p">))</span>
+    <span class="n">third_blackbox</span><span class="o">.</span><span class="n">blackbox_level</span> <span class="o">=</span> <span class="n">py_trees</span><span class="o">.</span><span class="n">common</span><span class="o">.</span><span class="n">BlackBoxLevel</span><span class="o">.</span><span class="n">DETAIL</span>
+    <span class="n">root</span><span class="o">.</span><span class="n">add_child</span><span class="p">(</span><span class="n">first_blackbox</span><span class="p">)</span>
+    <span class="n">root</span><span class="o">.</span><span class="n">add_child</span><span class="p">(</span><span class="n">second_blackbox</span><span class="p">)</span>
+    <span class="n">first_blackbox</span><span class="o">.</span><span class="n">add_child</span><span class="p">(</span><span class="n">third_blackbox</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">root</span>
+
+
+<span class="c1">##############################################################################</span>
+<span class="c1"># Main</span>
+<span class="c1">##############################################################################</span>
+
+<span class="k">def</span> <span class="nf">main</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Entry point for the demo script.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">args</span> <span class="o">=</span> <span class="n">command_line_argument_parser</span><span class="p">()</span><span class="o">.</span><span class="n">parse_args</span><span class="p">()</span>
+    <span class="n">args</span><span class="o">.</span><span class="n">enum_level</span> <span class="o">=</span> <span class="n">py_trees</span><span class="o">.</span><span class="n">common</span><span class="o">.</span><span class="n">string_to_visibility_level</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">level</span><span class="p">)</span>
+    <span class="k">print</span><span class="p">(</span><span class="n">description</span><span class="p">())</span>
+    <span class="n">py_trees</span><span class="o">.</span><span class="n">logging</span><span class="o">.</span><span class="n">level</span> <span class="o">=</span> <span class="n">py_trees</span><span class="o">.</span><span class="n">logging</span><span class="o">.</span><span class="n">Level</span><span class="o">.</span><span class="n">DEBUG</span>
+
+    <span class="n">root</span> <span class="o">=</span> <span class="n">create_tree</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">level</span><span class="p">)</span>
+    <span class="n">py_trees</span><span class="o">.</span><span class="n">display</span><span class="o">.</span><span class="n">render_dot_tree</span><span class="p">(</span><span class="n">root</span><span class="p">,</span> <span class="n">args</span><span class="o">.</span><span class="n">enum_level</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">py_trees</span><span class="o">.</span><span class="n">utilities</span><span class="o">.</span><span class="n">which</span><span class="p">(</span><span class="s2">&quot;xdot&quot;</span><span class="p">):</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">subprocess</span><span class="o">.</span><span class="n">call</span><span class="p">([</span><span class="s2">&quot;xdot&quot;</span><span class="p">,</span> <span class="s2">&quot;demo_dot_graphs_</span><span class="si">%s</span><span class="s2">.dot&quot;</span> <span class="o">%</span> <span class="n">args</span><span class="o">.</span><span class="n">level</span><span class="p">])</span>
+        <span class="k">except</span> <span class="ne">KeyboardInterrupt</span><span class="p">:</span>
+            <span class="k">pass</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">print</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
+        <span class="n">console</span><span class="o">.</span><span class="n">logerror</span><span class="p">(</span><span class="s2">&quot;No xdot viewer found, skipping display [hint: sudo apt install xdot]&quot;</span><span class="p">)</span>
+        <span class="k">print</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
+</pre></div>
+</td></tr></table></div>
+</div>
+</div>
+<div class="section" id="module-py_trees.demos.selector">
+<span id="py-trees-demo-selector"></span><span id="py-trees-demo-selector-program"></span><h2>py-trees-demo-selector<a class="headerlink" href="#module-py_trees.demos.selector" title="Permalink to this headline">¶</a></h2>
+<p><p>Higher priority switching and interruption in the children of a selector.</p>
+<p>In this example the higher priority child is setup to fail initially,
+falling back to the continually running second child. On the third
+tick, the first child succeeds and cancels the hitherto running child.</p>
+</p>
+<div class="highlight-python"><div class="highlight"><pre>usage: py-trees-demo-selector [-h] [-r]
+</pre></div>
+</div>
+<dl class="docutils">
+<dt>Options:</dt>
+<dd><table class="first last docutils option-list" frame="void" rules="none">
+<col class="option" />
+<col class="description" />
+<tbody valign="top">
+<tr><td class="option-group" colspan="2">
+<kbd><span class="option">-r=False</span>, <span class="option">--render=False</span></kbd></td>
+</tr>
+<tr><td>&nbsp;</td><td>render dot tree to file</td></tr>
+</tbody>
+</table>
+</dd>
+</dl>
+<p class="graphviz">
+<img src="_images/graphviz-63455f6e00bdcfa7b86d56758c4e974af96c8c5b.png" alt="digraph selector {
+graph [fontname=&quot;times-roman&quot;];
+node [fontname=&quot;times-roman&quot;];
+edge [fontname=&quot;times-roman&quot;];
+Selector [fillcolor=cyan, fontcolor=black, fontsize=11, shape=octagon, style=filled];
+&quot;After Two&quot; [fillcolor=gray, fontcolor=black, fontsize=11, shape=ellipse, style=filled];
+Selector -&gt; &quot;After Two&quot;;
+Running [fillcolor=gray, fontcolor=black, fontsize=11, shape=ellipse, style=filled];
+Selector -&gt; Running;
+}" />
+</p>
+<img alt="_images/selector.gif" src="_images/selector.gif" />
+<dl class="function">
+<dt id="py_trees.demos.selector.main">
+<code class="descclassname">py_trees.demos.selector.</code><code class="descname">main</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/py_trees/demos/selector.html#main"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#py_trees.demos.selector.main" title="Permalink to this definition">¶</a></dt>
+<dd><p>Entry point for the demo script.</p>
+</dd></dl>
+
+<div class="literal-block-wrapper container" id="py-trees-demos-selector-py">
+<div class="code-block-caption"><span class="caption-text">py_trees/demos/selector.py</span><a class="headerlink" href="#py-trees-demos-selector-py" title="Permalink to this code">¶</a></div>
+<div class="highlight-python"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>  1
+  2
+  3
+  4
+  5
+  6
+  7
+  8
+  9
+ 10
+ 11
+ 12
+ 13
+ 14
+ 15
+ 16
+ 17
+ 18
+ 19
+ 20
+ 21
+ 22
+ 23
+ 24
+ 25
+ 26
+ 27
+ 28
+ 29
+ 30
+ 31
+ 32
+ 33
+ 34
+ 35
+ 36
+ 37
+ 38
+ 39
+ 40
+ 41
+ 42
+ 43
+ 44
+ 45
+ 46
+ 47
+ 48
+ 49
+ 50
+ 51
+ 52
+ 53
+ 54
+ 55
+ 56
+ 57
+ 58
+ 59
+ 60
+ 61
+ 62
+ 63
+ 64
+ 65
+ 66
+ 67
+ 68
+ 69
+ 70
+ 71
+ 72
+ 73
+ 74
+ 75
+ 76
+ 77
+ 78
+ 79
+ 80
+ 81
+ 82
+ 83
+ 84
+ 85
+ 86
+ 87
+ 88
+ 89
+ 90
+ 91
+ 92
+ 93
+ 94
+ 95
+ 96
+ 97
+ 98
+ 99
+100
+101
+102
+103
+104
+105
+106
+107
+108
+109
+110
+111
+112
+113
+114
+115
+116
+117
+118
+119</pre></div></td><td class="code"><div class="highlight"><pre><span class="ch">#!/usr/bin/env python</span>
+<span class="c1">#</span>
+<span class="c1"># License: BSD</span>
+<span class="c1">#   https://raw.githubusercontent.com/stonier/py_trees/devel/LICENSE</span>
+<span class="c1">#</span>
+<span class="c1">##############################################################################</span>
+<span class="c1"># Documentation</span>
+<span class="c1">##############################################################################</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">.. argparse::</span>
+<span class="sd">   :module: py_trees.demos.selector</span>
+<span class="sd">   :func: command_line_argument_parser</span>
+<span class="sd">   :prog: py-trees-demo-selector</span>
+
+<span class="sd">.. graphviz:: dot/demo-selector.dot</span>
+
+<span class="sd">.. image:: images/selector.gif</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="c1">##############################################################################</span>
+<span class="c1"># Imports</span>
+<span class="c1">##############################################################################</span>
+
+<span class="kn">import</span> <span class="nn">argparse</span>
+<span class="kn">import</span> <span class="nn">py_trees</span>
+<span class="kn">import</span> <span class="nn">sys</span>
+<span class="kn">import</span> <span class="nn">time</span>
+
+<span class="kn">import</span> <span class="nn">py_trees.console</span> <span class="kn">as</span> <span class="nn">console</span>
+
+<span class="c1">##############################################################################</span>
+<span class="c1"># Classes</span>
+<span class="c1">##############################################################################</span>
+
+
+<span class="k">def</span> <span class="nf">description</span><span class="p">():</span>
+    <span class="n">content</span> <span class="o">=</span> <span class="s2">&quot;Higher priority switching and interruption in the children of a selector.</span><span class="se">\n</span><span class="s2">&quot;</span>
+    <span class="n">content</span> <span class="o">+=</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span>
+    <span class="n">content</span> <span class="o">+=</span> <span class="s2">&quot;In this example the higher priority child is setup to fail initially,</span><span class="se">\n</span><span class="s2">&quot;</span>
+    <span class="n">content</span> <span class="o">+=</span> <span class="s2">&quot;falling back to the continually running second child. On the third</span><span class="se">\n</span><span class="s2">&quot;</span>
+    <span class="n">content</span> <span class="o">+=</span> <span class="s2">&quot;tick, the first child succeeds and cancels the hitherto running child.</span><span class="se">\n</span><span class="s2">&quot;</span>
+    <span class="k">if</span> <span class="n">py_trees</span><span class="o">.</span><span class="n">console</span><span class="o">.</span><span class="n">has_colours</span><span class="p">:</span>
+        <span class="n">banner_line</span> <span class="o">=</span> <span class="n">console</span><span class="o">.</span><span class="n">green</span> <span class="o">+</span> <span class="s2">&quot;*&quot;</span> <span class="o">*</span> <span class="mi">79</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span> <span class="o">+</span> <span class="n">console</span><span class="o">.</span><span class="n">reset</span>
+        <span class="n">s</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span>
+        <span class="n">s</span> <span class="o">+=</span> <span class="n">banner_line</span>
+        <span class="n">s</span> <span class="o">+=</span> <span class="n">console</span><span class="o">.</span><span class="n">bold_white</span> <span class="o">+</span> <span class="s2">&quot;Selectors&quot;</span><span class="o">.</span><span class="n">center</span><span class="p">(</span><span class="mi">79</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span> <span class="o">+</span> <span class="n">console</span><span class="o">.</span><span class="n">reset</span>
+        <span class="n">s</span> <span class="o">+=</span> <span class="n">banner_line</span>
+        <span class="n">s</span> <span class="o">+=</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span>
+        <span class="n">s</span> <span class="o">+=</span> <span class="n">content</span>
+        <span class="n">s</span> <span class="o">+=</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span>
+        <span class="n">s</span> <span class="o">+=</span> <span class="n">banner_line</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">s</span> <span class="o">=</span> <span class="n">content</span>
+    <span class="k">return</span> <span class="n">s</span>
+
+
+<span class="k">def</span> <span class="nf">epilog</span><span class="p">():</span>
+    <span class="k">if</span> <span class="n">py_trees</span><span class="o">.</span><span class="n">console</span><span class="o">.</span><span class="n">has_colours</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">console</span><span class="o">.</span><span class="n">cyan</span> <span class="o">+</span> <span class="s2">&quot;And his noodly appendage reached forth to tickle the blessed...</span><span class="se">\n</span><span class="s2">&quot;</span> <span class="o">+</span> <span class="n">console</span><span class="o">.</span><span class="n">reset</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">None</span>
+
+
+<span class="k">def</span> <span class="nf">command_line_argument_parser</span><span class="p">():</span>
+    <span class="n">parser</span> <span class="o">=</span> <span class="n">argparse</span><span class="o">.</span><span class="n">ArgumentParser</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="n">description</span><span class="p">(),</span>
+                                     <span class="n">epilog</span><span class="o">=</span><span class="n">epilog</span><span class="p">(),</span>
+                                     <span class="n">formatter_class</span><span class="o">=</span><span class="n">argparse</span><span class="o">.</span><span class="n">RawDescriptionHelpFormatter</span><span class="p">,</span>
+                                     <span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s1">&#39;-r&#39;</span><span class="p">,</span> <span class="s1">&#39;--render&#39;</span><span class="p">,</span> <span class="n">action</span><span class="o">=</span><span class="s1">&#39;store_true&#39;</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s1">&#39;render dot tree to file&#39;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">parser</span>
+
+
+<span class="k">def</span> <span class="nf">create_tree</span><span class="p">():</span>
+    <span class="n">root</span> <span class="o">=</span> <span class="n">py_trees</span><span class="o">.</span><span class="n">composites</span><span class="o">.</span><span class="n">Selector</span><span class="p">(</span><span class="s2">&quot;Selector&quot;</span><span class="p">)</span>
+    <span class="n">success_after_two</span> <span class="o">=</span> <span class="n">py_trees</span><span class="o">.</span><span class="n">behaviours</span><span class="o">.</span><span class="n">Count</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;After Two&quot;</span><span class="p">,</span>
+                                                  <span class="n">fail_until</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
+                                                  <span class="n">running_until</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
+                                                  <span class="n">success_until</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
+    <span class="n">always_running</span> <span class="o">=</span> <span class="n">py_trees</span><span class="o">.</span><span class="n">behaviours</span><span class="o">.</span><span class="n">Running</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;Running&quot;</span><span class="p">)</span>
+    <span class="n">root</span><span class="o">.</span><span class="n">add_children</span><span class="p">([</span><span class="n">success_after_two</span><span class="p">,</span> <span class="n">always_running</span><span class="p">])</span>
+    <span class="k">return</span> <span class="n">root</span>
+
+
+<span class="c1">##############################################################################</span>
+<span class="c1"># Main</span>
+<span class="c1">##############################################################################</span>
+
+<span class="k">def</span> <span class="nf">main</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Entry point for the demo script.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">args</span> <span class="o">=</span> <span class="n">command_line_argument_parser</span><span class="p">()</span><span class="o">.</span><span class="n">parse_args</span><span class="p">()</span>
+    <span class="k">print</span><span class="p">(</span><span class="n">description</span><span class="p">())</span>
+    <span class="n">py_trees</span><span class="o">.</span><span class="n">logging</span><span class="o">.</span><span class="n">level</span> <span class="o">=</span> <span class="n">py_trees</span><span class="o">.</span><span class="n">logging</span><span class="o">.</span><span class="n">Level</span><span class="o">.</span><span class="n">DEBUG</span>
+
+    <span class="n">tree</span> <span class="o">=</span> <span class="n">create_tree</span><span class="p">()</span>
+
+    <span class="c1">####################</span>
+    <span class="c1"># Rendering</span>
+    <span class="c1">####################</span>
+    <span class="k">if</span> <span class="n">args</span><span class="o">.</span><span class="n">render</span><span class="p">:</span>
+        <span class="n">py_trees</span><span class="o">.</span><span class="n">display</span><span class="o">.</span><span class="n">render_dot_tree</span><span class="p">(</span><span class="n">tree</span><span class="p">)</span>
+        <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">()</span>
+
+    <span class="c1">####################</span>
+    <span class="c1"># Execute</span>
+    <span class="c1">####################</span>
+    <span class="n">tree</span><span class="o">.</span><span class="n">setup</span><span class="p">(</span><span class="n">timeout</span><span class="o">=</span><span class="mi">15</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">4</span><span class="p">):</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">--------- Tick {0} ---------</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">i</span><span class="p">))</span>
+            <span class="n">tree</span><span class="o">.</span><span class="n">tick_once</span><span class="p">()</span>
+            <span class="k">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="n">py_trees</span><span class="o">.</span><span class="n">display</span><span class="o">.</span><span class="n">print_ascii_tree</span><span class="p">(</span><span class="n">tree</span><span class="p">,</span> <span class="n">show_status</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+            <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mf">1.0</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">KeyboardInterrupt</span><span class="p">:</span>
+            <span class="k">break</span>
+    <span class="k">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</td></tr></table></div>
+</div>
+</div>
+<div class="section" id="module-py_trees.demos.sequence">
+<span id="py-trees-demo-sequence"></span><span id="py-trees-demo-sequence-program"></span><h2>py-trees-demo-sequence<a class="headerlink" href="#module-py_trees.demos.sequence" title="Permalink to this headline">¶</a></h2>
+<p><p>Demonstrates sequences in action.</p>
+<p>A sequence is populated with 2-tick jobs that are allowed to run through to
+completion.</p>
+</p>
+<div class="highlight-python"><div class="highlight"><pre>usage: py-trees-demo-sequence [-h] [-r]
+</pre></div>
+</div>
+<dl class="docutils">
+<dt>Options:</dt>
+<dd><table class="first last docutils option-list" frame="void" rules="none">
+<col class="option" />
+<col class="description" />
+<tbody valign="top">
+<tr><td class="option-group" colspan="2">
+<kbd><span class="option">-r=False</span>, <span class="option">--render=False</span></kbd></td>
+</tr>
+<tr><td>&nbsp;</td><td>render dot tree to file</td></tr>
+</tbody>
+</table>
+</dd>
+</dl>
+<p class="graphviz">
+<img src="_images/graphviz-1f1e0b81c9d10f0677c2ed325bee1bd7af6a56f7.png" alt="digraph sequence {
+graph [fontname=&quot;times-roman&quot;];
+node [fontname=&quot;times-roman&quot;];
+edge [fontname=&quot;times-roman&quot;];
+Sequence [fillcolor=orange, fontcolor=black, fontsize=11, shape=box, style=filled];
+&quot;Job 1&quot; [fillcolor=gray, fontcolor=black, fontsize=11, shape=ellipse, style=filled];
+Sequence -&gt; &quot;Job 1&quot;;
+&quot;Job 2&quot; [fillcolor=gray, fontcolor=black, fontsize=11, shape=ellipse, style=filled];
+Sequence -&gt; &quot;Job 2&quot;;
+&quot;Job 3&quot; [fillcolor=gray, fontcolor=black, fontsize=11, shape=ellipse, style=filled];
+Sequence -&gt; &quot;Job 3&quot;;
+}" />
+</p>
+<img alt="_images/sequence.gif" src="_images/sequence.gif" />
+<dl class="function">
+<dt id="py_trees.demos.sequence.main">
+<code class="descclassname">py_trees.demos.sequence.</code><code class="descname">main</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/py_trees/demos/sequence.html#main"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#py_trees.demos.sequence.main" title="Permalink to this definition">¶</a></dt>
+<dd><p>Entry point for the demo script.</p>
+</dd></dl>
+
+<div class="literal-block-wrapper container" id="py-trees-demos-sequence-py">
+<div class="code-block-caption"><span class="caption-text">py_trees/demos/sequence.py</span><a class="headerlink" href="#py-trees-demos-sequence-py" title="Permalink to this code">¶</a></div>
+<div class="highlight-python"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>  1
+  2
+  3
+  4
+  5
+  6
+  7
+  8
+  9
+ 10
+ 11
+ 12
+ 13
+ 14
+ 15
+ 16
+ 17
+ 18
+ 19
+ 20
+ 21
+ 22
+ 23
+ 24
+ 25
+ 26
+ 27
+ 28
+ 29
+ 30
+ 31
+ 32
+ 33
+ 34
+ 35
+ 36
+ 37
+ 38
+ 39
+ 40
+ 41
+ 42
+ 43
+ 44
+ 45
+ 46
+ 47
+ 48
+ 49
+ 50
+ 51
+ 52
+ 53
+ 54
+ 55
+ 56
+ 57
+ 58
+ 59
+ 60
+ 61
+ 62
+ 63
+ 64
+ 65
+ 66
+ 67
+ 68
+ 69
+ 70
+ 71
+ 72
+ 73
+ 74
+ 75
+ 76
+ 77
+ 78
+ 79
+ 80
+ 81
+ 82
+ 83
+ 84
+ 85
+ 86
+ 87
+ 88
+ 89
+ 90
+ 91
+ 92
+ 93
+ 94
+ 95
+ 96
+ 97
+ 98
+ 99
+100
+101
+102
+103
+104
+105
+106
+107
+108
+109
+110
+111
+112
+113
+114
+115
+116
+117
+118</pre></div></td><td class="code"><div class="highlight"><pre><span class="ch">#!/usr/bin/env python</span>
+<span class="c1">#</span>
+<span class="c1"># License: BSD</span>
+<span class="c1">#   https://raw.githubusercontent.com/stonier/py_trees/devel/LICENSE</span>
+<span class="c1">#</span>
+<span class="c1">##############################################################################</span>
+<span class="c1"># Documentation</span>
+<span class="c1">##############################################################################</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">.. argparse::</span>
+<span class="sd">   :module: py_trees.demos.sequence</span>
+<span class="sd">   :func: command_line_argument_parser</span>
+<span class="sd">   :prog: py-trees-demo-sequence</span>
+
+<span class="sd">.. graphviz:: dot/demo-sequence.dot</span>
+
+<span class="sd">.. image:: images/sequence.gif</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="c1">##############################################################################</span>
+<span class="c1"># Imports</span>
+<span class="c1">##############################################################################</span>
+
+<span class="kn">import</span> <span class="nn">argparse</span>
+<span class="kn">import</span> <span class="nn">py_trees</span>
+<span class="kn">import</span> <span class="nn">sys</span>
+<span class="kn">import</span> <span class="nn">time</span>
+
+<span class="kn">import</span> <span class="nn">py_trees.console</span> <span class="kn">as</span> <span class="nn">console</span>
+
+<span class="c1">##############################################################################</span>
+<span class="c1"># Classes</span>
+<span class="c1">##############################################################################</span>
+
+
+<span class="k">def</span> <span class="nf">description</span><span class="p">():</span>
+    <span class="n">content</span> <span class="o">=</span> <span class="s2">&quot;Demonstrates sequences in action.</span><span class="se">\n\n</span><span class="s2">&quot;</span>
+    <span class="n">content</span> <span class="o">+=</span> <span class="s2">&quot;A sequence is populated with 2-tick jobs that are allowed to run through to</span><span class="se">\n</span><span class="s2">&quot;</span>
+    <span class="n">content</span> <span class="o">+=</span> <span class="s2">&quot;completion.</span><span class="se">\n</span><span class="s2">&quot;</span>
+
+    <span class="k">if</span> <span class="n">py_trees</span><span class="o">.</span><span class="n">console</span><span class="o">.</span><span class="n">has_colours</span><span class="p">:</span>
+        <span class="n">banner_line</span> <span class="o">=</span> <span class="n">console</span><span class="o">.</span><span class="n">green</span> <span class="o">+</span> <span class="s2">&quot;*&quot;</span> <span class="o">*</span> <span class="mi">79</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span> <span class="o">+</span> <span class="n">console</span><span class="o">.</span><span class="n">reset</span>
+        <span class="n">s</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span>
+        <span class="n">s</span> <span class="o">+=</span> <span class="n">banner_line</span>
+        <span class="n">s</span> <span class="o">+=</span> <span class="n">console</span><span class="o">.</span><span class="n">bold_white</span> <span class="o">+</span> <span class="s2">&quot;Sequences&quot;</span><span class="o">.</span><span class="n">center</span><span class="p">(</span><span class="mi">79</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span> <span class="o">+</span> <span class="n">console</span><span class="o">.</span><span class="n">reset</span>
+        <span class="n">s</span> <span class="o">+=</span> <span class="n">banner_line</span>
+        <span class="n">s</span> <span class="o">+=</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span>
+        <span class="n">s</span> <span class="o">+=</span> <span class="n">content</span>
+        <span class="n">s</span> <span class="o">+=</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span>
+        <span class="n">s</span> <span class="o">+=</span> <span class="n">banner_line</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">s</span> <span class="o">=</span> <span class="n">content</span>
+    <span class="k">return</span> <span class="n">s</span>
+
+
+<span class="k">def</span> <span class="nf">epilog</span><span class="p">():</span>
+    <span class="k">if</span> <span class="n">py_trees</span><span class="o">.</span><span class="n">console</span><span class="o">.</span><span class="n">has_colours</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">console</span><span class="o">.</span><span class="n">cyan</span> <span class="o">+</span> <span class="s2">&quot;And his noodly appendage reached forth to tickle the blessed...</span><span class="se">\n</span><span class="s2">&quot;</span> <span class="o">+</span> <span class="n">console</span><span class="o">.</span><span class="n">reset</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">None</span>
+
+
+<span class="k">def</span> <span class="nf">command_line_argument_parser</span><span class="p">():</span>
+    <span class="n">parser</span> <span class="o">=</span> <span class="n">argparse</span><span class="o">.</span><span class="n">ArgumentParser</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="n">description</span><span class="p">(),</span>
+                                     <span class="n">epilog</span><span class="o">=</span><span class="n">epilog</span><span class="p">(),</span>
+                                     <span class="n">formatter_class</span><span class="o">=</span><span class="n">argparse</span><span class="o">.</span><span class="n">RawDescriptionHelpFormatter</span><span class="p">,</span>
+                                     <span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s1">&#39;-r&#39;</span><span class="p">,</span> <span class="s1">&#39;--render&#39;</span><span class="p">,</span> <span class="n">action</span><span class="o">=</span><span class="s1">&#39;store_true&#39;</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s1">&#39;render dot tree to file&#39;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">parser</span>
+
+
+<span class="k">def</span> <span class="nf">create_tree</span><span class="p">():</span>
+    <span class="n">root</span> <span class="o">=</span> <span class="n">py_trees</span><span class="o">.</span><span class="n">composites</span><span class="o">.</span><span class="n">Sequence</span><span class="p">(</span><span class="s2">&quot;Sequence&quot;</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">action</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;Action 1&quot;</span><span class="p">,</span> <span class="s2">&quot;Action 2&quot;</span><span class="p">,</span> <span class="s2">&quot;Action 3&quot;</span><span class="p">]:</span>
+        <span class="n">success_after_two</span> <span class="o">=</span> <span class="n">py_trees</span><span class="o">.</span><span class="n">behaviours</span><span class="o">.</span><span class="n">Count</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">action</span><span class="p">,</span>
+                                                      <span class="n">fail_until</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+                                                      <span class="n">running_until</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+                                                      <span class="n">success_until</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
+        <span class="n">root</span><span class="o">.</span><span class="n">add_child</span><span class="p">(</span><span class="n">success_after_two</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">root</span>
+
+
+<span class="c1">##############################################################################</span>
+<span class="c1"># Main</span>
+<span class="c1">##############################################################################</span>
+
+<span class="k">def</span> <span class="nf">main</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Entry point for the demo script.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">args</span> <span class="o">=</span> <span class="n">command_line_argument_parser</span><span class="p">()</span><span class="o">.</span><span class="n">parse_args</span><span class="p">()</span>
+    <span class="k">print</span><span class="p">(</span><span class="n">description</span><span class="p">())</span>
+    <span class="n">py_trees</span><span class="o">.</span><span class="n">logging</span><span class="o">.</span><span class="n">level</span> <span class="o">=</span> <span class="n">py_trees</span><span class="o">.</span><span class="n">logging</span><span class="o">.</span><span class="n">Level</span><span class="o">.</span><span class="n">DEBUG</span>
+
+    <span class="n">tree</span> <span class="o">=</span> <span class="n">create_tree</span><span class="p">()</span>
+
+    <span class="c1">####################</span>
+    <span class="c1"># Rendering</span>
+    <span class="c1">####################</span>
+    <span class="k">if</span> <span class="n">args</span><span class="o">.</span><span class="n">render</span><span class="p">:</span>
+        <span class="n">py_trees</span><span class="o">.</span><span class="n">display</span><span class="o">.</span><span class="n">render_dot_tree</span><span class="p">(</span><span class="n">tree</span><span class="p">)</span>
+        <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">()</span>
+
+    <span class="c1">####################</span>
+    <span class="c1"># Execute</span>
+    <span class="c1">####################</span>
+    <span class="n">tree</span><span class="o">.</span><span class="n">setup</span><span class="p">(</span><span class="n">timeout</span><span class="o">=</span><span class="mi">15</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">6</span><span class="p">):</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">--------- Tick {0} ---------</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">i</span><span class="p">))</span>
+            <span class="n">tree</span><span class="o">.</span><span class="n">tick_once</span><span class="p">()</span>
+            <span class="k">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="n">py_trees</span><span class="o">.</span><span class="n">display</span><span class="o">.</span><span class="n">print_ascii_tree</span><span class="p">(</span><span class="n">tree</span><span class="p">,</span> <span class="n">show_status</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+            <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mf">1.0</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">KeyboardInterrupt</span><span class="p">:</span>
+            <span class="k">break</span>
+    <span class="k">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</td></tr></table></div>
+</div>
+</div>
+<div class="section" id="module-py_trees.demos.stewardship">
+<span id="py-trees-demo-tree-stewardship"></span><span id="py-trees-demo-tree-stewardship-program"></span><h2>py-trees-demo-tree-stewardship<a class="headerlink" href="#module-py_trees.demos.stewardship" title="Permalink to this headline">¶</a></h2>
+<p><p>A demonstration of tree stewardship.</p>
+<p>A slightly less trivial tree that uses a simple stdout pre-tick handler
+and both the debug and snapshot visitors for logging and displaying
+the state of the tree.</p>
+<p>EVENTS</p>
+<blockquote>
+<div><ul class="simple">
+<li>3 : sequence switches from running to success</li>
+<li>4 : selector&#8217;s first child flicks to success once only</li>
+<li>8 : the fallback idler kicks in as everything else fails</li>
+<li>14 : the first child kicks in again, aborting a running sequence behind it</li>
+</ul>
+</div></blockquote>
+</p>
+<div class="highlight-python"><div class="highlight"><pre>usage: py-trees-demo-tree-stewardship [-h] [-r | -i]
+</pre></div>
+</div>
+<dl class="docutils">
+<dt>Options:</dt>
+<dd><table class="first last docutils option-list" frame="void" rules="none">
+<col class="option" />
+<col class="description" />
+<tbody valign="top">
+<tr><td class="option-group" colspan="2">
+<kbd><span class="option">-r=False</span>, <span class="option">--render=False</span></kbd></td>
+</tr>
+<tr><td>&nbsp;</td><td>render dot tree to file</td></tr>
+<tr><td class="option-group" colspan="2">
+<kbd><span class="option">-i=False</span>, <span class="option">--interactive=False</span></kbd></td>
+</tr>
+<tr><td>&nbsp;</td><td>pause and wait for keypress at each tick</td></tr>
+</tbody>
+</table>
+</dd>
+</dl>
+<p class="graphviz">
+<img src="_images/graphviz-2f14cb71e6d811f4ef5b0111dd8b7737f0d4d077.png" alt="digraph demo_tree {
+graph [fontname=&quot;times-roman&quot;];
+node [fontname=&quot;times-roman&quot;];
+edge [fontname=&quot;times-roman&quot;];
+&quot;Demo Tree&quot; [fillcolor=cyan, fontcolor=black, fontsize=11, shape=octagon, style=filled];
+EveryN [fillcolor=gray, fontcolor=black, fontsize=11, shape=ellipse, style=filled];
+&quot;Demo Tree&quot; -&gt; EveryN;
+Sequence [fillcolor=gray20, fontcolor=lawngreen, fontsize=11, shape=box, style=filled];
+&quot;Demo Tree&quot; -&gt; Sequence;
+Guard [fillcolor=gray, fontcolor=black, fontsize=11, shape=ellipse, style=filled];
+Sequence -&gt; Guard;
+Periodic [fillcolor=gray, fontcolor=black, fontsize=11, shape=ellipse, style=filled];
+Sequence -&gt; Periodic;
+Finisher [fillcolor=gray, fontcolor=black, fontsize=11, shape=ellipse, style=filled];
+Sequence -&gt; Finisher;
+Idle [fillcolor=gray, fontcolor=black, fontsize=11, shape=ellipse, style=filled];
+&quot;Demo Tree&quot; -&gt; Idle;
+}" />
+</p>
+<img alt="_images/tree_stewardship.gif" src="_images/tree_stewardship.gif" />
+<dl class="function">
+<dt id="py_trees.demos.stewardship.main">
+<code class="descclassname">py_trees.demos.stewardship.</code><code class="descname">main</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/py_trees/demos/stewardship.html#main"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#py_trees.demos.stewardship.main" title="Permalink to this definition">¶</a></dt>
+<dd><p>Entry point for the demo script.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="py_trees.demos.stewardship.post_tick_handler">
+<code class="descclassname">py_trees.demos.stewardship.</code><code class="descname">post_tick_handler</code><span class="sig-paren">(</span><em>snapshot_visitor</em>, <em>behaviour_tree</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/py_trees/demos/stewardship.html#post_tick_handler"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#py_trees.demos.stewardship.post_tick_handler" title="Permalink to this definition">¶</a></dt>
+<dd><p>Prints an ascii tree with the current snapshot status.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="py_trees.demos.stewardship.pre_tick_handler">
+<code class="descclassname">py_trees.demos.stewardship.</code><code class="descname">pre_tick_handler</code><span class="sig-paren">(</span><em>behaviour_tree</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/py_trees/demos/stewardship.html#pre_tick_handler"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#py_trees.demos.stewardship.pre_tick_handler" title="Permalink to this definition">¶</a></dt>
+<dd><p>This prints a banner will run immediately before every tick of the tree.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>behaviour_tree</strong> (<a class="reference internal" href="modules.html#py_trees.trees.BehaviourTree" title="py_trees.trees.BehaviourTree"><code class="xref py py-class docutils literal"><span class="pre">BehaviourTree</span></code></a>) &#8211; the tree custodian</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<div class="literal-block-wrapper container" id="py-trees-demos-stewardship-py">
+<div class="code-block-caption"><span class="caption-text">py_trees/demos/stewardship.py</span><a class="headerlink" href="#py-trees-demos-stewardship-py" title="Permalink to this code">¶</a></div>
+<div class="highlight-python"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>  1
+  2
+  3
+  4
+  5
+  6
+  7
+  8
+  9
+ 10
+ 11
+ 12
+ 13
+ 14
+ 15
+ 16
+ 17
+ 18
+ 19
+ 20
+ 21
+ 22
+ 23
+ 24
+ 25
+ 26
+ 27
+ 28
+ 29
+ 30
+ 31
+ 32
+ 33
+ 34
+ 35
+ 36
+ 37
+ 38
+ 39
+ 40
+ 41
+ 42
+ 43
+ 44
+ 45
+ 46
+ 47
+ 48
+ 49
+ 50
+ 51
+ 52
+ 53
+ 54
+ 55
+ 56
+ 57
+ 58
+ 59
+ 60
+ 61
+ 62
+ 63
+ 64
+ 65
+ 66
+ 67
+ 68
+ 69
+ 70
+ 71
+ 72
+ 73
+ 74
+ 75
+ 76
+ 77
+ 78
+ 79
+ 80
+ 81
+ 82
+ 83
+ 84
+ 85
+ 86
+ 87
+ 88
+ 89
+ 90
+ 91
+ 92
+ 93
+ 94
+ 95
+ 96
+ 97
+ 98
+ 99
+100
+101
+102
+103
+104
+105
+106
+107
+108
+109
+110
+111
+112
+113
+114
+115
+116
+117
+118
+119
+120
+121
+122
+123
+124
+125
+126
+127
+128
+129
+130
+131
+132
+133
+134
+135
+136
+137
+138
+139
+140
+141
+142
+143
+144
+145
+146
+147
+148
+149
+150
+151
+152
+153
+154
+155
+156
+157
+158
+159
+160
+161
+162
+163
+164
+165
+166</pre></div></td><td class="code"><div class="highlight"><pre><span class="ch">#!/usr/bin/env python</span>
+<span class="c1">#</span>
+<span class="c1"># License: BSD</span>
+<span class="c1">#   https://raw.githubusercontent.com/stonier/py_trees/devel/LICENSE</span>
+<span class="c1">#</span>
+<span class="c1">##############################################################################</span>
+<span class="c1"># Documentation</span>
+<span class="c1">##############################################################################</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">.. argparse::</span>
+<span class="sd">   :module: py_trees.demos.stewardship</span>
+<span class="sd">   :func: command_line_argument_parser</span>
+<span class="sd">   :prog: py-trees-demo-tree-stewardship</span>
+
+<span class="sd">.. graphviz:: dot/stewardship.dot</span>
+
+<span class="sd">.. image:: images/tree_stewardship.gif</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="c1">##############################################################################</span>
+<span class="c1"># Imports</span>
+<span class="c1">##############################################################################</span>
+
+<span class="kn">import</span> <span class="nn">argparse</span>
+<span class="kn">import</span> <span class="nn">functools</span>
+<span class="kn">import</span> <span class="nn">py_trees</span>
+<span class="kn">import</span> <span class="nn">sys</span>
+<span class="kn">import</span> <span class="nn">time</span>
+
+<span class="kn">import</span> <span class="nn">py_trees.console</span> <span class="kn">as</span> <span class="nn">console</span>
+
+<span class="c1">##############################################################################</span>
+<span class="c1"># Classes</span>
+<span class="c1">##############################################################################</span>
+
+
+<span class="k">def</span> <span class="nf">description</span><span class="p">(</span><span class="n">root</span><span class="p">):</span>
+    <span class="n">content</span> <span class="o">=</span> <span class="s2">&quot;A demonstration of tree stewardship.</span><span class="se">\n\n</span><span class="s2">&quot;</span>
+    <span class="n">content</span> <span class="o">+=</span> <span class="s2">&quot;A slightly less trivial tree that uses a simple stdout pre-tick handler</span><span class="se">\n</span><span class="s2">&quot;</span>
+    <span class="n">content</span> <span class="o">+=</span> <span class="s2">&quot;and both the debug and snapshot visitors for logging and displaying</span><span class="se">\n</span><span class="s2">&quot;</span>
+    <span class="n">content</span> <span class="o">+=</span> <span class="s2">&quot;the state of the tree.</span><span class="se">\n</span><span class="s2">&quot;</span>
+    <span class="n">content</span> <span class="o">+=</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span>
+    <span class="n">content</span> <span class="o">+=</span> <span class="s2">&quot;EVENTS</span><span class="se">\n</span><span class="s2">&quot;</span>
+    <span class="n">content</span> <span class="o">+=</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span>
+    <span class="n">content</span> <span class="o">+=</span> <span class="s2">&quot; -  3 : sequence switches from running to success</span><span class="se">\n</span><span class="s2">&quot;</span>
+    <span class="n">content</span> <span class="o">+=</span> <span class="s2">&quot; -  4 : selector&#39;s first child flicks to success once only</span><span class="se">\n</span><span class="s2">&quot;</span>
+    <span class="n">content</span> <span class="o">+=</span> <span class="s2">&quot; -  8 : the fallback idler kicks in as everything else fails</span><span class="se">\n</span><span class="s2">&quot;</span>
+    <span class="n">content</span> <span class="o">+=</span> <span class="s2">&quot; - 14 : the first child kicks in again, aborting a running sequence behind it</span><span class="se">\n</span><span class="s2">&quot;</span>
+    <span class="n">content</span> <span class="o">+=</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span>
+    <span class="k">if</span> <span class="n">py_trees</span><span class="o">.</span><span class="n">console</span><span class="o">.</span><span class="n">has_colours</span><span class="p">:</span>
+        <span class="n">banner_line</span> <span class="o">=</span> <span class="n">console</span><span class="o">.</span><span class="n">green</span> <span class="o">+</span> <span class="s2">&quot;*&quot;</span> <span class="o">*</span> <span class="mi">79</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span> <span class="o">+</span> <span class="n">console</span><span class="o">.</span><span class="n">reset</span>
+        <span class="n">s</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span>
+        <span class="n">s</span> <span class="o">+=</span> <span class="n">banner_line</span>
+        <span class="n">s</span> <span class="o">+=</span> <span class="n">console</span><span class="o">.</span><span class="n">bold_white</span> <span class="o">+</span> <span class="s2">&quot;Trees&quot;</span><span class="o">.</span><span class="n">center</span><span class="p">(</span><span class="mi">79</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span> <span class="o">+</span> <span class="n">console</span><span class="o">.</span><span class="n">reset</span>
+        <span class="n">s</span> <span class="o">+=</span> <span class="n">banner_line</span>
+        <span class="n">s</span> <span class="o">+=</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span>
+        <span class="n">s</span> <span class="o">+=</span> <span class="n">content</span>
+        <span class="n">s</span> <span class="o">+=</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span>
+        <span class="n">s</span> <span class="o">+=</span> <span class="n">banner_line</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">s</span> <span class="o">=</span> <span class="n">content</span>
+    <span class="k">return</span> <span class="n">s</span>
+
+
+<span class="k">def</span> <span class="nf">epilog</span><span class="p">():</span>
+    <span class="k">if</span> <span class="n">py_trees</span><span class="o">.</span><span class="n">console</span><span class="o">.</span><span class="n">has_colours</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">console</span><span class="o">.</span><span class="n">cyan</span> <span class="o">+</span> <span class="s2">&quot;And his noodly appendage reached forth to tickle the blessed...</span><span class="se">\n</span><span class="s2">&quot;</span> <span class="o">+</span> <span class="n">console</span><span class="o">.</span><span class="n">reset</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">None</span>
+
+
+<span class="k">def</span> <span class="nf">command_line_argument_parser</span><span class="p">():</span>
+    <span class="n">parser</span> <span class="o">=</span> <span class="n">argparse</span><span class="o">.</span><span class="n">ArgumentParser</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="n">description</span><span class="p">(</span><span class="n">create_tree</span><span class="p">()),</span>
+                                     <span class="n">epilog</span><span class="o">=</span><span class="n">epilog</span><span class="p">(),</span>
+                                     <span class="n">formatter_class</span><span class="o">=</span><span class="n">argparse</span><span class="o">.</span><span class="n">RawDescriptionHelpFormatter</span><span class="p">,</span>
+                                     <span class="p">)</span>
+    <span class="n">group</span> <span class="o">=</span> <span class="n">parser</span><span class="o">.</span><span class="n">add_mutually_exclusive_group</span><span class="p">()</span>
+    <span class="n">group</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s1">&#39;-r&#39;</span><span class="p">,</span> <span class="s1">&#39;--render&#39;</span><span class="p">,</span> <span class="n">action</span><span class="o">=</span><span class="s1">&#39;store_true&#39;</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s1">&#39;render dot tree to file&#39;</span><span class="p">)</span>
+    <span class="n">group</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s1">&#39;-i&#39;</span><span class="p">,</span> <span class="s1">&#39;--interactive&#39;</span><span class="p">,</span> <span class="n">action</span><span class="o">=</span><span class="s1">&#39;store_true&#39;</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s1">&#39;pause and wait for keypress at each tick&#39;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">parser</span>
+
+
+<span class="k">def</span> <span class="nf">pre_tick_handler</span><span class="p">(</span><span class="n">behaviour_tree</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    This prints a banner will run immediately before every tick of the tree.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        behaviour_tree (:class:`~py_trees.trees.BehaviourTree`): the tree custodian</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">--------- Run </span><span class="si">%s</span><span class="s2"> ---------</span><span class="se">\n</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">behaviour_tree</span><span class="o">.</span><span class="n">count</span><span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">post_tick_handler</span><span class="p">(</span><span class="n">snapshot_visitor</span><span class="p">,</span> <span class="n">behaviour_tree</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Prints an ascii tree with the current snapshot status.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span> <span class="o">+</span> <span class="n">py_trees</span><span class="o">.</span><span class="n">display</span><span class="o">.</span><span class="n">ascii_tree</span><span class="p">(</span><span class="n">behaviour_tree</span><span class="o">.</span><span class="n">root</span><span class="p">,</span>
+                                             <span class="n">snapshot_information</span><span class="o">=</span><span class="n">snapshot_visitor</span><span class="p">))</span>
+
+
+<span class="k">def</span> <span class="nf">create_tree</span><span class="p">():</span>
+    <span class="n">every_n_success</span> <span class="o">=</span> <span class="n">py_trees</span><span class="o">.</span><span class="n">behaviours</span><span class="o">.</span><span class="n">SuccessEveryN</span><span class="p">(</span><span class="s2">&quot;EveryN&quot;</span><span class="p">,</span> <span class="mi">5</span><span class="p">)</span>
+    <span class="n">sequence</span> <span class="o">=</span> <span class="n">py_trees</span><span class="o">.</span><span class="n">Sequence</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;Sequence&quot;</span><span class="p">)</span>
+    <span class="n">guard</span> <span class="o">=</span> <span class="n">py_trees</span><span class="o">.</span><span class="n">behaviours</span><span class="o">.</span><span class="n">Success</span><span class="p">(</span><span class="s2">&quot;Guard&quot;</span><span class="p">)</span>
+    <span class="n">periodic_success</span> <span class="o">=</span> <span class="n">py_trees</span><span class="o">.</span><span class="n">behaviours</span><span class="o">.</span><span class="n">Periodic</span><span class="p">(</span><span class="s2">&quot;Periodic&quot;</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
+    <span class="n">finisher</span> <span class="o">=</span> <span class="n">py_trees</span><span class="o">.</span><span class="n">behaviours</span><span class="o">.</span><span class="n">Success</span><span class="p">(</span><span class="s2">&quot;Finisher&quot;</span><span class="p">)</span>
+    <span class="n">sequence</span><span class="o">.</span><span class="n">add_child</span><span class="p">(</span><span class="n">guard</span><span class="p">)</span>
+    <span class="n">sequence</span><span class="o">.</span><span class="n">add_child</span><span class="p">(</span><span class="n">periodic_success</span><span class="p">)</span>
+    <span class="n">sequence</span><span class="o">.</span><span class="n">add_child</span><span class="p">(</span><span class="n">finisher</span><span class="p">)</span>
+    <span class="n">sequence</span><span class="o">.</span><span class="n">blackbox_level</span> <span class="o">=</span> <span class="n">py_trees</span><span class="o">.</span><span class="n">common</span><span class="o">.</span><span class="n">BlackBoxLevel</span><span class="o">.</span><span class="n">COMPONENT</span>
+    <span class="n">idle</span> <span class="o">=</span> <span class="n">py_trees</span><span class="o">.</span><span class="n">behaviours</span><span class="o">.</span><span class="n">Success</span><span class="p">(</span><span class="s2">&quot;Idle&quot;</span><span class="p">)</span>
+    <span class="n">root</span> <span class="o">=</span> <span class="n">py_trees</span><span class="o">.</span><span class="n">Selector</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;Demo Tree&quot;</span><span class="p">)</span>
+    <span class="n">root</span><span class="o">.</span><span class="n">add_child</span><span class="p">(</span><span class="n">every_n_success</span><span class="p">)</span>
+    <span class="n">root</span><span class="o">.</span><span class="n">add_child</span><span class="p">(</span><span class="n">sequence</span><span class="p">)</span>
+    <span class="n">root</span><span class="o">.</span><span class="n">add_child</span><span class="p">(</span><span class="n">idle</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">root</span>
+
+
+<span class="c1">##############################################################################</span>
+<span class="c1"># Main</span>
+<span class="c1">##############################################################################</span>
+
+<span class="k">def</span> <span class="nf">main</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Entry point for the demo script.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">args</span> <span class="o">=</span> <span class="n">command_line_argument_parser</span><span class="p">()</span><span class="o">.</span><span class="n">parse_args</span><span class="p">()</span>
+    <span class="n">py_trees</span><span class="o">.</span><span class="n">logging</span><span class="o">.</span><span class="n">level</span> <span class="o">=</span> <span class="n">py_trees</span><span class="o">.</span><span class="n">logging</span><span class="o">.</span><span class="n">Level</span><span class="o">.</span><span class="n">DEBUG</span>
+    <span class="n">tree</span> <span class="o">=</span> <span class="n">create_tree</span><span class="p">()</span>
+    <span class="k">print</span><span class="p">(</span><span class="n">description</span><span class="p">(</span><span class="n">tree</span><span class="p">))</span>
+
+    <span class="c1">####################</span>
+    <span class="c1"># Rendering</span>
+    <span class="c1">####################</span>
+    <span class="k">if</span> <span class="n">args</span><span class="o">.</span><span class="n">render</span><span class="p">:</span>
+        <span class="n">py_trees</span><span class="o">.</span><span class="n">display</span><span class="o">.</span><span class="n">render_dot_tree</span><span class="p">(</span><span class="n">tree</span><span class="p">)</span>
+        <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">()</span>
+
+    <span class="c1">####################</span>
+    <span class="c1"># Tree Stewardship</span>
+    <span class="c1">####################</span>
+    <span class="n">behaviour_tree</span> <span class="o">=</span> <span class="n">py_trees</span><span class="o">.</span><span class="n">trees</span><span class="o">.</span><span class="n">BehaviourTree</span><span class="p">(</span><span class="n">tree</span><span class="p">)</span>
+    <span class="n">behaviour_tree</span><span class="o">.</span><span class="n">add_pre_tick_handler</span><span class="p">(</span><span class="n">pre_tick_handler</span><span class="p">)</span>
+    <span class="n">behaviour_tree</span><span class="o">.</span><span class="n">visitors</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">py_trees</span><span class="o">.</span><span class="n">visitors</span><span class="o">.</span><span class="n">DebugVisitor</span><span class="p">())</span>
+    <span class="n">snapshot_visitor</span> <span class="o">=</span> <span class="n">py_trees</span><span class="o">.</span><span class="n">visitors</span><span class="o">.</span><span class="n">SnapshotVisitor</span><span class="p">()</span>
+    <span class="n">behaviour_tree</span><span class="o">.</span><span class="n">add_post_tick_handler</span><span class="p">(</span><span class="n">functools</span><span class="o">.</span><span class="n">partial</span><span class="p">(</span><span class="n">post_tick_handler</span><span class="p">,</span> <span class="n">snapshot_visitor</span><span class="p">))</span>
+    <span class="n">behaviour_tree</span><span class="o">.</span><span class="n">visitors</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">snapshot_visitor</span><span class="p">)</span>
+    <span class="n">behaviour_tree</span><span class="o">.</span><span class="n">setup</span><span class="p">(</span><span class="n">timeout</span><span class="o">=</span><span class="mi">15</span><span class="p">)</span>
+
+    <span class="c1">####################</span>
+    <span class="c1"># Tick Tock</span>
+    <span class="c1">####################</span>
+    <span class="k">if</span> <span class="n">args</span><span class="o">.</span><span class="n">interactive</span><span class="p">:</span>
+        <span class="n">unused_result</span> <span class="o">=</span> <span class="n">py_trees</span><span class="o">.</span><span class="n">console</span><span class="o">.</span><span class="n">read_single_keypress</span><span class="p">()</span>
+    <span class="k">while</span> <span class="bp">True</span><span class="p">:</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">behaviour_tree</span><span class="o">.</span><span class="n">tick</span><span class="p">()</span>
+            <span class="k">if</span> <span class="n">args</span><span class="o">.</span><span class="n">interactive</span><span class="p">:</span>
+                <span class="n">unused_result</span> <span class="o">=</span> <span class="n">py_trees</span><span class="o">.</span><span class="n">console</span><span class="o">.</span><span class="n">read_single_keypress</span><span class="p">()</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mf">0.5</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">KeyboardInterrupt</span><span class="p">:</span>
+            <span class="k">break</span>
+    <span class="k">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</td></tr></table></div>
+</div>
+</div>
+</div>
+
+
+           </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="programs.html" class="btn btn-neutral float-right" title="Programs" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="faq.html" class="btn btn-neutral" title="FAQ" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+
+    </p>
+  </div> 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'./',
+            VERSION:'0.5.8',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="_static/jquery.js"></script>
+      <script type="text/javascript" src="_static/underscore.js"></script>
+      <script type="text/javascript" src="_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

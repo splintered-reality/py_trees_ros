@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Py Trees for ROS &mdash; py_trees_ros 0.5.2 documentation</title>
+  <title>Py Trees &mdash; py_trees 0.5.8 documentation</title>
   
 
   
@@ -30,7 +30,7 @@
   
 
   
-    <link rel="top" title="py_trees_ros 0.5.2 documentation" href="#"/>
+    <link rel="top" title="py_trees 0.5.8 documentation" href="#"/>
         <link rel="next" title="Background" href="background.html"/> 
 
   
@@ -49,7 +49,7 @@
           
 
           
-            <a href="#" class="icon icon-home"> py_trees_ros
+            <a href="#" class="icon icon-home"> py_trees
           
 
           
@@ -59,7 +59,7 @@
             
             
               <div class="version">
-                0.5.2
+                0.5.8
               </div>
             
           
@@ -84,13 +84,18 @@
                 <p class="caption"><span class="caption-text">Guide</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="background.html">Background</a></li>
-<li class="toctree-l1"><a class="reference internal" href="new_and_shiny.html">New and Shiny</a></li>
-<li class="toctree-l1"><a class="reference internal" href="tutorials.html">Tutorials</a></li>
+<li class="toctree-l1"><a class="reference internal" href="behaviours.html">Behaviours</a></li>
+<li class="toctree-l1"><a class="reference internal" href="composites.html">Composites</a></li>
+<li class="toctree-l1"><a class="reference internal" href="blackboards.html">Blackboards</a></li>
+<li class="toctree-l1"><a class="reference internal" href="trees.html">Trees</a></li>
+<li class="toctree-l1"><a class="reference internal" href="visualisation.html">Visualisation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="the_crazy_hospital.html">Surviving the Crazy Hospital</a></li>
 <li class="toctree-l1"><a class="reference internal" href="terminology.html">Terminology</a></li>
 <li class="toctree-l1"><a class="reference internal" href="faq.html">FAQ</a></li>
 </ul>
 <p class="caption"><span class="caption-text">Reference</span></p>
 <ul>
+<li class="toctree-l1"><a class="reference internal" href="demos.html">Demos</a></li>
 <li class="toctree-l1"><a class="reference internal" href="programs.html">Programs</a></li>
 <li class="toctree-l1"><a class="reference internal" href="modules.html">Module API</a></li>
 <li class="toctree-l1"><a class="reference internal" href="changelog.html">Changelog</a></li>
@@ -110,7 +115,7 @@
       
       <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
         <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-        <a href="#">py_trees_ros</a>
+        <a href="#">py_trees</a>
       </nav>
 
 
@@ -127,7 +132,7 @@
   <ul class="wy-breadcrumbs">
     <li><a href="#">Docs</a> &raquo;</li>
       
-    <li>Py Trees for ROS</li>
+    <li>Py Trees</li>
       <li class="wy-breadcrumbs-aside">
         
           
@@ -141,37 +146,18 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <div class="section" id="py-trees-for-ros">
-<h1>Py Trees for ROS<a class="headerlink" href="#py-trees-for-ros" title="Permalink to this headline">¶</a></h1>
-<p>Behaviour trees for ros in python.</p>
-<p>Contents:</p>
+  <div class="section" id="py-trees">
+<h1>Py Trees<a class="headerlink" href="#py-trees" title="Permalink to this headline">¶</a></h1>
 <div class="toctree-wrapper compound" id="guide">
 <p class="caption"><span class="caption-text">Guide</span><a class="headerlink" href="#guide" title="Permalink to this toctree">¶</a></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="background.html">Background</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="background.html#introduction">Introduction</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="new_and_shiny.html">New and Shiny</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="new_and_shiny.html#behaviours">Behaviours</a></li>
-<li class="toctree-l2"><a class="reference internal" href="new_and_shiny.html#blackboards">Blackboards</a></li>
-<li class="toctree-l2"><a class="reference internal" href="new_and_shiny.html#trees">Trees</a></li>
-<li class="toctree-l2"><a class="reference internal" href="new_and_shiny.html#visualisation">Visualisation</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="tutorials.html">Tutorials</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="tutorials.html#dependencies">Dependencies</a></li>
-<li class="toctree-l2"><a class="reference internal" href="tutorials.html#the-mock-robot">The Mock Robot</a></li>
-<li class="toctree-l2"><a class="reference internal" href="tutorials.html#module-py_trees_ros.tutorials.one">Tutorial 1 - Data Gathering</a></li>
-<li class="toctree-l2"><a class="reference internal" href="tutorials.html#module-py_trees_ros.tutorials.two">Tutorial 2 - Adding a Battery Check</a></li>
-<li class="toctree-l2"><a class="reference internal" href="tutorials.html#tutorial-3-blackboards">Tutorial 3 - Blackboards!</a></li>
-<li class="toctree-l2"><a class="reference internal" href="tutorials.html#tutorial-4-introspecting-the-tree">Tutorial 4 - Introspecting the Tree</a></li>
-<li class="toctree-l2"><a class="reference internal" href="tutorials.html#module-py_trees_ros.tutorials.five">Tutorial 5 - Action Clients</a></li>
-<li class="toctree-l2"><a class="reference internal" href="tutorials.html#module-py_trees_ros.tutorials.six">Tutorial 6 - Context Switching</a></li>
-<li class="toctree-l2"><a class="reference internal" href="tutorials.html#tutorial-7-dynamic-priority-branches">Tutorial 7 - Dynamic Priority Branches</a></li>
-<li class="toctree-l2"><a class="reference internal" href="tutorials.html#tutorial-8-bags">Tutorial 8 - Bags</a></li>
-</ul>
-</li>
+<li class="toctree-l1"><a class="reference internal" href="background.html">Background</a></li>
+<li class="toctree-l1"><a class="reference internal" href="behaviours.html">Behaviours</a></li>
+<li class="toctree-l1"><a class="reference internal" href="composites.html">Composites</a></li>
+<li class="toctree-l1"><a class="reference internal" href="blackboards.html">Blackboards</a></li>
+<li class="toctree-l1"><a class="reference internal" href="trees.html">Trees</a></li>
+<li class="toctree-l1"><a class="reference internal" href="visualisation.html">Visualisation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="the_crazy_hospital.html">Surviving the Crazy Hospital</a></li>
 <li class="toctree-l1"><a class="reference internal" href="terminology.html">Terminology</a></li>
 <li class="toctree-l1"><a class="reference internal" href="faq.html">FAQ</a></li>
 </ul>
@@ -179,37 +165,10 @@
 <div class="toctree-wrapper compound" id="reference">
 <p class="caption"><span class="caption-text">Reference</span><a class="headerlink" href="#reference" title="Permalink to this toctree">¶</a></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="programs.html">Programs</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="programs.html#py-trees-blackboard-watcher">py-trees-blackboard-watcher</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="modules.html">Module API</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="modules.html#module-py_trees_ros">py_trees_ros</a></li>
-<li class="toctree-l2"><a class="reference internal" href="modules.html#module-py_trees_ros.actions">py_trees_ros.actions</a></li>
-<li class="toctree-l2"><a class="reference internal" href="modules.html#module-py_trees_ros.battery">py_trees_ros.battery</a></li>
-<li class="toctree-l2"><a class="reference internal" href="modules.html#module-py_trees_ros.blackboard">py_trees_ros.blackboard</a></li>
-<li class="toctree-l2"><a class="reference internal" href="modules.html#module-py_trees_ros.conversions">py_trees_ros.conversions</a></li>
-<li class="toctree-l2"><a class="reference internal" href="modules.html#module-py_trees_ros.subscribers">py_trees_ros.subscribers</a></li>
-<li class="toctree-l2"><a class="reference internal" href="modules.html#module-py_trees_ros.trees">py_trees_ros.trees</a></li>
-<li class="toctree-l2"><a class="reference internal" href="modules.html#module-py_trees_ros.utilities">py_trees.utilities</a></li>
-<li class="toctree-l2"><a class="reference internal" href="modules.html#module-py_trees_ros.visitors">py_trees.visitors</a></li>
-<li class="toctree-l2"><a class="reference internal" href="modules.html#module-py_trees_ros.mock">py_trees_ros.mock</a></li>
-<li class="toctree-l2"><a class="reference internal" href="modules.html#module-py_trees_ros.mock.action_server">py_trees_ros.mock.action_server</a></li>
-<li class="toctree-l2"><a class="reference internal" href="modules.html#module-py_trees_ros.mock.battery">py_trees_ros.mock.battery</a></li>
-<li class="toctree-l2"><a class="reference internal" href="modules.html#module-py_trees_ros.mock.move_base">py_trees_ros.mock.move_base</a></li>
-<li class="toctree-l2"><a class="reference internal" href="modules.html#module-py_trees_ros.mock.rotate">py_trees_ros.mock.rotate</a></li>
-<li class="toctree-l2"><a class="reference internal" href="modules.html#module-py_trees_ros.tutorials">py_trees_ros.tutorials</a></li>
-<li class="toctree-l2"><a class="reference internal" href="modules.html#module-py_trees_ros.tutorials.behaviours">py_trees_ros.tutorials.behaviours</a></li>
-<li class="toctree-l2"><a class="reference internal" href="modules.html#module-py_trees_ros.tutorials.qt">py_trees_ros.tutorials.qt</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="changelog.html">Changelog</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="changelog.html#id1">0.5.2 (2017-03-19)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="changelog.html#id2">0.5.1 (2017-03-19)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="changelog.html#id3">0.5.0 (2017-02-21)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="changelog.html#indigo-kinetic-changelist">Indigo -&gt; Kinetic Changelist</a></li>
-</ul>
-</li>
+<li class="toctree-l1"><a class="reference internal" href="demos.html">Demos</a></li>
+<li class="toctree-l1"><a class="reference internal" href="programs.html">Programs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="modules.html">Module API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="changelog.html">Changelog</a></li>
 </ul>
 </div>
 </div>
@@ -259,7 +218,7 @@
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'./',
-            VERSION:'0.5.2',
+            VERSION:'0.5.8',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
             HAS_SOURCE:  true

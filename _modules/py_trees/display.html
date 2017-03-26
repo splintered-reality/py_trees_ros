@@ -1,0 +1,513 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>py_trees.display &mdash; py_trees 0.5.8 documentation</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+    <link rel="top" title="py_trees 0.5.8 documentation" href="../../index.html"/>
+        <link rel="up" title="Module code" href="../index.html"/> 
+
+  
+  <script src="../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../index.html" class="icon icon-home"> py_trees
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.5.8
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+    
+            
+            
+                <p class="caption"><span class="caption-text">Guide</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../background.html">Background</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../behaviours.html">Behaviours</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../composites.html">Composites</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../blackboards.html">Blackboards</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../trees.html">Trees</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../visualisation.html">Visualisation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../the_crazy_hospital.html">Surviving the Crazy Hospital</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../terminology.html">Terminology</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../faq.html">FAQ</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Reference</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../demos.html">Demos</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../programs.html">Programs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../modules.html">Module API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../changelog.html">Changelog</a></li>
+</ul>
+
+            
+          
+    <a href="genindex.html">Index</a>
+    <a href="py-modindex.html">Module Index</a>
+  
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="../../index.html">py_trees</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../../index.html">Docs</a> &raquo;</li>
+      
+          <li><a href="../index.html">Module code</a> &raquo;</li>
+      
+    <li>py_trees.display</li>
+      <li class="wy-breadcrumbs-aside">
+        
+          
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for py_trees.display</h1><div class="highlight"><pre>
+<span class="ch">#!/usr/bin/env python</span>
+<span class="c1">#</span>
+<span class="c1"># License: BSD</span>
+<span class="c1">#   https://raw.githubusercontent.com/stonier/py_trees/devel/LICENSE</span>
+<span class="c1">#</span>
+<span class="c1">##############################################################################</span>
+<span class="c1"># Documentation</span>
+<span class="c1">##############################################################################</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Behaviour trees are significantly easier to design, monitor and debug</span>
+<span class="sd">with visualisations. Py Trees does provide minimal assistance to render</span>
+<span class="sd">trees to various simple output formats. Currently this includes dot graphs,</span>
+<span class="sd">strings or stdout.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="c1">##############################################################################</span>
+<span class="c1"># Imports</span>
+<span class="c1">##############################################################################</span>
+
+<span class="kn">import</span> <span class="nn">pydot</span>
+
+<span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">common</span>
+<span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">console</span>
+
+<span class="kn">from</span> <span class="nn">.composites</span> <span class="kn">import</span> <span class="n">Sequence</span><span class="p">,</span> <span class="n">Selector</span><span class="p">,</span> <span class="n">Parallel</span><span class="p">,</span> <span class="n">Chooser</span>
+<span class="kn">from</span> <span class="nn">.common</span> <span class="kn">import</span> <span class="n">Status</span>
+
+<span class="c1">##############################################################################</span>
+<span class="c1"># Behaviour</span>
+<span class="c1">##############################################################################</span>
+
+<span class="c1"># hide from public exposure</span>
+<span class="n">_behaviour_status_to_ascii</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="n">Status</span><span class="o">.</span><span class="n">SUCCESS</span><span class="p">:</span> <span class="n">console</span><span class="o">.</span><span class="n">green</span> <span class="o">+</span> <span class="s1">u&#39;</span><span class="se">\u2713</span><span class="s1">&#39;</span> <span class="o">+</span> <span class="n">console</span><span class="o">.</span><span class="n">reset</span><span class="p">,</span>
+    <span class="n">Status</span><span class="o">.</span><span class="n">FAILURE</span><span class="p">:</span> <span class="n">console</span><span class="o">.</span><span class="n">red</span> <span class="o">+</span> <span class="s2">&quot;x&quot;</span> <span class="o">+</span> <span class="n">console</span><span class="o">.</span><span class="n">reset</span><span class="p">,</span>
+    <span class="n">Status</span><span class="o">.</span><span class="n">INVALID</span><span class="p">:</span> <span class="n">console</span><span class="o">.</span><span class="n">yellow</span> <span class="o">+</span> <span class="s2">&quot;-&quot;</span> <span class="o">+</span> <span class="n">console</span><span class="o">.</span><span class="n">reset</span><span class="p">,</span>
+    <span class="n">Status</span><span class="o">.</span><span class="n">RUNNING</span><span class="p">:</span> <span class="n">console</span><span class="o">.</span><span class="n">blue</span> <span class="o">+</span> <span class="s2">&quot;*&quot;</span> <span class="o">+</span> <span class="n">console</span><span class="o">.</span><span class="n">reset</span>
+<span class="p">}</span>
+
+
+<span class="k">def</span> <span class="nf">_generate_ascii_tree</span><span class="p">(</span><span class="n">tree</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">snapshot_information</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Generator for spinning out the ascii tree.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        tree (:class:`~py_trees.behaviour.Behaviour`): the root of the tree, or subtree you want to show</span>
+<span class="sd">        indent (:obj:`int`): the number of characters to indent the tree</span>
+<span class="sd">        snapshot_information (:mod:`~py_trees.visitors`): a visitor that recorded information about a traversed tree (e.g. :class:`~py_trees.visitors.SnapshotVisitor`)</span>
+
+<span class="sd">    Yields:</span>
+<span class="sd">        :obj:`str`: a string with information about a single behaviour in the tree</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">nodes</span> <span class="o">=</span> <span class="p">{}</span> <span class="k">if</span> <span class="n">snapshot_information</span> <span class="ow">is</span> <span class="bp">None</span> <span class="k">else</span> <span class="n">snapshot_information</span><span class="o">.</span><span class="n">nodes</span>
+    <span class="n">previously_running_nodes</span> <span class="o">=</span> <span class="p">[]</span> <span class="k">if</span> <span class="n">snapshot_information</span> <span class="ow">is</span> <span class="bp">None</span> <span class="k">else</span> <span class="n">snapshot_information</span><span class="o">.</span><span class="n">previously_running_nodes</span>
+    <span class="n">running_nodes</span> <span class="o">=</span> <span class="p">[]</span> <span class="k">if</span> <span class="n">snapshot_information</span> <span class="ow">is</span> <span class="bp">None</span> <span class="k">else</span> <span class="n">snapshot_information</span><span class="o">.</span><span class="n">running_nodes</span>
+
+    <span class="k">if</span> <span class="n">indent</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">tree</span><span class="o">.</span><span class="n">id</span> <span class="ow">in</span> <span class="n">nodes</span><span class="p">:</span>
+            <span class="k">yield</span> <span class="s2">&quot;</span><span class="si">%s</span><span class="s2"> [</span><span class="si">%s</span><span class="s2">]&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">tree</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">_behaviour_status_to_ascii</span><span class="p">[</span><span class="n">nodes</span><span class="p">[</span><span class="n">tree</span><span class="o">.</span><span class="n">id</span><span class="p">]])</span>
+        <span class="k">elif</span> <span class="n">tree</span><span class="o">.</span><span class="n">id</span> <span class="ow">in</span> <span class="n">previously_running_nodes</span> <span class="ow">and</span> <span class="n">tree</span><span class="o">.</span><span class="n">id</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">running_nodes</span><span class="p">:</span>
+            <span class="k">yield</span> <span class="s2">&quot;</span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">tree</span><span class="o">.</span><span class="n">name</span> <span class="o">+</span> <span class="s2">&quot; [&quot;</span> <span class="o">+</span> <span class="n">console</span><span class="o">.</span><span class="n">yellow</span> <span class="o">+</span> <span class="s2">&quot;-&quot;</span> <span class="o">+</span> <span class="n">console</span><span class="o">.</span><span class="n">reset</span> <span class="o">+</span> <span class="s2">&quot;]&quot;</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">yield</span> <span class="s2">&quot;</span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">tree</span><span class="o">.</span><span class="n">name</span>
+    <span class="k">for</span> <span class="n">child</span> <span class="ow">in</span> <span class="n">tree</span><span class="o">.</span><span class="n">children</span><span class="p">:</span>
+        <span class="n">bullet</span> <span class="o">=</span> <span class="s2">&quot;--&gt; &quot;</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">child</span><span class="p">,</span> <span class="n">Sequence</span><span class="p">):</span>
+            <span class="n">bullet</span> <span class="o">=</span> <span class="s2">&quot;[-] &quot;</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">child</span><span class="p">,</span> <span class="n">Selector</span><span class="p">):</span>
+            <span class="n">bullet</span> <span class="o">=</span> <span class="s2">&quot;(-) &quot;</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">child</span><span class="p">,</span> <span class="n">Parallel</span><span class="p">):</span>
+            <span class="n">bullet</span> <span class="o">=</span> <span class="s2">&quot;(o) &quot;</span>
+        <span class="k">if</span> <span class="n">child</span><span class="o">.</span><span class="n">id</span> <span class="ow">in</span> <span class="n">nodes</span><span class="p">:</span>
+            <span class="n">message</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span> <span class="k">if</span> <span class="ow">not</span> <span class="n">child</span><span class="o">.</span><span class="n">feedback_message</span> <span class="k">else</span> <span class="s2">&quot; -- &quot;</span> <span class="o">+</span> <span class="n">child</span><span class="o">.</span><span class="n">feedback_message</span>
+            <span class="k">yield</span> <span class="s2">&quot;    &quot;</span> <span class="o">*</span> <span class="n">indent</span> <span class="o">+</span> <span class="n">bullet</span> <span class="o">+</span> <span class="n">child</span><span class="o">.</span><span class="n">name</span> <span class="o">+</span> <span class="s2">&quot; [</span><span class="si">%s</span><span class="s2">]&quot;</span> <span class="o">%</span> <span class="n">_behaviour_status_to_ascii</span><span class="p">[</span><span class="n">nodes</span><span class="p">[</span><span class="n">child</span><span class="o">.</span><span class="n">id</span><span class="p">]]</span> <span class="o">+</span> <span class="n">message</span>
+        <span class="k">elif</span> <span class="n">child</span><span class="o">.</span><span class="n">id</span> <span class="ow">in</span> <span class="n">previously_running_nodes</span> <span class="ow">and</span> <span class="n">child</span><span class="o">.</span><span class="n">id</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">running_nodes</span><span class="p">:</span>
+            <span class="k">yield</span> <span class="s2">&quot;    &quot;</span> <span class="o">*</span> <span class="n">indent</span> <span class="o">+</span> <span class="n">bullet</span> <span class="o">+</span> <span class="n">child</span><span class="o">.</span><span class="n">name</span> <span class="o">+</span> <span class="s2">&quot; [&quot;</span> <span class="o">+</span> <span class="n">console</span><span class="o">.</span><span class="n">yellow</span> <span class="o">+</span> <span class="s2">&quot;-&quot;</span> <span class="o">+</span> <span class="n">console</span><span class="o">.</span><span class="n">reset</span> <span class="o">+</span> <span class="s2">&quot;]&quot;</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">yield</span> <span class="s2">&quot;    &quot;</span> <span class="o">*</span> <span class="n">indent</span> <span class="o">+</span> <span class="n">bullet</span> <span class="o">+</span> <span class="n">child</span><span class="o">.</span><span class="n">name</span>
+        <span class="k">if</span> <span class="n">child</span><span class="o">.</span><span class="n">children</span> <span class="o">!=</span> <span class="p">[]:</span>
+            <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">_generate_ascii_tree</span><span class="p">(</span><span class="n">child</span><span class="p">,</span> <span class="n">indent</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">snapshot_information</span><span class="p">):</span>
+                <span class="k">yield</span> <span class="n">line</span>
+
+
+<div class="viewcode-block" id="ascii_tree"><a class="viewcode-back" href="../../visualisation.html#py_trees.display.ascii_tree">[docs]</a><span class="k">def</span> <span class="nf">ascii_tree</span><span class="p">(</span><span class="n">tree</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">snapshot_information</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Build an ascii tree representation as a string for redirecting</span>
+<span class="sd">    to elsewhere other than stdout. This can be the entire tree, or</span>
+<span class="sd">    a recorded snapshot of the tree (i.e. just the part that was traversed).</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        tree (:class:`~py_trees.behaviour.Behaviour`): the root of the tree, or subtree you want to show</span>
+<span class="sd">        indent (:obj:`int`): the number of characters to indent the tree</span>
+<span class="sd">        snapshot_information (:mod:`~py_trees.visitors`): a visitor that recorded information about a traversed tree (e.g. :class:`~py_trees.visitors.SnapshotVisitor`)</span>
+<span class="sd">        snapshot_information (:mod:`~py_trees.visitors`): a visitor that recorded information about a traversed tree (e.g. :class:`~py_trees.visitors.SnapshotVisitor`)</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        :obj:`str`: an ascii tree (i.e. in string form)</span>
+
+<span class="sd">    Examples:</span>
+
+<span class="sd">        Use the :class:`~py_trees.visitors.SnapshotVisitor`</span>
+<span class="sd">        and :class:`~py_trees.trees.BehaviourTree`</span>
+<span class="sd">        to generate snapshot information at each tick and feed that to</span>
+<span class="sd">        a post tick handler that will print the traversed ascii tree</span>
+<span class="sd">        complete with status and feedback messages.</span>
+
+<span class="sd">        .. image:: images/ascii_tree.png</span>
+<span class="sd">            :width: 200px</span>
+<span class="sd">            :align: right</span>
+
+<span class="sd">        .. code-block:: python</span>
+
+<span class="sd">            def post_tick_handler(snapshot_visitor, behaviour_tree):</span>
+<span class="sd">                print(py_trees.display.ascii_tree(behaviour_tree.root,</span>
+<span class="sd">                      snapshot_information=snapshot_visitor))</span>
+
+<span class="sd">            root = py_trees.composites.Sequence(&quot;Sequence&quot;)</span>
+<span class="sd">            for action in [&quot;Action 1&quot;, &quot;Action 2&quot;, &quot;Action 3&quot;]:</span>
+<span class="sd">                b = py_trees.behaviours.Count(</span>
+<span class="sd">                        name=action,</span>
+<span class="sd">                        fail_until=0,</span>
+<span class="sd">                        running_until=1,</span>
+<span class="sd">                        success_until=10)</span>
+<span class="sd">                root.add_child(b)</span>
+<span class="sd">            behaviour_tree = py_trees.trees.BehaviourTree(root)</span>
+<span class="sd">            snapshot_visitor = py_trees.visitors.SnapshotVisitor()</span>
+<span class="sd">            behaviour_tree.add_post_tick_handler(</span>
+<span class="sd">                functools.partial(post_tick_handler,</span>
+<span class="sd">                                  snapshot_visitor))</span>
+<span class="sd">            behaviour_tree.visitors.append(snapshot_visitor)</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">s</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+    <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">_generate_ascii_tree</span><span class="p">(</span><span class="n">tree</span><span class="p">,</span> <span class="n">indent</span><span class="p">,</span> <span class="n">snapshot_information</span><span class="p">):</span>
+        <span class="n">s</span> <span class="o">+=</span> <span class="s2">&quot;</span><span class="si">%s</span><span class="se">\n</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">line</span>
+    <span class="k">return</span> <span class="n">s</span></div>
+
+
+<div class="viewcode-block" id="print_ascii_tree"><a class="viewcode-back" href="../../visualisation.html#py_trees.display.print_ascii_tree">[docs]</a><span class="k">def</span> <span class="nf">print_ascii_tree</span><span class="p">(</span><span class="n">root</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">show_status</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Print the ASCII representation of an entire behaviour tree.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        root (:class:`~py_trees.behaviour.Behaviour`): the root of the tree, or subtree you want to show</span>
+<span class="sd">        indent (:obj:`int`): the number of characters to indent the tree</span>
+<span class="sd">        show_status (:obj:`bool`): additionally show feedback message and status of every element</span>
+
+<span class="sd">    Examples:</span>
+
+<span class="sd">        Render a simple tree in ascii format to stdout.</span>
+
+<span class="sd">        .. image:: images/ascii_tree_simple.png</span>
+<span class="sd">            :width: 100px</span>
+<span class="sd">            :align: right</span>
+
+<span class="sd">        .. code-block:: python</span>
+
+<span class="sd">            root = py_trees.composites.Sequence(&quot;Sequence&quot;)</span>
+<span class="sd">            for action in [&quot;Action 1&quot;, &quot;Action 2&quot;, &quot;Action 3&quot;]:</span>
+<span class="sd">                b = py_trees.behaviours.Count(</span>
+<span class="sd">                        name=action,</span>
+<span class="sd">                        fail_until=0,</span>
+<span class="sd">                        running_until=1,</span>
+<span class="sd">                        success_until=10)</span>
+<span class="sd">                root.add_child(b)</span>
+<span class="sd">            py_trees.display.print_ascii_tree(root)</span>
+
+<span class="sd">    .. tip::</span>
+
+<span class="sd">        To additionally display status and feedbback message from every behaviour in the tree,</span>
+<span class="sd">        simply set the :obj:`show_status` flag to True.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">class</span> <span class="nc">InstantSnapshot</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+        <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tree</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">nodes</span> <span class="o">=</span> <span class="p">{}</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">previously_running_nodes</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">running_nodes</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="k">for</span> <span class="n">node</span> <span class="ow">in</span> <span class="n">tree</span><span class="o">.</span><span class="n">iterate</span><span class="p">():</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">nodes</span><span class="p">[</span><span class="n">node</span><span class="o">.</span><span class="n">id</span><span class="p">]</span> <span class="o">=</span> <span class="n">node</span><span class="o">.</span><span class="n">status</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">running_nodes</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">node</span><span class="o">.</span><span class="n">id</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">previously_running_nodes</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">running_nodes</span>
+    <span class="n">snapshot_information</span> <span class="o">=</span> <span class="n">InstantSnapshot</span><span class="p">(</span><span class="n">root</span><span class="p">)</span> <span class="k">if</span> <span class="n">show_status</span> <span class="k">else</span> <span class="bp">None</span>
+    <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">_generate_ascii_tree</span><span class="p">(</span><span class="n">root</span><span class="p">,</span> <span class="n">indent</span><span class="p">,</span> <span class="n">snapshot_information</span><span class="p">):</span>
+        <span class="k">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">line</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="generate_pydot_graph"><a class="viewcode-back" href="../../modules.html#py_trees.display.generate_pydot_graph">[docs]</a><span class="k">def</span> <span class="nf">generate_pydot_graph</span><span class="p">(</span><span class="n">root</span><span class="p">,</span> <span class="n">visibility_level</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Generate the pydot graph - this is usually the first step in</span>
+<span class="sd">    rendering the tree to file. See also :py:func:`render_dot_tree`.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        root (:class:`~py_trees.behaviour.Behaviour`): the root of a tree, or subtree</span>
+<span class="sd">        visibility_level (:class`~py_trees.common.VisibilityLevel`): collapse subtrees at or under this level</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        pydot.Dot: graph</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">get_node_attributes</span><span class="p">(</span><span class="n">node</span><span class="p">,</span> <span class="n">visibility_level</span><span class="p">):</span>
+        <span class="n">blackbox_font_colours</span> <span class="o">=</span> <span class="p">{</span><span class="n">common</span><span class="o">.</span><span class="n">BlackBoxLevel</span><span class="o">.</span><span class="n">DETAIL</span><span class="p">:</span> <span class="s2">&quot;dodgerblue&quot;</span><span class="p">,</span>
+                                 <span class="n">common</span><span class="o">.</span><span class="n">BlackBoxLevel</span><span class="o">.</span><span class="n">COMPONENT</span><span class="p">:</span> <span class="s2">&quot;lawngreen&quot;</span><span class="p">,</span>
+                                 <span class="n">common</span><span class="o">.</span><span class="n">BlackBoxLevel</span><span class="o">.</span><span class="n">BIG_PICTURE</span><span class="p">:</span> <span class="s2">&quot;white&quot;</span>
+                                 <span class="p">}</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">node</span><span class="p">,</span> <span class="n">Chooser</span><span class="p">):</span>
+            <span class="n">attributes</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;doubleoctagon&#39;</span><span class="p">,</span> <span class="s1">&#39;cyan&#39;</span><span class="p">,</span> <span class="s1">&#39;black&#39;</span><span class="p">)</span>  <span class="c1"># octagon</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">node</span><span class="p">,</span> <span class="n">Selector</span><span class="p">):</span>
+            <span class="n">attributes</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;octagon&#39;</span><span class="p">,</span> <span class="s1">&#39;cyan&#39;</span><span class="p">,</span> <span class="s1">&#39;black&#39;</span><span class="p">)</span>  <span class="c1"># octagon</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">node</span><span class="p">,</span> <span class="n">Sequence</span><span class="p">):</span>
+            <span class="n">attributes</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;box&#39;</span><span class="p">,</span> <span class="s1">&#39;orange&#39;</span><span class="p">,</span> <span class="s1">&#39;black&#39;</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">node</span><span class="p">,</span> <span class="n">Parallel</span><span class="p">):</span>
+            <span class="n">attributes</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;note&#39;</span><span class="p">,</span> <span class="s1">&#39;gold&#39;</span><span class="p">,</span> <span class="s1">&#39;black&#39;</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">node</span><span class="o">.</span><span class="n">children</span> <span class="o">!=</span> <span class="p">[]:</span>
+            <span class="n">attributes</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;ellipse&#39;</span><span class="p">,</span> <span class="s1">&#39;ghostwhite&#39;</span><span class="p">,</span> <span class="s1">&#39;black&#39;</span><span class="p">)</span>  <span class="c1"># encapsulating behaviour (e.g. wait)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">attributes</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;ellipse&#39;</span><span class="p">,</span> <span class="s1">&#39;gray&#39;</span><span class="p">,</span> <span class="s1">&#39;black&#39;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">node</span><span class="o">.</span><span class="n">blackbox_level</span> <span class="o">!=</span> <span class="n">common</span><span class="o">.</span><span class="n">BlackBoxLevel</span><span class="o">.</span><span class="n">NOT_A_BLACKBOX</span><span class="p">:</span>
+            <span class="n">attributes</span> <span class="o">=</span> <span class="p">(</span><span class="n">attributes</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="s1">&#39;gray20&#39;</span><span class="p">,</span> <span class="n">blackbox_font_colours</span><span class="p">[</span><span class="n">node</span><span class="o">.</span><span class="n">blackbox_level</span><span class="p">])</span>
+        <span class="k">return</span> <span class="n">attributes</span>
+
+    <span class="n">fontsize</span> <span class="o">=</span> <span class="mi">11</span>
+    <span class="n">graph</span> <span class="o">=</span> <span class="n">pydot</span><span class="o">.</span><span class="n">Dot</span><span class="p">(</span><span class="n">graph_type</span><span class="o">=</span><span class="s1">&#39;digraph&#39;</span><span class="p">)</span>
+    <span class="n">graph</span><span class="o">.</span><span class="n">set_name</span><span class="p">(</span><span class="n">root</span><span class="o">.</span><span class="n">name</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot; &quot;</span><span class="p">,</span> <span class="s2">&quot;_&quot;</span><span class="p">))</span>
+    <span class="c1"># fonts: helvetica, times-bold, arial (times-roman is the default, but this helps some viewers, like kgraphviewer)</span>
+    <span class="n">graph</span><span class="o">.</span><span class="n">set_graph_defaults</span><span class="p">(</span><span class="n">fontname</span><span class="o">=</span><span class="s1">&#39;times-roman&#39;</span><span class="p">)</span>
+    <span class="n">graph</span><span class="o">.</span><span class="n">set_node_defaults</span><span class="p">(</span><span class="n">fontname</span><span class="o">=</span><span class="s1">&#39;times-roman&#39;</span><span class="p">)</span>
+    <span class="n">graph</span><span class="o">.</span><span class="n">set_edge_defaults</span><span class="p">(</span><span class="n">fontname</span><span class="o">=</span><span class="s1">&#39;times-roman&#39;</span><span class="p">)</span>
+    <span class="p">(</span><span class="n">node_shape</span><span class="p">,</span> <span class="n">node_colour</span><span class="p">,</span> <span class="n">node_font_colour</span><span class="p">)</span> <span class="o">=</span> <span class="n">get_node_attributes</span><span class="p">(</span><span class="n">root</span><span class="p">,</span> <span class="n">visibility_level</span><span class="p">)</span>
+    <span class="n">node_root</span> <span class="o">=</span> <span class="n">pydot</span><span class="o">.</span><span class="n">Node</span><span class="p">(</span><span class="n">root</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">shape</span><span class="o">=</span><span class="n">node_shape</span><span class="p">,</span> <span class="n">style</span><span class="o">=</span><span class="s2">&quot;filled&quot;</span><span class="p">,</span> <span class="n">fillcolor</span><span class="o">=</span><span class="n">node_colour</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="n">fontsize</span><span class="p">,</span> <span class="n">fontcolor</span><span class="o">=</span><span class="n">node_font_colour</span><span class="p">)</span>
+    <span class="n">graph</span><span class="o">.</span><span class="n">add_node</span><span class="p">(</span><span class="n">node_root</span><span class="p">)</span>
+    <span class="n">names</span> <span class="o">=</span> <span class="p">[</span><span class="n">root</span><span class="o">.</span><span class="n">name</span><span class="p">]</span>
+
+    <span class="k">def</span> <span class="nf">add_edges</span><span class="p">(</span><span class="n">root</span><span class="p">,</span> <span class="n">root_dot_name</span><span class="p">,</span> <span class="n">visibility_level</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">visibility_level</span> <span class="o">&lt;</span> <span class="n">root</span><span class="o">.</span><span class="n">blackbox_level</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">root</span><span class="o">.</span><span class="n">children</span><span class="p">:</span>
+                <span class="p">(</span><span class="n">node_shape</span><span class="p">,</span> <span class="n">node_colour</span><span class="p">,</span> <span class="n">node_font_colour</span><span class="p">)</span> <span class="o">=</span> <span class="n">get_node_attributes</span><span class="p">(</span><span class="n">c</span><span class="p">,</span> <span class="n">visibility_level</span><span class="p">)</span>
+                <span class="n">proposed_dot_name</span> <span class="o">=</span> <span class="n">c</span><span class="o">.</span><span class="n">name</span>
+                <span class="k">while</span> <span class="n">proposed_dot_name</span> <span class="ow">in</span> <span class="n">names</span><span class="p">:</span>
+                    <span class="n">proposed_dot_name</span> <span class="o">=</span> <span class="n">proposed_dot_name</span> <span class="o">+</span> <span class="s2">&quot;*&quot;</span>
+                <span class="n">names</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">proposed_dot_name</span><span class="p">)</span>
+                <span class="n">node</span> <span class="o">=</span> <span class="n">pydot</span><span class="o">.</span><span class="n">Node</span><span class="p">(</span><span class="n">proposed_dot_name</span><span class="p">,</span> <span class="n">shape</span><span class="o">=</span><span class="n">node_shape</span><span class="p">,</span> <span class="n">style</span><span class="o">=</span><span class="s2">&quot;filled&quot;</span><span class="p">,</span> <span class="n">fillcolor</span><span class="o">=</span><span class="n">node_colour</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="n">fontsize</span><span class="p">,</span> <span class="n">fontcolor</span><span class="o">=</span><span class="n">node_font_colour</span><span class="p">)</span>
+                <span class="n">graph</span><span class="o">.</span><span class="n">add_node</span><span class="p">(</span><span class="n">node</span><span class="p">)</span>
+                <span class="n">edge</span> <span class="o">=</span> <span class="n">pydot</span><span class="o">.</span><span class="n">Edge</span><span class="p">(</span><span class="n">root_dot_name</span><span class="p">,</span> <span class="n">proposed_dot_name</span><span class="p">)</span>
+                <span class="n">graph</span><span class="o">.</span><span class="n">add_edge</span><span class="p">(</span><span class="n">edge</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">c</span><span class="o">.</span><span class="n">children</span> <span class="o">!=</span> <span class="p">[]:</span>
+                    <span class="n">add_edges</span><span class="p">(</span><span class="n">c</span><span class="p">,</span> <span class="n">proposed_dot_name</span><span class="p">,</span> <span class="n">visibility_level</span><span class="p">)</span>
+
+    <span class="n">add_edges</span><span class="p">(</span><span class="n">root</span><span class="p">,</span> <span class="n">root</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">visibility_level</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">graph</span></div>
+
+
+<div class="viewcode-block" id="stringify_dot_tree"><a class="viewcode-back" href="../../modules.html#py_trees.display.stringify_dot_tree">[docs]</a><span class="k">def</span> <span class="nf">stringify_dot_tree</span><span class="p">(</span><span class="n">root</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Generate dot tree graphs and return a string representation</span>
+<span class="sd">    of the dot graph.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        root (:class:`~py_trees.behaviour.Behaviour`): the root of a tree, or subtree</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        :obj:`str`: dot graph as a string</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">graph</span> <span class="o">=</span> <span class="n">generate_pydot_graph</span><span class="p">(</span><span class="n">root</span><span class="p">,</span> <span class="n">visibility_level</span><span class="o">=</span><span class="n">common</span><span class="o">.</span><span class="n">VisibilityLevel</span><span class="o">.</span><span class="n">DETAIL</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">graph</span><span class="o">.</span><span class="n">to_string</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="render_dot_tree"><a class="viewcode-back" href="../../modules.html#py_trees.display.render_dot_tree">[docs]</a><span class="k">def</span> <span class="nf">render_dot_tree</span><span class="p">(</span><span class="n">root</span><span class="p">,</span> <span class="n">visibility_level</span><span class="o">=</span><span class="n">common</span><span class="o">.</span><span class="n">VisibilityLevel</span><span class="o">.</span><span class="n">DETAIL</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Render the dot tree to .dot, .svg, .png. files in the current</span>
+<span class="sd">    working directory. These will be named with the root behaviour name.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        root (:class:`~py_trees.behaviour.Behaviour`): the root of a tree, or subtree</span>
+<span class="sd">        visibility_level (:class`~py_trees.common.VisibilityLevel`): collapse subtrees at or under this level</span>
+<span class="sd">        name (:obj:`str`): name to use for the created files (defaults to the root behaviour name)</span>
+
+<span class="sd">    Example:</span>
+
+<span class="sd">        Render a simple tree to dot/svg/png file:</span>
+
+<span class="sd">        .. graphviz:: dot/sequence.dot</span>
+
+<span class="sd">        .. code-block:: python</span>
+
+<span class="sd">            root = py_trees.composites.Sequence(&quot;Sequence&quot;)</span>
+<span class="sd">            for job in [&quot;Action 1&quot;, &quot;Action 2&quot;, &quot;Action 3&quot;]:</span>
+<span class="sd">                success_after_two = py_trees.behaviours.Count(name=job,</span>
+<span class="sd">                                                              fail_until=0,</span>
+<span class="sd">                                                              running_until=1,</span>
+<span class="sd">                                                              success_until=10)</span>
+<span class="sd">                root.add_child(success_after_two)</span>
+<span class="sd">            py_trees.display.render_dot_tree(root)</span>
+
+<span class="sd">    .. tip::</span>
+
+<span class="sd">        A good practice is to provide a command line argument for optional rendering of a program so users</span>
+<span class="sd">        can quickly visualise what tree the program will execute.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">graph</span> <span class="o">=</span> <span class="n">generate_pydot_graph</span><span class="p">(</span><span class="n">root</span><span class="p">,</span> <span class="n">visibility_level</span><span class="p">)</span>
+    <span class="n">filename_wo_extension</span> <span class="o">=</span> <span class="n">root</span><span class="o">.</span><span class="n">name</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot; &quot;</span><span class="p">,</span> <span class="s2">&quot;_&quot;</span><span class="p">)</span> <span class="k">if</span> <span class="n">name</span> <span class="ow">is</span> <span class="bp">None</span> <span class="k">else</span> <span class="n">name</span>
+    <span class="k">print</span><span class="p">(</span><span class="s2">&quot;Writing </span><span class="si">%s</span><span class="s2">.dot/svg/png&quot;</span> <span class="o">%</span> <span class="n">filename_wo_extension</span><span class="p">)</span>
+    <span class="n">graph</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">filename_wo_extension</span> <span class="o">+</span> <span class="s1">&#39;.dot&#39;</span><span class="p">)</span>
+    <span class="n">graph</span><span class="o">.</span><span class="n">write_png</span><span class="p">(</span><span class="n">filename_wo_extension</span> <span class="o">+</span> <span class="s1">&#39;.png&#39;</span><span class="p">)</span>
+    <span class="n">graph</span><span class="o">.</span><span class="n">write_svg</span><span class="p">(</span><span class="n">filename_wo_extension</span> <span class="o">+</span> <span class="s1">&#39;.svg&#39;</span><span class="p">)</span></div>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+
+    </p>
+  </div> 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../',
+            VERSION:'0.5.8',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

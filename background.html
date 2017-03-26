@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Background &mdash; py_trees_ros 0.5.2 documentation</title>
+  <title>Background &mdash; py_trees 0.5.8 documentation</title>
   
 
   
@@ -30,9 +30,9 @@
   
 
   
-    <link rel="top" title="py_trees_ros 0.5.2 documentation" href="index.html"/>
-        <link rel="next" title="New and Shiny" href="new_and_shiny.html"/>
-        <link rel="prev" title="Py Trees for ROS" href="index.html"/> 
+    <link rel="top" title="py_trees 0.5.8 documentation" href="index.html"/>
+        <link rel="next" title="Behaviours" href="behaviours.html"/>
+        <link rel="prev" title="Py Trees" href="index.html"/> 
 
   
   <script src="_static/js/modernizr.min.js"></script>
@@ -50,7 +50,7 @@
           
 
           
-            <a href="index.html" class="icon icon-home"> py_trees_ros
+            <a href="index.html" class="icon icon-home"> py_trees
           
 
           
@@ -60,7 +60,7 @@
             
             
               <div class="version">
-                0.5.2
+                0.5.8
               </div>
             
           
@@ -86,15 +86,23 @@
 <ul class="current">
 <li class="toctree-l1 current"><a class="current reference internal" href="">Background</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#introduction">Introduction</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#motivation">Motivation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#design">Design</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#readings">Readings</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="new_and_shiny.html">New and Shiny</a></li>
-<li class="toctree-l1"><a class="reference internal" href="tutorials.html">Tutorials</a></li>
+<li class="toctree-l1"><a class="reference internal" href="behaviours.html">Behaviours</a></li>
+<li class="toctree-l1"><a class="reference internal" href="composites.html">Composites</a></li>
+<li class="toctree-l1"><a class="reference internal" href="blackboards.html">Blackboards</a></li>
+<li class="toctree-l1"><a class="reference internal" href="trees.html">Trees</a></li>
+<li class="toctree-l1"><a class="reference internal" href="visualisation.html">Visualisation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="the_crazy_hospital.html">Surviving the Crazy Hospital</a></li>
 <li class="toctree-l1"><a class="reference internal" href="terminology.html">Terminology</a></li>
 <li class="toctree-l1"><a class="reference internal" href="faq.html">FAQ</a></li>
 </ul>
 <p class="caption"><span class="caption-text">Reference</span></p>
 <ul>
+<li class="toctree-l1"><a class="reference internal" href="demos.html">Demos</a></li>
 <li class="toctree-l1"><a class="reference internal" href="programs.html">Programs</a></li>
 <li class="toctree-l1"><a class="reference internal" href="modules.html">Module API</a></li>
 <li class="toctree-l1"><a class="reference internal" href="changelog.html">Changelog</a></li>
@@ -114,7 +122,7 @@
       
       <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
         <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-        <a href="index.html">py_trees_ros</a>
+        <a href="index.html">py_trees</a>
       </nav>
 
 
@@ -149,14 +157,79 @@
 <h1>Background<a class="headerlink" href="#background" title="Permalink to this headline">¶</a></h1>
 <div class="section" id="introduction">
 <h2>Introduction<a class="headerlink" href="#introduction" title="Permalink to this headline">¶</a></h2>
-<p>Patrick Goebel wrote an introduction on his block about <a class="reference external" href="http://www.pirobot.org/blog/0030/">Behaviour Trees For Robotics</a>.</p>
-<p>See to <a class="reference external" href="http://py-trees.readthedocs.io/en/devel/modules.html#py_trees.behaviour.Behaviour" title="(in py_trees v0.5.8)"><code class="xref py py-class docutils literal"><span class="pre">Behaviour</span></code></a>.</p>
-<p>Also <a class="reference external" href="http://py-trees.readthedocs.io/en/devel/terminology.html#term-tick" title="(in py_trees v0.5.8)"><span class="xref std std-term">Py trees tick</span></a>.</p>
-<p>And page <a class="reference external" href="http://py-trees.readthedocs.io/en/devel/the_crazy_hospital.html#crazy-hospital-section" title="(in py_trees v0.5.8)"><span>Surviving the Crazy Hospital</span></a>.
-Doh</p>
-<p><a class="reference external" href="http://docs.python.org/reference/expressions.html#comparisons" title="(in Python v2.7)"><span class="xref std std-ref">comparison manual</span></a></p>
-<p>What about <a class="reference external" href="http://py-trees.readthedocs.io/en/devel/blackboards.html#blackboards-section" title="(in py_trees v0.5.8)"><span>Blackboards</span></a>
-and <a class="reference external" href="http://py-trees.readthedocs.io/en/devel/the_crazy_hospital.html#crazy-hospital-section" title="(in py_trees v0.5.8)"><span>Surviving the Crazy Hospital</span></a>.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">Behaviour trees are a decision making engine often used in the gaming industry.</p>
+</div>
+<p>Others include hierarchical finite state machines, task networks, scripting
+engines all of which have various pros and cons. Behaviour trees sit somewhere in the middle
+of these allowing you a good blend of purposeful planning towards goals with enough reactivity
+to shift in the presence of important events. They are also wonderfully simple to compose.</p>
+<p>There&#8217;s much information already covering behaviour trees. Rather than regurgitating
+it here, dig through some of these first. A good starter is
+<a class="reference external" href="http://aigamedev.com/insider/presentation/behavior-trees/">AI GameDev - Behaviour Trees</a> (free signup and login) which puts behaviour trees in context
+alongside other techniques. A simpler read is Patrick Goebel&#8217;s <a class="reference external" href="http://www.pirobot.org/blog/0030/">Behaviour Trees For Robotics</a>.
+Other readings are listed at the bottom of this page.</p>
+<p>Some standout features of behaviour trees that makes them very attractive:</p>
+<ul class="simple">
+<li><strong>Ticking</strong> - the ability to <a class="reference internal" href="terminology.html#term-tick"><span class="xref std std-term">tick</span></a> allows for work between executions without multi-threading</li>
+<li><strong>Priority Handling</strong> - switching mechansims that allow higher priority interruptions is very natural</li>
+<li><strong>Simplicity</strong> - very few core components, making it easy for designers to work with it</li>
+<li><strong>Dynamic</strong> - change the graph on the fly, between ticks or from parent behaviours themselves</li>
+</ul>
+</div>
+<div class="section" id="motivation">
+<h2>Motivation<a class="headerlink" href="#motivation" title="Permalink to this headline">¶</a></h2>
+<p>The driving use case for this package was to implement a higher level decision making layer in robotics, i.e.
+scenarios with some overlap into the control layer. Behaviour trees turned out to be a much more
+apt fit to handle the many concurrent processes in a robot after attempts with finite state machines
+became entangled in wiring complexity as the problem grew in scope.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">There are very few open behaviour tree implementations.</p>
+</div>
+<p>Most of these have either not progressed significantly (e.g. <a class="reference external" href="https://github.com/eykd/owyl">Owyl</a>), or are
+accessible only in some niche, e.g. <a class="reference external" href="https://forum.unity3d.com/threads/behavior-designer-behavior-trees-for-everyone.227497/">Behaviour Designer</a>, which is a frontend to the trees in the unity framework.
+Does this mean people do not use them? It is more probable that most behaviour tree
+implementations happen within the closed doors of gaming/robot companies.</p>
+<p><a class="reference external" href="https://www.youtube.com/watch?v=n4aREFb3SsU">Youtube - Second Generation of Behaviour Trees</a> is an enlightening video about behaviour trees and
+the developments of the last ten years from an industry expert. It also
+walks you through a simple c++ implementation. His advice? If you can&#8217;t find one that fits, roll your own.
+It is relatively simple and this way you can flexibly cater for your own needs.</p>
+</div>
+<div class="section" id="design">
+<h2>Design<a class="headerlink" href="#design" title="Permalink to this headline">¶</a></h2>
+<p>The requirements for the previously discussed robotics use case match that of the more general:</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">Rapid development of medium scale decision engines that don&#8217;t need to be real time reactive.</p>
+</div>
+<p>Developers should expect to be able to get up to speed and write their own trees with enough
+power and flexibility to adapt the library to their needs. Robotics is a good fit.
+These systems typically do not grow too large (~ hundreds of behaviours) and do not
+need to handle the reactive decision making that is usually directly incorporated into the controller subsystems.
+On the other hand, it is not scoped to enable an NPC gaming engine with hundreds of characters and thousands
+of beahaviours for each character.</p>
+<p>This implementation uses all the whizbang tricks (generators, decorators)
+that python has to offer. Some design constraints that have been assumed to enable a practical, easy to use framework:</p>
+<ul class="simple">
+<li>No interaction or sharing of data between tree instances</li>
+<li>No parallelisation of tree execution</li>
+<li>Only one behaviour initialising or executing at a time</li>
+</ul>
+<div class="admonition hint">
+<p class="first admonition-title">Hint</p>
+<p class="last">A c++ version is feasible and may come forth if there&#8217;s a need..</p>
+</div>
+</div>
+<div class="section" id="readings">
+<h2>Readings<a class="headerlink" href="#readings" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li><a class="reference external" href="http://aigamedev.com/insider/presentation/behavior-trees/">AI GameDev - Behaviour Trees</a> - from a gaming expert, good big picture view</li>
+<li><a class="reference external" href="https://www.youtube.com/watch?v=n4aREFb3SsU">Youtube - Second Generation of Behaviour Trees</a> - from a gaming expert, in depth c++ walkthrough (on github).</li>
+<li><a class="reference external" href="http://www.pirobot.org/blog/0030/">Behaviour trees for robotics</a> - by pirobot, a clear intro on its usefulness for robots.</li>
+<li><a class="reference external" href="http://www.dabeaz.com/coroutines/Coroutines.pdf">A Curious Course on Coroutines and Concurrency</a> - generators and coroutines in python.</li>
+</ul>
 </div>
 </div>
 
@@ -167,10 +240,10 @@ and <a class="reference external" href="http://py-trees.readthedocs.io/en/devel/
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="new_and_shiny.html" class="btn btn-neutral float-right" title="New and Shiny" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
+        <a href="behaviours.html" class="btn btn-neutral float-right" title="Behaviours" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
-        <a href="index.html" class="btn btn-neutral" title="Py Trees for ROS" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+        <a href="index.html" class="btn btn-neutral" title="Py Trees" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   
@@ -199,7 +272,7 @@ and <a class="reference external" href="http://py-trees.readthedocs.io/en/devel/
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'./',
-            VERSION:'0.5.2',
+            VERSION:'0.5.8',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
             HAS_SOURCE:  true

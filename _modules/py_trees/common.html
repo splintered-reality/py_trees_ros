@@ -1,0 +1,341 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>py_trees.common &mdash; py_trees 0.5.8 documentation</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+    <link rel="top" title="py_trees 0.5.8 documentation" href="../../index.html"/>
+        <link rel="up" title="Module code" href="../index.html"/> 
+
+  
+  <script src="../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../index.html" class="icon icon-home"> py_trees
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.5.8
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+    
+            
+            
+                <p class="caption"><span class="caption-text">Guide</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../background.html">Background</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../behaviours.html">Behaviours</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../composites.html">Composites</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../blackboards.html">Blackboards</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../trees.html">Trees</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../visualisation.html">Visualisation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../the_crazy_hospital.html">Surviving the Crazy Hospital</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../terminology.html">Terminology</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../faq.html">FAQ</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Reference</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../demos.html">Demos</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../programs.html">Programs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../modules.html">Module API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../changelog.html">Changelog</a></li>
+</ul>
+
+            
+          
+    <a href="genindex.html">Index</a>
+    <a href="py-modindex.html">Module Index</a>
+  
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="../../index.html">py_trees</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../../index.html">Docs</a> &raquo;</li>
+      
+          <li><a href="../index.html">Module code</a> &raquo;</li>
+      
+    <li>py_trees.common</li>
+      <li class="wy-breadcrumbs-aside">
+        
+          
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for py_trees.common</h1><div class="highlight"><pre>
+<span class="ch">#!/usr/bin/env python</span>
+<span class="c1">#</span>
+<span class="c1"># License: BSD</span>
+<span class="c1">#   https://raw.githubusercontent.com/stonier/py_trees/devel/LICENSE</span>
+<span class="c1">#</span>
+<span class="c1">##############################################################################</span>
+<span class="c1"># Documentation</span>
+<span class="c1">##############################################################################</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Common definitions, methods and variables used by the py_trees library.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="c1">##############################################################################</span>
+<span class="c1"># Imports</span>
+<span class="c1">##############################################################################</span>
+
+<span class="kn">import</span> <span class="nn">enum</span>
+
+<span class="c1">##############################################################################</span>
+<span class="c1"># Status</span>
+<span class="c1">##############################################################################</span>
+
+<span class="c1"># &quot;&quot;&quot; An enumerator representing the status of a behaviour &quot;&quot;&quot;</span>
+<span class="c1"># Status = Enum(&#39;Status&#39;, &#39;SUCCESS FAILURE RUNNING INVALID&#39;)</span>
+
+
+<div class="viewcode-block" id="Status"><a class="viewcode-back" href="../../modules.html#py_trees.common.Status">[docs]</a><span class="k">class</span> <span class="nc">Status</span><span class="p">(</span><span class="n">enum</span><span class="o">.</span><span class="n">Enum</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;An enumerator representing the status of a behaviour &quot;&quot;&quot;</span>
+
+    <span class="n">SUCCESS</span> <span class="o">=</span> <span class="s2">&quot;SUCCESS&quot;</span>
+    <span class="sd">&quot;&quot;&quot;Behaviour check has passed, or execution of its action has finished with a successful result.&quot;&quot;&quot;</span>
+    <span class="n">FAILURE</span> <span class="o">=</span> <span class="s2">&quot;FAILURE&quot;</span>
+    <span class="sd">&quot;&quot;&quot;Behaviour check has failed, or execution of its action finished with a failed result.&quot;&quot;&quot;</span>
+    <span class="n">RUNNING</span> <span class="o">=</span> <span class="s2">&quot;RUNNING&quot;</span>
+    <span class="sd">&quot;&quot;&quot;Behaviour is in the middle of executing some action, result still pending.&quot;&quot;&quot;</span>
+    <span class="n">INVALID</span> <span class="o">=</span> <span class="s2">&quot;INVALID&quot;</span>
+    <span class="sd">&quot;&quot;&quot;Behaviour is uninitialised and inactive, i.e. this is the status before first entry, and after a higher priority switch has occurred.&quot;&quot;&quot;</span></div>
+
+
+<div class="viewcode-block" id="ParallelPolicy"><a class="viewcode-back" href="../../modules.html#py_trees.common.ParallelPolicy">[docs]</a><span class="k">class</span> <span class="nc">ParallelPolicy</span><span class="p">(</span><span class="n">enum</span><span class="o">.</span><span class="n">Enum</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Policy rules for :py:class:`~py_trees.composites.Parallel` composites.&quot;&quot;&quot;</span>
+
+    <span class="n">SUCCESS_ON_ALL</span> <span class="o">=</span> <span class="s2">&quot;SUCCESS_ON_ALL&quot;</span>
+    <span class="sd">&quot;&quot;&quot;:py:data:`~py_trees.common.Status.SUCCESS` only when each and every child returns :py:data:`~py_trees.common.Status.SUCCESS`.&quot;&quot;&quot;</span>
+    <span class="n">SUCCESS_ON_ONE</span> <span class="o">=</span> <span class="s2">&quot;SUCCESS_ON_ONE&quot;</span>
+    <span class="sd">&quot;&quot;&quot;:py:data:`~py_trees.common.Status.SUCCESS` so long as at least one child has :py:data:`~py_trees.common.Status.SUCCESS` and the remainder are :py:data:`~py_trees.common.Status.RUNNING`&quot;&quot;&quot;</span></div>
+
+
+<span class="k">class</span> <span class="nc">Foo</span><span class="p">(</span><span class="n">enum</span><span class="o">.</span><span class="n">IntEnum</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Foo</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">MORE_FOO</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="sd">&quot;&quot;&quot;More Foo&quot;&quot;&quot;</span>
+
+
+<div class="viewcode-block" id="ClearingPolicy"><a class="viewcode-back" href="../../modules.html#py_trees.common.ClearingPolicy">[docs]</a><span class="k">class</span> <span class="nc">ClearingPolicy</span><span class="p">(</span><span class="n">enum</span><span class="o">.</span><span class="n">IntEnum</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Policy rules for behaviours to dictate when data should be cleared/reset.</span>
+<span class="sd">    Used by the :py:mod:`~py_trees.subscribers` module.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">ON_INITIALISE</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="sd">&quot;&quot;&quot;Clear when entering the :py:meth:`~py_trees.behaviour.Behaviour.initialise` method.&quot;&quot;&quot;</span>
+    <span class="n">ON_SUCCESS</span> <span class="o">=</span> <span class="mi">2</span>
+    <span class="sd">&quot;&quot;&quot;Clear when returning :py:data:`~py_trees.common.Status.SUCCESS`.&quot;&quot;&quot;</span>
+    <span class="n">NEVER</span> <span class="o">=</span> <span class="mi">3</span>
+    <span class="sd">&quot;&quot;&quot;Never clear the data&quot;&quot;&quot;</span></div>
+
+
+<div class="viewcode-block" id="BlackBoxLevel"><a class="viewcode-back" href="../../modules.html#py_trees.common.BlackBoxLevel">[docs]</a><span class="k">class</span> <span class="nc">BlackBoxLevel</span><span class="p">(</span><span class="n">enum</span><span class="o">.</span><span class="n">IntEnum</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Whether a behaviour is a blackbox entity that may be considered collapsible</span>
+<span class="sd">    (i.e. everything in its subtree will not be visualised) by</span>
+<span class="sd">    visualisation tools.</span>
+
+<span class="sd">    Blackbox levels are increasingly persistent in visualisations.</span>
+
+<span class="sd">    Visualisations by default, should always collapse blackboxes that represent</span>
+<span class="sd">    `DETAIL`.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">DETAIL</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="sd">&quot;&quot;&quot;A blackbox that encapsulates detailed activity.&quot;&quot;&quot;</span>
+    <span class="n">COMPONENT</span> <span class="o">=</span> <span class="mi">2</span>
+    <span class="sd">&quot;&quot;&quot;A blackbox that encapsulates a subgroup of functionalities as a single group.&quot;&quot;&quot;</span>
+    <span class="n">BIG_PICTURE</span> <span class="o">=</span> <span class="mi">3</span>
+    <span class="sd">&quot;&quot;&quot;A blackbox that represents a big picture part of the entire tree view.&quot;&quot;&quot;</span>
+    <span class="n">NOT_A_BLACKBOX</span> <span class="o">=</span> <span class="mi">4</span>
+    <span class="sd">&quot;&quot;&quot;Not a blackbox, do not ever collapse.&quot;&quot;&quot;</span></div>
+
+
+<div class="viewcode-block" id="VisibilityLevel"><a class="viewcode-back" href="../../modules.html#py_trees.common.VisibilityLevel">[docs]</a><span class="k">class</span> <span class="nc">VisibilityLevel</span><span class="p">(</span><span class="n">enum</span><span class="o">.</span><span class="n">IntEnum</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Closely associated with the :py:class:`~py_trees.common.BlackBoxLevel` for a</span>
+<span class="sd">    behaviour. This sets the visibility level to be used for visualisations.</span>
+
+<span class="sd">    Visibility levels correspond to reducing levels of visibility in a visualisation.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">ALL</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="sd">&quot;&quot;&quot;Do not collapse any behaviour.&quot;&quot;&quot;</span>
+    <span class="n">DETAIL</span> <span class="o">=</span> <span class="n">BlackBoxLevel</span><span class="o">.</span><span class="n">DETAIL</span>
+    <span class="sd">&quot;&quot;&quot;Collapse blackboxes marked with :py:data:`~py_trees.common.BlackBoxLevel.DETAIL` or lower.&quot;&quot;&quot;</span>
+    <span class="n">COMPONENT</span> <span class="o">=</span> <span class="n">BlackBoxLevel</span><span class="o">.</span><span class="n">COMPONENT</span>
+    <span class="sd">&quot;&quot;&quot;Collapse blackboxes marked with :py:data:`~py_trees.common.BlackBoxLevel.COMPONENT` or lower.&quot;&quot;&quot;</span>
+    <span class="n">BIG_PICTURE</span> <span class="o">=</span> <span class="n">BlackBoxLevel</span><span class="o">.</span><span class="n">BIG_PICTURE</span>
+    <span class="sd">&quot;&quot;&quot;Collapse any blackbox that isn&#39;t marked with :py:data:`~py_trees.common.BlackBoxLevel.BIG_PICTURE`.&quot;&quot;&quot;</span></div>
+
+
+<span class="n">visibility_level_strings</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;all&quot;</span><span class="p">,</span> <span class="s2">&quot;detail&quot;</span><span class="p">,</span> <span class="s2">&quot;component&quot;</span><span class="p">,</span> <span class="s2">&quot;big_picture&quot;</span><span class="p">]</span>
+<span class="sd">&quot;&quot;&quot;Convenient string representations to use for command line input (amongst other things).&quot;&quot;&quot;</span>
+
+
+<span class="k">def</span> <span class="nf">string_to_visibility_level</span><span class="p">(</span><span class="n">level</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Will convert a string to a visibility level. Note that it will quietly return ALL if</span>
+<span class="sd">    the string is not matched to any visibility level string identifier.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        level (str): visibility level as a string</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        :class:`~py_trees.common.VisibilityLevel`: visibility level enum</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">level</span> <span class="o">==</span> <span class="s2">&quot;detail&quot;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">VisibilityLevel</span><span class="o">.</span><span class="n">DETAIL</span>
+    <span class="k">elif</span> <span class="n">level</span> <span class="o">==</span> <span class="s2">&quot;component&quot;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">VisibilityLevel</span><span class="o">.</span><span class="n">COMPONENT</span>
+    <span class="k">elif</span> <span class="n">level</span> <span class="o">==</span> <span class="s2">&quot;big_picture&quot;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">VisibilityLevel</span><span class="o">.</span><span class="n">BIG_PICTURE</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">VisibilityLevel</span><span class="o">.</span><span class="n">ALL</span>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+
+    </p>
+  </div> 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../',
+            VERSION:'0.5.8',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>
