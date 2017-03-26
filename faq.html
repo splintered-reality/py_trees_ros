@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>FAQ &mdash; py_trees 0.5.8 documentation</title>
+  <title>FAQ &mdash; py_trees_ros 0.5.4 documentation</title>
   
 
   
@@ -30,8 +30,10 @@
   
 
   
-    <link rel="top" title="py_trees 0.5.8 documentation" href="index.html"/>
-        <link rel="next" title="Demos" href="demos.html"/>
+        <link rel="author" title="About these documents"
+              href="about.html"/>
+    <link rel="top" title="py_trees_ros 0.5.4 documentation" href="index.html"/>
+        <link rel="next" title="Programs" href="programs.html"/>
         <link rel="prev" title="Terminology" href="terminology.html"/> 
 
   
@@ -50,7 +52,7 @@
           
 
           
-            <a href="index.html" class="icon icon-home"> py_trees
+            <a href="index.html" class="icon icon-home"> py_trees_ros
           
 
           
@@ -60,7 +62,7 @@
             
             
               <div class="version">
-                0.5.8
+                0.5.4
               </div>
             
           
@@ -84,19 +86,19 @@
             
                 <p class="caption"><span class="caption-text">Guide</span></p>
 <ul class="current">
-<li class="toctree-l1"><a class="reference internal" href="background.html">Background</a></li>
-<li class="toctree-l1"><a class="reference internal" href="behaviours.html">Behaviours</a></li>
-<li class="toctree-l1"><a class="reference internal" href="composites.html">Composites</a></li>
-<li class="toctree-l1"><a class="reference internal" href="blackboards.html">Blackboards</a></li>
-<li class="toctree-l1"><a class="reference internal" href="trees.html">Trees</a></li>
-<li class="toctree-l1"><a class="reference internal" href="visualisation.html">Visualisation</a></li>
-<li class="toctree-l1"><a class="reference internal" href="the_crazy_hospital.html">Surviving the Crazy Hospital</a></li>
+<li class="toctree-l1"><a class="reference internal" href="about.html">About</a></li>
+<li class="toctree-l1"><a class="reference internal" href="features.html">Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorials.html">Tutorials</a></li>
 <li class="toctree-l1"><a class="reference internal" href="terminology.html">Terminology</a></li>
-<li class="toctree-l1 current"><a class="current reference internal" href="">FAQ</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="">FAQ</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#parameter-remap-proliferation">Parameter/Remap Proliferation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#do-i-need-to-continuously-tick-tock">Do I need to Continuously Tick-Tock?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#control-level-decision-making">Control-Level Decision Making</a></li>
+</ul>
+</li>
 </ul>
 <p class="caption"><span class="caption-text">Reference</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="demos.html">Demos</a></li>
 <li class="toctree-l1"><a class="reference internal" href="programs.html">Programs</a></li>
 <li class="toctree-l1"><a class="reference internal" href="modules.html">Module API</a></li>
 <li class="toctree-l1"><a class="reference internal" href="changelog.html">Changelog</a></li>
@@ -116,7 +118,7 @@
       
       <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
         <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-        <a href="index.html">py_trees</a>
+        <a href="index.html">py_trees_ros</a>
       </nav>
 
 
@@ -149,17 +151,57 @@
             
   <div class="section" id="faq">
 <span id="faq-section-label"></span><h1>FAQ<a class="headerlink" href="#faq" title="Permalink to this headline">¶</a></h1>
-<div class="admonition tip">
-<p class="first admonition-title">Tip</p>
-<p class="last">For hints and guidelines, you might also like to browse <a class="reference internal" href="the_crazy_hospital.html#crazy-hospital-section"><span>Surviving the Crazy Hospital</span></a>.</p>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last">The <a class="reference external" href="http://py-trees.readthedocs.io/en/devel/faq.html#faq-section-label" title="(in py_trees v0.5.9)"><span>FAQ</span></a> from the py_trees package.</p>
 </div>
-<p><strong>Will there be a c++ implementation?</strong></p>
-<p>Certainly feasible and if there&#8217;s a need. If such a things should come to pass though, the
-c++ implementation should compliment this one. That is, it should focus on decision making
-for systems with low latency and reactive requirements. It would use triggers to tick
-the tree instead of tick-tock and a few other tricks that have evolved in the gaming
-industry over the last few years. Having a c++ implementation for use in the control
-layer of a robotics system would be a driving use case.</p>
+<div class="section" id="parameter-remap-proliferation">
+<h2>Parameter/Remap Proliferation<a class="headerlink" href="#parameter-remap-proliferation" title="Permalink to this headline">¶</a></h2>
+<p>You can imagine once you have 50+ re-usable behaviours in a tree for move_base, odometry, ...
+that the need for remaps in the behaviour tree launcher will become exceedingly large. In these
+situations it is more convenient to provide a single point of call for behaviour tree configuration. Load all
+your remappings into a single namespace on the ROS parameter server and apply them as you instantiate
+behaviours. A typical tree namespace on the ROS parameter server might look something like:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="o">/</span><span class="n">tree</span><span class="o">/</span><span class="n">topics</span><span class="o">/</span><span class="n">odom</span>                 <span class="o">/</span><span class="n">gopher</span><span class="o">/</span><span class="n">odom</span>
+<span class="o">/</span><span class="n">tree</span><span class="o">/</span><span class="n">topics</span><span class="o">/</span><span class="n">pose</span>                 <span class="o">/</span><span class="n">gopher</span><span class="o">/</span><span class="n">pose</span>
+<span class="o">/</span><span class="n">tree</span><span class="o">/</span><span class="n">services</span><span class="o">/</span><span class="n">get_global_costmap</span> <span class="o">/</span><span class="n">move_base</span><span class="o">/</span><span class="k">global</span><span class="o">/</span><span class="n">get_costmap</span>
+<span class="o">/</span><span class="n">tree</span><span class="o">/</span><span class="n">dyn_reconf</span><span class="o">/</span><span class="n">max_speed</span>        <span class="o">/</span><span class="n">trajectory_controller</span><span class="o">/</span><span class="n">max_speed</span>
+</pre></div>
+</div>
+<p>With an example instantiation of a move base client behaviour:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">odometry_topic</span><span class="o">=</span><span class="n">rospy</span><span class="o">.</span><span class="n">get_param</span><span class="p">(</span><span class="s2">&quot;~topics/odom&quot;</span><span class="p">,</span> <span class="s2">&quot;/odom&quot;</span><span class="p">)</span>
+<span class="n">pose_topic</span><span class="o">=</span><span class="n">rospy</span><span class="o">.</span><span class="n">get_param</span><span class="p">(</span><span class="s2">&quot;~topics/pose&quot;</span><span class="p">,</span> <span class="s2">&quot;/pose&quot;</span><span class="p">)</span>
+<span class="n">move_base</span> <span class="o">=</span> <span class="n">some_navi_package</span><span class="o">.</span><span class="n">MoveBaseClient</span><span class="p">(</span><span class="n">odometry_topic</span><span class="p">,</span> <span class="n">pose_topic</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="do-i-need-to-continuously-tick-tock">
+<h2>Do I need to Continuously Tick-Tock?<a class="headerlink" href="#do-i-need-to-continuously-tick-tock" title="Permalink to this headline">¶</a></h2>
+<p>Not at all - you can set your own pace. This can be useful if you wish to tick only when
+an external trigger is received (a common trick to minimise cpu usage in games).</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="o">...</span>
+<span class="n">rate</span> <span class="o">=</span> <span class="n">rospy</span><span class="o">.</span><span class="n">Rate</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span>
+<span class="k">while</span> <span class="bp">True</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">some_external_trigger</span><span class="p">:</span>
+        <span class="n">tree</span><span class="o">.</span><span class="n">tick_once</span><span class="p">()</span>
+        <span class="n">rate</span><span class="o">.</span><span class="n">sleep</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>or even better, apply conditions to block the tick.</p>
+</div>
+<div class="section" id="control-level-decision-making">
+<h2>Control-Level Decision Making<a class="headerlink" href="#control-level-decision-making" title="Permalink to this headline">¶</a></h2>
+<p>Our first use case never intended the behaviour trees for use by control level applications.
+So it was surprising when the control engineers started requesting to use the behaviour
+trees for handling the state changes in docking, elevator entry and extensions/replacements
+for finishing and recovery in place of move base (not that none of these require low-latency
+reactivity).</p>
+<p>In hindsight, this makes good sense.
+Prior to the behaviour trees there was a different state machine implementation in each
+controller - having just one decision making engine with shared code and design patterns
+is more efficient. It also drives the design of the controllers to be more granular, which
+in turn, permits more freedom for customisation of the scenario at the behaviour tree level.</p>
+</div>
 </div>
 
 
@@ -169,7 +211,7 @@ layer of a robotics system would be a driving use case.</p>
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="demos.html" class="btn btn-neutral float-right" title="Demos" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
+        <a href="programs.html" class="btn btn-neutral float-right" title="Programs" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
         <a href="terminology.html" class="btn btn-neutral" title="Terminology" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
@@ -201,7 +243,7 @@ layer of a robotics system would be a driving use case.</p>
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'./',
-            VERSION:'0.5.8',
+            VERSION:'0.5.4',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
             HAS_SOURCE:  true

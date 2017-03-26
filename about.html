@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Terminology &mdash; py_trees_ros 0.5.4 documentation</title>
+  <title>About &mdash; py_trees_ros 0.5.4 documentation</title>
   
 
   
@@ -31,10 +31,10 @@
 
   
         <link rel="author" title="About these documents"
-              href="about.html"/>
+              href="#"/>
     <link rel="top" title="py_trees_ros 0.5.4 documentation" href="index.html"/>
-        <link rel="next" title="FAQ" href="faq.html"/>
-        <link rel="prev" title="Tutorials" href="tutorials.html"/> 
+        <link rel="next" title="Features" href="features.html"/>
+        <link rel="prev" title="Py Trees for ROS" href="index.html"/> 
 
   
   <script src="_static/js/modernizr.min.js"></script>
@@ -86,10 +86,10 @@
             
                 <p class="caption"><span class="caption-text">Guide</span></p>
 <ul class="current">
-<li class="toctree-l1"><a class="reference internal" href="about.html">About</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="">About</a></li>
 <li class="toctree-l1"><a class="reference internal" href="features.html">Features</a></li>
 <li class="toctree-l1"><a class="reference internal" href="tutorials.html">Tutorials</a></li>
-<li class="toctree-l1 current"><a class="current reference internal" href="">Terminology</a></li>
+<li class="toctree-l1"><a class="reference internal" href="terminology.html">Terminology</a></li>
 <li class="toctree-l1"><a class="reference internal" href="faq.html">FAQ</a></li>
 </ul>
 <p class="caption"><span class="caption-text">Reference</span></p>
@@ -130,11 +130,11 @@
   <ul class="wy-breadcrumbs">
     <li><a href="index.html">Docs</a> &raquo;</li>
       
-    <li>Terminology</li>
+    <li>About</li>
       <li class="wy-breadcrumbs-aside">
         
           
-            <a href="_sources/terminology.txt" rel="nofollow"> View page source</a>
+            <a href="_sources/about.txt" rel="nofollow"> View page source</a>
           
         
       </li>
@@ -144,53 +144,15 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <div class="section" id="terminology">
-<h1>Terminology<a class="headerlink" href="#terminology" title="Permalink to this headline">¶</a></h1>
-<dl class="glossary docutils">
-<dt id="term-data-gathering">data gathering</dt>
-<dd><p class="first">Caching events, notifications, or incoming data arriving asynchronously on the blackboard.
-This is a fairly common practice for behaviour trees which exist inside a complex system.
-In the ROS world, it is most likely you will catch data coming in on subscribers in this way.</p>
-<p>In most cases, data gathering is done at the front end of your tree under a parallel
-directly alongside your priority work selector.</p>
-<div class="last admonition seealso">
-<p class="first admonition-title">See also</p>
-<p class="last"><a class="reference internal" href="tutorials.html#tutorial-one"><span>Tutorial 1 - Data Gathering</span></a></p>
-</div>
-</dd>
-<dt id="term-block"><span id="term-blocking"></span>block<br />blocking</dt>
-<dd>A behaviour is sometimes referred to as a &#8216;blocking&#8217; behaviour. Technically, the execution
-of a behaviour should be non-blocking (i.e. the tick part), however when it&#8217;s progress from
-&#8216;RUNNING&#8217; to &#8216;FAILURE/SUCCESS&#8217; takes more than one tick, we say that the behaviour itself
-is blocking. In short, <cite>blocking == RUNNING</cite>.</dd>
-<dt id="term-guard">guard</dt>
-<dd>A guard is a behaviour at the start of a work sequence that checks for a particular condition
-(e.g. is battery low?). If the check succeeds, then the door is opened to the rest of the
-work sequence.</dd>
-<dt id="term-mock"><span id="term-mocking"></span>mock<br />mocking</dt>
-<dd><p class="first">A very useful paradigm to accelerate development and testing of your behaviour trees
-is to mock your robot with very simple stubs that provide the same ROS API as the real
-robot. The actual behaviour underneath that ROS API need only be very roughly connected
-to the real thing.</p>
-<div class="admonition note">
-<p class="first admonition-title">Note</p>
-<p class="last">The key here is to test the decision making in your behaviour tree.</p>
-</div>
-<p>In most cases this has very little to do with the kinematics, dynamics or sensor
-fidelity of a full simulation.</p>
-<p>Mocking the bits and pieces takes far less time and you&#8217;ll also be able to
-insert handles that can help you force decision making to
-branch to where you want to test. For example, using dynamic reconfigure in
-<a class="reference internal" href="modules.html#py_trees_ros.mock.battery.Battery" title="py_trees_ros.mock.battery.Battery"><code class="xref py py-class docutils literal"><span class="pre">py_trees_ros.mock.battery.Battery</span></code></a> to abruptly force charging/discharging and at
-varying rates. Additionally, if you set up the mock well, you&#8217;ll find it executes far faster
-than a full simulation (you can montage - no need to endure travel time).</p>
-<p class="last">t will also make your web team happier (for apps that sit astride the behaiviour tree).
-These apps typically require thorough testing of decision making branches that are not
-often traversed e.g. battery low recovery handling, or cancelling procedures.
-This is far easier to do in a mock. They&#8217;ll also appreciate not having to setup the
-entire infrastructure necessary for a dynamic simulation.</p>
-</dd>
-</dl>
+  <div class="section" id="about">
+<h1>About<a class="headerlink" href="#about" title="Permalink to this headline">¶</a></h1>
+<p>ROS Py Trees extends the <a class="reference external" href="https://github.com/stonier/py_trees">Py Trees</a> package with wrappers, patterns
+and debugging tools for use in ROS.</p>
+<p>If you are new to behaviour trees, start with the py_trees
+<a class="reference external" href="http://py-trees.readthedocs.io/en/devel/background.html#introduction-section" title="(in py_trees v0.5.9)"><span class="xref std std-ref">Sphinx Documentation</span></a>, browse
+through a few of the readings and try the demos contained therein.</p>
+<p>The <a class="reference internal" href="tutorials.html#py-trees-ros-tutorials-section"><span>Tutorials</span></a> section walks through the incremental development
+of a behaviour tree layer for a robot.</p>
 </div>
 
 
@@ -200,10 +162,10 @@ entire infrastructure necessary for a dynamic simulation.</p>
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="faq.html" class="btn btn-neutral float-right" title="FAQ" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
+        <a href="features.html" class="btn btn-neutral float-right" title="Features" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
-        <a href="tutorials.html" class="btn btn-neutral" title="Tutorials" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+        <a href="index.html" class="btn btn-neutral" title="Py Trees for ROS" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   

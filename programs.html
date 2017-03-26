@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Programs &mdash; py_trees 0.5.8 documentation</title>
+  <title>Programs &mdash; py_trees_ros 0.5.4 documentation</title>
   
 
   
@@ -30,9 +30,11 @@
   
 
   
-    <link rel="top" title="py_trees 0.5.8 documentation" href="index.html"/>
+        <link rel="author" title="About these documents"
+              href="about.html"/>
+    <link rel="top" title="py_trees_ros 0.5.4 documentation" href="index.html"/>
         <link rel="next" title="Module API" href="modules.html"/>
-        <link rel="prev" title="Demos" href="demos.html"/> 
+        <link rel="prev" title="FAQ" href="faq.html"/> 
 
   
   <script src="_static/js/modernizr.min.js"></script>
@@ -50,7 +52,7 @@
           
 
           
-            <a href="index.html" class="icon icon-home"> py_trees
+            <a href="index.html" class="icon icon-home"> py_trees_ros
           
 
           
@@ -60,7 +62,7 @@
             
             
               <div class="version">
-                0.5.8
+                0.5.4
               </div>
             
           
@@ -84,21 +86,16 @@
             
                 <p class="caption"><span class="caption-text">Guide</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="background.html">Background</a></li>
-<li class="toctree-l1"><a class="reference internal" href="behaviours.html">Behaviours</a></li>
-<li class="toctree-l1"><a class="reference internal" href="composites.html">Composites</a></li>
-<li class="toctree-l1"><a class="reference internal" href="blackboards.html">Blackboards</a></li>
-<li class="toctree-l1"><a class="reference internal" href="trees.html">Trees</a></li>
-<li class="toctree-l1"><a class="reference internal" href="visualisation.html">Visualisation</a></li>
-<li class="toctree-l1"><a class="reference internal" href="the_crazy_hospital.html">Surviving the Crazy Hospital</a></li>
+<li class="toctree-l1"><a class="reference internal" href="about.html">About</a></li>
+<li class="toctree-l1"><a class="reference internal" href="features.html">Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorials.html">Tutorials</a></li>
 <li class="toctree-l1"><a class="reference internal" href="terminology.html">Terminology</a></li>
 <li class="toctree-l1"><a class="reference internal" href="faq.html">FAQ</a></li>
 </ul>
 <p class="caption"><span class="caption-text">Reference</span></p>
 <ul class="current">
-<li class="toctree-l1"><a class="reference internal" href="demos.html">Demos</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="">Programs</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#py-trees-render">py-trees-render</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#py-trees-blackboard-watcher">py-trees-blackboard-watcher</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="modules.html">Module API</a></li>
@@ -119,7 +116,7 @@
       
       <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
         <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-        <a href="index.html">py_trees</a>
+        <a href="index.html">py_trees_ros</a>
       </nav>
 
 
@@ -151,21 +148,17 @@
            <div itemprop="articleBody">
             
   <div class="section" id="programs">
-<span id="py-trees-program-section"></span><h1>Programs<a class="headerlink" href="#programs" title="Permalink to this headline">¶</a></h1>
-<div class="section" id="py-trees-render">
-<span id="id1"></span><h2>py-trees-render<a class="headerlink" href="#py-trees-render" title="Permalink to this headline">¶</a></h2>
-<span class="target" id="module-py_trees.programs.render"></span><p><p>Point this program at a method which creates a root to render to dot/svg/png.</p>
-<p><strong>Examples</strong></p>
-<div class="highlight-bash"><div class="highlight"><pre>$ py-trees-render py_trees.demos.stewardship.create_tree
-$ py-trees-render --name<span class="o">=</span>foo py_trees.demos.stewardship.create_tree
-$ py-trees-render --kwargs<span class="o">=</span><span class="s1">&#39;{&quot;level&quot;:&quot;all&quot;}&#39;</span> py_trees.demos.dot_graphs.create_tree
+<span id="py-trees-ros-program-section"></span><h1>Programs<a class="headerlink" href="#programs" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="py-trees-blackboard-watcher">
+<span id="id1"></span><h2>py-trees-blackboard-watcher<a class="headerlink" href="#py-trees-blackboard-watcher" title="Permalink to this headline">¶</a></h2>
+<span class="target" id="module-py_trees_ros.programs.blackboard_watcher"></span><p><p>Open up a window onto the blackboard!</p>
+<p><strong>Examples:</strong></p>
+<div class="highlight-bash"><div class="highlight"><pre>$ py-trees-blackboard-watcher --list-variables
+$ py-trees-blackboard-watcher access_point odom/pose/pose/position
 </pre></div>
 </div>
 </p>
-<div class="highlight-python"><div class="highlight"><pre>usage: py-trees-render [-h]
-                       [-l {all,fine_detail,detail,component,big_picture}]
-                       [-n NAME] [-k KWARGS]
-                       method
+<div class="highlight-python"><div class="highlight"><pre>usage: py-trees-blackboard-watcher [-h] [-l] [-n [NAMESPACE]] ...
 </pre></div>
 </div>
 <dl class="docutils">
@@ -175,7 +168,7 @@ $ py-trees-render --kwargs<span class="o">=</span><span class="s1">&#39;{&quot;l
 <col class="description" />
 <tbody valign="top">
 <tr><td class="option-group">
-<kbd>method</kbd></td>
+<kbd>variables</kbd></td>
 <td>space separated list of blackboard variables to watch</td></tr>
 </tbody>
 </table>
@@ -186,23 +179,19 @@ $ py-trees-render --kwargs<span class="o">=</span><span class="s1">&#39;{&quot;l
 <col class="description" />
 <tbody valign="top">
 <tr><td class="option-group" colspan="2">
-<kbd><span class="option">-l=fine_detail</span>, <span class="option">--level=fine_detail</span></kbd></td>
+<kbd><span class="option">-l</span>, <span class="option">--list-variables</span></kbd></td>
 </tr>
-<tr><td>&nbsp;</td><td><p class="first">visibility level</p>
-<p class="last">Possible choices: all, fine_detail, detail, component, big_picture</p>
-</td></tr>
-<tr><td class="option-group">
-<kbd><span class="option">-n</span>, <span class="option">--name</span></kbd></td>
-<td>name to use for the created files (defaults to the root behaviour name)</td></tr>
+<tr><td>&nbsp;</td><td>list the blackboard variables</td></tr>
 <tr><td class="option-group" colspan="2">
-<kbd><span class="option">-k={}</span>, <span class="option">--kwargs={}</span></kbd></td>
+<kbd><span class="option">-n</span>, <span class="option">--namespace</span></kbd></td>
 </tr>
-<tr><td>&nbsp;</td><td>dictionary of keyword arguments to the method</td></tr>
+<tr><td>&nbsp;</td><td>namespace of blackboard services (if there should be more than one blackboard)</td></tr>
 </tbody>
 </table>
 </dd>
 </dl>
-<img alt="_images/render.gif" src="_images/render.gif" />
+<p>Example interaction with the services of a <a class="reference internal" href="modules.html#py_trees_ros.blackboard.Exchange" title="py_trees_ros.blackboard.Exchange"><code class="xref py py-class docutils literal"><span class="pre">Blackboard</span> <span class="pre">Exchange</span></code></a>:</p>
+<img alt="_images/watcher.gif" src="_images/watcher.gif" />
 </div>
 </div>
 
@@ -216,7 +205,7 @@ $ py-trees-render --kwargs<span class="o">=</span><span class="s1">&#39;{&quot;l
         <a href="modules.html" class="btn btn-neutral float-right" title="Module API" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
-        <a href="demos.html" class="btn btn-neutral" title="Demos" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+        <a href="faq.html" class="btn btn-neutral" title="FAQ" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   
@@ -245,7 +234,7 @@ $ py-trees-render --kwargs<span class="o">=</span><span class="s1">&#39;{&quot;l
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'./',
-            VERSION:'0.5.8',
+            VERSION:'0.5.4',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
             HAS_SOURCE:  true

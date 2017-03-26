@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>py_trees_ros.actions &mdash; py_trees_ros 0.5.2 documentation</title>
+  <title>py_trees_ros.actions &mdash; py_trees_ros 0.5.4 documentation</title>
   
 
   
@@ -30,7 +30,9 @@
   
 
   
-    <link rel="top" title="py_trees_ros 0.5.2 documentation" href="../../index.html"/>
+        <link rel="author" title="About these documents"
+              href="../../about.html"/>
+    <link rel="top" title="py_trees_ros 0.5.4 documentation" href="../../index.html"/>
         <link rel="up" title="Module code" href="../index.html"/> 
 
   
@@ -59,7 +61,7 @@
             
             
               <div class="version">
-                0.5.2
+                0.5.4
               </div>
             
           
@@ -83,8 +85,8 @@
             
                 <p class="caption"><span class="caption-text">Guide</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="../../background.html">Background</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../new_and_shiny.html">New and Shiny</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../about.html">About</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../features.html">Features</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../tutorials.html">Tutorials</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../terminology.html">Terminology</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../faq.html">FAQ</a></li>
@@ -233,6 +235,7 @@
             <span class="k">return</span> <span class="n">py_trees</span><span class="o">.</span><span class="n">Status</span><span class="o">.</span><span class="n">INVALID</span>
         <span class="c1"># pity there is no &#39;is_connected&#39; api like there is for c++</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">sent_goal</span><span class="p">:</span>
+            <span class="k">print</span><span class="p">(</span><span class="s2">&quot;Goal </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">action_goal</span><span class="p">))</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">action_client</span><span class="o">.</span><span class="n">send_goal</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">action_goal</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">sent_goal</span> <span class="o">=</span> <span class="bp">True</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">feedback_message</span> <span class="o">=</span> <span class="s2">&quot;sent goal to the action server&quot;</span>
@@ -294,7 +297,7 @@
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'../../',
-            VERSION:'0.5.2',
+            VERSION:'0.5.4',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
             HAS_SOURCE:  true

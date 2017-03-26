@@ -1,0 +1,374 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>py_trees_ros.tutorials.jobs &mdash; py_trees_ros 0.5.4 documentation</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+        <link rel="author" title="About these documents"
+              href="../../../about.html"/>
+    <link rel="top" title="py_trees_ros 0.5.4 documentation" href="../../../index.html"/>
+        <link rel="up" title="Module code" href="../../index.html"/> 
+
+  
+  <script src="../../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../../index.html" class="icon icon-home"> py_trees_ros
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.5.4
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+    
+            
+            
+                <p class="caption"><span class="caption-text">Guide</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../about.html">About</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../features.html">Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorials.html">Tutorials</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../terminology.html">Terminology</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../faq.html">FAQ</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Reference</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../programs.html">Programs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../modules.html">Module API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../changelog.html">Changelog</a></li>
+</ul>
+
+            
+          
+    <a href="genindex.html">Index</a>
+    <a href="py-modindex.html">Module Index</a>
+  
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="../../../index.html">py_trees_ros</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../../../index.html">Docs</a> &raquo;</li>
+      
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+      
+    <li>py_trees_ros.tutorials.jobs</li>
+      <li class="wy-breadcrumbs-aside">
+        
+          
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for py_trees_ros.tutorials.jobs</h1><div class="highlight"><pre>
+<span class="ch">#!/usr/bin/env python</span>
+<span class="c1">#</span>
+<span class="c1"># License: BSD</span>
+<span class="c1">#   https://raw.githubusercontent.com/stonier/py_trees/devel/LICENSE</span>
+<span class="c1">#</span>
+<span class="c1">##############################################################################</span>
+<span class="c1"># Documentation</span>
+<span class="c1">##############################################################################</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">A few behaviours to support the tutorials.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="c1">##############################################################################</span>
+<span class="c1"># Imports</span>
+<span class="c1">##############################################################################</span>
+
+<span class="kn">import</span> <span class="nn">copy</span>
+<span class="kn">import</span> <span class="nn">move_base_msgs.msg</span> <span class="kn">as</span> <span class="nn">move_base_msgs</span>
+<span class="kn">import</span> <span class="nn">py_trees</span>
+<span class="kn">import</span> <span class="nn">py_trees_msgs.msg</span> <span class="kn">as</span> <span class="nn">py_trees_msgs</span>
+<span class="kn">import</span> <span class="nn">py_trees_ros</span>
+<span class="kn">import</span> <span class="nn">rospy</span>
+<span class="kn">import</span> <span class="nn">std_msgs.msg</span> <span class="kn">as</span> <span class="nn">std_msgs</span>
+<span class="kn">import</span> <span class="nn">threading</span>
+
+<span class="c1">##############################################################################</span>
+<span class="c1"># Behaviours</span>
+<span class="c1">##############################################################################</span>
+
+
+<div class="viewcode-block" id="Scan"><a class="viewcode-back" href="../../../modules.html#py_trees_ros.tutorials.jobs.Scan">[docs]</a><span class="k">class</span> <span class="nc">Scan</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    A job handler that instantiates a subtree for scanning to be executed by</span>
+<span class="sd">    a behaviour tree.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="Scan.__init__"><a class="viewcode-back" href="../../../modules.html#py_trees_ros.tutorials.jobs.Scan.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Tune into a channel for incoming goal requests. This is a simple</span>
+<span class="sd">        subscriber here but more typically would be a service or action interface.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_subscriber</span> <span class="o">=</span> <span class="n">rospy</span><span class="o">.</span><span class="n">Subscriber</span><span class="p">(</span><span class="s2">&quot;/dashboard/scan&quot;</span><span class="p">,</span> <span class="n">std_msgs</span><span class="o">.</span><span class="n">Empty</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">incoming</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_goal</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_lock</span> <span class="o">=</span> <span class="n">threading</span><span class="o">.</span><span class="n">Lock</span><span class="p">()</span></div>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">goal</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Getter for the variable indicating whether or not a goal has recently been received</span>
+<span class="sd">        but not yet handled. It simply makes sure it is wrapped with the appropriate locking.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">_lock</span><span class="p">:</span>
+            <span class="n">g</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_goal</span><span class="p">)</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">_goal</span>
+        <span class="k">return</span> <span class="n">g</span>
+
+    <span class="nd">@goal.setter</span>
+    <span class="k">def</span> <span class="nf">goal</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Setter for the variable indicating whether or not a goal has recently been received</span>
+<span class="sd">        but not yet handled. It simply makes sure it is wrapped with the appropriate locking.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">_lock</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_goal</span> <span class="o">=</span> <span class="n">value</span>
+
+<div class="viewcode-block" id="Scan.incoming"><a class="viewcode-back" href="../../../modules.html#py_trees_ros.tutorials.jobs.Scan.incoming">[docs]</a>    <span class="k">def</span> <span class="nf">incoming</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">msg</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Incoming goal callback.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            msg (:class:`~std_msgs.Empty`): incoming goal message</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">goal</span><span class="p">:</span>
+            <span class="n">rospy</span><span class="o">.</span><span class="n">logerr</span><span class="p">(</span><span class="s2">&quot;Scan: rejecting new goal, previous still in the pipeline&quot;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">goal</span> <span class="o">=</span> <span class="n">msg</span></div>
+
+<div class="viewcode-block" id="Scan.create_report_string"><a class="viewcode-back" href="../../../modules.html#py_trees_ros.tutorials.jobs.Scan.create_report_string">[docs]</a>    <span class="k">def</span> <span class="nf">create_report_string</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">subtree_root</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Introspect the subtree root to determine an appropriate human readable status report string.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            subtree_root (:class:`~py_trees.behaviour.Behaviour`): introspect the subtree</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            :obj:`str`: human readable substring</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">subtree_root</span><span class="o">.</span><span class="n">tip</span><span class="p">()</span><span class="o">.</span><span class="n">has_parent_with_name</span><span class="p">(</span><span class="s2">&quot;Cancelling?&quot;</span><span class="p">):</span>
+            <span class="k">return</span> <span class="s2">&quot;cancelling&quot;</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="s2">&quot;scanning&quot;</span></div>
+
+    <span class="nd">@staticmethod</span>
+<div class="viewcode-block" id="Scan.create_root"><a class="viewcode-back" href="../../../modules.html#py_trees_ros.tutorials.jobs.Scan.create_root">[docs]</a>    <span class="k">def</span> <span class="nf">create_root</span><span class="p">(</span><span class="n">goal</span><span class="o">=</span><span class="n">std_msgs</span><span class="o">.</span><span class="n">Empty</span><span class="p">()):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Create the job subtree based on the incoming goal specification.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            goal (:class:`~std_msgs.msg.Empty`): incoming goal specification</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">           :class:`~py_trees.behaviour.Behaviour`: subtree root</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># beahviors</span>
+        <span class="n">root</span> <span class="o">=</span> <span class="n">py_trees</span><span class="o">.</span><span class="n">composites</span><span class="o">.</span><span class="n">Selector</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;Scan or Die&quot;</span><span class="p">)</span>
+        <span class="n">die</span> <span class="o">=</span> <span class="n">py_trees_ros</span><span class="o">.</span><span class="n">tutorials</span><span class="o">.</span><span class="n">behaviours</span><span class="o">.</span><span class="n">FlashLedStrip</span><span class="p">(</span>
+            <span class="n">name</span><span class="o">=</span><span class="s2">&quot;Uh Oh&quot;</span><span class="p">,</span>
+            <span class="n">colour</span><span class="o">=</span><span class="s2">&quot;red&quot;</span><span class="p">)</span>
+        <span class="n">ere_we_go</span> <span class="o">=</span> <span class="n">py_trees</span><span class="o">.</span><span class="n">composites</span><span class="o">.</span><span class="n">Sequence</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;Ere we Go&quot;</span><span class="p">)</span>
+        <span class="n">undock</span> <span class="o">=</span> <span class="n">py_trees_ros</span><span class="o">.</span><span class="n">actions</span><span class="o">.</span><span class="n">ActionClient</span><span class="p">(</span>
+            <span class="n">name</span><span class="o">=</span><span class="s2">&quot;UnDock&quot;</span><span class="p">,</span>
+            <span class="n">action_namespace</span><span class="o">=</span><span class="s2">&quot;/dock&quot;</span><span class="p">,</span>
+            <span class="n">action_spec</span><span class="o">=</span><span class="n">py_trees_msgs</span><span class="o">.</span><span class="n">DockAction</span><span class="p">,</span>
+            <span class="n">action_goal</span><span class="o">=</span><span class="n">py_trees_msgs</span><span class="o">.</span><span class="n">DockGoal</span><span class="p">(</span><span class="bp">False</span><span class="p">)</span>
+        <span class="p">)</span>
+        <span class="n">scan_or_be_cancelled</span> <span class="o">=</span> <span class="n">py_trees</span><span class="o">.</span><span class="n">composites</span><span class="o">.</span><span class="n">Selector</span><span class="p">(</span><span class="s2">&quot;Scan or Be Cancelled&quot;</span><span class="p">)</span>
+        <span class="n">cancelling</span> <span class="o">=</span> <span class="n">py_trees</span><span class="o">.</span><span class="n">composites</span><span class="o">.</span><span class="n">Sequence</span><span class="p">(</span><span class="s2">&quot;Cancelling?&quot;</span><span class="p">)</span>
+        <span class="n">is_cancel_requested</span> <span class="o">=</span> <span class="n">py_trees</span><span class="o">.</span><span class="n">blackboard</span><span class="o">.</span><span class="n">CheckBlackboardVariable</span><span class="p">(</span>
+            <span class="n">name</span><span class="o">=</span><span class="s2">&quot;Cancel?&quot;</span><span class="p">,</span>
+            <span class="n">variable_name</span><span class="o">=</span><span class="s1">&#39;event_cancel_button&#39;</span><span class="p">,</span>
+            <span class="n">expected_value</span><span class="o">=</span><span class="bp">True</span>
+        <span class="p">)</span>
+        <span class="n">move_home_after_cancel</span> <span class="o">=</span> <span class="n">py_trees_ros</span><span class="o">.</span><span class="n">actions</span><span class="o">.</span><span class="n">ActionClient</span><span class="p">(</span>
+            <span class="n">name</span><span class="o">=</span><span class="s2">&quot;Move Home&quot;</span><span class="p">,</span>
+            <span class="n">action_namespace</span><span class="o">=</span><span class="s2">&quot;/move_base&quot;</span><span class="p">,</span>
+            <span class="n">action_spec</span><span class="o">=</span><span class="n">move_base_msgs</span><span class="o">.</span><span class="n">MoveBaseAction</span><span class="p">,</span>
+            <span class="n">action_goal</span><span class="o">=</span><span class="n">move_base_msgs</span><span class="o">.</span><span class="n">MoveBaseGoal</span><span class="p">()</span>
+        <span class="p">)</span>
+        <span class="n">move_out_and_scan</span> <span class="o">=</span> <span class="n">py_trees</span><span class="o">.</span><span class="n">composites</span><span class="o">.</span><span class="n">Sequence</span><span class="p">(</span><span class="s2">&quot;Move Out and Scan&quot;</span><span class="p">)</span>
+        <span class="n">move_base</span> <span class="o">=</span> <span class="n">py_trees_ros</span><span class="o">.</span><span class="n">actions</span><span class="o">.</span><span class="n">ActionClient</span><span class="p">(</span>
+            <span class="n">name</span><span class="o">=</span><span class="s2">&quot;Move Out&quot;</span><span class="p">,</span>
+            <span class="n">action_namespace</span><span class="o">=</span><span class="s2">&quot;/move_base&quot;</span><span class="p">,</span>
+            <span class="n">action_spec</span><span class="o">=</span><span class="n">move_base_msgs</span><span class="o">.</span><span class="n">MoveBaseAction</span><span class="p">,</span>
+            <span class="n">action_goal</span><span class="o">=</span><span class="n">move_base_msgs</span><span class="o">.</span><span class="n">MoveBaseGoal</span><span class="p">()</span>
+        <span class="p">)</span>
+        <span class="n">scanning</span> <span class="o">=</span> <span class="n">py_trees</span><span class="o">.</span><span class="n">composites</span><span class="o">.</span><span class="n">Parallel</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;Scanning&quot;</span><span class="p">,</span> <span class="n">policy</span><span class="o">=</span><span class="n">py_trees</span><span class="o">.</span><span class="n">common</span><span class="o">.</span><span class="n">ParallelPolicy</span><span class="o">.</span><span class="n">SUCCESS_ON_ONE</span><span class="p">)</span>
+        <span class="n">scan_context_switch</span> <span class="o">=</span> <span class="n">py_trees_ros</span><span class="o">.</span><span class="n">tutorials</span><span class="o">.</span><span class="n">behaviours</span><span class="o">.</span><span class="n">ScanContext</span><span class="p">(</span><span class="s2">&quot;Context Switch&quot;</span><span class="p">)</span>
+        <span class="n">scan_rotate</span> <span class="o">=</span> <span class="n">py_trees_ros</span><span class="o">.</span><span class="n">actions</span><span class="o">.</span><span class="n">ActionClient</span><span class="p">(</span>
+            <span class="n">name</span><span class="o">=</span><span class="s2">&quot;Rotate&quot;</span><span class="p">,</span>
+            <span class="n">action_namespace</span><span class="o">=</span><span class="s2">&quot;/rotate&quot;</span><span class="p">,</span>
+            <span class="n">action_spec</span><span class="o">=</span><span class="n">py_trees_msgs</span><span class="o">.</span><span class="n">RotateAction</span><span class="p">,</span>
+            <span class="n">action_goal</span><span class="o">=</span><span class="n">py_trees_msgs</span><span class="o">.</span><span class="n">RotateGoal</span><span class="p">()</span>
+        <span class="p">)</span>
+        <span class="n">scan_flash_blue</span> <span class="o">=</span> <span class="n">py_trees_ros</span><span class="o">.</span><span class="n">tutorials</span><span class="o">.</span><span class="n">behaviours</span><span class="o">.</span><span class="n">FlashLedStrip</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;Flash Blue&quot;</span><span class="p">,</span> <span class="n">colour</span><span class="o">=</span><span class="s2">&quot;blue&quot;</span><span class="p">)</span>
+        <span class="n">move_home_after_scan</span> <span class="o">=</span> <span class="n">py_trees_ros</span><span class="o">.</span><span class="n">actions</span><span class="o">.</span><span class="n">ActionClient</span><span class="p">(</span>
+            <span class="n">name</span><span class="o">=</span><span class="s2">&quot;Move Home&quot;</span><span class="p">,</span>
+            <span class="n">action_namespace</span><span class="o">=</span><span class="s2">&quot;/move_base&quot;</span><span class="p">,</span>
+            <span class="n">action_spec</span><span class="o">=</span><span class="n">move_base_msgs</span><span class="o">.</span><span class="n">MoveBaseAction</span><span class="p">,</span>
+            <span class="n">action_goal</span><span class="o">=</span><span class="n">move_base_msgs</span><span class="o">.</span><span class="n">MoveBaseGoal</span><span class="p">()</span>
+        <span class="p">)</span>
+        <span class="n">celebrate</span> <span class="o">=</span> <span class="n">py_trees</span><span class="o">.</span><span class="n">composites</span><span class="o">.</span><span class="n">Parallel</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;Celebrate&quot;</span><span class="p">,</span> <span class="n">policy</span><span class="o">=</span><span class="n">py_trees</span><span class="o">.</span><span class="n">common</span><span class="o">.</span><span class="n">ParallelPolicy</span><span class="o">.</span><span class="n">SUCCESS_ON_ONE</span><span class="p">)</span>
+        <span class="n">celebrate_flash_green</span> <span class="o">=</span> <span class="n">py_trees_ros</span><span class="o">.</span><span class="n">tutorials</span><span class="o">.</span><span class="n">behaviours</span><span class="o">.</span><span class="n">FlashLedStrip</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;Flash Green&quot;</span><span class="p">,</span> <span class="n">colour</span><span class="o">=</span><span class="s2">&quot;green&quot;</span><span class="p">)</span>
+        <span class="n">celebrate_pause</span> <span class="o">=</span> <span class="n">py_trees</span><span class="o">.</span><span class="n">timers</span><span class="o">.</span><span class="n">Timer</span><span class="p">(</span><span class="s2">&quot;Pause&quot;</span><span class="p">,</span> <span class="n">duration</span><span class="o">=</span><span class="mf">3.0</span><span class="p">)</span>
+        <span class="n">dock</span> <span class="o">=</span> <span class="n">py_trees_ros</span><span class="o">.</span><span class="n">actions</span><span class="o">.</span><span class="n">ActionClient</span><span class="p">(</span>
+            <span class="n">name</span><span class="o">=</span><span class="s2">&quot;Dock&quot;</span><span class="p">,</span>
+            <span class="n">action_namespace</span><span class="o">=</span><span class="s2">&quot;/dock&quot;</span><span class="p">,</span>
+            <span class="n">action_spec</span><span class="o">=</span><span class="n">py_trees_msgs</span><span class="o">.</span><span class="n">DockAction</span><span class="p">,</span>
+            <span class="n">action_goal</span><span class="o">=</span><span class="n">py_trees_msgs</span><span class="o">.</span><span class="n">DockGoal</span><span class="p">(</span><span class="bp">True</span><span class="p">)</span>
+        <span class="p">)</span>
+        <span class="c1"># Subtree</span>
+        <span class="n">root</span><span class="o">.</span><span class="n">add_children</span><span class="p">([</span><span class="n">ere_we_go</span><span class="p">,</span> <span class="n">die</span><span class="p">])</span>
+        <span class="n">ere_we_go</span><span class="o">.</span><span class="n">add_children</span><span class="p">([</span><span class="n">undock</span><span class="p">,</span> <span class="n">scan_or_be_cancelled</span><span class="p">,</span> <span class="n">dock</span><span class="p">,</span> <span class="n">celebrate</span><span class="p">])</span>
+        <span class="n">scan_or_be_cancelled</span><span class="o">.</span><span class="n">add_children</span><span class="p">([</span><span class="n">cancelling</span><span class="p">,</span> <span class="n">move_out_and_scan</span><span class="p">])</span>
+        <span class="n">cancelling</span><span class="o">.</span><span class="n">add_children</span><span class="p">([</span><span class="n">is_cancel_requested</span><span class="p">,</span> <span class="n">move_home_after_cancel</span><span class="p">])</span>
+        <span class="n">move_out_and_scan</span><span class="o">.</span><span class="n">add_children</span><span class="p">([</span><span class="n">move_base</span><span class="p">,</span> <span class="n">scanning</span><span class="p">,</span> <span class="n">move_home_after_scan</span><span class="p">])</span>
+        <span class="n">scanning</span><span class="o">.</span><span class="n">add_children</span><span class="p">([</span><span class="n">scan_context_switch</span><span class="p">,</span> <span class="n">scan_rotate</span><span class="p">,</span> <span class="n">scan_flash_blue</span><span class="p">])</span>
+        <span class="n">celebrate</span><span class="o">.</span><span class="n">add_children</span><span class="p">([</span><span class="n">celebrate_flash_green</span><span class="p">,</span> <span class="n">celebrate_pause</span><span class="p">])</span>
+        <span class="k">return</span> <span class="n">root</span></div></div>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+
+    </p>
+  </div> 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../../',
+            VERSION:'0.5.4',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

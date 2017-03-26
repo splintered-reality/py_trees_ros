@@ -1,13 +1,13 @@
-.. _py-trees-program-section:
+.. _py-trees-ros-program-section:
 
 Programs
 ========
 
-.. _py-trees-render:
+.. _py-trees-blackboard-watcher:
 
-py-trees-render
----------------
+py-trees-blackboard-watcher
+---------------------------
 
-.. automodule:: py_trees.programs.render
-    :synopsis:
+.. automodule:: py_trees_ros.programs.blackboard_watcher
+    :synopsis: call Exchange services to open up a watcher to a blackboard
 

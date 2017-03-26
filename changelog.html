@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Changelog &mdash; py_trees 0.5.8 documentation</title>
+  <title>Changelog &mdash; py_trees_ros 0.5.4 documentation</title>
   
 
   
@@ -30,7 +30,9 @@
   
 
   
-    <link rel="top" title="py_trees 0.5.8 documentation" href="index.html"/>
+        <link rel="author" title="About these documents"
+              href="about.html"/>
+    <link rel="top" title="py_trees_ros 0.5.4 documentation" href="index.html"/>
         <link rel="prev" title="Module API" href="modules.html"/> 
 
   
@@ -49,7 +51,7 @@
           
 
           
-            <a href="index.html" class="icon icon-home"> py_trees
+            <a href="index.html" class="icon icon-home"> py_trees_ros
           
 
           
@@ -59,7 +61,7 @@
             
             
               <div class="version">
-                0.5.8
+                0.5.4
               </div>
             
           
@@ -83,34 +85,23 @@
             
                 <p class="caption"><span class="caption-text">Guide</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="background.html">Background</a></li>
-<li class="toctree-l1"><a class="reference internal" href="behaviours.html">Behaviours</a></li>
-<li class="toctree-l1"><a class="reference internal" href="composites.html">Composites</a></li>
-<li class="toctree-l1"><a class="reference internal" href="blackboards.html">Blackboards</a></li>
-<li class="toctree-l1"><a class="reference internal" href="trees.html">Trees</a></li>
-<li class="toctree-l1"><a class="reference internal" href="visualisation.html">Visualisation</a></li>
-<li class="toctree-l1"><a class="reference internal" href="the_crazy_hospital.html">Surviving the Crazy Hospital</a></li>
+<li class="toctree-l1"><a class="reference internal" href="about.html">About</a></li>
+<li class="toctree-l1"><a class="reference internal" href="features.html">Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorials.html">Tutorials</a></li>
 <li class="toctree-l1"><a class="reference internal" href="terminology.html">Terminology</a></li>
 <li class="toctree-l1"><a class="reference internal" href="faq.html">FAQ</a></li>
 </ul>
 <p class="caption"><span class="caption-text">Reference</span></p>
 <ul class="current">
-<li class="toctree-l1"><a class="reference internal" href="demos.html">Demos</a></li>
 <li class="toctree-l1"><a class="reference internal" href="programs.html">Programs</a></li>
 <li class="toctree-l1"><a class="reference internal" href="modules.html">Module API</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="">Changelog</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#id1">0.5.8 (2017-03-19)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#id2">0.5.7 (2017-03-01)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#id3">0.5.5 (2017-03-01)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#id4">0.5.4 (2017-02-22)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#id5">0.5.2 (2017-02-22)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#id6">0.5.1 (2017-02-21)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#id7">0.5.0 (2017-02-21)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#id8">0.4.0 (2017-01-13)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#id9">0.3.0 (2016-08-25)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#id10">0.2.0 (2016-06-01)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#id11">0.1.2 (2015-11-16)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#id12">0.1.1 (2015-10-10)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id1">0.5.4 (2017-03-25)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id2">0.5.3 (2017-03-21)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id3">0.5.2 (2017-03-19)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id4">0.5.1 (2017-03-19)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id5">0.5.0 (2017-02-21)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#indigo-kinetic-changelist">Indigo -&gt; Kinetic Changelist</a></li>
 </ul>
 </li>
 </ul>
@@ -129,7 +120,7 @@
       
       <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
         <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-        <a href="index.html">py_trees</a>
+        <a href="index.html">py_trees_ros</a>
       </nav>
 
 
@@ -163,104 +154,88 @@
   <div class="section" id="changelog">
 <h1>Changelog<a class="headerlink" href="#changelog" title="Permalink to this headline">¶</a></h1>
 <div class="section" id="id1">
-<h2>0.5.8 (2017-03-19)<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h2>
+<h2>0.5.4 (2017-03-25)<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h2>
 <ul class="simple">
-<li>[infra] setup.py tests_require, not test_require</li>
+<li>[docs] faq added</li>
+<li>[tutorials] 9 - bagging</li>
+<li>[infra] various dependency fixes for tests and autodoc</li>
+<li>[tests] fix broken subscrirber test</li>
 </ul>
 </div>
 <div class="section" id="id2">
-<h2>0.5.7 (2017-03-01)<a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h2>
+<h2>0.5.3 (2017-03-21)<a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h2>
 <ul class="simple">
-<li>[infra] update maintainer email</li>
+<li>[tutorials] 8 - dynamic loading, insertion and execution</li>
+<li>[tutorials] 7 - docking, undocking, cancelling and recovery</li>
 </ul>
 </div>
 <div class="section" id="id3">
-<h2>0.5.5 (2017-03-01)<a class="headerlink" href="#id3" title="Permalink to this headline">¶</a></h2>
+<h2>0.5.2 (2017-03-19)<a class="headerlink" href="#id3" title="Permalink to this headline">¶</a></h2>
 <ul class="simple">
-<li>[docs] many minor doc updates</li>
-<li>[meta] bugfix so that imposter now ticks over composite children</li>
-<li>[trees] method for getting the tip of the tree</li>
-<li>[programs] py-trees-render program added</li>
+<li>[infra] add missing actionlib dependencies</li>
 </ul>
 </div>
 <div class="section" id="id4">
-<h2>0.5.4 (2017-02-22)<a class="headerlink" href="#id4" title="Permalink to this headline">¶</a></h2>
+<h2>0.5.1 (2017-03-19)<a class="headerlink" href="#id4" title="Permalink to this headline">¶</a></h2>
 <ul class="simple">
-<li>[infra] handle pypi/catkin conflicts with install_requires</li>
+<li>[tutorials] 6 - context switching</li>
+<li>[tutorials] re-insert missing images</li>
 </ul>
 </div>
 <div class="section" id="id5">
-<h2>0.5.2 (2017-02-22)<a class="headerlink" href="#id5" title="Permalink to this headline">¶</a></h2>
+<h2>0.5.0 (2017-02-21)<a class="headerlink" href="#id5" title="Permalink to this headline">¶</a></h2>
 <ul class="simple">
-<li>[docs] disable colour when building</li>
-<li>[docs] sidebar headings</li>
-<li>[docs] dont require project installation</li>
+<li>[docs] new and shiny index added</li>
+<li>[tutorials] qt dashboard support</li>
+<li>[tutorials] 5 - tree scanning added</li>
+<li>[tutorials] 4 - tree introspection added</li>
+<li>[tutorials] 3 - blackboards added</li>
+<li>[tutorials] 2 - battery low branch added</li>
+<li>[tutorials] 1 - data gathering added</li>
+<li>[mock] a mock robot for tutorials and testing</li>
+<li>[behaviours] action client, battery behaviours added</li>
+<li>[infra] refactoring for kinetic</li>
 </ul>
 </div>
-<div class="section" id="id6">
-<h2>0.5.1 (2017-02-21)<a class="headerlink" href="#id6" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="indigo-kinetic-changelist">
+<h2>Indigo -&gt; Kinetic Changelist<a class="headerlink" href="#indigo-kinetic-changelist" title="Permalink to this headline">¶</a></h2>
+<p><strong>Py Trees ROS API</strong></p>
 <ul class="simple">
-<li>[infra] pypi package enabled</li>
+<li><strong>subscribers</strong><ul>
+<li>py_trees.subscribers.SubscriberHandler -&gt; py_trees_ros.subscribers.Handler</li>
+<li>py_trees.subscribers.CheckSubscriberVariable -&gt; py_trees_ros.subscribers.CheckData</li>
+<li>py_trees.subscribers.WaitForSubscriberData -&gt; py_trees_ros.subscribers.WaitForData</li>
 </ul>
-</div>
-<div class="section" id="id7">
-<h2>0.5.0 (2017-02-21)<a class="headerlink" href="#id7" title="Permalink to this headline">¶</a></h2>
-<ul class="simple">
-<li>[ros] components moved to py_trees_ros</li>
-<li>[timeout] bugfix to ensure timeout decorator initialises properly</li>
-<li>[docs] rolled over with napolean style</li>
-<li>[docs] sphinx documentation updated</li>
-<li>[imposter] make sure tip() drills down into composites</li>
-<li>[demos] re-organised into modules</li>
+</li>
+<li><strong>conversions</strong><ul>
+<li>py_trees.converters.convert_type -&gt; py_trees_ros.converters.behaviour_type_to_msg_constant</li>
+<li>py_trees.converters.convert_status -&gt; py_trees_ros.converters.status_enum_to_msg_constant</li>
+<li>py_trees.converters.convert_blackbox -&gt; py_trees_ros.converters.blackbox_enum_to_msg_constant</li>
 </ul>
-</div>
-<div class="section" id="id8">
-<h2>0.4.0 (2017-01-13)<a class="headerlink" href="#id8" title="Permalink to this headline">¶</a></h2>
-<ul class="simple">
-<li>[trees] add pre/post handlers after setup, just in case setup fails</li>
-<li>[introspection] do parent lookups so you can crawl back up a tree</li>
-<li>[blackboard] permit init of subscriber2blackboard behaviours</li>
-<li>[blackboard] watchers</li>
-<li>[timers] better feedback messages</li>
-<li>[imposter] ensure stop() directly calls the composited behaviour</li>
+</li>
+<li><strong>blackboard</strong><ul>
+<li>py_trees.ros.blackboard -&gt; py_trees_ros.blackboard.Exchange</li>
+<li>~list_blackboard_variables -&gt; ~get_blackboard_variables</li>
+<li>~spawn_blackboard_watcher -&gt; ~open_blackboard_watcher</li>
+<li>~destroy_blackboard_watcher -&gt; ~close_blackboard_watcher</li>
 </ul>
-</div>
-<div class="section" id="id9">
-<h2>0.3.0 (2016-08-25)<a class="headerlink" href="#id9" title="Permalink to this headline">¶</a></h2>
-<ul class="simple">
-<li><code class="docutils literal"><span class="pre">failure_is_running</span> <span class="pre">decorator</span></code> (meta).</li>
+</li>
+<li><strong>visitors</strong> : classes moved from py_trees.trees -&gt; py_trees_ros.visitors</li>
 </ul>
-</div>
-<div class="section" id="id10">
-<h2>0.2.0 (2016-06-01)<a class="headerlink" href="#id10" title="Permalink to this headline">¶</a></h2>
+<p><strong>Py Trees ROS Msgs API</strong></p>
 <ul class="simple">
-<li>do terminate properly amongst relevant classes</li>
-<li>blackboxes</li>
-<li>chooser variant of selectors</li>
-<li>bugfix the decorators</li>
-<li>blackboard updates on change only</li>
-<li>improved dot graph creation</li>
-<li>many bugfixes to composites</li>
-<li>subscriber behaviours</li>
-<li>timer behaviours</li>
+<li><strong>blackboard services</strong><ul>
+<li>py_trees.msgs.srv.BlackboardVariables -&gt; py_trees_msgs.srv.GetBlackboardVariables</li>
+<li>py_trees.msgs.srv.SpawnBlackboardWatcher -&gt; py_trees_msgs.srv.OpenBlackboardWatcher</li>
+<li>py_trees.msgs.srv.DestroyBlackboardWatcher -&gt; py_trees_msgs.srv.CloseBlackboardWatcher</li>
 </ul>
-</div>
-<div class="section" id="id11">
-<h2>0.1.2 (2015-11-16)<a class="headerlink" href="#id11" title="Permalink to this headline">¶</a></h2>
-<ul class="simple">
-<li>one shot sequences</li>
-<li>abort() renamed more appropriately to stop()</li>
+</li>
 </ul>
-</div>
-<div class="section" id="id12">
-<h2>0.1.1 (2015-10-10)<a class="headerlink" href="#id12" title="Permalink to this headline">¶</a></h2>
+<p><strong>Py Trees</strong></p>
 <ul class="simple">
-<li>lots of bugfixing stabilising py_trees for the spain field test</li>
-<li>complement decorator for behaviours</li>
-<li>dot tree views</li>
-<li>ascii tree and tick views</li>
-<li>use generators and visitors to more efficiently walk/introspect trees</li>
-<li>a first implementation of behaviour trees in python</li>
+<li><strong>program</strong> : py-trees-render added</li>
+<li><strong>imposter</strong> : bugfix to permit visitors to the children of a composite original</li>
+<li><strong>visitors</strong> : py_trees.trees -&gt; py_trees.visitors</li>
 </ul>
 </div>
 </div>
@@ -302,7 +277,7 @@
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'./',
-            VERSION:'0.5.8',
+            VERSION:'0.5.4',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
             HAS_SOURCE:  true
