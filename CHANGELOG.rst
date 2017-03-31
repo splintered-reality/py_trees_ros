@@ -1,6 +1,10 @@
 Changelog
 =========
 
+0.5.5 (2017-03-31)
+------------------
+* [infra] missed the py_trees exec dependency, fixed.
+
 0.5.4 (2017-03-25)
 ------------------
 * [docs] faq added
