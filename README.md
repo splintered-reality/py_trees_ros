@@ -5,7 +5,7 @@
 Behaviours, trees and utilities that extend [py_trees](https://github.com/stonier/py_trees) for use
 with ROS.
 
-Refer to the [package documentation](https://stonier.github.io/py_trees_ros/) for more information.
+Refer to the [py_trees](http://py-trees.readthedocs.io/en/devel/) & [py_trees_ros](https://stonier.github.io/py_trees_ros/) sphinx documentation for more information.
 
 ## Build Status
 

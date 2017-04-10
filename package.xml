@@ -1,6 +1,6 @@
 <package format="2">
   <name>py_trees_ros</name>
-  <version>0.5.4</version>
+  <version>0.5.5</version>
   <description>
     Ros extensions and behaviours for py_trees.
   </description>
@@ -40,6 +40,7 @@
   <!-- core dependencies -->
   <exec_depend>actionlib</exec_depend>
   <exec_depend>actionlib_msgs</exec_depend>
+  <exec_depend>py_trees</exec_depend>
   <exec_depend>py_trees_msgs</exec_depend>
   <exec_depend>python-rospkg</exec_depend>
   <exec_depend>rosbag</exec_depend>
