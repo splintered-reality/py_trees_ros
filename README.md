@@ -5,7 +5,14 @@
 Behaviours, trees and utilities that extend [py_trees](https://github.com/stonier/py_trees) for use
 with ROS.
 
-Refer to the [py_trees](http://py-trees.readthedocs.io/en/devel/) & [py_trees_ros](https://stonier.github.io/py_trees_ros/) sphinx documentation for more information.
+Refer to the sphinx documentation for [py_trees](http://py-trees.readthedocs.io/en/devel/) as a primer and reference on behaviour trees & [py_trees_ros](https://stonier.github.io/py_trees_ros/) for tutorials on getting started with behaviour trees in ROS.
+
+## The ROS Py Trees Packages
+
+* [py_trees](https://github.com/stonier/py_trees) ([sphinx documentation](http://py-trees.readthedocs.io/en/devel/))
+* [py_trees_msgs](https://github.com/stonier/py_trees_msgs)
+* [py_trees_ros](https://github.com/stonier/py_trees_ros) ([sphinx documentation](https://stonier.github.io/py_trees_ros/))
+* [rqt_py_trees](https://github.com/stonier/rqt_py_trees)
 
 ## Build Status
 
@@ -29,11 +36,4 @@ The currently supported ROS Distro is Kinetic.
 
 [devel-docs-image]: https://img.shields.io/badge/docs-devel-brightgreen.svg?style=plastic
 [devel-docs]: https://stonier.github.io/py_trees_ros/
-
-## The ROS Py Trees Repositories
-
-* [py_trees](https://github.com/stonier/py_trees)
-* [py_trees_msgs](https://github.com/stonier/py_trees_msgs)
-* [py_trees_ros](https://github.com/stonier/py_trees_ros)
-* [rqt_py_trees](https://github.com/stonier/rqt_py_trees)
 
