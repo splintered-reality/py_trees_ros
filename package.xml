@@ -27,6 +27,7 @@
   <doc_depend>python-sphinx-rtd-theme</doc_depend>
   <doc_depend>python-catkin-pkg</doc_depend>
   <doc_depend>py_trees</doc_depend>
+  <doc_depend>py_trees_msgs</doc_depend>
 
   <!-- mocking & simulation dependencies -->
   <exec_depend>dynamic_reconfigure</exec_depend>
