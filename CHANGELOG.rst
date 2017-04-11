@@ -1,6 +1,9 @@
 Changelog
 =========
 
+Forthcoming
+* [infra] bugfix missing install rule for mock sensors script
+
 0.5.5 (2017-03-31)
 ------------------
 * [infra] missed the py_trees exec dependency, fixed.
