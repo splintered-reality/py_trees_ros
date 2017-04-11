@@ -25,6 +25,7 @@ catkin_package()
          scripts/mock_battery
          scripts/mock_led_strip
          scripts/mock_component
+         scripts/mock_safety_sensors
          scripts/tutorial_dashboard
          scripts/tutorial_tree
      DESTINATION
