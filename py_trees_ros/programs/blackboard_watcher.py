@@ -139,7 +139,11 @@ def spin_ros_node(received_topic, namespace):
 
 
 def find_service(namespace, service_type):
-    service_name = rosservice.rosservice_find(service_type)
+    try:
+        service_name = rosservice.rosservice_find(service_type)
+    except rosservice.ROSServiceIOException as e:
+        print(console.red + "ERROR: {0}".format(str(e)) + console.reset)
+        sys.exit(1)
     if len(service_name) > 0:
         if len(service_name) == 1:
             service_name = service_name[0]
@@ -180,8 +184,7 @@ def handle_args(args):
     else:
         if not args.variables:
             print(console.red + "\nERROR: please provide a list of variables to watch.\n" + console.reset)
-            print(console.bold + console.yellow + "  Usage" + console.reset)
-            print("%s" % description())
+            print("%s" % description(formatted_for_sphinx=False))
             sys.exit(1)
         else:
             variables = args.variables[0:]
