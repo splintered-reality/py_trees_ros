@@ -25,8 +25,10 @@ with open(version_file) as f:
 # If extensions (or modules to document with autodoc) are in another directory,
 # add these directories to sys.path here. If the directory is relative to the
 # documentation root, use os.path.abspath to make it absolute, like shown here.
-# import sys
+
+print("Inserting Project Directory: %s" % project_dir)
 sys.path.insert(0, project_dir)
+print("Sys Path: %s" % sys.path)
 
 # -- General configuration ------------------------------------------------
 
