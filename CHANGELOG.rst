@@ -1,7 +1,9 @@
 Changelog
 =========
 
-Forthcoming
+0.5.9 (2017-04-16)
+------------------
+* [doc] add missing rqt-py-trees image
 * [infra] bugfix missing install rule for mock sensors script
 
 0.5.5 (2017-03-31)
