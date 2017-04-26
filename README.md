@@ -1,11 +1,11 @@
 # Py Trees for ROS
 
-## About
-
 Behaviours, trees and utilities that extend py_trees for use
 with ROS.
 
-Refer to the sphinx documentation for [py_trees](http://py-trees.readthedocs.io/en/devel/) as a primer and reference on behaviour trees & [py_trees_ros](https://stonier.github.io/py_trees_ros/) for tutorials on getting started with behaviour trees in ROS.
+## Documentation
+
+Refer to the sphinx docs for [py_trees](http://py-trees.readthedocs.io/en/devel/) as a primer and reference on behaviour trees & [py_trees_ros](https://stonier.github.io/py_trees_ros/) for tutorials on getting started with behaviour trees in ROS.
 
 ## The ROS Py Trees Packages
 
