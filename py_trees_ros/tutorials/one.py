@@ -12,13 +12,22 @@ About
 ^^^^^
 
 In this, the first of the tutorials, we start out by using a behaviour to
-collect battery data from a ros subscribers and cache the result on the
+collect battery data from a ros subscriber and cache the result on the
 blackboard for other behaviours to utilise.
 
-This is a fairly common thing to do - it takes the asynchronicity out of
+Data gathering up front via subscribers is a useful practice that can
+by justified by one of a variety of reasons. In order of priority:
+
+* Lock incoming data for the remainder of the tick so that decision making is consistent across the entire tree
+* Avoid invoking the rospy threading model when it is not necessary
+* Python access to the blackboard is easier than ROS api handling
+
+In short, it takes the asynchronicity out of
 the subscriber callbacks and when it comes to sharing the data, it is
 far simpler to access the blackboard than to manage multiple subscribers
-from all over the behaviour tree. Usually you will end up with a collection
+spread across the entire behaviour tree.
+
+Usually you will end up with a collection
 of data gatherers at the front end of your behaviour tree which will always
 run and will happen before any decision branching can occur in the tree.
 
