@@ -9,9 +9,9 @@ Refer to the sphinx docs for [py_trees](http://py-trees.readthedocs.io/en/devel/
 
 ## The ROS Py Trees Packages
 
-* [py_trees](https://github.com/stonier/py_trees) ([sphinx documentation](http://py-trees.readthedocs.io/en/devel/))
+* [py_trees](https://github.com/stonier/py_trees) ([sphinx docs](http://py-trees.readthedocs.io/en/devel/))
 * [py_trees_msgs](https://github.com/stonier/py_trees_msgs)
-* [py_trees_ros](https://github.com/stonier/py_trees_ros) ([sphinx documentation](https://stonier.github.io/py_trees_ros/))
+* [py_trees_ros](https://github.com/stonier/py_trees_ros) ([sphinx docs](https://stonier.github.io/py_trees_ros/))
 * [rqt_py_trees](https://github.com/stonier/rqt_py_trees)
 
 ## Build Status
