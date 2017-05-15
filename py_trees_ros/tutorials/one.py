@@ -39,8 +39,8 @@ Tree
 .. literalinclude:: ../py_trees_ros/tutorials/one.py
    :language: python
    :linenos:
-   :lines: 86-108
-   :caption: py_trees_ros/tutorials/one.py
+   :lines: 95-117
+   :caption: py_trees_ros/tutorials/one.py#create_root
 
 Along with the data gathering side, you'll also notice the dummy branch for
 priority jobs (complete with idle behaviour that is always

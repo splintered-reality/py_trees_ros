@@ -27,7 +27,7 @@ Tree
 .. literalinclude:: ../py_trees_ros/tutorials/five.py
    :language: python
    :linenos:
-   :lines: 121-178
+   :lines: 121-179
    :caption: py_trees_ros/tutorials/five.py#create_root
 
 **Guards**
