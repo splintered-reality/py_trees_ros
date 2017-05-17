@@ -1,5 +1,7 @@
+#!/usr/bin/env python
 #
-# License: Yujin
+# License: BSD
+#   https://raw.githubusercontent.com/stonier/py_trees_ros/devel/LICENSE
 #
 ##############################################################################
 # Description
