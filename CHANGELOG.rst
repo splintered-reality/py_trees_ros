@@ -2,9 +2,9 @@
 Changelog
 =========
 
-0.5.11 (2017-05-15)
+0.5.12 (2017-05-17)
 -------------------
-* [doc] add many missing *msg packages to satiate autodoc
+* [doc] add many missing packages to satiate autodoc
 
 0.5.9 (2017-04-16)
 ------------------

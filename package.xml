@@ -1,6 +1,6 @@
 <package format="2">
   <name>py_trees_ros</name>
-  <version>0.5.11</version>
+  <version>0.5.12</version>
   <description>
     Ros extensions and behaviours for py_trees.
   </description>
@@ -23,16 +23,24 @@
   <build_depend>python-setuptools</build_depend>
 
   <!-- ach, autodoc is a beast, it shouldn't need these (there is a PR going in upstream for autodoc) -->
+  <doc_depend>actionlib</doc_depend>
   <doc_depend>actionlib_msgs</doc_depend>
+  <doc_depend>dynamic_reconfigure</doc_depend>
   <doc_depend>geometry_msgs</doc_depend>
   <doc_depend>move_base_msgs</doc_depend>
   <doc_depend>nav_msgs</doc_depend>
   <doc_depend>python-sphinx-argparse</doc_depend>
   <doc_depend>python-sphinx-rtd-theme</doc_depend>
   <doc_depend>python-catkin-pkg</doc_depend>
+  <doc_depend>python-rospkg</doc_depend>
+  <doc_depend>python-termcolor</doc_depend>
   <doc_depend>py_trees</doc_depend>
   <doc_depend>py_trees_msgs</doc_depend>
+  <doc_depend>rosbag</doc_depend>
+  <doc_depend>rospy</doc_depend>
   <doc_depend>sensor_msgs</doc_depend>
+  <doc_depend>std_msgs</doc_depend>
+  <doc_depend>unique_id</doc_depend>
   <doc_depend>uuid_msgs</doc_depend>
 
   <!-- mocking & simulation dependencies -->
