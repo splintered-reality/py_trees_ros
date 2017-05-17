@@ -5,8 +5,7 @@
     Ros extensions and behaviours for py_trees.
   </description>
 
-  <maintainer email="stonier@yujinrobot.com">Daniel Stonier</maintainer>
-  <maintainer email="m.staniaszek@gmail.com">Michal Staniaszek</maintainer>
+  <maintainer email="d.stonier@gmail.com">Daniel Stonier</maintainer>
   <maintainer email="naveedhd@gmail.com">Naveed Usmani</maintainer>
 
   <license>BSD</license>
