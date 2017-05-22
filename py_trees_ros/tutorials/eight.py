@@ -211,7 +211,7 @@ class SplinteredReality(object):
         if self.busy():
             job = self.priorities.children[-2]
             if job.status == py_trees.common.Status.SUCCESS or job.status == py_trees.common.Status.FAILURE:
-                rospy.loginfo("{0}: finished [{1}".format(job.name, job.status))
+                rospy.loginfo("{0}: finished [{1}]".format(job.name, job.status))
                 tree.prune_subtree(job.id)
                 self.current_job = None
         # publish a status report
