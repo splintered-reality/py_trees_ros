@@ -16,7 +16,6 @@ Mocks the move base action server of the ROS navigation stack.
 ##############################################################################
 
 import dynamic_reconfigure.server
-import rospy
 
 from py_trees_msgs.cfg import MockSafetySensorsConfig
 
