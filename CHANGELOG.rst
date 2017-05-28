@@ -2,7 +2,7 @@
 Changelog
 =========
 
-0.5.12 (2017-05-17)
+0.5.13 (2017-05-28)
 -------------------
 * [doc] add many missing packages to satiate autodoc
 
