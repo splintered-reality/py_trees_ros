@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Tutorials &mdash; py_trees_ros 0.5.4 documentation</title>
+  <title>Tutorials &mdash; py_trees_ros 0.5.13 documentation</title>
   
 
   
@@ -32,7 +32,7 @@
   
         <link rel="author" title="About these documents"
               href="about.html"/>
-    <link rel="top" title="py_trees_ros 0.5.4 documentation" href="index.html"/>
+    <link rel="top" title="py_trees_ros 0.5.13 documentation" href="index.html"/>
         <link rel="next" title="Terminology" href="terminology.html"/>
         <link rel="prev" title="Features" href="features.html"/> 
 
@@ -62,7 +62,7 @@
             
             
               <div class="version">
-                0.5.4
+                0.5.13
               </div>
             
           
@@ -263,12 +263,20 @@ launched on its own with:</p>
 <div class="section" id="about">
 <h3>About<a class="headerlink" href="#about" title="Permalink to this headline">¶</a></h3>
 <p>In this, the first of the tutorials, we start out by using a behaviour to
-collect battery data from a ros subscribers and cache the result on the
+collect battery data from a ros subscriber and cache the result on the
 blackboard for other behaviours to utilise.</p>
-<p>This is a fairly common thing to do - it takes the asynchronicity out of
+<p>Data gathering up front via subscribers is a useful practice that can
+by justified by one of a variety of reasons. In order of priority:</p>
+<ul class="simple">
+<li>Lock incoming data for the remainder of the tick so that decision making is consistent across the entire tree</li>
+<li>Avoid invoking the rospy threading model when it is not necessary</li>
+<li>Python access to the blackboard is easier than ROS api handling</li>
+</ul>
+<p>In short, it takes the asynchronicity out of
 the subscriber callbacks and when it comes to sharing the data, it is
 far simpler to access the blackboard than to manage multiple subscribers
-from all over the behaviour tree. Usually you will end up with a collection
+spread across the entire behaviour tree.</p>
+<p>Usually you will end up with a collection
 of data gatherers at the front end of your behaviour tree which will always
 run and will happen before any decision branching can occur in the tree.</p>
 </div>
@@ -290,8 +298,8 @@ Idle [fillcolor=gray, fontcolor=black, fontsize=11, shape=ellipse, style=filled]
 Priorities -&gt; Idle;
 }" />
 </p>
-<div class="literal-block-wrapper container" id="py-trees-ros-tutorials-one-py">
-<div class="code-block-caption"><span class="caption-text">py_trees_ros/tutorials/one.py</span><a class="headerlink" href="#py-trees-ros-tutorials-one-py" title="Permalink to this code">¶</a></div>
+<div class="literal-block-wrapper container" id="py-trees-ros-tutorials-one-py-create-root">
+<div class="code-block-caption"><span class="caption-text">py_trees_ros/tutorials/one.py#create_root</span><a class="headerlink" href="#py-trees-ros-tutorials-one-py-create-root" title="Permalink to this code">¶</a></div>
 <div class="highlight-python"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre> 1
  2
  3
@@ -342,7 +350,7 @@ Priorities -&gt; Idle;
 </div>
 <p>Along with the data gathering side, you&#8217;ll also notice the dummy branch for
 priority jobs (complete with idle behaviour that is always
-<a class="reference external" href="http://py-trees.readthedocs.io/en/devel/modules.html#py_trees.common.Status.RUNNING" title="(in py_trees v0.5.9)"><code class="xref py py-attr docutils literal"><span class="pre">RUNNING</span></code></a>). This configuration is typical
+<code class="xref py py-attr docutils literal"><span class="pre">RUNNING</span></code>). This configuration is typical
 of the <a class="reference internal" href="terminology.html#term-data-gathering"><span class="xref std std-term">data gathering</span></a> pattern.</p>
 </div>
 <div class="section" id="behaviours">
@@ -455,7 +463,7 @@ of the <a class="reference internal" href="terminology.html#term-data-gathering"
 </td></tr></table></div>
 </div>
 <p>This behaviour will cause the entire tree will tick over with
-<a class="reference external" href="http://py-trees.readthedocs.io/en/devel/modules.html#py_trees.common.Status.SUCCESS" title="(in py_trees v0.5.9)"><code class="xref py py-attr docutils literal"><span class="pre">SUCCESS</span></code></a> so long as there is data incoming.
+<code class="xref py py-attr docutils literal"><span class="pre">SUCCESS</span></code> so long as there is data incoming.
 If there is no data incoming, it will simply
 <a class="reference internal" href="terminology.html#term-block"><span class="xref std std-term">block</span></a> and prevent the rest of the tree from acting.</p>
 </div>
@@ -500,7 +508,7 @@ Priorities -&gt; Idle;
 }" />
 </p>
 <p>The white coloured ellipse shown here is a decorated behaviour (in this
-case a <a class="reference external" href="http://py-trees.readthedocs.io/en/devel/modules.html#py_trees.composites.Selector" title="(in py_trees v0.5.9)"><code class="xref py py-class docutils literal"><span class="pre">Selector</span></code></a> with the <a class="reference external" href="http://py-trees.readthedocs.io/en/devel/modules.html#py_trees.meta.success_is_failure" title="(in py_trees v0.5.9)"><code class="xref py py-func docutils literal"><span class="pre">success_is_failure()</span></code></a>
+case a <code class="xref py py-class docutils literal"><span class="pre">Selector</span></code> with the <code class="xref py py-func docutils literal"><span class="pre">success_is_failure()</span></code>
 decorator (looking forward to better visualisations for this in the future).</p>
 <div class="literal-block-wrapper container" id="py-trees-ros-tutorials-two-py">
 <div class="code-block-caption"><span class="caption-text">py_trees_ros/tutorials/two.py</span><a class="headerlink" href="#py-trees-ros-tutorials-two-py" title="Permalink to this code">¶</a></div>
@@ -565,7 +573,7 @@ invalidated as soon as the battery becomes ok again. This will trigger the
 flashing behaviour&#8217;s terminate method (see below) to send off a command to
 clear the request. To do this we&#8217;ve made use of a higher priority &#8216;Is Battery Ok?&#8217;
 check underneath the selector, but also had to decorate the selector with
-<a class="reference external" href="http://py-trees.readthedocs.io/en/devel/modules.html#py_trees.meta.success_is_failure" title="(in py_trees v0.5.9)"><code class="xref py py-func docutils literal"><span class="pre">success_is_failure()</span></code></a> to make sure the priority branch is chosen appropriately.</p>
+<code class="xref py py-func docutils literal"><span class="pre">success_is_failure()</span></code> to make sure the priority branch is chosen appropriately.</p>
 <p>You could have also designed this particular subtree with sequences and parallels
 instead of the selector and decorator here.</p>
 <div class="admonition tip">
@@ -690,9 +698,9 @@ you can render with:</p>
 </div>
 <p>A new feature here is the way it uses the terminate method to put a &#8216;fullstop&#8217;
 to the commands sent when ticking. Note also that it is permanently in the
-<a class="reference external" href="http://py-trees.readthedocs.io/en/devel/modules.html#py_trees.common.Status.RUNNING" title="(in py_trees v0.5.9)"><code class="xref py py-attr docutils literal"><span class="pre">RUNNING</span></code></a> state while ticking. Behaviours do
-not <em>have</em> to return <a class="reference external" href="http://py-trees.readthedocs.io/en/devel/modules.html#py_trees.common.Status.SUCCESS" title="(in py_trees v0.5.9)"><code class="xref py py-attr docutils literal"><span class="pre">SUCCESS</span></code></a> or
-<a class="reference external" href="http://py-trees.readthedocs.io/en/devel/modules.html#py_trees.common.Status.FAILURE" title="(in py_trees v0.5.9)"><code class="xref py py-attr docutils literal"><span class="pre">FAILURE</span></code></a>, they can be just as involved in the
+<code class="xref py py-attr docutils literal"><span class="pre">RUNNING</span></code> state while ticking. Behaviours do
+not <em>have</em> to return <code class="xref py py-attr docutils literal"><span class="pre">SUCCESS</span></code> or
+<code class="xref py py-attr docutils literal"><span class="pre">FAILURE</span></code>, they can be just as involved in the
 decision making via the way they behave when cancelled or interrupted.</p>
 </div>
 <div class="section" id="id4">
@@ -758,9 +766,9 @@ $ rostopic list <span class="p">|</span> grep tree
 <span class="c1"># a static ascii view of the tree</span>
 $ rostopic <span class="nb">echo</span> /tree/ascii/tree
 <span class="c1"># a dynamic view of the tree, with current states and feedback messages</span>
-<span class="c1"># rostopic echo /tree/ascii/snaphots</span>
-$ at what behaviour did decision making turn around and why? often useful <span class="k">for</span> other programs to know
-<span class="c1"># rostopic echo /tree/tip</span>
+$ rostopic <span class="nb">echo</span> /tree/ascii/snaphots
+<span class="c1"># at what behaviour did decision making turn around and why? often useful for other programs to know</span>
+$ rostopic <span class="nb">echo</span> /tree/tip
 </pre></div>
 </div>
 <p>and of course the blackboard topics, but they were covered in tutorial three.</p>
@@ -771,7 +779,7 @@ This is not very human readable (typically very large), but can be used for othe
 <code class="docutils literal"><span class="pre">rqt-py-trees</span></code>.</p>
 <p>While not in this package itself, it&#8217;s worth taking some time out to discover what it can do here.</p>
 <ul class="simple">
-<li><em>Coloured States</em> : GREEN for <a class="reference external" href="http://py-trees.readthedocs.io/en/devel/modules.html#py_trees.common.Status.SUCCESS" title="(in py_trees v0.5.9)"><code class="xref py py-attr docutils literal"><span class="pre">SUCCESS</span></code></a>, RED for <a class="reference external" href="http://py-trees.readthedocs.io/en/devel/modules.html#py_trees.common.Status.FAILURE" title="(in py_trees v0.5.9)"><code class="xref py py-attr docutils literal"><span class="pre">FAILURE</span></code></a>, BLUE for <a class="reference external" href="http://py-trees.readthedocs.io/en/devel/modules.html#py_trees.common.Status.RUNNING" title="(in py_trees v0.5.9)"><code class="xref py py-attr docutils literal"><span class="pre">RUNNING</span></code></a> and GREY for unvisited.</li>
+<li><em>Coloured States</em> : GREEN for <code class="xref py py-attr docutils literal"><span class="pre">SUCCESS</span></code>, RED for <code class="xref py py-attr docutils literal"><span class="pre">FAILURE</span></code>, BLUE for <code class="xref py py-attr docutils literal"><span class="pre">RUNNING</span></code> and GREY for unvisited.</li>
 <li><em>Tooltips</em> : hover over a behaviour to catch name, type, status and feedback message information</li>
 <li><em>Timeline</em> : rewind as you wish, note the bars indicating where important events occured</li>
 <li><em>Fit</em> : disable auto-resizing by unchecking the &#8216;Fit&#8217; button to handle large trees which become unreadable in a small window</li>
@@ -897,7 +905,8 @@ Priorities -&gt; Idle;
 55
 56
 57
-58</pre></div></td><td class="code"><div class="highlight"><pre><span class="k">def</span> <span class="nf">create_root</span><span class="p">():</span>
+58
+59</pre></div></td><td class="code"><div class="highlight"><pre><span class="k">def</span> <span class="nf">create_root</span><span class="p">():</span>
     <span class="c1"># behaviours</span>
     <span class="n">root</span> <span class="o">=</span> <span class="n">py_trees</span><span class="o">.</span><span class="n">composites</span><span class="o">.</span><span class="n">Parallel</span><span class="p">(</span><span class="s2">&quot;Tutorial&quot;</span><span class="p">)</span>
     <span class="n">topics2bb</span> <span class="o">=</span> <span class="n">py_trees</span><span class="o">.</span><span class="n">composites</span><span class="o">.</span><span class="n">Sequence</span><span class="p">(</span><span class="s2">&quot;Topics2BB&quot;</span><span class="p">)</span>
@@ -955,6 +964,7 @@ Priorities -&gt; Idle;
     <span class="n">scan_preempt</span><span class="o">.</span><span class="n">add_children</span><span class="p">([</span><span class="n">is_scan_requested_two</span><span class="p">,</span> <span class="n">scanning</span><span class="p">])</span>
     <span class="n">scanning</span><span class="o">.</span><span class="n">add_children</span><span class="p">([</span><span class="n">scan_rotate</span><span class="p">,</span> <span class="n">scan_flash_blue</span><span class="p">])</span>
     <span class="n">scan_celebrate</span><span class="o">.</span><span class="n">add_children</span><span class="p">([</span><span class="n">scan_flash_green</span><span class="p">,</span> <span class="n">scan_pause</span><span class="p">])</span>
+    <span class="k">return</span> <span class="n">root</span>
 </pre></div>
 </td></tr></table></div>
 </div>
@@ -1008,7 +1018,7 @@ insert action goals on the fly from the parent class.</p>
 <p><strong>Handling Failure</strong></p>
 <p>If the rotate action should fail, then the whole branch will also fail. Subsequently
 dropping the robot back to its idle state. A failure event could be generated by
-simply watching either the &#8216;Scanning&#8217; parallel or the <a class="reference external" href="http://py-trees.readthedocs.io/en/devel/modules.html#py_trees.trees.BehaviourTree.tip" title="(in py_trees v0.5.9)"><code class="xref py py-meth docutils literal"><span class="pre">tip()</span></code></a>
+simply watching either the &#8216;Scanning&#8217; parallel or the <code class="xref py py-meth docutils literal"><span class="pre">tip()</span></code>
 of the tree and reacting to it&#8217;s state change.</p>
 </div>
 <div class="section" id="id11">
@@ -1634,8 +1644,8 @@ finalises or is interrupted from above.</p>
 </pre></div>
 </td></tr></table></div>
 </div>
-<p>As you can see, all the action is happening in the <a class="reference external" href="http://py-trees.readthedocs.io/en/devel/modules.html#py_trees.behaviour.Behaviour.initialise" title="(in py_trees v0.5.9)"><code class="xref py py-meth docutils literal"><span class="pre">initialise()</span></code></a>
-and <a class="reference external" href="http://py-trees.readthedocs.io/en/devel/modules.html#py_trees.behaviour.Behaviour.terminate" title="(in py_trees v0.5.9)"><code class="xref py py-meth docutils literal"><span class="pre">terminate()</span></code></a> methods. This class is intended for use
+<p>As you can see, all the action is happening in the <code class="xref py py-meth docutils literal"><span class="pre">initialise()</span></code>
+and <code class="xref py py-meth docutils literal"><span class="pre">terminate()</span></code> methods. This class is intended for use
 underneath a parallel with the action(s) that are designed to run in this context. This guarantees
 that the context is reset no matter whether the action(s) succeed or fail, or the parallel itself
 is interrupted from above.</p>
@@ -2000,7 +2010,7 @@ it is &#8220;scanning&#8221;, &#8220;cancelling&#8221; or is &#8220;idle&#8217;.
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">tree</span><span class="o">.</span><span class="n">setup</span><span class="p">(</span><span class="n">timeout</span><span class="o">=</span><span class="mi">15</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">publish_reality_report</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tree</span><span class="p">):</span>
-        <span class="k">if</span> <span class="n">tree</span><span class="o">.</span><span class="n">tip</span><span class="p">()</span><span class="o">.</span><span class="n">has_parent_with_name</span><span class="p">(</span><span class="s2">&quot;Battery Emergency&quot;</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">tree</span><span class="o">.</span><span class="n">tip</span><span class="p">()</span><span class="o">.</span><span class="n">has_parent_with_name</span><span class="p">(</span><span class="s2">&quot;_Battery Emergency&quot;</span><span class="p">):</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">report_publisher</span><span class="o">.</span><span class="n">publish</span><span class="p">(</span><span class="s2">&quot;battery&quot;</span><span class="p">)</span>
         <span class="k">elif</span> <span class="n">tree</span><span class="o">.</span><span class="n">tip</span><span class="p">()</span><span class="o">.</span><span class="n">has_parent_with_name</span><span class="p">(</span><span class="s2">&quot;Cancelling?&quot;</span><span class="p">):</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">report_publisher</span><span class="o">.</span><span class="n">publish</span><span class="p">(</span><span class="s2">&quot;cancelling&quot;</span><span class="p">)</span>
@@ -2535,7 +2545,7 @@ logic could alternatively have been achieved from behaviours inside the tree.</p
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">busy</span><span class="p">():</span>
             <span class="n">job</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">priorities</span><span class="o">.</span><span class="n">children</span><span class="p">[</span><span class="o">-</span><span class="mi">2</span><span class="p">]</span>
             <span class="k">if</span> <span class="n">job</span><span class="o">.</span><span class="n">status</span> <span class="o">==</span> <span class="n">py_trees</span><span class="o">.</span><span class="n">common</span><span class="o">.</span><span class="n">Status</span><span class="o">.</span><span class="n">SUCCESS</span> <span class="ow">or</span> <span class="n">job</span><span class="o">.</span><span class="n">status</span> <span class="o">==</span> <span class="n">py_trees</span><span class="o">.</span><span class="n">common</span><span class="o">.</span><span class="n">Status</span><span class="o">.</span><span class="n">FAILURE</span><span class="p">:</span>
-                <span class="n">rospy</span><span class="o">.</span><span class="n">loginfo</span><span class="p">(</span><span class="s2">&quot;{0}: finished [{1}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">job</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">job</span><span class="o">.</span><span class="n">status</span><span class="p">))</span>
+                <span class="n">rospy</span><span class="o">.</span><span class="n">loginfo</span><span class="p">(</span><span class="s2">&quot;{0}: finished [{1}]&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">job</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">job</span><span class="o">.</span><span class="n">status</span><span class="p">))</span>
                 <span class="n">tree</span><span class="o">.</span><span class="n">prune_subtree</span><span class="p">(</span><span class="n">job</span><span class="o">.</span><span class="n">id</span><span class="p">)</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">current_job</span> <span class="o">=</span> <span class="bp">None</span>
         <span class="c1"># publish a status report</span>
@@ -2645,7 +2655,7 @@ This provides small, modular bags for convenient storage and lookup.</p>
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'./',
-            VERSION:'0.5.4',
+            VERSION:'0.5.13',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
             HAS_SOURCE:  true

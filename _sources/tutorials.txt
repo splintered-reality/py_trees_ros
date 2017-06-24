@@ -125,9 +125,9 @@ Running
     # a static ascii view of the tree
     $ rostopic echo /tree/ascii/tree
     # a dynamic view of the tree, with current states and feedback messages
-    # rostopic echo /tree/ascii/snaphots
-    $ at what behaviour did decision making turn around and why? often useful for other programs to know
-    # rostopic echo /tree/tip
+    $ rostopic echo /tree/ascii/snaphots
+    # at what behaviour did decision making turn around and why? often useful for other programs to know
+    $ rostopic echo /tree/tip
 
 and of course the blackboard topics, but they were covered in tutorial three.
 
