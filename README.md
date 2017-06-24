@@ -28,7 +28,7 @@ with ROS.
 
 ## Getting Started
 
-Make sure to refer to the [py_trees package](https://github.com/stonier/py_trees) and it's documentation for a primer on behaviour trees and then follow up with this package's tutorials [[devel](https://stonier.github.io/py_trees_ros/)], [[kinetic](http://docs.ros.org/kinetic/api/py_trees_ros/html/)] for getting started with behaviour trees in ROS.
+Make sure to refer to the [py_trees package](https://github.com/stonier/py_trees) and it's documentation [[devel](http://py-trees.readthedocs.io/en/devel/)], [[kinetic](http://py-trees.readthedocs.io/en/release-0.5-kinetic/)] for a primer on behaviour trees and then follow up with this package's tutorials [[devel](https://stonier.github.io/py_trees_ros/)], [[kinetic](http://docs.ros.org/kinetic/api/py_trees_ros/html/)] for getting started with behaviour trees in ROS.
 
 ## The ROS Py Trees Packages
 
