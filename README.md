@@ -3,10 +3,6 @@
 Behaviours, trees and utilities that extend py_trees for use
 with ROS.
 
-## Getting Started
-
-Make sure to refer to the [py_trees package](https://github.com/stonier/py_trees) and it's documentation for a primer on behaviour trees and then follow up with this package's tutorials [[devel](https://stonier.github.io/py_trees_ros/)], [[kinetic](http://docs.ros.org/kinetic/api/py_trees_ros/html/)] for getting started with behaviour trees in ROS.
-
 ## Sources, Builds & Docs
 
 | Devel | Kinetic |
@@ -29,6 +25,10 @@ Make sure to refer to the [py_trees package](https://github.com/stonier/py_trees
 [devel-docs]: https://stonier.github.io/py_trees_ros/
 [0.5.x-docs-image]: http://img.shields.io/badge/docs-0.5--kinetic-brightgreen.svg?style=plastic
 [0.5.x-docs]: http://docs.ros.org/kinetic/api/py_trees_ros/html/
+
+## Getting Started
+
+Make sure to refer to the [py_trees package](https://github.com/stonier/py_trees) and it's documentation for a primer on behaviour trees and then follow up with this package's tutorials [[devel](https://stonier.github.io/py_trees_ros/)], [[kinetic](http://docs.ros.org/kinetic/api/py_trees_ros/html/)] for getting started with behaviour trees in ROS.
 
 ## The ROS Py Trees Packages
 
