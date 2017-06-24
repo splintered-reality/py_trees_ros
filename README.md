@@ -3,20 +3,11 @@
 Behaviours, trees and utilities that extend py_trees for use
 with ROS.
 
-## Documentation
+## Getting Started
 
-Refer to the sphinx [py_trees documentation](http://py-trees.readthedocs.io/en/devel/) as a primer and reference on behaviour trees & the [py_trees_ros tutorials](https://stonier.github.io/py_trees_ros/) for getting started with behaviour trees in ROS.
+Make sure to refer to the [py_trees package](https://github.com/stonier/py_trees) and it's documentation for a primer on behaviour trees and then follow up with this package's tutorials [[devel](https://stonier.github.io/py_trees_ros/)], [[kinetic](http://docs.ros.org/kinetic/api/py_trees_ros/html/)] for getting started with behaviour trees in ROS.
 
-## The ROS Py Trees Packages
-
-* [py_trees](https://github.com/stonier/py_trees) ([sphinx docs](http://py-trees.readthedocs.io/en/devel/))
-* [py_trees_msgs](https://github.com/stonier/py_trees_msgs)
-* [py_trees_ros](https://github.com/stonier/py_trees_ros) ([sphinx docs](https://stonier.github.io/py_trees_ros/))
-* [rqt_py_trees](https://github.com/stonier/rqt_py_trees)
-
-## Build Status
-
-The currently supported ROS Distro is Kinetic.
+## Sources, Builds & Docs
 
 | Devel | Kinetic |
 |:---:|:---:|
@@ -38,3 +29,10 @@ The currently supported ROS Distro is Kinetic.
 [devel-docs]: https://stonier.github.io/py_trees_ros/
 [0.5.x-docs-image]: http://img.shields.io/badge/docs-0.5--kinetic-brightgreen.svg?style=plastic
 [0.5.x-docs]: http://docs.ros.org/kinetic/api/py_trees_ros/html/
+
+## The ROS Py Trees Packages
+
+* [py_trees](https://github.com/stonier/py_trees)
+* [py_trees_msgs](https://github.com/stonier/py_trees_msgs)
+* [py_trees_ros](https://github.com/stonier/py_trees_ros)
+* [rqt_py_trees](https://github.com/stonier/rqt_py_trees)
