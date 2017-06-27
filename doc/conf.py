@@ -109,7 +109,7 @@ copyright = u'2017, Daniel Stonier'
 # built documents.
 #
 # The short X.Y version.
-version = "0.5.13"  # __version__
+version = "0.5.14"  # __version__
 # version = catkin_package.version
 # The full version, including alpha/beta/rc tags.
 release = version
