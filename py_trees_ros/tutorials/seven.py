@@ -195,7 +195,7 @@ class SplinteredReality(object):
         return self.tree.setup(timeout=15)
 
     def publish_reality_report(self, tree):
-        if tree.tip().has_parent_with_name("_Battery Emergency"):
+        if tree.tip().has_parent_with_name("Battery Emergency"):
             self.report_publisher.publish("battery")
         elif tree.tip().has_parent_with_name("Cancelling?"):
             self.report_publisher.publish("cancelling")
