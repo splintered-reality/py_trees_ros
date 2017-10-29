@@ -1,0 +1,12 @@
+<!--
+  Test the action client behaviour
+ -->
+<launch>
+  <node pkg="py_trees_ros" name="move_base" type="mock_component" args="move_base.MoveBase">
+      <param name="duration" value="1" />
+  </node>
+
+  <test test-name="test_action_client" type="test_action_client.py" pkg="py_trees_ros">
+  </test>
+
+</launch>
