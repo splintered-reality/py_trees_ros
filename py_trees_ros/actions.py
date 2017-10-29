@@ -42,16 +42,24 @@ class ActionClient(py_trees.behaviour.Behaviour):
         action_spec (:obj:`any`): spec type for the action (e.g. move_base_msgs.msg.MoveBaseAction)
         action_goal (:obj:`any`): preconfigured action goal (e.g. move_base_msgs.msg.MoveBaseGoal())
         action_namespace (:obj:`str`): where you can find the action topics
+        override_feedback_message_on_running (:obj:`str`): override the feedback message from the server
+
+    Feedback messages are often accompanied with detailed messages that continuously change - since these
+    are not significant and we don't want to log every change due to these messages, you can provide an override
+    here that simply signifies the action is running.
+
+    @todo: a more comprehensive way of filtering/parsing feedback messages to customise a running state so
+    that it can identify and react to 'significant' events while running.
     """
     def __init__(self, name="Action Client", action_spec=None, action_goal=None, action_namespace="/action",
-                 feedback_message_on_running="moving"):
+                 override_feedback_message_on_running="moving"):
         super(ActionClient, self).__init__(name)
         self.action_client = None
         self.sent_goal = False
         self.action_spec = action_spec
         self.action_goal = action_goal
         self.action_namespace = action_namespace
-        self.feedback_message_on_running = feedback_message_on_running
+        self.override_feedback_message_on_running = override_feedback_message_on_running
 
     def setup(self, timeout):
         """
@@ -104,7 +112,7 @@ class ActionClient(py_trees.behaviour.Behaviour):
         if result:
             return py_trees.Status.SUCCESS
         else:
-            self.feedback_message = self.feedback_message_on_running
+            self.feedback_message = self.override_feedback_message_on_running
             return py_trees.Status.RUNNING
 
     def terminate(self, new_status):

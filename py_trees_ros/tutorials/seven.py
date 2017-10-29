@@ -120,7 +120,8 @@ def create_root():
         name="UnDock",
         action_namespace="/dock",
         action_spec=py_trees_msgs.DockAction,
-        action_goal=py_trees_msgs.DockGoal(False)
+        action_goal=py_trees_msgs.DockGoal(False),
+        override_feedback_message_on_running="undocking"
     )
     scan_or_be_cancelled = py_trees.composites.Selector("Scan or Be Cancelled")
     cancelling = py_trees.composites.Sequence("Cancelling?")
@@ -148,7 +149,8 @@ def create_root():
         name="Rotate",
         action_namespace="/rotate",
         action_spec=py_trees_msgs.RotateAction,
-        action_goal=py_trees_msgs.RotateGoal()
+        action_goal=py_trees_msgs.RotateGoal(),
+        override_feedback_message_on_running="rotating"
     )
     scan_flash_blue = py_trees_ros.tutorials.behaviours.FlashLedStrip(name="Flash Blue", colour="blue")
     move_home_after_scan = py_trees_ros.actions.ActionClient(
@@ -164,7 +166,8 @@ def create_root():
         name="Dock",
         action_namespace="/dock",
         action_spec=py_trees_msgs.DockAction,
-        action_goal=py_trees_msgs.DockGoal(True)
+        action_goal=py_trees_msgs.DockGoal(True),
+        override_feedback_message_on_running="docking"
     )
     idle = py_trees.behaviours.Running(name="Idle")
 
