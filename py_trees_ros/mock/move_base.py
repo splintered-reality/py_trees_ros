@@ -41,7 +41,7 @@ class MoveBase(action_server.ActionServer):
         pose_topic (:obj:`str`): name of the pose (with covariance stamped) topic
         duration (:obj:`int`): time for a goal to complete (seconds)
     """
-    def __init__(self, odometry_topic='/odom', pose_topic='/pose', duration=5):
+    def __init__(self, odometry_topic='/odom', pose_topic='/pose', duration=None):
         super(MoveBase, self).__init__(action_name="move_base",
                                        action_type=move_base_msgs.MoveBaseAction,
                                        worker=self.worker,
