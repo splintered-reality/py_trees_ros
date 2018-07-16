@@ -150,6 +150,9 @@ class Exchange(object):
         self.cached_blackboard_dict = {}
         self.watchers = []
         self.publisher = None
+        self.get_blackboard_variables_srv = None
+        self.open_blackboard_watcher_srv = None
+        self.close_blackboard_watcher_srv = None
 
     def setup(self, timeout):
         """
@@ -184,9 +187,9 @@ class Exchange(object):
         .. seealso:: This method is called in the way illustrated above in :class:`~py_trees_ros.trees.BehaviourTree`.
         """
         self.publisher = rospy.Publisher("~blackboard", std_msgs.String, latch=True, queue_size=2)
-        rospy.Service('~get_blackboard_variables', py_trees_srvs.GetBlackboardVariables, self._get_blackboard_variables_service)
-        rospy.Service('~open_blackboard_watcher', py_trees_srvs.OpenBlackboardWatcher, self._open_blackboard_watcher_service)
-        rospy.Service('~close_blackboard_watcher', py_trees_srvs.CloseBlackboardWatcher, self._close_blackboard_watcher_service)
+        self.get_blackboard_variables_srv = rospy.Service('~get_blackboard_variables', py_trees_srvs.GetBlackboardVariables, self._get_blackboard_variables_service)
+        self.open_blackboard_watcher_srv = rospy.Service('~open_blackboard_watcher', py_trees_srvs.OpenBlackboardWatcher, self._open_blackboard_watcher_service)
+        self.close_blackboard_watcher_srv = rospy.Service('~close_blackboard_watcher', py_trees_srvs.CloseBlackboardWatcher, self._close_blackboard_watcher_service)
         return True
 
     def _get_nested_keys(self):
@@ -267,3 +270,15 @@ class Exchange(object):
             watcher = _View(topic_name, req.variables)
             self.watchers.append(watcher)
         return py_trees_srvs.OpenBlackboardWatcherResponse(topic_name)
+
+    def unregister_services(self):
+        """
+        Use this method to make sure services are cleaned up when you wish
+        to subsequently discard the Exchange instance. This should be a
+        fairly atypical use case however - first consider if there are
+        ways to modify trees on the fly instead of destructing/recreating
+        all of the peripheral machinery.
+        """
+        for srv in [self.get_blackboard_variables_srv, self.open_blackboard_watcher_srv, self.close_blackboard_watcher_srv]:
+            if srv is not None:
+                srv.shutdown()
