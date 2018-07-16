@@ -272,6 +272,13 @@ class Exchange(object):
         return py_trees_srvs.OpenBlackboardWatcherResponse(topic_name)
 
     def unregister_services(self):
+        """
+        Use this method to make sure services are cleaned up when you wish
+        to subsequently discard the Exchange instance. This should be a
+        fairly atypical use case however - first consider if there are
+        ways to modify trees on the fly instead of destructing/recreating
+        all of the peripheral machinery.
+        """
         for srv in [self.get_blackboard_variables_srv, self.open_blackboard_watcher_srv, self.close_blackboard_watcher_srv]:
             if srv is not None:
                 srv.shutdown()
