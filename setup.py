@@ -10,7 +10,7 @@ install_requires = [ # ] if os.environ.get('AMENT_PREFIX_PATH') else [
 ]
 
 d = setup(
-    name='py_trees',
+    name='py_trees_ros',
     version='0.5.14',  # also update package.xml and version.py
     packages=find_packages(exclude=['tests*', 'docs*', 'launch*']),
     install_requires=install_requires,
@@ -41,5 +41,3 @@ d = setup(
          ],
      },
 )
-
-setup(**d)
