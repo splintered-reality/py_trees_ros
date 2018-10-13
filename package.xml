@@ -1,12 +1,13 @@
-<package format="2">
+<?xml version="1.0"? encoding="utf-8">
+<?xml-model href="http://download.ros.org/schema/package_format2.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
+<package format="3">
   <name>py_trees_ros</name>
   <version>0.5.14</version>
   <description>
-    Ros extensions and behaviours for py_trees.
+    ROS2 extensions and behaviours for py_trees.
   </description>
 
   <maintainer email="d.stonier@gmail.com">Daniel Stonier</maintainer>
-  <maintainer email="naveedhd@gmail.com">Naveed Usmani</maintainer>
 
   <license>BSD</license>
 
@@ -18,11 +19,10 @@
   <author>Michal Staniaszek</author>
   <author>Naveed Usmani</author>
 
-  <buildtool_depend>catkin</buildtool_depend>
-
-  <build_depend>python-setuptools</build_depend>
+  <build_depend>python3-setuptools</build_depend>
 
   <!-- ach, autodoc is a beast, it shouldn't need these (there is a PR going in upstream for autodoc) -->
+  <!--
   <doc_depend>actionlib</doc_depend>
   <doc_depend>actionlib_msgs</doc_depend>
   <doc_depend>dynamic_reconfigure</doc_depend>
@@ -43,34 +43,41 @@
   <doc_depend>std_msgs</doc_depend>
   <doc_depend>unique_id</doc_depend>
   <doc_depend>uuid_msgs</doc_depend>
+  -->
 
   <!-- mocking & simulation dependencies -->
+  <!--
   <exec_depend>dynamic_reconfigure</exec_depend>
   <exec_depend>geometry_msgs</exec_depend>
   <exec_depend>move_base_msgs</exec_depend>
   <exec_depend>python-termcolor</exec_depend>
   <exec_depend>nav_msgs</exec_depend>
   <exec_depend>sensor_msgs</exec_depend>
+  -->
 
   <!-- core dependencies -->
-  <exec_depend>actionlib</exec_depend>
-  <exec_depend>actionlib_msgs</exec_depend>
   <exec_depend>py_trees</exec_depend>
   <exec_depend>py_trees_msgs</exec_depend>
+  <!--
+  <exec_depend>actionlib</exec_depend>
+  <exec_depend>actionlib_msgs</exec_depend>
   <exec_depend>python-rospkg</exec_depend>
   <exec_depend>rosbag</exec_depend>
   <exec_depend>rospy</exec_depend>
   <exec_depend>std_msgs</exec_depend>
   <exec_depend>unique_id</exec_depend>
   <exec_depend>uuid_msgs</exec_depend>
+  -->
 
+  <!--
   <test_depend>py_trees</test_depend>
   <test_depend>geometry_msgs</test_depend>
   <test_depend>python_qt_binding</test_depend>
   <test_depend>rostest</test_depend>
   <test_depend>rosunit</test_depend>
+  -->
 
   <export>
-    <rosdoc config="rosdoc.yaml"/>
+    <build_type>ament_python</build_type>
   </export>
 </package>
