@@ -12,7 +12,8 @@ install_requires = [ # ] if os.environ.get('AMENT_PREFIX_PATH') else [
 d = setup(
     name='py_trees_ros',
     version='0.5.14',  # also update package.xml and version.py
-    packages=find_packages(exclude=['tests*', 'docs*', 'launch*']),
+    # packages=find_packages(exclude=['tests*', 'docs*', 'launch*']),
+    packages=find_packages(include=['py_trees_ros.*']),
     install_requires=install_requires,
     extras_require={},
     author='Daniel Stonier, Naveed Usmani, Michal Staniaszek',
@@ -37,6 +38,7 @@ d = setup(
     # scripts=['scripts/demo_tree'],
     entry_points={
          'console_scripts': [
+             'py-trees-demo-exchange = py_trees_ros.demos.exchange:main',
              'py-trees-blackboard-watcher = py_trees_ros.programs.blackboard_watcher:main',
          ],
      },
