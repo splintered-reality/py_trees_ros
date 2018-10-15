@@ -26,13 +26,14 @@ means of interacting with the watching services.
 ##############################################################################
 
 import operator
+import pickle
 import py_trees
 import py_trees_msgs.srv as py_trees_srvs
-import rospy
+import rclpy
+import rclpy.node
+
 import py_trees.console as console
 import std_msgs.msg as std_msgs
-
-from cPickle import dumps
 
 ##############################################################################
 # ROS Blackboard
@@ -71,7 +72,7 @@ class _View(object):
 
     def _is_changed(self):
         self._update_sub_blackboard()
-        current_pickle = dumps(self.dict, -1)
+        current_pickle = pickle.dumps(self.dict, -1)
         blackboard_changed = current_pickle != self.cached_dict
         self.cached_dict = current_pickle
 
@@ -137,6 +138,7 @@ class Exchange(object):
     """Incremental counter guaranteeing unique watcher names"""
 
     def __init__(self):
+        self.node = None
         self.blackboard = py_trees.blackboard.Blackboard()
         """
         Internal handle to the blackboard. Users can utilise this, or create their own handles via the
@@ -154,7 +156,7 @@ class Exchange(object):
         self.open_blackboard_watcher_srv = None
         self.close_blackboard_watcher_srv = None
 
-    def setup(self, timeout):
+    def setup(self, node, timeout):
         """
         This is where the ros initialisation of publishers and services happens. It is kept
         outside of the constructor for the same reasons that the familiar py_trees
@@ -186,10 +188,11 @@ class Exchange(object):
 
         .. seealso:: This method is called in the way illustrated above in :class:`~py_trees_ros.trees.BehaviourTree`.
         """
-        self.publisher = rospy.Publisher("~blackboard", std_msgs.String, latch=True, queue_size=2)
-        self.get_blackboard_variables_srv = rospy.Service('~get_blackboard_variables', py_trees_srvs.GetBlackboardVariables, self._get_blackboard_variables_service)
-        self.open_blackboard_watcher_srv = rospy.Service('~open_blackboard_watcher', py_trees_srvs.OpenBlackboardWatcher, self._open_blackboard_watcher_service)
-        self.close_blackboard_watcher_srv = rospy.Service('~close_blackboard_watcher', py_trees_srvs.CloseBlackboardWatcher, self._close_blackboard_watcher_service)
+        self.publisher = node.create_publisher(std_msgs.String, 'blackboard')
+        # self.publisher = rospy.Publisher("~blackboard", std_msgs.String, latch=True, queue_size=2)
+        # self.get_blackboard_variables_srv = rospy.Service('~get_blackboard_variables', py_trees_srvs.GetBlackboardVariables, self._get_blackboard_variables_service)
+        # self.open_blackboard_watcher_srv = rospy.Service('~open_blackboard_watcher', py_trees_srvs.OpenBlackboardWatcher, self._open_blackboard_watcher_service)
+        # self.close_blackboard_watcher_srv = rospy.Service('~close_blackboard_watcher', py_trees_srvs.CloseBlackboardWatcher, self._close_blackboard_watcher_service)
         return True
 
     def _get_nested_keys(self):
@@ -220,7 +223,7 @@ class Exchange(object):
         return False
 
     def _is_changed(self):
-        current_pickle = dumps(self.blackboard.__dict__, -1)
+        current_pickle = pickle.dumps(self.blackboard.__dict__, -1)
         blackboard_changed = current_pickle != self.cached_blackboard_dict
         self.cached_blackboard_dict = current_pickle
         return blackboard_changed

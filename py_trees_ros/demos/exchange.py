@@ -6,16 +6,17 @@
 ##############################################################################
 # Documentation
 ##############################################################################
+from platform import node
 
 """
 .. argparse::
-   :module: py_trees_ros.demos.blackboard_exchange
+   :module: py_trees_ros.demos.exchange
    :func: command_line_argument_parser
-   :prog: py-trees-demo-blackboard-exchange
+   :prog: py-trees-demo-exchange
 
-.. graphviz:: dot/demo-blackboard.dot
+.. graphviz:: dot/demo-exchange.dot
 
-.. image:: images/blackboard.gif
+.. image:: images/exchange.gif
 """
 
 ##############################################################################
@@ -23,8 +24,9 @@
 ##############################################################################
 
 import argparse
-import py_trees
 import py_trees_ros
+import rclpy
+import rclpy.node
 
 import py_trees.console as console
 
@@ -76,15 +78,31 @@ def main():
     """
     Entry point for the demo script.
     """
+    ####################
+    # Arg Parsing
+    ####################
+    # if this gets run with ros-specific command line arguments (e.g. when
+    # executed from roslaunch, then we'll need to pass it something like
+    # rospy.myargv()[1:])
+    # Refer to https://github.com/ros2/demos/blob/master/demo_nodes_py/demo_nodes_py/topics/talker_qos.py
     unused_args = command_line_argument_parser().parse_args()
     print(description())
-    py_trees.logging.level = py_trees.logging.Level.DEBUG
 
+    ####################
+    # Exchange
+    ####################
     exchange = py_trees_ros.blackboard.Exchange()
     exchange.blackboard.dude = "Bob"
     exchange.blackboard.dudette = "Sarah"
+    print(exchange.blackboard)
 
     ####################
-    # Execute
+    # Rclpy
     ####################
-    print(exchange.blackboard)
+    rclpy.init(args=None)
+    node = rclpy.node.Node('exchange')
+    exchange.setup(node=node, timeout=15)
+    rclpy.spin(node)
+    node.destroy_node()
+
+
