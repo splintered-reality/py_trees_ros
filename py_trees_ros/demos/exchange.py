@@ -24,6 +24,7 @@ from platform import node
 ##############################################################################
 
 import argparse
+import functools
 import py_trees_ros
 import rclpy
 import rclpy.node
@@ -69,6 +70,9 @@ def command_line_argument_parser():
                                      )
     return parser
 
+def periodically_publish(exchange):
+    print("Publishing the blackboard")
+    exchange.publish_blackboard()
 
 ##############################################################################
 # Main
@@ -102,7 +106,15 @@ def main():
     rclpy.init(args=None)
     node = rclpy.node.Node('exchange')
     exchange.setup(node=node, timeout=15)
-    rclpy.spin(node)
+    timer_period = 1.0
+    timer = node.create_timer(
+        timer_period,
+        functools.partial(periodically_publish, exchange=exchange)
+    )
+    try:
+        rclpy.spin(node)
+    except KeyboardInterrupt:
+        pass
     node.destroy_node()
 
 

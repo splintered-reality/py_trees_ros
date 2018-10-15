@@ -188,6 +188,7 @@ class Exchange(object):
 
         .. seealso:: This method is called in the way illustrated above in :class:`~py_trees_ros.trees.BehaviourTree`.
         """
+        self.node = node
         self.publisher = node.create_publisher(std_msgs.String, 'blackboard')
         # self.publisher = rospy.Publisher("~blackboard", std_msgs.String, latch=True, queue_size=2)
         # self.get_blackboard_variables_srv = rospy.Service('~get_blackboard_variables', py_trees_srvs.GetBlackboardVariables, self._get_blackboard_variables_service)
@@ -243,20 +244,23 @@ class Exchange(object):
             unused_tree (:obj:`any`): if used as a post_tick_handler, needs the argument, but nonetheless, gets unused
         """
         if self.publisher is None:
-            rospy.logerr("Blackboard Exchange: no publishers [hint: call setup() on the exchange]")
+            self.node.get_logger().error("Blackboard Exchange: no publishers [hint: call setup() on the exchange]")
             return
 
         # publish blackboard
-        if self.publisher.get_num_connections() > 0:
-            if self._is_changed():
-                self.publisher.publish("%s" % self.blackboard)
+        msg = std_msgs.String()
+        msg.data = "{0}".format(self.blackboard)
+        self.publisher.publish(msg)
+        # if self.publisher.get_num_connections() > 0:
+        #     if self._is_changed():
+        #         self.publisher.publish("%s" % self.blackboard)
 
         # publish watchers
-        if len(self.watchers) > 0:
-            for (unused_i, sub_blackboard) in enumerate(self.watchers):
-                if sub_blackboard.publisher.get_num_connections() > 0:
-                    if sub_blackboard._is_changed():
-                        sub_blackboard.publisher.publish("%s" % sub_blackboard)
+        # if len(self.watchers) > 0:
+        #     for (unused_i, sub_blackboard) in enumerate(self.watchers):
+        #         if sub_blackboard.publisher.get_num_connections() > 0:
+        #             if sub_blackboard._is_changed():
+        #                 sub_blackboard.publisher.publish("%s" % sub_blackboard)
 
     def _close_blackboard_watcher_service(self, req):
         result = self._close_watcher(req)
