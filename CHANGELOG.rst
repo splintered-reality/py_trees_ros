@@ -2,6 +2,16 @@
 Changelog
 =========
 
+Forthcoming
+-----------
+Noteworthy changes from 0.5.x -> 0.6.x:
+
+* [infra] stripped down and rebuilt for ROS2
+
+Regular changelog details:
+
+* [infra] builds in a colcon environment
+
 0.5.13 (2017-05-28)
 -------------------
 * [doc] add many missing packages to satiate autodoc
