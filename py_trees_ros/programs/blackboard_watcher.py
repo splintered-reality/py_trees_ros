@@ -24,12 +24,13 @@ Example interaction with the services of a :class:`Blackboard Exchange <py_trees
 
 import argparse
 import functools
+import os
 import py_trees_msgs.srv as py_trees_srvs
-import rospy
 import py_trees.console as console
-import rosservice
+import rclpy
 import sys
 import std_msgs.msg as std_msgs
+import time
 
 ##############################################################################
 # Classes
@@ -97,11 +98,11 @@ def pretty_print_variables(variables):
             sep = ""
         s += "    " * len(variable) + sep + variable[-1] + "\n"
     s += console.reset
-    print "%s" % s
+    print("{}".format(s))
 
 
 def echo_sub_blackboard(sub_blackboard):
-    print "%s" % sub_blackboard.data
+    print("{}".format(sub_blackboard))
 
 
 def spin_ros_node(received_topic, namespace):
@@ -110,36 +111,45 @@ def spin_ros_node(received_topic, namespace):
         received_topic (:obj:`str`): topic name
         namespace (:obj:`str`): where to look for blackboard exchange services
     """
-    rospy.init_node(received_topic.split('/')[-1])
+#     rospy.init_node(received_topic.split('/')[-1])
+#
+#     close_blackboard_watcher_service_name = find_service(namespace, 'py_trees_msgs/CloseBlackboardWatcher')
+#
+#     def request_close_blackboard_watcher(updates_subscriber):
+#         """
+#         :param rospy.Subscriber updates_subscriber: subscriber to unregister
+#         """
+#         updates_subscriber.unregister()
+#         try:
+#             rospy.wait_for_service(close_blackboard_watcher_service_name, timeout=3.0)
+#             try:
+#                 close_blackboard_watcher = rospy.ServiceProxy(close_blackboard_watcher_service_name, py_trees_srvs.CloseBlackboardWatcher)
+#                 unused_result = close_blackboard_watcher(received_topic)  # received_topic.split('/')[-1]
+#                 # could check if result returned success
+#             except rospy.ServiceException, e:
+#                     print(console.red + "ERROR: service call failed [%s]" % str(e) + console.reset)
+#                     sys.exit(1)
+#         except rospy.exceptions.ROSException, e:
+#             print(console.red + "ERROR: unknown ros exception [%s]" % str(e) + console.reset)
+#             sys.exit(1)
+#
+#     updates_subscriber = rospy.Subscriber(received_topic, std_msgs.String, echo_sub_blackboard)
+#     rospy.on_shutdown(functools.partial(request_close_blackboard_watcher, updates_subscriber))
+#     while not rospy.is_shutdown():
+#         rospy.spin()
 
-    close_blackboard_watcher_service_name = find_service(namespace, 'py_trees_msgs/CloseBlackboardWatcher')
 
-    def request_close_blackboard_watcher(updates_subscriber):
-        """
-        :param rospy.Subscriber updates_subscriber: subscriber to unregister
-        """
-        updates_subscriber.unregister()
-        try:
-            rospy.wait_for_service(close_blackboard_watcher_service_name, timeout=3.0)
-            try:
-                close_blackboard_watcher = rospy.ServiceProxy(close_blackboard_watcher_service_name, py_trees_srvs.CloseBlackboardWatcher)
-                unused_result = close_blackboard_watcher(received_topic)  # received_topic.split('/')[-1]
-                # could check if result returned success
-            except rospy.ServiceException, e:
-                    print(console.red + "ERROR: service call failed [%s]" % str(e) + console.reset)
-                    sys.exit(1)
-        except rospy.exceptions.ROSException, e:
-            print(console.red + "ERROR: unknown ros exception [%s]" % str(e) + console.reset)
-            sys.exit(1)
-
-    updates_subscriber = rospy.Subscriber(received_topic, std_msgs.String, echo_sub_blackboard)
-    rospy.on_shutdown(functools.partial(request_close_blackboard_watcher, updates_subscriber))
-    while not rospy.is_shutdown():
-        rospy.spin()
-
-
-def find_service(namespace, service_type):
+def find_service(namespace, service_type, node):
     try:
+        service_names_and_types = node.get_service_names_and_types()
+        print("[DJS] Services Names and Types:\n {}".format(service_names_and_types))
+        try:
+            service_name = [name for name, types in enumerate(service_names_and_types) if service_type in types ].pop()
+        except IndexError:
+
+        for service_name, service_types in service_names_and_types:
+
+
         service_name = rosservice.rosservice_find(service_type)
     except rosservice.ROSServiceIOException as e:
         print(console.red + "ERROR: {0}".format(str(e)) + console.reset)
@@ -167,48 +177,49 @@ def find_service(namespace, service_type):
 
 
 def handle_args(args):
-    if args.list_variables:
-        list_variables_service_name = find_service(args.namespace, 'py_trees_msgs/GetBlackboardVariables')
-        try:
-            rospy.wait_for_service(list_variables_service_name, timeout=3.0)
-            try:
-                list_variables = rospy.ServiceProxy(list_variables_service_name, py_trees_srvs.GetBlackboardVariables)
-                recieved_variables = list_variables()
-                pretty_print_variables(recieved_variables.variables)
-            except rospy.ServiceException, e:
-                print(console.red + "ERROR: service call failed [%s]" % str(e) + console.reset)
-                sys.exit(1)
-        except rospy.exceptions.ROSException, e:
-            print(console.red + "ERROR: unknown ros exception [%s]" % str(e) + console.reset)
-            sys.exit(1)
-    else:
-        if not args.variables:
-            print(console.red + "\nERROR: please provide a list of variables to watch.\n" + console.reset)
-            print("%s" % description(formatted_for_sphinx=False))
-            sys.exit(1)
-        else:
-            variables = args.variables[0:]
-            variables = [variable.strip(',[]') for variable in variables]
-
-            open_blackboard_watcher_service = find_service(args.namespace, 'py_trees_msgs/OpenBlackboardWatcher')
-
-            try:
-                rospy.wait_for_service(open_blackboard_watcher_service, timeout=3.0)
-                try:
-                    open_watcher = rospy.ServiceProxy(open_blackboard_watcher_service, py_trees_srvs.OpenBlackboardWatcher)
-                    response = open_watcher(variables)
-                except rospy.ServiceException, e:
-                    print(console.red + "ERROR: service call failed [%s]" % str(e) + console.reset)
-                    sys.exit(1)
-
-                if response is not None:
-                    spin_ros_node(response.topic, args.namespace)
-
-                else:
-                    print(console.red + "\nERROR: subscribing to topic failed\n" + console.reset)
-            except rospy.exceptions.ROSException, e:
-                print(console.red + "ERROR: unknown ros exception [%s]" % str(e) + console.reset)
-                sys.exit(1)
+    print("[DJS] handle args")
+#     if args.list_variables:
+#         list_variables_service_name = find_service(args.namespace, 'py_trees_msgs/GetBlackboardVariables')
+#         try:
+#             rospy.wait_for_service(list_variables_service_name, timeout=3.0)
+#             try:
+#                 list_variables = rospy.ServiceProxy(list_variables_service_name, py_trees_srvs.GetBlackboardVariables)
+#                 recieved_variables = list_variables()
+#                 pretty_print_variables(recieved_variables.variables)
+#             except rospy.ServiceException, e:
+#                 print(console.red + "ERROR: service call failed [%s]" % str(e) + console.reset)
+#                 sys.exit(1)
+#         except rospy.exceptions.ROSException, e:
+#             print(console.red + "ERROR: unknown ros exception [%s]" % str(e) + console.reset)
+#             sys.exit(1)
+#     else:
+#         if not args.variables:
+#             print(console.red + "\nERROR: please provide a list of variables to watch.\n" + console.reset)
+#             print("%s" % description(formatted_for_sphinx=False))
+#             sys.exit(1)
+#         else:
+#             variables = args.variables[0:]
+#             variables = [variable.strip(',[]') for variable in variables]
+#
+#             open_blackboard_watcher_service = find_service(args.namespace, 'py_trees_msgs/OpenBlackboardWatcher')
+#
+#             try:
+#                 rospy.wait_for_service(open_blackboard_watcher_service, timeout=3.0)
+#                 try:
+#                     open_watcher = rospy.ServiceProxy(open_blackboard_watcher_service, py_trees_srvs.OpenBlackboardWatcher)
+#                     response = open_watcher(variables)
+#                 except rospy.ServiceException, e:
+#                     print(console.red + "ERROR: service call failed [%s]" % str(e) + console.reset)
+#                     sys.exit(1)
+#
+#                 if response is not None:
+#                     spin_ros_node(response.topic, args.namespace)
+#
+#                 else:
+#                     print(console.red + "\nERROR: subscribing to topic failed\n" + console.reset)
+#             except rospy.exceptions.ROSException, e:
+#                 print(console.red + "ERROR: unknown ros exception [%s]" % str(e) + console.reset)
+#                 sys.exit(1)
 
 ##############################################################################
 # Main
@@ -219,7 +230,22 @@ def main():
     """
     Entry point for the blackboard watcher script.
     """
-    command_line_args = rospy.myargv(argv=sys.argv)[1:]
+    # Until there is support for a ros arg stripper
+    # command_line_args = rospy.myargv(argv=sys.argv)[1:]
+    command_line_args = None
     parser = command_line_argument_parser(formatted_for_sphinx=False)
     args = parser.parse_args(command_line_args)
-    handle_args(args)
+    print("[DJS] main")
+
+    rclpy.init(args=None)
+    node = rclpy.create_node(
+        node_name='watcher' + "_" + str(os.getpid()),
+        # start_parameter_services=False  # crystal api probably
+    )
+    time.sleep(0.1)
+    print("Topic Names and Types:\n {}".format(node.get_topic_names_and_types()))
+    print("Services Names and Types:\n {}".format(node.get_service_names_and_types()))
+    print("Node Names: {}".format(node.get_node_names()))
+    time.sleep(1)
+
+    #handle_args(args)

@@ -189,8 +189,7 @@ class Exchange(object):
         .. seealso:: This method is called in the way illustrated above in :class:`~py_trees_ros.trees.BehaviourTree`.
         """
         self.node = node
-        self.publisher = node.create_publisher(std_msgs.String, 'blackboard')
-        # self.publisher = rospy.Publisher("~blackboard", std_msgs.String, latch=True, queue_size=2)
+        self.publisher = node.create_publisher(std_msgs.String, '~/blackboard')
         # self.get_blackboard_variables_srv = rospy.Service('~get_blackboard_variables', py_trees_srvs.GetBlackboardVariables, self._get_blackboard_variables_service)
         # self.open_blackboard_watcher_srv = rospy.Service('~open_blackboard_watcher', py_trees_srvs.OpenBlackboardWatcher, self._open_blackboard_watcher_service)
         # self.close_blackboard_watcher_srv = rospy.Service('~close_blackboard_watcher', py_trees_srvs.CloseBlackboardWatcher, self._close_blackboard_watcher_service)
@@ -227,6 +226,7 @@ class Exchange(object):
         current_pickle = pickle.dumps(self.blackboard.__dict__, -1)
         blackboard_changed = current_pickle != self.cached_blackboard_dict
         self.cached_blackboard_dict = current_pickle
+        print("[DJS] Changed: {}".format(blackboard_changed))
         return blackboard_changed
 
     def publish_blackboard(self, unused_tree=None):
@@ -248,19 +248,21 @@ class Exchange(object):
             return
 
         # publish blackboard
-        msg = std_msgs.String()
-        msg.data = "{0}".format(self.blackboard)
-        self.publisher.publish(msg)
-        # if self.publisher.get_num_connections() > 0:
-        #     if self._is_changed():
-        #         self.publisher.publish("%s" % self.blackboard)
+        print("[DJS] # Subscribers: {}".format(self.node.count_subscribers("~/blackboard")))
+        if self.node.count_subscribers("~/blackboard") > 0:
+            if self._is_changed():
+                msg = std_msgs.String()
+                msg.data = "{0}".format(self.blackboard)
+                self.publisher.publish(msg)
 
         # publish watchers
-        # if len(self.watchers) > 0:
-        #     for (unused_i, sub_blackboard) in enumerate(self.watchers):
-        #         if sub_blackboard.publisher.get_num_connections() > 0:
-        #             if sub_blackboard._is_changed():
-        #                 sub_blackboard.publisher.publish("%s" % sub_blackboard)
+        if len(self.watchers) > 0:
+            for (unused_i, sub_blackboard) in enumerate(self.watchers):
+                if sub_blackboard.publisher.get_num_connections() > 0:
+                    if sub_blackboard._is_changed():
+                        msg = std_msgs.String()
+                        msg.data = "{0}".format(sub_blackboard)
+                        sub_blackboard.publisher.publish(msg)
 
     def _close_blackboard_watcher_service(self, req):
         result = self._close_watcher(req)
