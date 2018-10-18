@@ -140,47 +140,55 @@ def spin_ros_node(received_topic, namespace):
 
 
 def find_service(namespace, service_type, node):
-    try:
-        service_names_and_types = node.get_service_names_and_types()
-        print("[DJS] Services Names and Types:\n {}".format(service_names_and_types))
-        try:
-            service_name = [name for name, types in enumerate(service_names_and_types) if service_type in types ].pop()
-        except IndexError:
+    # TODO: follow the pattern of ros2cli to create a node without the need to init
+    # rcl (might get rid of the magic sleep this way). See:
+    #    https://github.com/ros2/ros2cli/blob/master/ros2service/ros2service/verb/list.py
+    #    https://github.com/ros2/ros2cli/blob/master/ros2cli/ros2cli/node/strategy.py
 
-        for service_name, service_types in service_names_and_types:
+    # Returns a list of the form: [('exchange/blackboard', ['std_msgs/String'])
+    service_names_and_types = node.get_service_names_and_types()
+    print("[DJS] Services Names and Types:\n {}".format(service_names_and_types))
+    service_names = [name for name, types in service_names_and_types if service_type in types ]
+    print("[DJS] Service Names: {}".format(service_names))
+    if namespace is not None:
+        service_names = [name for name in service_names if namespace in name]
+    print("[DJS] Service Names: {}".format(service_names))
 
-
-        service_name = rosservice.rosservice_find(service_type)
-    except rosservice.ROSServiceIOException as e:
-        print(console.red + "ERROR: {0}".format(str(e)) + console.reset)
-        sys.exit(1)
-    if len(service_name) > 0:
-        if len(service_name) == 1:
-            service_name = service_name[0]
-        elif namespace is not None:
-            for service in service_name:
-                if namespace in service:
-                    service_name = service
-                    break
-            if type(service_name) is list:
-                print(console.red + "\nERROR: multiple blackboard services found %s" % service_name + console.reset)
-                print(console.red + "\nERROR: but none matching the requested '%s'" % namespace + console.reset)
-                sys.exit(1)
-        else:
-            print(console.red + "\nERROR: multiple blackboard services found %s" % service_name + console.reset)
-            print(console.red + "\nERROR: select one with the --namespace argument" + console.reset)
-            sys.exit(1)
-    else:
+    if not service_names:
         print(console.red + "ERROR: blackboard services not found" + console.reset)
         sys.exit(1)
-    return service_name
+
+    if len(service_names) == 1:
+        return service_names[0]
+
+    print(console.red + "\nERROR: multiple blackboard services found %s" % service_names + console.reset)
+    if namespace is None:
+        print(console.red + "\nERROR: select one with the --namespace argument" + console.reset)
+    else:
+        print(console.red + "\nERROR: but none matching the requested '%s'" % namespace + console.reset)
+    sys.exit(1)
 
 
-def handle_args(args):
+def handle_args(args, node):
     print("[DJS] handle args")
-#     if args.list_variables:
-#         list_variables_service_name = find_service(args.namespace, 'py_trees_msgs/GetBlackboardVariables')
-#         try:
+    if args.list_variables:
+        list_variables_service_name = find_service(args.namespace, 'py_trees_msgs/GetBlackboardVariables', node)
+        list_variables_client = node.create_client(
+            srv_type=py_trees_srvs.GetBlackboardVariables,
+            srv_name=list_variables_service_name
+            )
+        print("[DJS] list_variables_service_name: {}".format(list_variables_service_name))
+        if not list_variables_client.wait_for_service(timeout_sec=3.0):
+            print(console.red + "ERROR: timed out waiting for the list variables server" + console.reset)
+            sys.exit(1)
+        request = py_trees_srvs.GetBlackboardVariables.Request()
+        future = list_variables_client.call_async(request)
+        rclpy.spin_until_future_complete(node, future)
+        if future.result() is not None:
+            pretty_print_variables(future.result().variables)
+        else:
+            print(console.red + "ERROR: service call failed [{}]".format(future.exception() + console.reset))
+#        try:
 #             rospy.wait_for_service(list_variables_service_name, timeout=3.0)
 #             try:
 #                 list_variables = rospy.ServiceProxy(list_variables_service_name, py_trees_srvs.GetBlackboardVariables)
@@ -246,6 +254,4 @@ def main():
     print("Topic Names and Types:\n {}".format(node.get_topic_names_and_types()))
     print("Services Names and Types:\n {}".format(node.get_service_names_and_types()))
     print("Node Names: {}".format(node.get_node_names()))
-    time.sleep(1)
-
-    #handle_args(args)
+    handle_args(args, node)

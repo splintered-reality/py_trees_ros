@@ -190,7 +190,11 @@ class Exchange(object):
         """
         self.node = node
         self.publisher = node.create_publisher(std_msgs.String, '~/blackboard')
-        # self.get_blackboard_variables_srv = rospy.Service('~get_blackboard_variables', py_trees_srvs.GetBlackboardVariables, self._get_blackboard_variables_service)
+        self.get_blackboard_variables_srv = node.create_service(
+            srv_type=py_trees_srvs.GetBlackboardVariables,
+            srv_name='~/get_blackboard_variables',
+            callback=self._get_blackboard_variables_service
+        )
         # self.open_blackboard_watcher_srv = rospy.Service('~open_blackboard_watcher', py_trees_srvs.OpenBlackboardWatcher, self._open_blackboard_watcher_service)
         # self.close_blackboard_watcher_srv = rospy.Service('~close_blackboard_watcher', py_trees_srvs.CloseBlackboardWatcher, self._close_blackboard_watcher_service)
         return True
@@ -264,21 +268,21 @@ class Exchange(object):
                         msg.data = "{0}".format(sub_blackboard)
                         sub_blackboard.publisher.publish(msg)
 
-    def _close_blackboard_watcher_service(self, req):
-        result = self._close_watcher(req)
-        return result
+    def _close_blackboard_watcher_service(self, request, response):
+        response.result = self._close_watcher(request)
+        return response
 
-    def _get_blackboard_variables_service(self, req):
-        nested_keys = self._get_nested_keys()
-        return py_trees_srvs.GetBlackboardVariablesResponse(nested_keys)
+    def _get_blackboard_variables_service(self, unused_request, response):
+        response.variables = self._get_nested_keys()
+        return response
 
-    def _open_blackboard_watcher_service(self, req):
-        if isinstance(req.variables, list):
-            topic_name = rospy.names.resolve_name("~blackboard/watcher_" + str(Exchange._counter))
+    def _open_blackboard_watcher_service(self, request, response):
+        if isinstance(request.variables, list):
+            response.topic = rospy.names.resolve_name("~blackboard/watcher_" + str(Exchange._counter))
             Exchange._counter += 1
-            watcher = _View(topic_name, req.variables)
+            watcher = _View(response.topic, request.variables)
             self.watchers.append(watcher)
-        return py_trees_srvs.OpenBlackboardWatcherResponse(topic_name)
+        return response
 
     def unregister_services(self):
         """
