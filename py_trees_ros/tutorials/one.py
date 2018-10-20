@@ -84,7 +84,7 @@ import functools
 import py_trees
 import py_trees_ros
 import py_trees.console as console
-import rospy
+import rclpy
 import sys
 
 ##############################################################################
@@ -103,15 +103,15 @@ def create_root():
     root = py_trees.composites.Parallel("Tutorial")
 
     topics2bb = py_trees.composites.Sequence("Topics2BB")
-    battery2bb = py_trees_ros.battery.ToBlackboard(name="Battery2BB",
-                                                   topic_name="/battery/state",
-                                                   threshold=30.0
-                                                   )
+    # TODO: battery2bb = py_trees_ros.battery.ToBlackboard(name="Battery2BB",
+    #                                                topic_name="/battery/state",
+    #                                                threshold=30.0
+    #                                                )
     priorities = py_trees.composites.Selector("Priorities")
     idle = py_trees.behaviours.Running(name="Idle")
 
     root.add_child(topics2bb)
-    topics2bb.add_child(battery2bb)
+    # TODO: topics2bb.add_child(battery2bb)
     root.add_child(priorities)
     priorities.add_child(idle)
     return root
@@ -129,11 +129,12 @@ def main():
     """
     Entry point for the demo script.
     """
-    rospy.init_node("tree")
+    rclpy.init(args=None)
     root = create_root()
     behaviour_tree = py_trees_ros.trees.BehaviourTree(root)
-    rospy.on_shutdown(functools.partial(shutdown, behaviour_tree))
+    # TODO: rospy.on_shutdown(functools.partial(shutdown, behaviour_tree))
     if not behaviour_tree.setup(timeout=15):
         console.logerror("failed to setup the tree, aborting.")
         sys.exit(1)
-    behaviour_tree.tick_tock(500)
+    rclpy.spin(behaviour_tree.node)
+    # TODO: behaviour_tree.tick_tock(500)

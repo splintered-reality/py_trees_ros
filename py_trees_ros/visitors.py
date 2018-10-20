@@ -25,7 +25,7 @@ runs its own method on the behaviour to do as it wishes - logging, introspecting
 
 import py_trees
 import py_trees_msgs.msg as py_trees_msgs
-import rospy
+import rclpy
 
 from . import conversions
 
@@ -96,7 +96,8 @@ class LoggingVisitor(py_trees.visitors.VisitorBase):
         instance.
         """
         self.tree = py_trees_msgs.BehaviourTree()
-        self.tree.header.stamp = rospy.Time.now()
+        # TODO: crystal api
+        # self.tree.stamp = rclpy.clock.Clock.now().to_msg()
 
     def run(self, behaviour):
         """

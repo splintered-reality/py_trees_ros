@@ -37,8 +37,10 @@ d = setup(
     # scripts=['scripts/demo_tree'],
     entry_points={
          'console_scripts': [
-             'py-trees-demo-exchange = py_trees_ros.demos.exchange:main',
              'py-trees-blackboard-watcher = py_trees_ros.programs.blackboard_watcher:main',
+             # TODO: none of these should be in the global bin
+             'py-trees-demo-exchange = py_trees_ros.demos.exchange:main',
+             'py-trees-ros-tutorial-tree-one = py_trees_ros.tutorials.one:main',
          ],
      },
 )

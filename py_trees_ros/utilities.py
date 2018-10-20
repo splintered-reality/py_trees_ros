@@ -15,6 +15,12 @@ Assorted utility functions.
 # Imports
 ##############################################################################
 
+import os
+import pathlib
+import py_trees.console as console
+import rclpy
+import std_msgs.msg as std_msgs
+
 from . import exceptions
 
 ##############################################################################
@@ -56,88 +62,109 @@ def find_service(node, service_type, namespace=None):
     else:
         raise exceptions.MultipleFoundError("multiple services found [type: {}]".format(service_type))
 
+
+def basename(name):
+    """
+    Generate the basename from a ros name.
+
+    Args:
+        name (:obj:`str`): ros name
+
+    Returns:
+        :obj:`str`: name stripped up until the last slash or tilde character.
+    Examples:
+
+        .. code-block:: python
+
+           basename("~dude")
+           # 'dude'
+           basename("/gang/dude")
+           # 'dude'
+    """
+    return name.rsplit('/', 1)[-1].rsplit('~', 1)[-1]
+
+def get_py_trees_home():
+    """
+    Find the default home directory used for logging, bagging and other
+    esoterica.
+    """
+    # TODO: update with replacement for rospkg.get_ros_home() when it arrives
+    home = os.path.join(str(pathlib.Path.home()), ".ros2", "py_trees")
+    return home
+
 ##############################################################################
-# Graveyard
+# Convenience Classes
 ##############################################################################
 
+class Publishers(object):
+    """
+    Utility class that groups the publishers together in one convenient structure.
 
-# def basename(name):
-#     """
-#     Generate the basename from a ros name.
-#
-#     Args:
-#         name (:obj:`str`): ros name
-#
-#     Returns:
-#         :obj:`str`: name stripped up until the last slash or tilde character.
-#     Examples:
-#
-#         .. code-block:: python
-#
-#            basename("~dude")
-#            # 'dude'
-#            basename("/gang/dude")
-#            # 'dude'
-#     """
-#     return name.rsplit('/', 1)[-1].rsplit('~', 1)[-1]
-#
-#
-# def publish_resolved_names(publisher, ros_communication_handles):
-#     """
-#     Worker that provides a string representation of all the resolved names
-#     and publishes it so we can use it as an introspection topic in runtime.
-#
-#     Args:
-#         publisher (:obj:`rospy.Publisher`): use this object to publish with
-#         ros_communication_handles ([]): list of handles with their resolved names to to publish
-#     """
-#     s = console.bold + "\nResolved Names\n\n" + console.reset
-#     for handle in ros_communication_handles:
-#         s += console.yellow + "  " + handle.resolved_name + "\n" + console.reset
-#         publisher.publish(std_msgs.String("%s" % s))
-#
+    Args:
+        publishers (obj:`tuple`): list of (str, str, bool, int) tuples representing (topic_name, publisher_type, latched, queue_size) specifications to create publishers with
+
+    Examples:
+        Convert the incoming list of publisher name, type, latched, queue_size specifications into proper variables of this class.
+
+        .. code-block:: python
+
+           publishers = rocon_python_comms.utils.Publishers(
+               [
+                   ('~foo', std_msgs.String, True, 5),
+                   ('/foo/bar', std_msgs.String, False, 5),
+                   ('foobar', '/foo/bar', std_msgs.String, False, 5),
+               ]
+           )
+
+        Note: '~/introspection/dude' will become just 'dude' unless you prepend a field for the name
+        as in the third example above.
+    """
+    def __init__(self, node, publishers, introspection_topic_name="publishers"):
+        resolved_names = []
+        publisher_details = []
+        for info in publishers:
+            if len(info) == 4:
+                publisher_details.append((basename(info[0]), info[0], info[1], info[2], info[3]))
+            else:
+                # naively assume the user got it right and added exactly 5 fields
+                publisher_details.append(info)
+
+        # TODO: handle latched, queue size
+        for (name, topic_name, publisher_type, unused_latched, unused_queue_size) in publisher_details:
+            self.__dict__[name] = node.create_publisher(publisher_type, topic_name)
+            resolved_names.append(resolve_name(node, topic_name))
+
+        # TODO: handle latched, queue size
+        self.introspection_publisher = node.create_publisher(std_msgs.String, "~/introspection/" + introspection_topic_name)
+        s = console.bold + "\nPublishers\n\n" + console.reset
+        for name in resolved_names:
+            s += console.yellow + "  " + name + "\n" + console.reset
+        self.introspection_publisher.publish(std_msgs.String(data=s))
+
+def resolve_name(node, name):
+    """
+    Convenience function for getting the resolved name (similar to 'publisher.resolved_name' in ROS1).
+
+    Args:
+        node (:class:`rclpy.node.Node`): the node, namespace it *should* be relevant to
+        name (obj:`str`): topic or service name
+
+    .. note::
+
+       This entirely depends on the user providing the relevant node, name pair.
+    """
+    return rclpy.expand_topic_name.expand_topic_name(
+        name,
+        node.get_name(),
+        node.get_namespace()
+    )
+
 # ##############################################################################
 # # Classes
 # ##############################################################################
 #
 #
-# class Publishers(object):
-#     """
-#     Utility class that groups the publishers together in one convenient structure.
-#
-#     Args:
-#         publishers (obj:`tuple`): list of (str, str, bool, int) tuples representing (topic_name, publisher_type, latched, queue_size) specifications to create publishers with
-#
-#     Examples:
-#         Convert the incoming list of publisher name, type, latched, queue_size specifications into proper variables of this class.
-#
-#         .. code-block:: python
-#
-#            publishers = rocon_python_comms.utils.Publishers(
-#                [
-#                    ('~foo', std_msgs.String, True, 5),
-#                    ('/foo/bar', std_msgs.String, False, 5),
-#                    ('foobar', '/foo/bar', std_msgs.String, False, 5),
-#                ]
-#            )
-#
-#         Note: '~/introspection/dude' will become just 'dude' unless you prepend a field for the name
-#         as in the third example above.
-#     """
-#     def __init__(self, publishers, introspection_topic_name="publishers"):
-#         publisher_details = []
-#         for info in publishers:
-#             if len(info) == 4:
-#                 publisher_details.append((basename(info[0]), info[0], info[1], info[2], info[3]))
-#             else:
-#                 # naively assume the user got it right and added exactly 5 fields
-#                 publisher_details.append(info)
-#         self.__dict__ = {name: rospy.Publisher(topic_name, publisher_type, latch=latched, queue_size=queue_size) for (name, topic_name, publisher_type, latched, queue_size) in publisher_details}
-#         publisher = rospy.Publisher("~introspection/" + introspection_topic_name, std_msgs.String, latch=True, queue_size=1)
-#         publish_resolved_names(publisher, self.__dict__.values())
-#         self.introspection_publisher = publisher
-#
-#
+
 # class Subscribers(object):
 #     """
 #     Converts the incoming list of subscriber name, msg type, callback triples into proper

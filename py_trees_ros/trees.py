@@ -24,10 +24,11 @@ with a few ROS style adornments. The major features currently include:
 import datetime
 import os
 import py_trees
+import py_trees.console as console
 import py_trees_msgs.msg as py_trees_msgs
-import rosbag
-import rospkg
-import rospy
+# import rosbag
+# TODO: import rospkg
+import rclpy
 import std_msgs.msg as std_msgs
 import threading
 import unique_id
@@ -96,25 +97,26 @@ class BehaviourTree(py_trees.trees.BehaviourTree):
         self._bag_closed = False
 
         now = datetime.datetime.now()
-        topdir = rospkg.get_ros_home() + '/behaviour_trees'
-        subdir = topdir + '/' + now.strftime('%Y-%m-%d')
+        topdir = utilities.get_py_trees_home()
+        subdir = os.path.join(topdir, now.strftime('%Y-%m-%d'))
         if not os.path.exists(topdir):
             os.makedirs(topdir)
-
         if not os.path.exists(subdir):
             os.makedirs(subdir)
 
         # opens in ros home directory for the user
-        self.bag = rosbag.Bag(subdir + '/behaviour_tree_' + now.strftime("%H-%M-%S") + '.bag', 'w')
+        # TODO: self.bag = rosbag.Bag(subdir + '/behaviour_tree_' + now.strftime("%H-%M-%S") + '.bag', 'w')
 
         self.last_tree = py_trees_msgs.BehaviourTree()
         self.lock = threading.Lock()
 
-        # delay the publishers so we can instantiate this class without connecting to ros (private names need init_node)
+        # delay ROS specific artifacts so we can create/introsepct on this class
+        # without having to go live.
+        self.node = None
         self.publishers = None
 
         # _cleanup must come last as it assumes the existence of the bag
-        rospy.on_shutdown(self._cleanup)
+        # TODO: rospy.on_shutdown(self._cleanup)
 
     def setup(self, timeout):
         """
@@ -127,9 +129,15 @@ class BehaviourTree(py_trees.trees.BehaviourTree):
         Returns:
             :obj:`bool`: suceess or failure of the operation
         """
+        default_node_name = "tree"
+        try:
+            self.node = rclpy.create_node(default_node_name)
+        except rclpy.exceptions.NotInitializedException:
+            print(console.red + "ERROR: rlcpy not yet initialised [{}]".format(default_node_name) + console.reset)
+            return False
         self._setup_publishers()
         self.blackboard_exchange = blackboard.Exchange()
-        if not self.blackboard_exchange.setup(timeout):
+        if not self.blackboard_exchange.setup(self.node, timeout):
             return False
         self.post_tick_handlers.append(self._publish_tree_snapshots)
         self.post_tick_handlers.append(self.blackboard_exchange.publish_blackboard)
@@ -137,18 +145,18 @@ class BehaviourTree(py_trees.trees.BehaviourTree):
 
     def _setup_publishers(self):
         latched = True
-        self.publishers = utilities.Publishers(
+        self.publishers = utilities.Publishers(self.node,
             [
-                ("ascii_tree", "~ascii/tree", std_msgs.String, latched, 2),
-                ("ascii_snapshot", "~ascii/snapshot", std_msgs.String, latched, 2),
-                ("dot_tree", "~dot/tree", std_msgs.String, latched, 2),
-                ("log_tree", "~log/tree", py_trees_msgs.BehaviourTree, latched, 2),
-                ("tip", "~tip", py_trees_msgs.Behaviour, latched, 2)
+                ("ascii_tree", "~/ascii/tree", std_msgs.String, latched, 2),
+                ("ascii_snapshot", "~/ascii/snapshot", std_msgs.String, latched, 2),
+                ("dot_tree", "~/dot/tree", std_msgs.String, latched, 2),
+                ("log_tree", "~/log/tree", py_trees_msgs.BehaviourTree, latched, 2),
+                ("tip", "~/tip", py_trees_msgs.Behaviour, latched, 2)
             ]
         )
 
         # publish current state
-        self._publish_tree_modifications(self.root)
+        # TODO: self._publish_tree_modifications(self.root)
         # set a handler to publish future modifiactions
         # tree_update_handler is in the base class, set this to the callback function here.
         self.tree_update_handler = self._publish_tree_modifications
@@ -192,11 +200,12 @@ class BehaviourTree(py_trees.trees.BehaviourTree):
             self.publishers.log_tree.publish(self.logging_visitor.tree)
             with self.lock:
                 if not self._bag_closed:
-                    self.bag.write(self.publishers.log_tree.name, self.logging_visitor.tree)
+                    # self.bag.write(self.publishers.log_tree.name, self.logging_visitor.tree)
+                    pass
             self.last_tree = self.logging_visitor.tree
 
     def _cleanup(self):
         with self.lock:
-            self.bag.close()
+            # self.bag.close()
             self.interrupt_tick_tocking = True
             self._bag_closed = True
