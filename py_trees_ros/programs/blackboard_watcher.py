@@ -24,11 +24,10 @@ Example interaction with the services of a :class:`Blackboard Exchange <py_trees
 
 import argparse
 import os
-import py_trees_msgs.srv as py_trees_srvs
 import py_trees.console as console
+import py_trees_ros
 import rclpy
 import sys
-import std_msgs.msg as std_msgs
 import time
 
 ##############################################################################
@@ -100,132 +99,16 @@ def pretty_print_variables(variables):
     print("{}".format(s))
 
 
-def echo_sub_blackboard(sub_blackboard):
-    print("{}".format(sub_blackboard.data))
-
-
-def spin_ros_node(received_topic, namespace, node):
+def echo_blackboard_contents(contents):
     """
     Args:
-        received_topic (:obj:`str`): topic name
-        namespace (:obj:`str`): where to look for blackboard exchange services
+        contents (:obj:`str`): blackboard contents
+
+    .. note::
+        The string comes pre-formatted with bash color identifiers and newlines.
+        This is currently not especially good for anything other than debugging.
     """
-    close_blackboard_watcher_service_name = find_service(namespace, 'py_trees_msgs/CloseBlackboardWatcher', node)
-
-    def request_close_blackboard_watcher(updates_subscriber):
-        """
-        :param rospy.Subscriber updates_subscriber: subscriber to unregister
-        """
-        node.destroy_subscription(updates_subscriber)
-        close_blackboard_watcher_client = node.create_client(
-            srv_type=py_trees_srvs.CloseBlackboardWatcher,
-            srv_name=close_blackboard_watcher_service_name
-            )
-        if not close_blackboard_watcher_client.wait_for_service(timeout_sec=3.0):
-            print(console.red + "ERROR: timed out waiting for the close blackboard watcher server" + console.reset)
-            sys.exit(1)
-        request = py_trees_srvs.CloseBlackboardWatcher.Request()
-        request.topic_name = received_topic
-        future = close_blackboard_watcher_client.call_async(request)
-        rclpy.spin_until_future_complete(node, future)
-        unused_response = future.result()
-
-    updates_subscriber = node.create_subscription(
-        msg_type=std_msgs.String,
-        topic=received_topic,
-        callback= echo_sub_blackboard
-    )
-    try:
-        rclpy.spin(node)
-    except KeyboardInterrupt:
-        pass
-
-    # Shutdown!
-    #
-    # This would be a preferable approach if they had the ros1 style shutdown hook
-    # as it would allow us to put this code back in main()
-    #
-    #    rclpy.on_shutdown(
-    #        functools.partial(
-    #            request_close_blackboard_watcher,
-    #            updates_subscriber)
-    #    )
-    request_close_blackboard_watcher(updates_subscriber)
-    node.destroy_node()
-    rclpy.shutdown()
-
-
-def find_service(namespace, service_type, node):
-    # TODO: follow the pattern of ros2cli to create a node without the need to init
-    # rcl (might get rid of the magic sleep this way). See:
-    #    https://github.com/ros2/ros2cli/blob/master/ros2service/ros2service/verb/list.py
-    #    https://github.com/ros2/ros2cli/blob/master/ros2cli/ros2cli/node/strategy.py
-
-    # Returns a list of the form: [('exchange/blackboard', ['std_msgs/String'])
-    service_names_and_types = node.get_service_names_and_types()
-    service_names = [name for name, types in service_names_and_types if service_type in types ]
-    if namespace is not None:
-        service_names = [name for name in service_names if namespace in name]
-
-    if not service_names:
-        print(console.red + "ERROR: blackboard services not found" + console.reset)
-        sys.exit(1)
-
-    if len(service_names) == 1:
-        return service_names[0]
-
-    print(console.red + "\nERROR: multiple blackboard services found %s" % service_names + console.reset)
-    if namespace is None:
-        print(console.red + "\nERROR: select one with the --namespace argument" + console.reset)
-    else:
-        print(console.red + "\nERROR: but none matching the requested '%s'" % namespace + console.reset)
-    sys.exit(1)
-
-
-def handle_args(args, node):
-    if args.list_variables:
-        list_variables_service_name = find_service(args.namespace, 'py_trees_msgs/GetBlackboardVariables', node)
-        list_variables_client = node.create_client(
-            srv_type=py_trees_srvs.GetBlackboardVariables,
-            srv_name=list_variables_service_name
-            )
-        if not list_variables_client.wait_for_service(timeout_sec=3.0):
-            print(console.red + "ERROR: timed out waiting for the list variables server" + console.reset)
-            sys.exit(1)
-        request = py_trees_srvs.GetBlackboardVariables.Request()
-        future = list_variables_client.call_async(request)
-        rclpy.spin_until_future_complete(node, future)
-        if future.result() is not None:
-            pretty_print_variables(future.result().variables)
-        else:
-            print(console.red + "ERROR: service call failed [{}]".format(future.exception() + console.reset))
-    else:
-#         if not args.variables:
-#             print(console.red + "\nERROR: please provide a list of variables to watch.\n" + console.reset)
-#             print("%s" % description(formatted_for_sphinx=False))
-#             sys.exit(1)
-#         else:
-        open_blackboard_watcher_service_name = find_service(args.namespace, 'py_trees_msgs/OpenBlackboardWatcher', node)
-        open_blackboard_watcher_client = node.create_client(
-            srv_type=py_trees_srvs.OpenBlackboardWatcher,
-            srv_name=open_blackboard_watcher_service_name
-            )
-        if not open_blackboard_watcher_client.wait_for_service(timeout_sec=3.0):
-            print(console.red + "ERROR: timed out waiting for the open blackboard watcher server" + console.reset)
-            sys.exit(1)
-        request = py_trees_srvs.OpenBlackboardWatcher.Request()
-        # convenience, just in case someone wrote the list of variables for argparse like a python list instead
-        # of a space separated list of variables, i.e.
-        #    py_trees-blackboard-watcher [count, dude] → ['[count,', 'dude]']  → ['count', 'dude']
-        request.variables = [variable.strip(',[]') for variable in args.variables]
-        future = open_blackboard_watcher_client.call_async(request)
-        rclpy.spin_until_future_complete(node, future)
-        response = future.result()
-        if response is None:
-            print(console.red + "ERROR: service call failed [{}]".format(future.exception() + console.reset))
-            sys.exit(1)
-
-        spin_ros_node(response.topic, args.namespace, node)
+    print("{}".format(contents))
 
 ##############################################################################
 # Main
@@ -242,9 +125,61 @@ def main():
     parser = command_line_argument_parser(formatted_for_sphinx=False)
     args = parser.parse_args(command_line_args)
 
+    blackboard_watcher = py_trees_ros.blackboard.BlackboardWatcher(
+        callback=echo_blackboard_contents,
+        namespace_hint=args.namespace
+    )
+
     rclpy.init(args=None)
     node = rclpy.create_node(
         node_name='watcher' + "_" + str(os.getpid()),
     )
+
+    ####################
+    # Setup
+    ####################
     time.sleep(0.1) # ach, the magic foo before discovery works
-    handle_args(args, node)
+    try:
+        blackboard_watcher.setup(node, timeout_sec=15)
+    except py_trees_ros.exceptions.NotFoundError as e:
+        print(console.red + "\nERROR: {}".format(str(e)) + console.reset)
+        sys.exit(1)
+    except py_trees_ros.exceptions.MultipleFoundError as e:
+        print(console.red + "\nERROR: {}".format(str(e)) + console.reset)
+        if args.namespace is None:
+            print(console.red + "\nERROR: select one with the --namespace argument" + console.reset)
+        else:
+            print(console.red + "\nERROR: but none matching the requested '%s'" % args.namespace + console.reset)
+
+    ####################
+    # Execute
+    ####################
+    if args.list_variables:
+        try:
+            pretty_print_variables(blackboard_watcher.list_variables())
+        except (py_trees_ros.exceptions.NotReadyError,
+                py_trees_ros.exceptions.ServiceError,
+                py_trees_ros.exceptions.TimedOutError) as e:
+            print(console.red + "ERROR: {}".format(str(e)) + console.reset)
+            sys.exit(1)
+    else:
+        try:
+            blackboard_watcher.open_connection(args.variables)
+        except (py_trees_ros.exceptions.NotReadyError,
+                py_trees_ros.exceptions.ServiceError,
+                py_trees_ros.exceptions.TimedOutError) as e:
+            print(console.red + "ERROR: {}".format(str(e)) + console.reset)
+            sys.exit(1)
+        try:
+            rclpy.spin(node)
+        except KeyboardInterrupt:
+            pass
+        try:
+            blackboard_watcher.close_connection()
+        except (py_trees_ros.exceptions.NotReadyError,
+                py_trees_ros.exceptions.ServiceError,
+                py_trees_ros.exceptions.TimedOutError) as e:
+            print(console.red + "ERROR: {}".format(str(e)) + console.reset)
+            sys.exit(1)
+        node.destroy_node()
+        rclpy.shutdown()

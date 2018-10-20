@@ -15,6 +15,8 @@ ROS extensions, behaviours and utilities for py_trees.
 ##############################################################################
 
 from . import blackboard
+from . import exceptions
+from . import utilities
 
 # from . import actions
 # from . import battery
@@ -24,7 +26,6 @@ from . import blackboard
 # from . import subscribers
 # from . import trees
 # from . import tutorials
-# from . import utilities
 # from . import visitors
 
 ##############################################################################

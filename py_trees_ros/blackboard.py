@@ -35,8 +35,11 @@ import rclpy.expand_topic_name
 import py_trees.console as console
 import std_msgs.msg as std_msgs
 
+from . import exceptions
+from . import utilities
+
 ##############################################################################
-# ROS Blackboard
+# SubView of a Blackboard
 ##############################################################################
 
 
@@ -102,6 +105,9 @@ class BlackboardView(object):
                     s += console.cyan + "  " + '{0: <{1}}'.format(key, max_length + 1) + console.reset + ": " + console.yellow + "%s" % (value) + console.reset + "\n"
         return s.rstrip()  # get rid of the trailing newline...print will take care of adding a new line
 
+##############################################################################
+# Exchange
+##############################################################################
 
 class Exchange(object):
     """
@@ -306,3 +312,142 @@ class Exchange(object):
         for srv in [self.get_blackboard_variables_srv, self.open_blackboard_watcher_srv, self.close_blackboard_watcher_srv]:
             if srv is not None:
                 srv.shutdown()
+
+
+##############################################################################
+# Blackboard Watcher
+##############################################################################
+
+class BlackboardWatcher(object):
+    """
+    The blackboard watcher sits on the other side of the exchange and is a
+    useful mechanism from which to pull all or part of the blackboard contents.
+    This is extremely useful for logging, but also for introspecting in the
+    runtime for various uses (e.g. reporting out on the current state to
+    a fleet server).
+
+    .. seealso:: :ref:`py-trees-blackboard-watcher`
+    """
+    def __init__(self, callback, namespace_hint):
+        """
+        Args:
+            callback: any method that accepts a string as an input argument
+            namespace_hint (:obj:`str`): (optionally) used to locate the blackboard
+                                         if there exists more than one
+        """
+        self.namespace_hint = namespace_hint
+        self.service_names = {
+            'list': None,
+            'open': None,
+            'close': None
+        }
+        self.service_type_strings = {
+            'list': 'py_trees_msgs/GetBlackboardVariables',
+            'open': 'py_trees_msgs/OpenBlackboardWatcher',
+            'close': 'py_trees_msgs/CloseBlackboardWatcher'
+        }
+        self.service_types = {
+            'list': py_trees_srvs.GetBlackboardVariables,
+            'open': py_trees_srvs.OpenBlackboardWatcher,
+            'close': py_trees_srvs.CloseBlackboardWatcher
+        }
+        self.watcher_topic_name = None
+        self.watcher_subscriber = None
+        self.callback = callback
+
+
+    def setup(self, node, timeout_sec):
+        """
+        Args:
+            node (:class:`~rclpy.node.Node`): nodes have the discovery methods
+        Raises:
+            :class:`~py_trees_ros.exceptions.NotFoundError`: if no services were found
+            :class:`~py_trees_ros.exceptions.MultipleFoundError`: if multiple services were found
+        """
+        # Note: this assumes that the services are not dynamically available (i.e.
+        # go up and down frequently)
+        for service_name in self.service_names.keys():
+            self.service_names[service_name] = utilities.find_service(
+            node,
+            self.service_type_strings[service_name],
+            self.namespace_hint
+        )
+        self.node = node
+
+    def list_variables(self):
+        """
+        Raises:
+            :class:`~py_trees_ros.exceptions.NotReadyError`: if setup not executed or it hitherto failed
+            :class:`~py_trees_ros.exceptions.ServiceError`: if the services could not be reached
+            :class:`~py_trees_ros.exceptions.TimedOutError`: if the services could not be reached
+        """
+        request, client = self.create_service_client('list')
+        future = client.call_async(request)
+        rclpy.spin_until_future_complete(self.node, future)
+        if future.result() is None:
+            raise exceptions.ServiceError(
+                "service call failed [{}]".format(future.exception())
+            )
+        return future.result().variables
+
+    def open_connection(self, variables):
+        """
+        Raises:
+            :class:`~py_trees_ros.exceptions.NotReadyError`: if setup not executed or it hitherto failed
+            :class:`~py_trees_ros.exceptions.ServiceError`: if the service failed to respond
+            :class:`~py_trees_ros.exceptions.TimedOutError`: if the services could not be reached
+        """
+        request, client = self.create_service_client('open')
+        # convenience, just in case someone wrote the list of variables for argparse like a python list instead
+        # of a space separated list of variables, i.e.
+        #    py_trees-blackboard-watcher [count, dude] → ['[count,', 'dude]']  → ['count', 'dude']
+        request.variables = [variable.strip(',[]') for variable in variables]
+        future = client.call_async(request)
+        rclpy.spin_until_future_complete(self.node, future)
+        response = future.result()
+        if response is None:
+            raise exceptions.ServiceError(
+                "service call failed [{}]".format(future.exception())
+            )
+        self.watcher_topic_name = response.topic
+        self.watcher_subscriber = self.node.create_subscription(
+            msg_type=std_msgs.String,
+            topic=self.watcher_topic_name,
+            callback= self.blackboard_contents_callback
+        )
+
+    def close_connection(self):
+        """
+        Raises:
+            :class:`~py_trees_ros.exceptions.NotReadyError`: if setup not executed or it hitherto failed
+            :class:`~py_trees_ros.exceptions.TimedOutError`: if the services could not be reached
+        """
+        if not self.watcher_topic_name:
+            return  # Nothing to do
+        request, client = self.create_service_client('close')
+        request.topic_name = self.watcher_topic_name
+        future = client.call_async(request)
+        rclpy.spin_until_future_complete(self.node, future)
+        unused_response = future.result()
+        self.node.destroy_subscription(self.watcher_subscriber)
+        self.watcher_topic_name = None
+        self.watcher_subscriber = None
+
+    def create_service_client(self, key):
+        if self.service_names[key] is None:
+            raise exceptions.NotReadyError(
+                "no known '{}' service known [did you call setup()?]".format(self.service_types[key])
+            )
+        client = self.node.create_client(
+            srv_type=self.service_types[key],
+            srv_name=self.service_names[key]
+            )
+        # hardcoding timeouts will get us into trouble
+        if not client.wait_for_service(timeout_sec=3.0):
+            raise exceptions.TimedOutError(
+                "timed out waiting for {}".format(self.service_names['close'])
+            )
+        return (self.service_types[key].Request(), client)
+
+    def blackboard_contents_callback(self, msg):
+        self.callback(msg.data)
