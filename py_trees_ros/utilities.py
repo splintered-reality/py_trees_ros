@@ -29,7 +29,7 @@ from . import exceptions
 
 def find_service(node, service_type, namespace=None):
     """
-    Discover a service of the specified type and optionally, with the specified
+    Discover a service of the specified type and if necessary, under the specified
     namespace.
 
     Args:
@@ -61,6 +61,42 @@ def find_service(node, service_type, namespace=None):
         return service_names[0]
     else:
         raise exceptions.MultipleFoundError("multiple services found [type: {}]".format(service_type))
+
+
+def find_topic(node, topic_type, namespace=None):
+    """
+    Discover a topic of the specified type and if necessary, under the specified
+    namespace.
+
+    Args:
+        node (:class:`~rclpy.node.Node`): nodes have the discovery methods
+        topic_type (:obj:`str`): primary lookup hint
+        namespace (:obj:`str`): secondary lookup hint
+
+    Returns:
+        :obj:`str`: fully expanded the service name
+
+    Raises:
+        :class:`~py_trees_ros.exceptions.NotFoundError`: if no services were found
+        :class:`~py_trees_ros.exceptions.MultipleFoundError`: if multiple services were found
+    """
+    # TODO: follow the pattern of ros2cli to create a node without the need to init
+    # rcl (might get rid of the magic sleep this way). See:
+    #    https://github.com/ros2/ros2cli/blob/master/ros2service/ros2service/verb/list.py
+    #    https://github.com/ros2/ros2cli/blob/master/ros2cli/ros2cli/node/strategy.py
+
+    # Returns a list of the form: [('exchange/blackboard', ['std_msgs/String'])
+    topic_names_and_types = node.get_topic_names_and_types()
+    topic_names = [name for name, types in topic_names_and_types if topic_type in types ]
+    if namespace is not None:
+        topic_names = [name for name in topic_names if namespace in name]
+
+    if not topic_names:
+        raise exceptions.NotFoundError("topic not found [type: {}]".format(topic_type))
+    elif len(topic_names) == 1:
+        return topic_names[0]
+    else:
+        raise exceptions.MultipleFoundError("multiple topics found [type: {}]".format(topic_type))
 
 
 def basename(name):
@@ -135,11 +171,27 @@ class Publishers(object):
             resolved_names.append(resolve_name(node, topic_name))
 
         # TODO: handle latched, queue size
-        self.introspection_publisher = node.create_publisher(std_msgs.String, "~/introspection/" + introspection_topic_name)
+        self.introspection_publisher = node.create_publisher(
+            msg_type=std_msgs.String,
+            topic="~/introspection/" + introspection_topic_name,
+            qos_profile = qos_profile_latched_topic()
+        )
         s = console.bold + "\nPublishers\n\n" + console.reset
         for name in resolved_names:
             s += console.yellow + "  " + name + "\n" + console.reset
         self.introspection_publisher.publish(std_msgs.String(data=s))
+
+def qos_profile_latched_topic():
+    """
+    Convenience retrieval for a latched topic (publisher / subscriber)
+    """
+    return rclpy.qos.QoSProfile(
+        history=rclpy.qos.QoSHistoryPolicy.RMW_QOS_POLICY_HISTORY_KEEP_LAST,
+        depth=1,
+        durability=rclpy.qos.QoSDurabilityPolicy.RMW_QOS_POLICY_DURABILITY_TRANSIENT_LOCAL,
+        reliability=rclpy.qos.QoSReliabilityPolicy.RMW_QOS_POLICY_RELIABILITY_RELIABLE
+    )
+
 
 def resolve_name(node, name):
     """
