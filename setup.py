@@ -2,6 +2,8 @@
 
 from setuptools import find_packages, setup
 
+package_name = 'py_trees_ros'
+
 install_requires = [ # ] if os.environ.get('AMENT_PREFIX_PATH') else [
     # build
     'setuptools',
@@ -10,9 +12,15 @@ install_requires = [ # ] if os.environ.get('AMENT_PREFIX_PATH') else [
 ]
 
 setup(
-    name='py_trees_ros',
+    name=package_name,
     version='0.5.14',  # also update package.xml and version.py
     packages=find_packages(exclude=['tests*', 'docs*', 'launch*']),
+    data_files=[
+        ('share/' + package_name, ['package.xml']),
+        # global scripts (note: package specific scripts use the entry_points)
+        ('bin', ['scripts/py-trees-blackboard-watcher',
+                 'scripts/py-trees-tree-watcher']),
+    ],
     install_requires=install_requires,
     extras_require={},
     author='Daniel Stonier, Naveed Usmani, Michal Staniaszek',
@@ -43,9 +51,7 @@ setup(
     # tests_require=['pytest'],
     entry_points={
          'console_scripts': [
-             'py-trees-blackboard-watcher = py_trees_ros.programs.blackboard_watcher:main',
-             'py-trees-tree-watcher = py_trees_ros.programs.tree_watcher:main',
-             # TODO: none of these should be in the global bin
+             # These are redirected to lib/<package_name> by setup.cfg
              'py-trees-demo-exchange = py_trees_ros.demos.exchange:main',
              'py-trees-ros-tutorial-tree-one = py_trees_ros.tutorials.one:main',
          ],
