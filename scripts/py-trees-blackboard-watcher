@@ -7,7 +7,7 @@
 # Documentation
 ##############################################################################
 """
-Open up a window to a blackboard!
+Open up a window to a running behaviour tree!
 """
 ##############################################################################
 # Imports
@@ -20,4 +20,4 @@ import py_trees_ros
 ##############################################################################
 
 if __name__ == '__main__':
-    py_trees_ros.programs.blackboard_watcher.main()
+    py_trees_ros.programs.tree_watcher.main()

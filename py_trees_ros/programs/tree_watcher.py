@@ -9,13 +9,17 @@
 
 """
 .. argparse::
-   :module: py_trees_ros.programs.blackboard_watcher
+   :module: py_trees_ros.programs.tree_watcher
    :func: command_line_argument_parser
-   :prog: py-trees-blackboard-watcher
+   :prog: py-trees-tree-watcher
 
-Example interaction with the services of a :class:`Blackboard Exchange <py_trees_ros.blackboard.Exchange>`:
+Simple tool to interact with a running :class:`~py_trees_ros.trees.BehaviourTree`
+instance.
 
-.. image:: images/watcher.gif
+.. warning::
+
+   Interim solution only until (hopefully) string formatting is handled better
+   by ros2cli.
 """
 
 ##############################################################################
@@ -36,9 +40,11 @@ import time
 
 
 def description(formatted_for_sphinx):
-    short = "Open up a window onto the blackboard!\n"
-    examples = ["--list-variables", "access_point odom/pose/pose/position"]
-    script_name = "py-trees-blackboard-watcher"
+    short = "Open up a window onto the behaviour tree!\n"
+    examples = [
+        "--list-variables", "access_point odom/pose/pose/position"
+    ]
+    script_name = "py-trees-tree-watcher"
 
     if formatted_for_sphinx:
         # for sphinx documentation (doesn't like raw text)
@@ -53,10 +59,10 @@ def description(formatted_for_sphinx):
         banner_line = console.green + "*" * 79 + "\n" + console.reset
         s = "\n"
         s += banner_line
-        s += console.bold_white + "Blackboard Watcher".center(79) + "\n" + console.reset
+        s += console.bold_white + "Tree Watcher".center(79) + "\n" + console.reset
         s += banner_line
         s += "\n"
-        s += "Open up a window onto the blackboard!\n"
+        s += "Open up a window onto the behaviour tree!\n"
         s += "\n"
         s += console.bold + "Examples" + console.reset + "\n\n"
         s += '\n'.join(["    $ " + console.cyan + script_name + console.yellow + " {0}".format(example_args) + console.reset for example_args in examples])
@@ -79,9 +85,10 @@ def command_line_argument_parser(formatted_for_sphinx=True):
                                      epilog=epilog(formatted_for_sphinx),
                                      formatter_class=argparse.RawDescriptionHelpFormatter,
                                      )
-    parser.add_argument('-l', '--list-variables', action='store_true', default=None, help='list the blackboard variables')
     parser.add_argument('-n', '--namespace', nargs='?', default=None, help='namespace of blackboard services (if there should be more than one blackboard)')
-    parser.add_argument('variables', nargs=argparse.REMAINDER, default=list(), help='space separated list of blackboard variables to watch')
+    parser.add_argument('-s', '--ascii-snapshot', action='store_true', default=False, help='print an ascii snapshot of the tree state')
+    parser.add_argument('-a', '--ascii-tree', action='store_true', default=False, help='print an ascii representation of the tree structure')
+    parser.add_argument('-d', '--dot-tree', action='store_true', default=False, help='print a dot representation of the tree structure')
     return parser
 
 
@@ -111,13 +118,17 @@ def echo_blackboard_contents(contents):
     print("{}".format(contents))
 
 ##############################################################################
+# Tree Watcher
+##############################################################################
+
+##############################################################################
 # Main
 ##############################################################################
 
 
 def main():
     """
-    Entry point for the blackboard watcher script.
+    Entry point for the tree watcher script.
     """
     # Until there is support for a ros arg stripper
     # command_line_args = rospy.myargv(argv=sys.argv)[1:]
@@ -125,22 +136,16 @@ def main():
     parser = command_line_argument_parser(formatted_for_sphinx=False)
     args = parser.parse_args(command_line_args)
 
-    blackboard_watcher = py_trees_ros.blackboard.BlackboardWatcher(
-        callback=echo_blackboard_contents,
+    tree_watcher = py_trees_ros.trees.Watcher(
         namespace_hint=args.namespace
-    )
-
-    rclpy.init(args=None)
-    node = rclpy.create_node(
-        node_name='watcher' + "_" + str(os.getpid()),
     )
 
     ####################
     # Setup
     ####################
-    time.sleep(0.1) # ach, the magic foo before discovery works
+    rclpy.init(args=None)
     try:
-        blackboard_watcher.setup(node, timeout_sec=15)
+        tree_watcher.setup(timeout=15)
     except py_trees_ros.exceptions.NotFoundError as e:
         print(console.red + "\nERROR: {}".format(str(e)) + console.reset)
         sys.exit(1)
@@ -152,34 +157,22 @@ def main():
             print(console.red + "\nERROR: but none matching the requested '%s'" % args.namespace + console.reset)
 
     ####################
+    # Arg Handling
+    ####################
+    print("Args: {}".format(args))
+    if args.ascii_tree:
+        tree_watcher.connect_to_ascii_tree()
+    if args.dot_tree:
+        tree_watcher.connect_to_dot_tree()
+    if args.ascii_snapshot:
+        tree_watcher.connect_to_ascii_snapshot()
+
+    ####################
     # Execute
     ####################
-    if args.list_variables:
-        try:
-            pretty_print_variables(blackboard_watcher.list_variables())
-        except (py_trees_ros.exceptions.NotReadyError,
-                py_trees_ros.exceptions.ServiceError,
-                py_trees_ros.exceptions.TimedOutError) as e:
-            print(console.red + "ERROR: {}".format(str(e)) + console.reset)
-            sys.exit(1)
-    else:
-        try:
-            blackboard_watcher.open_connection(args.variables)
-        except (py_trees_ros.exceptions.NotReadyError,
-                py_trees_ros.exceptions.ServiceError,
-                py_trees_ros.exceptions.TimedOutError) as e:
-            print(console.red + "ERROR: {}".format(str(e)) + console.reset)
-            sys.exit(1)
-        try:
-            rclpy.spin(node)
-        except KeyboardInterrupt:
-            pass
-        try:
-            blackboard_watcher.close_connection()
-        except (py_trees_ros.exceptions.NotReadyError,
-                py_trees_ros.exceptions.ServiceError,
-                py_trees_ros.exceptions.TimedOutError) as e:
-            print(console.red + "ERROR: {}".format(str(e)) + console.reset)
-            sys.exit(1)
-        node.destroy_node()
-        rclpy.shutdown()
+    try:
+        rclpy.spin(tree_watcher.node)
+    except KeyboardInterrupt:
+        pass
+    tree_watcher.node.destroy_node()
+    rclpy.shutdown()

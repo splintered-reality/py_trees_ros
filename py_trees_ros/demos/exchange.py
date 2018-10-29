@@ -6,7 +6,6 @@
 ##############################################################################
 # Documentation
 ##############################################################################
-from platform import node
 
 """
 .. argparse::
@@ -70,8 +69,12 @@ def command_line_argument_parser():
                                      )
     return parser
 
+def periodically_increment(exchange):
+    exchange.blackboard.count += 1
+    print("[DJS] Increment: {}".format(exchange.blackboard.count))
+
 def periodically_publish(exchange):
-    print("Publishing the blackboard")
+    print("[DJS] Publish")
     exchange.publish_blackboard()
 
 ##############################################################################
@@ -98,6 +101,7 @@ def main():
     exchange = py_trees_ros.blackboard.Exchange()
     exchange.blackboard.dude = "Bob"
     exchange.blackboard.dudette = "Sarah"
+    exchange.blackboard.count = 1
     print(exchange.blackboard)
 
     ####################
@@ -106,11 +110,19 @@ def main():
     rclpy.init(args=None)
     node = rclpy.node.Node('exchange')
     exchange.setup(node=node, timeout=15)
-    timer_period = 1.0
-    timer = node.create_timer(
-        timer_period,
-        functools.partial(periodically_publish, exchange=exchange)
+    unused_publisher_timer = node.create_timer(
+        timer_period_sec=1.0,
+        callback=functools.partial(periodically_publish, exchange=exchange)
     )
+    unused_increment_timer = node.create_timer(
+        timer_period_sec=2.0,
+        callback=functools.partial(periodically_increment, exchange=exchange)
+    )
+    print("Name:  {}".format(node.get_name()))
+    print("Namespace: {}".format(node.get_namespace()))
+    print("Node Names: {}".format(node.get_node_names()))
+    # In crystal
+    # print("Node Names & Namespaces\n  {}".format(node.get_node_names_and_namespaces()))
     try:
         rclpy.spin(node)
     except KeyboardInterrupt:

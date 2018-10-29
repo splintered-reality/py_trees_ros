@@ -25,22 +25,25 @@ means of interacting with the watching services.
 # Imports
 ##############################################################################
 
+import copy
 import operator
 import pickle
 import py_trees
 import py_trees_msgs.srv as py_trees_srvs
-import rclpy
-import rclpy.node
+import rclpy.expand_topic_name
 
 import py_trees.console as console
 import std_msgs.msg as std_msgs
 
+from . import exceptions
+from . import utilities
+
 ##############################################################################
-# ROS Blackboard
+# SubView of a Blackboard
 ##############################################################################
 
 
-class _View(object):
+class BlackboardView(object):
     """
     Utility class that enables tracking and publishing of relevant
     parts of the blackboard for a user. This is used by the
@@ -50,25 +53,28 @@ class _View(object):
         topic_name (:obj:`str`): name of the topic for the publisher
         attrs (:obj:`???`):
     """
-    def __init__(self, topic_name, attrs):
+    def __init__(self, node, topic_name, attrs):
         self.blackboard = py_trees.blackboard.Blackboard()
         self.topic_name = topic_name
         self.attrs = attrs
         self.dict = {}
         self.cached_dict = {}
-        self.publisher = rospy.Publisher(topic_name, std_msgs.String, latch=True, queue_size=2)
+        self.publisher = node.create_publisher(std_msgs.String, topic_name)
 
     def _update_sub_blackboard(self):
-        for attr in self.attrs:
-            if '/' in attr:
-                check_attr = operator.attrgetter(".".join(attr.split('/')))
-            else:
-                check_attr = operator.attrgetter(attr)
-            try:
-                value = check_attr(self.blackboard)
-                self.dict[attr] = value
-            except AttributeError:
-                pass
+        if not self.attrs:
+            self.dict = copy.copy(self.blackboard.__dict__)
+        else:
+            for attr in self.attrs:
+                if '/' in attr:
+                    check_attr = operator.attrgetter(".".join(attr.split('/')))
+                else:
+                    check_attr = operator.attrgetter(attr)
+                try:
+                    value = check_attr(self.blackboard)
+                    self.dict[attr] = value
+                except AttributeError:
+                    pass
 
     def _is_changed(self):
         self._update_sub_blackboard()
@@ -99,6 +105,9 @@ class _View(object):
                     s += console.cyan + "  " + '{0: <{1}}'.format(key, max_length + 1) + console.reset + ": " + console.yellow + "%s" % (value) + console.reset + "\n"
         return s.rstrip()  # get rid of the trailing newline...print will take care of adding a new line
 
+##############################################################################
+# Exchange
+##############################################################################
 
 class Exchange(object):
     """
@@ -106,18 +115,18 @@ class Exchange(object):
     that enable users to introspect or watch relevant parts of the blackboard.
 
     ROS Publishers:
-        * **~blackboard** (:class:`std_msgs.msg.String`)
+        * **~/blackboard** (:class:`std_msgs.msg.String`)
 
           * streams (string form) the contents of the entire blackboard as it updates
 
     ROS Services:
-        * **~get_blackboard_variables** (:class:`py_trees_msgs.srv.GetBlackboardVariables`)
+        * **~/get_blackboard_variables** (:class:`py_trees_msgs.srv.GetBlackboardVariables`)
 
           * list all the blackboard variable names (not values)
-        * **~open_blackboard_watcher** (:class:`py_trees_msgs.srv.OpenBlackboardWatcher`)
+        * **~/open_blackboard_watcher** (:class:`py_trees_msgs.srv.OpenBlackboardWatcher`)
 
           * request a publisher to stream a part of the blackboard contents
-        * **~close_blackboard_watcher** (:class:`py_trees_msgs.srv.CloseBlackboardWatcher`)
+        * **~/close_blackboard_watcher** (:class:`py_trees_msgs.srv.CloseBlackboardWatcher`)
 
           * close a previously opened watcher
 
@@ -150,7 +159,7 @@ class Exchange(object):
 
         """
         self.cached_blackboard_dict = {}
-        self.watchers = []
+        self.views = []
         self.publisher = None
         self.get_blackboard_variables_srv = None
         self.open_blackboard_watcher_srv = None
@@ -189,11 +198,22 @@ class Exchange(object):
         .. seealso:: This method is called in the way illustrated above in :class:`~py_trees_ros.trees.BehaviourTree`.
         """
         self.node = node
-        self.publisher = node.create_publisher(std_msgs.String, 'blackboard')
-        # self.publisher = rospy.Publisher("~blackboard", std_msgs.String, latch=True, queue_size=2)
-        # self.get_blackboard_variables_srv = rospy.Service('~get_blackboard_variables', py_trees_srvs.GetBlackboardVariables, self._get_blackboard_variables_service)
-        # self.open_blackboard_watcher_srv = rospy.Service('~open_blackboard_watcher', py_trees_srvs.OpenBlackboardWatcher, self._open_blackboard_watcher_service)
-        # self.close_blackboard_watcher_srv = rospy.Service('~close_blackboard_watcher', py_trees_srvs.CloseBlackboardWatcher, self._close_blackboard_watcher_service)
+        self.publisher = node.create_publisher(std_msgs.String, '~/blackboard')
+        self.get_blackboard_variables_srv = node.create_service(
+            srv_type=py_trees_srvs.GetBlackboardVariables,
+            srv_name='~/get_blackboard_variables',
+            callback=self._get_blackboard_variables_service
+        )
+        self.open_blackboard_watcher_srv = node.create_service(
+            srv_type=py_trees_srvs.OpenBlackboardWatcher,
+            srv_name='~/open_blackboard_watcher',
+            callback=self._open_blackboard_watcher_service
+        )
+        self.close_blackboard_watcher_srv = node.create_service(
+            srv_type=py_trees_srvs.CloseBlackboardWatcher,
+            srv_name='~/close_blackboard_watcher',
+            callback=self._close_blackboard_watcher_service
+        )
         return True
 
     def _get_nested_keys(self):
@@ -216,10 +236,10 @@ class Exchange(object):
         return variables
 
     def _close_watcher(self, req):
-        for (i, watcher) in enumerate(self.watchers):
-            if watcher.topic_name == req.topic_name:
-                watcher.publisher.unregister()
-                del self.watchers[i]
+        for i, view in enumerate(self.views):
+            if view.topic_name == req.topic_name:
+                self.node.destroy_publisher(view.publisher)
+                del self.views[i]
                 return True
         return False
 
@@ -248,35 +268,38 @@ class Exchange(object):
             return
 
         # publish blackboard
-        msg = std_msgs.String()
-        msg.data = "{0}".format(self.blackboard)
-        self.publisher.publish(msg)
-        # if self.publisher.get_num_connections() > 0:
-        #     if self._is_changed():
-        #         self.publisher.publish("%s" % self.blackboard)
+        if self.node.count_subscribers("~/blackboard") > 0:
+            if self._is_changed():
+                msg = std_msgs.String()
+                msg.data = "{0}".format(self.blackboard)
+                self.publisher.publish(msg)
 
         # publish watchers
-        # if len(self.watchers) > 0:
-        #     for (unused_i, sub_blackboard) in enumerate(self.watchers):
-        #         if sub_blackboard.publisher.get_num_connections() > 0:
-        #             if sub_blackboard._is_changed():
-        #                 sub_blackboard.publisher.publish("%s" % sub_blackboard)
+        if len(self.views) > 0:
+            for view in self.views:
+                if self.node.count_publishers(view.topic_name) > 0:
+                    if view._is_changed():
+                        msg = std_msgs.String()
+                        msg.data = "{0}".format(view)
+                        view.publisher.publish(msg)
 
-    def _close_blackboard_watcher_service(self, req):
-        result = self._close_watcher(req)
-        return result
+    def _close_blackboard_watcher_service(self, request, response):
+        response.result = self._close_watcher(request)
+        return response
 
-    def _get_blackboard_variables_service(self, req):
-        nested_keys = self._get_nested_keys()
-        return py_trees_srvs.GetBlackboardVariablesResponse(nested_keys)
+    def _get_blackboard_variables_service(self, unused_request, response):
+        response.variables = self._get_nested_keys()
+        return response
 
-    def _open_blackboard_watcher_service(self, req):
-        if isinstance(req.variables, list):
-            topic_name = rospy.names.resolve_name("~blackboard/watcher_" + str(Exchange._counter))
-            Exchange._counter += 1
-            watcher = _View(topic_name, req.variables)
-            self.watchers.append(watcher)
-        return py_trees_srvs.OpenBlackboardWatcherResponse(topic_name)
+    def _open_blackboard_watcher_service(self, request, response):
+        response.topic = rclpy.expand_topic_name.expand_topic_name(
+            topic_name="~/blackboard/watcher_" + str(Exchange._counter),
+            node_name=self.node.get_name(),
+            node_namespace=self.node.get_namespace())
+        Exchange._counter += 1
+        view = BlackboardView(self.node, response.topic, request.variables)
+        self.views.append(view)
+        return response
 
     def unregister_services(self):
         """
@@ -289,3 +312,142 @@ class Exchange(object):
         for srv in [self.get_blackboard_variables_srv, self.open_blackboard_watcher_srv, self.close_blackboard_watcher_srv]:
             if srv is not None:
                 srv.shutdown()
+
+
+##############################################################################
+# Blackboard Watcher
+##############################################################################
+
+class BlackboardWatcher(object):
+    """
+    The blackboard watcher sits on the other side of the exchange and is a
+    useful mechanism from which to pull all or part of the blackboard contents.
+    This is extremely useful for logging, but also for introspecting in the
+    runtime for various uses (e.g. reporting out on the current state to
+    a fleet server).
+
+    .. seealso:: :ref:`py-trees-blackboard-watcher`
+    """
+    def __init__(self, callback, namespace_hint):
+        """
+        Args:
+            callback: any method that accepts a string as an input argument
+            namespace_hint (:obj:`str`): (optionally) used to locate the blackboard
+                                         if there exists more than one
+        """
+        self.namespace_hint = namespace_hint
+        self.service_names = {
+            'list': None,
+            'open': None,
+            'close': None
+        }
+        self.service_type_strings = {
+            'list': 'py_trees_msgs/GetBlackboardVariables',
+            'open': 'py_trees_msgs/OpenBlackboardWatcher',
+            'close': 'py_trees_msgs/CloseBlackboardWatcher'
+        }
+        self.service_types = {
+            'list': py_trees_srvs.GetBlackboardVariables,
+            'open': py_trees_srvs.OpenBlackboardWatcher,
+            'close': py_trees_srvs.CloseBlackboardWatcher
+        }
+        self.watcher_topic_name = None
+        self.watcher_subscriber = None
+        self.callback = callback
+
+
+    def setup(self, node, timeout_sec):
+        """
+        Args:
+            node (:class:`~rclpy.node.Node`): nodes have the discovery methods
+        Raises:
+            :class:`~py_trees_ros.exceptions.NotFoundError`: if no services were found
+            :class:`~py_trees_ros.exceptions.MultipleFoundError`: if multiple services were found
+        """
+        # Note: this assumes that the services are not dynamically available (i.e.
+        # go up and down frequently)
+        for service_name in self.service_names.keys():
+            self.service_names[service_name] = utilities.find_service(
+            node,
+            self.service_type_strings[service_name],
+            self.namespace_hint
+        )
+        self.node = node
+
+    def list_variables(self):
+        """
+        Raises:
+            :class:`~py_trees_ros.exceptions.NotReadyError`: if setup not executed or it hitherto failed
+            :class:`~py_trees_ros.exceptions.ServiceError`: if the services could not be reached
+            :class:`~py_trees_ros.exceptions.TimedOutError`: if the services could not be reached
+        """
+        request, client = self.create_service_client('list')
+        future = client.call_async(request)
+        rclpy.spin_until_future_complete(self.node, future)
+        if future.result() is None:
+            raise exceptions.ServiceError(
+                "service call failed [{}]".format(future.exception())
+            )
+        return future.result().variables
+
+    def open_connection(self, variables):
+        """
+        Raises:
+            :class:`~py_trees_ros.exceptions.NotReadyError`: if setup not executed or it hitherto failed
+            :class:`~py_trees_ros.exceptions.ServiceError`: if the service failed to respond
+            :class:`~py_trees_ros.exceptions.TimedOutError`: if the services could not be reached
+        """
+        request, client = self.create_service_client('open')
+        # convenience, just in case someone wrote the list of variables for argparse like a python list instead
+        # of a space separated list of variables, i.e.
+        #    py_trees-blackboard-watcher [count, dude] → ['[count,', 'dude]']  → ['count', 'dude']
+        request.variables = [variable.strip(',[]') for variable in variables]
+        future = client.call_async(request)
+        rclpy.spin_until_future_complete(self.node, future)
+        response = future.result()
+        if response is None:
+            raise exceptions.ServiceError(
+                "service call failed [{}]".format(future.exception())
+            )
+        self.watcher_topic_name = response.topic
+        self.watcher_subscriber = self.node.create_subscription(
+            msg_type=std_msgs.String,
+            topic=self.watcher_topic_name,
+            callback= self.blackboard_contents_callback
+        )
+
+    def close_connection(self):
+        """
+        Raises:
+            :class:`~py_trees_ros.exceptions.NotReadyError`: if setup not executed or it hitherto failed
+            :class:`~py_trees_ros.exceptions.TimedOutError`: if the services could not be reached
+        """
+        if not self.watcher_topic_name:
+            return  # Nothing to do
+        request, client = self.create_service_client('close')
+        request.topic_name = self.watcher_topic_name
+        future = client.call_async(request)
+        rclpy.spin_until_future_complete(self.node, future)
+        unused_response = future.result()
+        self.node.destroy_subscription(self.watcher_subscriber)
+        self.watcher_topic_name = None
+        self.watcher_subscriber = None
+
+    def create_service_client(self, key):
+        if self.service_names[key] is None:
+            raise exceptions.NotReadyError(
+                "no known '{}' service known [did you call setup()?]".format(self.service_types[key])
+            )
+        client = self.node.create_client(
+            srv_type=self.service_types[key],
+            srv_name=self.service_names[key]
+            )
+        # hardcoding timeouts will get us into trouble
+        if not client.wait_for_service(timeout_sec=3.0):
+            raise exceptions.TimedOutError(
+                "timed out waiting for {}".format(self.service_names['close'])
+            )
+        return (self.service_types[key].Request(), client)
+
+    def blackboard_contents_callback(self, msg):
+        self.callback(msg.data)
