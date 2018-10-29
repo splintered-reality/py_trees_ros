@@ -149,11 +149,11 @@ class BehaviourTree(py_trees.trees.BehaviourTree):
         latched = True
         self.publishers = utilities.Publishers(self.node,
             [
-                ("ascii_tree", "~/ascii/tree", std_msgs.String, latched, 2),
-                ("ascii_snapshot", "~/ascii/snapshot", std_msgs.String, latched, 2),
-                ("dot_tree", "~/dot/tree", std_msgs.String, latched, 2),
-                ("log_tree", "~/log/tree", py_trees_msgs.BehaviourTree, latched, 2),
-                ("tip", "~/tip", py_trees_msgs.Behaviour, latched, 2)
+                ("ascii_tree", "~/ascii/tree", std_msgs.String, latched),
+                ("ascii_snapshot", "~/ascii/snapshot", std_msgs.String, latched),
+                ("dot_tree", "~/dot/tree", std_msgs.String, latched),
+                ("log_tree", "~/log/tree", py_trees_msgs.BehaviourTree, latched),
+                ("tip", "~/tip", py_trees_msgs.Behaviour, latched)
             ]
         )
 
@@ -173,7 +173,6 @@ class BehaviourTree(py_trees.trees.BehaviourTree):
         if self.publishers is None:
             self.node.get_logger().error("call setup() on this tree to initialise the ros components")
             return
-        print("[DJS] publishing the ascii_tree: ")
         self.publishers.ascii_tree.publish(
             std_msgs.String(
                 data=py_trees.display.ascii_tree(root)
@@ -286,11 +285,12 @@ class Watcher(object):
             self.topic_type_strings['log/tree'],
             self.namespace_hint
         )
+
         # fineprint: assumption that the others are set relative to that and not remapped!
         root = "/" + "".join(self.topic_names['log/tree'].split('/')[:-2])
         self.topic_names['ascii/snapshot'] = root + "/ascii/snapshot"
         self.topic_names['ascii/tree']     = root + "/ascii/tree"
-        self.topic_names['dot/tree']       = root + "dot/tree"
+        self.topic_names['dot/tree']       = root + "/dot/tree"
         self.topic_names['tip']            = root + "/tip"
 
     def connect_to_ascii_tree(self):
@@ -327,5 +327,4 @@ class Watcher(object):
         Args
             timeout (:class:`std_msgs.msg.String`): string message
         """
-        print("DJS: Dude")
         print("{}".format(msg.data))
