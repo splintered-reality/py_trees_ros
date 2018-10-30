@@ -16,11 +16,16 @@ Mock a hardware LED strip.
 # Imports
 ##############################################################################
 
-import rospy
+import argparse
+import functools
 import math
+import py_trees_ros
+import rclpy
 import std_msgs.msg as std_msgs
-import termcolor
+import sys
+import termcolor  # TODO: replace this with py_trees.console
 import threading
+import uuid
 
 ##############################################################################
 # Class
@@ -48,10 +53,20 @@ class LEDStrip(object):
     _valid_colours = {'red': 'red', 'green': 'green', 'yellow': 'yellow', 'blue': 'blue', 'purple': 'magenta', 'white': 'white'}
 
     def __init__(self):
-        self.command_subscriber = rospy.Subscriber('~command', std_msgs.String, self.command_callback)
-        self.display_publisher = rospy.Publisher('~display', std_msgs.String, queue_size=1, latch=True)
-        self.duration = rospy.Duration(3.0)
+        self.node = rclpy.create_node("led_strip")
+        self.command_subscriber = self.node.create_subscription(
+            msg_type=std_msgs.String,
+            topic='~/command',
+            callback=self.command_callback,
+            )
+        self.display_publisher = self.node.create_publisher(
+            msg_type=std_msgs.String,
+            topic="~/display",
+            qos_profile = py_trees_ros.utilities.qos_profile_latched_topic()
+        )
+        self.duration_sec = 3.0
         self.last_text = ''
+        self.last_uuid = None
         self.lock = threading.Lock()
         self.flashing_timer = None
 
@@ -65,12 +80,12 @@ class LEDStrip(object):
         """
         # top and bottom of print repeats the pattern as many times as possible
         # in the space specified
-        top_bottom = LEDStrip._pattern * (width / len(LEDStrip._pattern))
+        top_bottom = LEDStrip._pattern * int(width / len(LEDStrip._pattern))
         # space for two halves of the pattern on either side of the pattern name
         mid_pattern_space = (width - len(label) - self._pattern_name_spacing * 2) / 2
 
         # pattern for the mid line
-        mid = LEDStrip._pattern * (mid_pattern_space / len(LEDStrip._pattern))
+        mid = LEDStrip._pattern * int(mid_pattern_space / len(LEDStrip._pattern))
 
         # total length of the middle line with pattern, spacing and name
         mid_len = len(mid) * 2 + self._pattern_name_spacing * 2 + len(label)
@@ -103,17 +118,47 @@ class LEDStrip(object):
             text = self.generate_led_text(msg.data)
             # don't bother publishing if nothing changed.
             if self.last_text != text:
-                self.display_publisher.publish(std_msgs.String(text))
+                print("{}".format(text))
+                self.last_text = text
+                self.last_uuid = uuid.uuid4()
+                self.display_publisher.publish(std_msgs.String(data=text))
             if self.flashing_timer is not None:
-                self.flashing_timer.shutdown()
-            self.flashing_timer = rospy.Timer(period=self.duration, callback=self.cancel_flashing, oneshot=True)
-            self.last_text = text
+                self.flashing_timer.cancel()
+                self.node.destroy_timer(self.flashing_timer)
+            # TODO: convert this to a one-shot once rclpy has the capability
+            # Without oneshot, it will keep triggering, but do nothing while
+            # it has the uuid check
+            self.flashing_timer = self.node.create_timer(
+                timer_period_sec=self.duration_sec,
+                callback=functools.partial(
+                    self.cancel_flashing,
+                    last_uuid=self.last_uuid
+                )
+            )
 
-    def cancel_flashing(self, unused_event):
+    def cancel_flashing(self, last_uuid):
         with self.lock:
-            self.flashing_timer = None
-            self.display_publisher.publish(std_msgs.String(""))
-            self.last_text = ""
+            if self.last_uuid == last_uuid:
+                # We're still relevant, publish and make us irrelevant
+                self.display_publisher.publish(std_msgs.String(data=""))
+                self.last_text = ""
+                self.last_uuid = uuid.uuid4()
 
     def spin(self):
-        rospy.spin()
+        try:
+            rclpy.spin(self.node)
+        except KeyboardInterrupt:
+            pass
+        self.node.destroy_node()
+
+def main():
+    """
+    Entry point for the mock led strip.
+    """
+    parser = argparse.ArgumentParser(description='Mock an led strip')
+    command_line_args = rclpy.utilities.remove_ros_args(args=sys.argv)[1:]
+    parser.parse_args(command_line_args)
+    rclpy.init(args=None)
+    led_strip = LEDStrip()
+    led_strip.spin()
+    rclpy.shutdown()

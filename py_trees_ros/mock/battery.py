@@ -117,23 +117,21 @@ class Battery:
         """
         Spin around, updating battery state and publishing the result.
         """
-        timer = self.node.create_timer(
+        # TODO: with rate and spin_once, once rate is implemented in rclpy
+        unused_timer = self.node.create_timer(
             timer_period_sec=0.2,
-            callback=self.spin_once
+            callback=self.publish
         )
         try:
-            while rclpy.ok():
-                rclpy.spin_once(self.node)  # blocks until there is some work to do
+            rclpy.spin(self.node)
         except KeyboardInterrupt:
             pass
-        timer.cancel()
-        self.node.destroy_timer(timer)
         self.node.destroy_node()
 
 
-    def spin_once(self):
+    def publish(self):
         """
-        Execute a single update and publish.
+        Update and publish.
         """
 #        if self.parameters.charging:
 #            self.dynamic_reconfigure_server.update_configuration({"charging_percentage": min(100, self.battery.percentage + self.charging_increment)})
