@@ -1,4 +1,5 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
 #
 # License: BSD
 #   https://raw.github.com/stonier/py_trees_ros/license/LICENSE
