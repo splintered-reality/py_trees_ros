@@ -54,6 +54,8 @@ setup(
              # These are redirected to lib/<package_name> by setup.cfg
              'py-trees-demo-exchange = py_trees_ros.demos.exchange:main',
              'py-trees-ros-tutorial-tree-one = py_trees_ros.tutorials.one:main',
+             'mock-battery = py_trees_ros.mock.battery:main',
+             'mock-led-strip = py_trees_ros.mock.led_strip:main',
          ],
      },
 )

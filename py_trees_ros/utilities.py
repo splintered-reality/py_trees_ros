@@ -159,15 +159,25 @@ class Publishers(object):
         resolved_names = []
         publisher_details = []
         for info in publishers:
-            if len(info) == 4:
-                publisher_details.append((basename(info[0]), info[0], info[1], info[2], info[3]))
+            if len(info) == 3:
+                publisher_details.append((basename(info[0]), info[0], info[1], info[2]))
             else:
                 # naively assume the user got it right and added exactly 5 fields
                 publisher_details.append(info)
 
         # TODO: handle latched, queue size
-        for (name, topic_name, publisher_type, unused_latched, unused_queue_size) in publisher_details:
-            self.__dict__[name] = node.create_publisher(publisher_type, topic_name)
+        for (name, topic_name, publisher_type, latched) in publisher_details:
+            if latched:
+                self.__dict__[name] = node.create_publisher(
+                    msg_type=publisher_type,
+                    topic=topic_name,
+                    qos_profile = qos_profile_latched_topic()
+                )
+            else:
+                self.__dict__[name] = node.create_publisher(
+                    msg_type=publisher_type,
+                    topic=topic_name
+                )
             resolved_names.append(resolve_name(node, topic_name))
 
         # TODO: handle latched, queue size

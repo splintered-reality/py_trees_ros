@@ -110,11 +110,11 @@ def main():
     rclpy.init(args=None)
     node = rclpy.node.Node('exchange')
     exchange.setup(node=node, timeout=15)
-    unused_publisher_timer = node.create_timer(
+    publisher_timer = node.create_timer(
         timer_period_sec=1.0,
         callback=functools.partial(periodically_publish, exchange=exchange)
     )
-    unused_increment_timer = node.create_timer(
+    increment_timer = node.create_timer(
         timer_period_sec=2.0,
         callback=functools.partial(periodically_increment, exchange=exchange)
     )
@@ -127,6 +127,10 @@ def main():
         rclpy.spin(node)
     except KeyboardInterrupt:
         pass
+    publisher_timer.cancel()
+    increment_timer.cancel()
+    node.destroy_timer(publisher_timer)
+    node.destroy_timer(increment_timer)
     node.destroy_node()
 
 

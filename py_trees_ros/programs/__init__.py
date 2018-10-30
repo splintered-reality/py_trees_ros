@@ -1,21 +1,18 @@
 #
 # License: BSD
-#   https://raw.githubusercontent.com/stonier/py_trees_ros/devel/LICENSE
+#   https://raw.github.com/stonier/py_trees_ros/license/LICENSE
 #
 ##############################################################################
 # Documentation
 ##############################################################################
 
 """
-This package contains mock nodes for ROS py_trees simulations.
+Entry points to the programs (tools and utilities).
 """
+
 ##############################################################################
 # Imports
 ##############################################################################
 
-# from . import action_server
-from . import battery
-from . import led_strip
-# from . import move_base
-# from . import rotate
-# from . import safety_sensors
+from . import blackboard_watcher
+from . import tree_watcher

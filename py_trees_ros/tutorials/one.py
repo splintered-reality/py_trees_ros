@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 #
 # License: BSD
 #   https://raw.githubusercontent.com/stonier/py_trees/devel/LICENSE
@@ -136,5 +136,9 @@ def main():
     if not behaviour_tree.setup(timeout=15):
         console.logerror("failed to setup the tree, aborting.")
         sys.exit(1)
-    rclpy.spin(behaviour_tree.node)
-    # TODO: behaviour_tree.tick_tock(500)
+
+    try:
+        rclpy.spin(behaviour_tree.node)
+        # TODO: behaviour_tree.tick_tock(500)
+    except KeyboardInterrupt:
+        pass

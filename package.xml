@@ -46,27 +46,27 @@
   -->
 
   <!-- mocking & simulation dependencies -->
+  <exec_depend>python-termcolor</exec_depend>
+  <exec_depend>sensor_msgs</exec_depend>
   <!--
   <exec_depend>dynamic_reconfigure</exec_depend>
   <exec_depend>geometry_msgs</exec_depend>
   <exec_depend>move_base_msgs</exec_depend>
-  <exec_depend>python-termcolor</exec_depend>
   <exec_depend>nav_msgs</exec_depend>
-  <exec_depend>sensor_msgs</exec_depend>
   -->
 
   <!-- core dependencies -->
   <exec_depend>py_trees</exec_depend>
   <exec_depend>py_trees_msgs</exec_depend>
+  <exec_depend>rclpy</exec_depend>
+  <exec_depend>std_msgs</exec_depend>
+  <exec_depend>uuid_msgs</exec_depend>
+  <exec_depend>unique_id</exec_depend>
   <!--
   <exec_depend>actionlib</exec_depend>
   <exec_depend>actionlib_msgs</exec_depend>
   <exec_depend>python-rospkg</exec_depend>
   <exec_depend>rosbag</exec_depend>
-  <exec_depend>rospy</exec_depend>
-  <exec_depend>std_msgs</exec_depend>
-  <exec_depend>unique_id</exec_depend>
-  <exec_depend>uuid_msgs</exec_depend>
   -->
 
   <!--

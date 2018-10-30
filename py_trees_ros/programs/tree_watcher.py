@@ -160,12 +160,12 @@ def main():
     # Arg Handling
     ####################
     print("Args: {}".format(args))
+    if args.ascii_snapshot:
+        tree_watcher.connect_to_ascii_snapshot()
     if args.ascii_tree:
         tree_watcher.connect_to_ascii_tree()
     if args.dot_tree:
         tree_watcher.connect_to_dot_tree()
-    if args.ascii_snapshot:
-        tree_watcher.connect_to_ascii_snapshot()
 
     ####################
     # Execute
