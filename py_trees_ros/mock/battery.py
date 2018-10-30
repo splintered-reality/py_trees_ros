@@ -16,16 +16,21 @@ Mocks a battery provider.
 # Imports
 ##############################################################################
 
-import dynamic_reconfigure.server
-import rospy
+import argparse
+# import dynamic_reconfigure.server
+import py_trees_ros
+import rclpy
 import sensor_msgs.msg as sensor_msgs
+import sys
 
-from py_trees_msgs.cfg import BatteryConfig
+# from py_trees_msgs.cfg import BatteryConfig
 
 ##############################################################################
 # Class
 ##############################################################################
 
+def foo():
+    print("Foo")
 
 class Battery:
     """
@@ -52,17 +57,22 @@ class Battery:
     """
     def __init__(self):
         # ros communications
-        self.battery_publisher = rospy.Publisher('~state', sensor_msgs.BatteryState, queue_size=1, latch=True)
+        self.node = rclpy.create_node("battery")
+        self.battery_publisher = self.node.create_publisher(
+            msg_type=sensor_msgs.BatteryState,
+            topic="~/state",
+            qos_profile = py_trees_ros.utilities.qos_profile_latched_topic()
+        )
 
         # initialisations
         self.battery = sensor_msgs.BatteryState()
-        self.battery.header.stamp = rospy.Time.now()
+        self.battery.header.stamp = rclpy.clock.Clock().now().to_msg()
         self.battery.voltage = float('nan')
         self.battery.current = float('nan')
         self.battery.charge = float('nan')
         self.battery.capacity = float('nan')
         self.battery.design_capacity = float('nan')
-        self.battery.percentage = 100
+        self.battery.percentage = 100.0
         self.battery.power_supply_health = sensor_msgs.BatteryState.POWER_SUPPLY_HEALTH_GOOD
         self.battery.power_supply_technology = sensor_msgs.BatteryState.POWER_SUPPLY_TECHNOLOGY_LION
         self.battery.power_supply_status = sensor_msgs.BatteryState.POWER_SUPPLY_STATUS_FULL
@@ -74,11 +84,11 @@ class Battery:
         self.charging_increment = 0.01
 
         # dynamic_reconfigure
-        self.parameters = None
-        self.dynamic_reconfigure_server = dynamic_reconfigure.server.Server(
-            BatteryConfig,
-            self.dynamic_reconfigure_callback
-        )
+#         self.parameters = None
+#         self.dynamic_reconfigure_server = dynamic_reconfigure.server.Server(
+#             BatteryConfig,
+#             self.dynamic_reconfigure_callback
+#         )
 
     def dynamic_reconfigure_callback(self, config, level):
         """
@@ -107,12 +117,39 @@ class Battery:
         """
         Spin around, updating battery state and publishing the result.
         """
-        rate = rospy.Rate(5)  # hz
-        while not rospy.is_shutdown():
-            if self.parameters.charging:
-                self.dynamic_reconfigure_server.update_configuration({"charging_percentage": min(100, self.battery.percentage + self.charging_increment)})
-            else:
-                self.dynamic_reconfigure_server.update_configuration({"charging_percentage": max(0, self.battery.percentage - self.charging_increment)})
-            self.battery.header.stamp = rospy.get_rostime()  # get_rostime() returns the time in rospy.Time structure
-            self.battery_publisher.publish(self.battery)
-            rate.sleep()
+        timer = self.node.create_timer(
+            timer_period_sec=0.2,
+            callback=self.spin_once
+        )
+        try:
+            while rclpy.ok():
+                rclpy.spin_once(self.node)  # blocks until there is some work to do
+        except KeyboardInterrupt:
+            pass
+        timer.cancel()
+        self.node.destroy_timer(timer)
+        self.node.destroy_node()
+
+
+    def spin_once(self):
+        """
+        Execute a single update and publish.
+        """
+#        if self.parameters.charging:
+#            self.dynamic_reconfigure_server.update_configuration({"charging_percentage": min(100, self.battery.percentage + self.charging_increment)})
+#        else:
+#            self.dynamic_reconfigure_server.update_configuration({"charging_percentage": max(0, self.battery.percentage - self.charging_increment)})
+        self.battery.header.stamp = rclpy.clock.Clock().now().to_msg()
+        self.battery_publisher.publish(msg=self.battery)
+
+def main():
+    """
+    Entry point for the mock batttery node.
+    """
+    parser = argparse.ArgumentParser(description='Mock a battery/charging source')
+    command_line_args = rclpy.utilities.remove_ros_args(args=sys.argv)[1:]
+    parser.parse_args(command_line_args)
+    rclpy.init(args=None)
+    battery = Battery()
+    battery.spin()
+    rclpy.shutdown()
