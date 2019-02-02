@@ -122,10 +122,14 @@ Running
 
     # identify the tree publishers
     $ rostopic list | grep tree
-    # a static ascii view of the tree
+    # a static ascii view of the tree (lacks formatting)
     $ rostopic echo /tree/ascii/tree
-    # a dynamic view of the tree, with current states and feedback messages
+    # a static ascii view of the tree (with formatting)
+    $ py-trees-tree-watcher --tree
+    # a dynamic view of the tree (lacks formatting), with current state and feedback messages
     $ rostopic echo /tree/ascii/snaphots
+    # a dynamic view of the tree (with formatting)
+    $ py-trees-tree-watcher --snapshot
     # at what behaviour did decision making turn around and why? often useful for other programs to know
     $ rostopic echo /tree/tip
 

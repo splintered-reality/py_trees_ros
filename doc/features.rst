@@ -32,12 +32,21 @@ Trees
 Visualisation
 -------------
 
-You can visualise the trees in ROS via either the ascii tree publishers:
+You can visualise the trees in ROS via either the ascii tree publishers (which lack formatting),
 
 .. code-block:: bash
 
+   rostopic echo /tree/ascii/tree
    rostopic echo /tree/ascii/snapshot
 
+the tree-watcher frontend (which adds ascii formatting):
+
+.. code-block:: bash
+
+   py-trees-tree-watcher --tree
+   py-trees-tree-watcher --snapshot
+   py-trees-tree-watcher --namespace my_tree --snapshot
+   
 .. image:: images/ascii-snapshot.png
 
 or the `rqt_py_trees` plugin which tunes in to the `~log/tree` topic.

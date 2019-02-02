@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 #
 # License: BSD
 #   https://raw.githubusercontent.com/stonier/py_trees_ros/devel/LICENSE
@@ -5,14 +6,18 @@
 ##############################################################################
 # Documentation
 ##############################################################################
-
 """
-This package contains py_trees_ros program script code.
+Introspect the static or dynamic (running) view of a tree.
 """
-
 ##############################################################################
 # Imports
 ##############################################################################
 
-from . import blackboard_watcher
-from . import tree_watcher
+import py_trees_ros
+
+##############################################################################
+# Main
+##############################################################################
+
+if __name__ == '__main__':
+    py_trees_ros.programs.tree_watcher.main()
