@@ -2,8 +2,8 @@
 Changelog
 =========
 
-Forthcoming
------------
+0.5.15 (2019-02-02)
+-------------------
 * [programs] blackboard-watcher can operate on the entire blackboard
 * [programs] tree-watcher added
 
