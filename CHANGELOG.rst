@@ -5,6 +5,7 @@ Changelog
 Forthcoming
 -----------
 * [programs] blackboard-watcher can operate on the entire blackboard
+* [programs] tree-watcher added
 
 0.5.13 (2017-05-28)
 -------------------

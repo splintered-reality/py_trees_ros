@@ -9,6 +9,7 @@ d = generate_distutils_setup(
     # scripts=['scripts/demo_tree'],
     keywords=['ros', 'behaviour-trees'],
     scripts=['scripts/py-trees-blackboard-watcher',
+             'scripts/py-trees-tree-watcher',
              ]
 )
 
