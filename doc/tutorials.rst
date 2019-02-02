@@ -84,7 +84,7 @@ In another shell:
 .. code-block:: bash
 
     # check the entire board
-    $ rostopic echo /tree/blackboard
+    $ py-trees-blackboard-watcher
     # determine what you may stream
     $ py-trees-blackboard-watcher --list-variables
     # pull a simple variable

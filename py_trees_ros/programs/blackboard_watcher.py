@@ -101,10 +101,21 @@ def pretty_print_variables(variables):
 
 
 def echo_sub_blackboard(sub_blackboard):
+    # TODO: have the blackboard publish yaml/json/pickled data
+    # and do the pretty printing here 
     print "%s" % sub_blackboard.data
 
 
-def spin_ros_node(received_topic, namespace):
+def watch_blackboard(namespace):
+    rospy.init_node("blackboard_watcher", anonymous=True)
+    # TODO: this will fall over if anyone actually remaps the blackboard name
+    # Solution 1: command line argument (pushes the work to the user)
+    # Solution 2: have a unique type for the blackboard (not std_msgs/String), look it up
+    rospy.Subscriber(namespace + "/blackboard", std_msgs.String, echo_sub_blackboard)
+    while not rospy.is_shutdown():
+        rospy.spin()
+
+def watch_sub_blackboard(received_topic, namespace):
     """
     Args:
         received_topic (:obj:`str`): topic name
@@ -137,36 +148,56 @@ def spin_ros_node(received_topic, namespace):
     while not rospy.is_shutdown():
         rospy.spin()
 
+def discover_namespace(suggested_namespace):
+    try:
+        service_name_list = rosservice.rosservice_find("py_trees_msgs/OpenBlackboardWatcher")
+    except rosservice.ROSServiceIOException as e:
+        print(console.red + "ERROR: {0}".format(str(e)) + console.reset)
+        sys.exit(1)
 
+    if not service_name_list:
+        print(console.red + "ERROR: blackboard services not found" + console.reset)
+        sys.exit(1)
+
+    if suggested_namespace is not None:
+        for service_name in service_name_list:
+            if suggested_namespace in service_name:
+                return suggested_namespace
+        print("")
+        print(console.red
+              + "ERROR: blackboard services found {}".format(service_name_list)
+              + console.reset
+        )
+        print(console.red
+              + "ERROR: but none matching the requested '{}'".format(suggested_namespace)
+              + console.reset)
+        print("")
+        sys.exit(1)
+
+    if len(service_name_list) > 1:
+        print(console.red + "\nERROR: multiple blackboard services found %s" % service_name_list + console.reset)
+        print(console.red + "\nERROR: select one with the --namespace argument" + console.reset)
+        sys.exit(1)
+
+    # the previous checks guarantee we have a single name here
+    service_name = service_name_list[0]
+    # drop the last substring
+    namespace = '/'.join(service_name.split('/')[:-1])
+    return namespace
+        
 def find_service(namespace, service_type):
+    # This method assumes all error handling for discovery of a unique
+    # services associated with the namespace, service_type pair has been
+    # hitherto handled by a call to discover_namespace
     try:
         service_name = rosservice.rosservice_find(service_type)
     except rosservice.ROSServiceIOException as e:
         print(console.red + "ERROR: {0}".format(str(e)) + console.reset)
         sys.exit(1)
-    if len(service_name) > 0:
-        if len(service_name) == 1:
-            service_name = service_name[0]
-        elif namespace is not None:
-            for service in service_name:
-                if namespace in service:
-                    service_name = service
-                    break
-            if type(service_name) is list:
-                print(console.red + "\nERROR: multiple blackboard services found %s" % service_name + console.reset)
-                print(console.red + "\nERROR: but none matching the requested '%s'" % namespace + console.reset)
-                sys.exit(1)
-        else:
-            print(console.red + "\nERROR: multiple blackboard services found %s" % service_name + console.reset)
-            print(console.red + "\nERROR: select one with the --namespace argument" + console.reset)
-            sys.exit(1)
-    else:
-        print(console.red + "ERROR: blackboard services not found" + console.reset)
-        sys.exit(1)
-    return service_name
-
+    return service_name[0]
 
 def handle_args(args):
+    args.namespace = discover_namespace(args.namespace)
     if args.list_variables:
         list_variables_service_name = find_service(args.namespace, 'py_trees_msgs/GetBlackboardVariables')
         try:
@@ -183,9 +214,7 @@ def handle_args(args):
             sys.exit(1)
     else:
         if not args.variables:
-            print(console.red + "\nERROR: please provide a list of variables to watch.\n" + console.reset)
-            print("%s" % description(formatted_for_sphinx=False))
-            sys.exit(1)
+            watch_blackboard(args.namespace)
         else:
             variables = args.variables[0:]
             variables = [variable.strip(',[]') for variable in variables]
@@ -202,7 +231,7 @@ def handle_args(args):
                     sys.exit(1)
 
                 if response is not None:
-                    spin_ros_node(response.topic, args.namespace)
+                    watch_sub_blackboard(response.topic, args.namespace)
 
                 else:
                     print(console.red + "\nERROR: subscribing to topic failed\n" + console.reset)
