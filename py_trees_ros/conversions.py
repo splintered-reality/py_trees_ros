@@ -46,6 +46,8 @@ def behaviour_type_to_msg_constant(behaviour):
         return py_trees_msgs.Behaviour.SELECTOR
     elif isinstance(behaviour, py_trees.composites.Parallel):
         return py_trees_msgs.Behaviour.PARALLEL
+    elif isinstance(behaviour, py_trees.decorators.Decorator):
+        return py_trees_msgs.Behaviour.DECORATOR
     elif isinstance(behaviour, py_trees.behaviour.Behaviour):
         return py_trees_msgs.Behaviour.BEHAVIOUR
     else:
