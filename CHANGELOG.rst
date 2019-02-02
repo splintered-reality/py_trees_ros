@@ -2,6 +2,10 @@
 Changelog
 =========
 
+0.5.16 (2019-02-02)
+-------------------
+* [trees] added serialisation to Decorator
+
 0.5.15 (2019-02-02)
 -------------------
 * [programs] blackboard-watcher can operate on the entire blackboard
