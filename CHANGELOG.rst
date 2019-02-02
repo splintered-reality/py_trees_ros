@@ -2,6 +2,10 @@
 Changelog
 =========
 
+Forthcoming
+-----------
+* [programs] blackboard-watcher can operate on the entire blackboard
+
 0.5.13 (2017-05-28)
 -------------------
 * [doc] add many missing packages to satiate autodoc
