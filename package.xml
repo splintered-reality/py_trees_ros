@@ -33,7 +33,6 @@
   <doc_depend>python-sphinx-rtd-theme</doc_depend>
   <doc_depend>python-catkin-pkg</doc_depend>
   <doc_depend>python-rospkg</doc_depend>
-  <doc_depend>python-termcolor</doc_depend>
   <doc_depend>python_qt_binding</doc_depend>
   <doc_depend>py_trees</doc_depend>
   <doc_depend>py_trees_msgs</doc_depend>
@@ -46,7 +45,6 @@
   -->
 
   <!-- mocking & simulation dependencies -->
-  <exec_depend>python-termcolor</exec_depend>
   <exec_depend>sensor_msgs</exec_depend>
   <!--
   <exec_depend>dynamic_reconfigure</exec_depend>
