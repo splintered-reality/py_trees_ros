@@ -20,11 +20,11 @@ Mock a hardware LED strip.
 import argparse
 import functools
 import math
+import py_trees.console as console
 import py_trees_ros
 import rclpy
 import std_msgs.msg as std_msgs
 import sys
-import termcolor  # TODO: replace this with py_trees.console
 import threading
 import uuid
 
@@ -50,8 +50,6 @@ class LEDStrip(object):
     _pattern = '*'
     _pattern_width = 60  # total width of the pattern to be output
     _pattern_name_spacing = 4  # space between pattern and the name of the pattern
-    # map colour names in message to termcolor names
-    _valid_colours = {'red': 'red', 'green': 'green', 'yellow': 'yellow', 'blue': 'blue', 'purple': 'magenta', 'white': 'white'}
 
     def __init__(self):
         self.node = rclpy.create_node("led_strip")
@@ -63,7 +61,7 @@ class LEDStrip(object):
         self.display_publisher = self.node.create_publisher(
             msg_type=std_msgs.String,
             topic="~/display",
-            qos_profile = py_trees_ros.utilities.qos_profile_latched_topic()
+            qos_profile=py_trees_ros.utilities.qos_profile_latched_topic()
         )
         self.duration_sec = 3.0
         self.last_text = ''
@@ -109,10 +107,19 @@ class LEDStrip(object):
             return ""
         else:
             text = self.get_display_string(self._pattern_width, label=colour)
-            return termcolor.colored(text,
-                                     colour,
-                                     attrs=['blink']
-                                     )
+
+            # map colour names in message to console colour escape sequences
+            console_colour_map = {
+                'red': console.red,
+                'green': console.green,
+                'yellow': console.yellow,
+                'blue': console.blue,
+                'purple': console.magenta,
+                'white': console.white
+            }
+
+            coloured_text = console_colour_map[colour] + console.blink + text + console.reset
+            return coloured_text
 
     def command_callback(self, msg):
         with self.lock:
@@ -151,6 +158,7 @@ class LEDStrip(object):
         except KeyboardInterrupt:
             pass
         self.node.destroy_node()
+
 
 def main():
     """
