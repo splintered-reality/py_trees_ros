@@ -30,8 +30,6 @@ import sys
 # Class
 ##############################################################################
 
-def foo():
-    print("Foo")
 
 class Battery:
     """
@@ -62,7 +60,7 @@ class Battery:
         self.battery_publisher = self.node.create_publisher(
             msg_type=sensor_msgs.BatteryState,
             topic="~/state",
-            qos_profile = py_trees_ros.utilities.qos_profile_latched_topic()
+            qos_profile=py_trees_ros.utilities.qos_profile_latched_topic()
         )
 
         # initialisations
@@ -74,9 +72,9 @@ class Battery:
         self.battery.capacity = float('nan')
         self.battery.design_capacity = float('nan')
         self.battery.percentage = 100.0
-        self.battery.power_supply_health = sensor_msgs.BatteryState.POWER_SUPPLY_HEALTH_GOOD
-        self.battery.power_supply_technology = sensor_msgs.BatteryState.POWER_SUPPLY_TECHNOLOGY_LION
-        self.battery.power_supply_status = sensor_msgs.BatteryState.POWER_SUPPLY_STATUS_FULL
+        self.battery.power_supply_health=sensor_msgs.BatteryState.POWER_SUPPLY_HEALTH_GOOD
+        self.battery.power_supply_technology=sensor_msgs.BatteryState.POWER_SUPPLY_TECHNOLOGY_LION
+        self.battery.power_supply_status=sensor_msgs.BatteryState.POWER_SUPPLY_STATUS_FULL
         self.battery.present = True
         self.battery.location = ""
         self.battery.serial_number = ""
@@ -129,7 +127,6 @@ class Battery:
             pass
         self.node.destroy_node()
 
-
     def publish(self):
         """
         Update and publish.
@@ -141,6 +138,7 @@ class Battery:
         self.battery.header.stamp = rclpy.clock.Clock().now().to_msg()
         self.battery_publisher.publish(msg=self.battery)
 
+
 def main():
     """
     Entry point for the mock batttery node.
@@ -148,7 +146,7 @@ def main():
     parser = argparse.ArgumentParser(description='Mock a battery/charging source')
     command_line_args = rclpy.utilities.remove_ros_args(args=sys.argv)[1:]
     parser.parse_args(command_line_args)
-    rclpy.init(args=None)
+    rclpy.init()  # picks up sys.argv automagically internally
     battery = Battery()
     battery.spin()
     rclpy.shutdown()

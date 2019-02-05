@@ -19,7 +19,9 @@ setup(
         ('share/' + package_name, ['package.xml']),
         # global scripts (note: package specific scripts use the entry_points)
         ('bin', ['scripts/py-trees-blackboard-watcher',
-                 'scripts/py-trees-tree-watcher']),
+                 'scripts/py-trees-tree-watcher',
+                 'scripts/py-trees-latched-echo'
+                 ]),
     ],
     install_requires=install_requires,
     extras_require={},
@@ -55,6 +57,7 @@ setup(
              'py-trees-demo-exchange = py_trees_ros.demos.exchange:main',
              'py-trees-ros-tutorial-tree-one = py_trees_ros.tutorials.one:main',
              'mock-battery = py_trees_ros.mock.battery:main',
+             'mock-dashboard = py_trees_ros.mock.dashboard:main',
              'mock-led-strip = py_trees_ros.mock.led_strip:main',
          ],
      },
