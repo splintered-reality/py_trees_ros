@@ -21,6 +21,7 @@ import rclpy
 import signal
 import std_msgs.msg as std_msgs
 import sys
+import threading
 
 # from python_qt_binding.QtWidgets import QApplication, QMainWindow, QWidget
 import PyQt5.QtWidgets as qt_widgets
@@ -122,10 +123,15 @@ class Dashboard(qt_widgets.QWidget):
 #             ]
 #         )
 #         self.led_strip_timer.start(500)  # ms
-# 
+#
+    def spin(self):
+        try:
+            rclpy.spin(self.node)
+        except KeyboardInterrupt:
+            pass
 #     def publish_button_message(self, publisher):
 #         publisher.publish(std_msgs.Empty())
-# 
+#
 #     def reality_report_callback(self, msg):
 #         if msg.data == "cancelling":
 #             self.set_scanning_colour(False)
@@ -189,13 +195,11 @@ class Dashboard(qt_widgets.QWidget):
 
 def main():
     rclpy.init()  # picks up sys.argv automagically internally
-    dash = Dash()
-    dash.spin()
-
-#     app = qt_widgets.QApplication(sys.argv)
-#     window = qt_widgets.QMainWindow()
-#     dashboard = Dashboard()
-#     window.setCentralWidget(dashboard)
-#     window.show()
-#     signal.signal(signal.SIGINT, signal.SIG_DFL)
-#     sys.exit(app.exec_())
+    app = qt_widgets.QApplication(sys.argv)
+    window = qt_widgets.QMainWindow()
+    dashboard = Dashboard()
+    threading.Thread(target=dashboard.spin).start()
+    window.setCentralWidget(dashboard)
+    window.show()
+    signal.signal(signal.SIGINT, signal.SIG_DFL)
+    sys.exit(app.exec_())
