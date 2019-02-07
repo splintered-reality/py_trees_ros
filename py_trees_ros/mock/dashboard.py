@@ -16,6 +16,7 @@ Launch a qt dashboard for the tutorials.
 ##############################################################################
 
 import functools
+import os
 import py_trees_ros
 import rclpy
 import signal
@@ -25,6 +26,7 @@ import threading
 
 import PyQt5.QtWidgets as qt_widgets
 import PyQt5.QtCore as qt_core
+import PyQt5.uic as qt_ui
 
 ##############################################################################
 # Main
@@ -33,6 +35,7 @@ import PyQt5.QtCore as qt_core
 
 class Dash(object):
     def __init__(self):
+
         self.node = rclpy.create_node("dashboard")
 
         not_latched = False  # latched = True
@@ -195,10 +198,12 @@ class Dashboard(qt_widgets.QWidget):
 def main():
     rclpy.init()  # picks up sys.argv automagically internally
     app = qt_widgets.QApplication(sys.argv)
-    window = qt_widgets.QMainWindow()
-    dashboard = Dashboard()
-    threading.Thread(target=dashboard.spin).start()
-    window.setCentralWidget(dashboard)
-    window.show()
+    # window = qt_widgets.QMainWindow()
+    resources_directory = os.path.join(os.path.dirname(__file__), 'resources')
+    main_window = qt_ui.loadUi(os.path.join(resources_directory, 'main_window.ui'))
+    # dashboard = Dashboard()
+    # threading.Thread(target=dashboard.spin).start()
+    # window.setCentralWidget(dashboard)
+    main_window.show()
     signal.signal(signal.SIGINT, signal.SIG_DFL)
     sys.exit(app.exec_())

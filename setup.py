@@ -1,14 +1,15 @@
 #!/usr/bin/env python
 
+import os
+
 from setuptools import find_packages, setup
 
 package_name = 'py_trees_ros'
 
-install_requires = [ # ] if os.environ.get('AMENT_PREFIX_PATH') else [
+install_requires = [] if os.environ.get('AMENT_PREFIX_PATH') else [
     # build
     'setuptools',
     # runtime
-
 ]
 
 setup(
@@ -23,6 +24,7 @@ setup(
                  'scripts/py-trees-latched-echo'
                  ]),
     ],
+    install_package_data=True,
     install_requires=install_requires,
     extras_require={},
     author='Daniel Stonier, Naveed Usmani, Michal Staniaszek',
