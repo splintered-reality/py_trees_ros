@@ -199,7 +199,7 @@ def main():
     rclpy.init()  # picks up sys.argv automagically internally
     app = qt_widgets.QApplication(sys.argv)
     # window = qt_widgets.QMainWindow()
-    resources_directory = os.path.join(os.path.dirname(__file__), 'resources')
+    resources_directory = os.path.join(os.path.dirname(__file__), '..', 'resources')
     main_window = qt_ui.loadUi(os.path.join(resources_directory, 'main_window.ui'))
     # dashboard = Dashboard()
     # threading.Thread(target=dashboard.spin).start()

@@ -24,7 +24,7 @@ setup(
                  'scripts/py-trees-latched-echo'
                  ]),
     ],
-    install_package_data=True,
+    package_data={'py_trees_ros': ['resources/*']},
     install_requires=install_requires,
     extras_require={},
     author='Daniel Stonier, Naveed Usmani, Michal Staniaszek',
