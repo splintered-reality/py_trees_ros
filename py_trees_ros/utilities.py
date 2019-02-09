@@ -174,7 +174,7 @@ class Publishers(object):
     Utility class that groups the publishers together in one convenient structure.
 
     Args:
-        publishers (obj:`tuple`): list of (str, str, bool, int) tuples representing
+        publisher_details (obj:`tuple`): list of (str, str, bool, int) tuples representing
                                   (unique_name, topic_name, publisher_type, latched)
                                   specifications for creating publishers
 
@@ -232,7 +232,7 @@ class Subscribers(object):
     Utility class that groups the publishers together in one convenient structure.
 
     Args:
-        publishers (obj:`tuple`): list of (str, str, bool, func) tuples representing
+        subscriber_details (obj:`tuple`): list of (str, str, bool, func) tuples representing
                                   (unique_name, topic_name, subscriber_type, latched, callback)
                                   specifications for creating subscribers
 
@@ -250,7 +250,7 @@ class Subscribers(object):
            )
     """
     def __init__(self, node, subscriber_details, introspection_topic_name="subscribers"):
-        # TODO: check for the correct setting of publisher_details
+        # TODO: check for the correct setting of subscriber_details
         self.subscriber_details_msg = []
         for (name, topic_name, subscriber_type, latched, callback) in subscriber_details:
             if latched:

@@ -57,8 +57,9 @@ class Dash(object):
 
 class Dashboard(qt_widgets.QWidget):
 
-    def __init__(self):
+    def __init__(self, ui):
         super().__init__()
+        self.ui = ui
         self.node = rclpy.create_node("dashboard")
 
         not_latched = False  # latched = True
@@ -70,25 +71,15 @@ class Dashboard(qt_widgets.QWidget):
             ]
         )
 
-        self.scan_push_button = qt_widgets.QPushButton("Scan")
-        self.scan_push_button.setStyleSheet("QPushButton { font-size: 30pt; }")
-        self.scan_push_button.setSizePolicy(
-            qt_widgets.QSizePolicy.Expanding,
-            qt_widgets.QSizePolicy.Expanding
-        )
-        self.scan_push_button.pressed.connect(
+        self.scan_push_button_stylesheet = self.ui.scan_push_button.styleSheet()
+        ui.scan_push_button.pressed.connect(
             functools.partial(
                 self.publish_button_message,
                 self.publishers.scan)
         )
 
-        self.cancel_push_button = qt_widgets.QPushButton("Cancel")
-        self.cancel_push_button.setStyleSheet("QPushButton { font-size: 30pt; }")
-        self.cancel_push_button.setSizePolicy(
-            qt_widgets.QSizePolicy.Expanding,
-            qt_widgets.QSizePolicy.Expanding
-        )
-        self.cancel_push_button.pressed.connect(
+        self.cancel_push_button_stylesheet = self.ui.cancel_push_button.styleSheet()
+        ui.cancel_push_button.pressed.connect(
             functools.partial(
                 self.publish_button_message,
                 self.publishers.cancel)
@@ -97,23 +88,12 @@ class Dashboard(qt_widgets.QWidget):
         self.led_strip_flashing = False
         self.led_strip_on_count = 1
         self.led_strip_colour = "grey"
+        self.led_strip_stylesheet = self.ui.led_strip_label.styleSheet()
 
         self.led_strip_lock = threading.Lock()
         self.led_strip_timer = qt_core.QTimer()
         self.led_strip_timer.timeout.connect(self.led_strip_timer_callback)
-        self.led_strip_label = qt_widgets.QLabel("LED Strip")
-        self.led_strip_label.setAlignment(qt_core.Qt.AlignCenter)
-        self.led_strip_label.setSizePolicy(
-            qt_widgets.QSizePolicy.Expanding,
-            qt_widgets.QSizePolicy.Expanding)
-        self.led_strip_label.setStyleSheet(
-            "background-color: {}; font-size: 30pt;".format(self.led_strip_colour)
-        )
-
-        self.hbox_layout = qt_widgets.QGridLayout(self)
-        self.hbox_layout.addWidget(self.scan_push_button)
-        self.hbox_layout.addWidget(self.cancel_push_button)
-        self.hbox_layout.addWidget(self.led_strip_label)
+        self.set_led_strip_colour(self.led_strip_colour)
 
         latched = True
         unlatched = False
@@ -139,29 +119,34 @@ class Dashboard(qt_widgets.QWidget):
         if msg.data == "cancelling":
             self.set_scanning_colour(False)
             self.set_cancelling_colour(True)
-            self.cancel_push_button.setEnabled(True)
+            self.ui.cancel_push_button.setEnabled(True)
         elif msg.data == "scanning":
             self.set_scanning_colour(True)
             self.set_cancelling_colour(False)
-            self.cancel_push_button.setEnabled(True)
+            self.ui.cancel_push_button.setEnabled(True)
         else:
             self.set_scanning_colour(False)
             self.set_cancelling_colour(False)
-            self.cancel_push_button.setEnabled(False)
+            self.ui.cancel_push_button.setEnabled(False)
 
     def set_cancelling_colour(self, val):
-        if val:
-            self.cancel_push_button.setStyleSheet("QPushButton { font-size: 30pt; background-color: red}")
-        else:
-            self.cancel_push_button.setStyleSheet("QPushButton { font-size: 30pt; }")
+        print("style: {}".format(self.ui.cancel_push_button.styleSheet()))
+        background_colour = "green" if val else "none"
+        self.ui.cancel_push_button.setStyleSheet(
+            self.cancel_push_button_stylesheet + "\n" +
+            "background-color: {}".format(background_colour)
+        )
 
     def set_scanning_colour(self, val):
-        if val:
-            self.scan_push_button.setStyleSheet("QPushButton { font-size: 30pt; background-color: green}")
-        else:
-            self.scan_push_button.setStyleSheet("QPushButton { font-size: 30pt; }")
+        print("style: {}".format(self.ui.scan_push_button.styleSheet()))
+        background_colour = "green" if val else "none"
+        self.ui.scan_push_button.setStyleSheet(
+            self.scan_push_button_stylesheet + "\n" +
+            "background-color: {}".format(background_colour)
+        )
 
     def led_strip_display_callback(self, msg):
+        print("Got callback")
         with self.led_strip_lock:
             if not msg.data:
                 self.led_strip_colour = "grey"
@@ -182,13 +167,26 @@ class Dashboard(qt_widgets.QWidget):
             if self.led_strip_flashing:
                 if self.led_strip_on_count > 0:
                     self.led_strip_on_count = 0
-                    self.led_strip_label.setStyleSheet("background-color: none; font-size: 30pt;")
+                    self.set_led_strip_colour("none")
                 else:
                     self.led_strip_on_count += 1
-                    self.led_strip_label.setStyleSheet("background-color: %s; font-size: 30pt;" % self.led_strip_colour)
+                    self.set_led_strip_colour(self.led_strip_colour)
             else:  # solid
                 self.led_strip_on_count = 1
-                self.led_strip_label.setStyleSheet("background-color: %s; font-size: 30pt;" % self.led_strip_colour)
+                self.set_led_strip_colour(self.led_strip_colour)
+
+    def set_led_strip_colour(self, colour):
+        # background-color doesn't line up with the qframe panel border
+        # border-radius wipes out the qframe styledpanel raised border
+        #
+        # Q: How to get the background fill colour, to be merely
+        #    embedded in the qframe StyledPanel|Raised style?
+        #
+        # Workaround: just set the text colour
+        self.ui.led_strip_label.setStyleSheet(
+            self.led_strip_stylesheet + "\n" +
+            "color: {};".format(colour)
+        )
 
 ##############################################################################
 # Main
@@ -198,12 +196,14 @@ class Dashboard(qt_widgets.QWidget):
 def main():
     rclpy.init()  # picks up sys.argv automagically internally
     app = qt_widgets.QApplication(sys.argv)
-    # window = qt_widgets.QMainWindow()
     resources_directory = os.path.join(os.path.dirname(__file__), '..', 'resources')
     main_window = qt_ui.loadUi(os.path.join(resources_directory, 'main_window.ui'))
-    # dashboard = Dashboard()
-    # threading.Thread(target=dashboard.spin).start()
-    # window.setCentralWidget(dashboard)
+    dashboard_group_box = qt_ui.loadUi(os.path.join(resources_directory, 'dashboard.ui'))
+    reconfigure_group_box = qt_ui.loadUi(os.path.join(resources_directory, 'reconfigure.ui'))
+    main_window.central_layout.addWidget(dashboard_group_box)
+    main_window.central_layout.addWidget(reconfigure_group_box)
+    dashboard = Dashboard(dashboard_group_box)
+    threading.Thread(target=dashboard.spin).start()
     main_window.show()
     signal.signal(signal.SIGINT, signal.SIG_DFL)
     sys.exit(app.exec_())
