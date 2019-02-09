@@ -146,7 +146,6 @@ class Dashboard(qt_widgets.QWidget):
         )
 
     def led_strip_display_callback(self, msg):
-        print("Got callback")
         with self.led_strip_lock:
             if not msg.data:
                 self.led_strip_colour = "grey"
@@ -159,8 +158,9 @@ class Dashboard(qt_widgets.QWidget):
                         self.led_strip_colour = colour
                         break
                 if not self.led_strip_colour:
-                    self.led_strip_colour = "pink"
-                    self.node.get_logger().info("Dashboard: received unknown LED colour {0}, setting 'pink'".format(msg.data))
+                    self.node.get_logger().info("Dashboard: received unknown LED colour {0}, setting 'grey'".format(msg.data))
+                    self.led_strip_colour = "grey"
+                    self.led_strip_flashing = False
 
     def led_strip_timer_callback(self):
         with self.led_strip_lock:

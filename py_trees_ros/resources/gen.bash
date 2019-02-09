@@ -71,6 +71,7 @@ install_package ()
 install_package pyqt5-dev-tools || return
 
 pyuic5 main_window.ui -o main_window.py
+pyrcc5 main_window.qrc -o main_window_rc.py
 
 echo ""
 echo "I'm grooty, you should be too."

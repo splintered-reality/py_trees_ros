@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>MainWindow</class>
- <widget class="QMainWindow" name="MainWindow">
+ <class>main_window</class>
+ <widget class="QMainWindow" name="main_window">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -12,6 +12,10 @@
   </property>
   <property name="windowTitle">
    <string>Mock Robot</string>
+  </property>
+  <property name="windowIcon">
+   <iconset>
+    <normaloff>tuxrobot.png</normaloff>tuxrobot.png</iconset>
   </property>
   <widget class="QWidget" name="central_widget">
    <layout class="QHBoxLayout" name="central_layout"/>
@@ -28,6 +32,8 @@
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
  </widget>
- <resources/>
+ <resources>
+  <include location="main_window.qrc"/>
+ </resources>
  <connections/>
 </ui>
