@@ -70,7 +70,7 @@ install_package ()
 
 install_package pyqt5-dev-tools || return
 
-pyuic5 py_trees_ros/resources/main_window.ui -o py_trees_ros/resources/main_window.py
+pyuic5 main_window.ui -o main_window.py
 
 echo ""
 echo "I'm grooty, you should be too."
