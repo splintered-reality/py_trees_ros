@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>dashboard_group_box</class>
- <widget class="QGroupBox" name="dashboard_group_box">
+ <class>DashboardGroupBox</class>
+ <widget class="QGroupBox" name="DashboardGroupBox">
   <property name="geometry">
    <rect>
     <x>0</x>

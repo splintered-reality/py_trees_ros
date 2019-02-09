@@ -29,38 +29,26 @@ import PyQt5.QtCore as qt_core
 import PyQt5.uic as qt_ui
 
 ##############################################################################
-# Main
+# Helpers
 ##############################################################################
 
 
-class Dash(object):
+def resources_directory():
+    return os.path.join(os.path.dirname(__file__), '..', 'resources')
+
+
+class Dashboard(qt_widgets.QGroupBox):
+
     def __init__(self):
-
-        self.node = rclpy.create_node("dashboard")
-
-        not_latched = False  # latched = True
-        self.publishers = py_trees_ros.utilities.Publishers(
-            self.node,
-            [
-                ('scan', "~/scan", std_msgs.Empty, not_latched),
-                ('cancel', "~/cancel", std_msgs.Empty, not_latched),
-            ]
-        )
-
-    def spin(self):
-        try:
-            rclpy.spin(self.node)
-        except KeyboardInterrupt:
-            pass
-        self.node.destroy_node()
-
-
-class Dashboard(qt_widgets.QWidget):
-
-    def __init__(self, ui):
         super().__init__()
-        self.ui = ui
+        (Ui_DashboardGroupBox, _) = qt_ui.loadUiType(
+            os.path.join(resources_directory(), 'dashboard.ui')
+        )
+        self.ui = Ui_DashboardGroupBox()
+        self.ui.setupUi(self)
+
         self.node = rclpy.create_node("dashboard")
+        print("Dict: %s" % super().__dict__)
 
         not_latched = False  # latched = True
         self.publishers = py_trees_ros.utilities.Publishers(
@@ -72,14 +60,14 @@ class Dashboard(qt_widgets.QWidget):
         )
 
         self.scan_push_button_stylesheet = self.ui.scan_push_button.styleSheet()
-        ui.scan_push_button.pressed.connect(
+        self.ui.scan_push_button.pressed.connect(
             functools.partial(
                 self.publish_button_message,
                 self.publishers.scan)
         )
 
         self.cancel_push_button_stylesheet = self.ui.cancel_push_button.styleSheet()
-        ui.cancel_push_button.pressed.connect(
+        self.ui.cancel_push_button.pressed.connect(
             functools.partial(
                 self.publish_button_message,
                 self.publishers.cancel)
@@ -196,13 +184,11 @@ class Dashboard(qt_widgets.QWidget):
 def main():
     rclpy.init()  # picks up sys.argv automagically internally
     app = qt_widgets.QApplication(sys.argv)
-    resources_directory = os.path.join(os.path.dirname(__file__), '..', 'resources')
-    main_window = qt_ui.loadUi(os.path.join(resources_directory, 'main_window.ui'))
-    dashboard_group_box = qt_ui.loadUi(os.path.join(resources_directory, 'dashboard.ui'))
-    reconfigure_group_box = qt_ui.loadUi(os.path.join(resources_directory, 'reconfigure.ui'))
-    main_window.central_layout.addWidget(dashboard_group_box)
+    main_window = qt_ui.loadUi(os.path.join(resources_directory(), 'main_window.ui'))
+    reconfigure_group_box = qt_ui.loadUi(os.path.join(resources_directory(), 'reconfigure.ui'))
+    dashboard = Dashboard()
+    main_window.central_layout.addWidget(dashboard)
     main_window.central_layout.addWidget(reconfigure_group_box)
-    dashboard = Dashboard(dashboard_group_box)
     threading.Thread(target=dashboard.spin).start()
     main_window.show()
     signal.signal(signal.SIGINT, signal.SIG_DFL)
