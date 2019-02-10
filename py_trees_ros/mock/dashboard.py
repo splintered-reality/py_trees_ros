@@ -28,16 +28,36 @@ import PyQt5.QtWidgets as qt_widgets
 import PyQt5.QtCore as qt_core
 import PyQt5.uic as qt_ui
 
+# To use generated files instead of loading ui's directly
+from . import gui
+
 ##############################################################################
 # Helpers
 ##############################################################################
 
 
 def resources_directory():
-    return os.path.join(os.path.dirname(__file__), '..', 'resources')
+    return os.path.join(os.path.dirname(__file__), 'gui')
 
 
-class Dashboard(qt_widgets.QGroupBox):
+class MainWindow(qt_widgets.QMainWindow):
+    def __init__(self):
+        super().__init__()
+
+        # Use generated files - bugfree when using promotions & resources
+        self.ui = gui.main_window.Ui_MainWindow()
+
+        # Use ui files directly - pyqt5 has bugs for promotions & resources
+#         (Ui_MainWindow, _) = qt_ui.loadUiType(
+#             os.path.join(resources_directory(), 'main_window.ui'),
+#             from_imports=True  # make sure to use from . import <my_resource_file>
+#         )
+#         self.ui = Ui_MainWindow()
+
+        self.ui.setupUi(self)
+
+
+class Dashboard(object):
 
     def __init__(self):
         super().__init__()
@@ -182,14 +202,12 @@ class Dashboard(qt_widgets.QGroupBox):
 
 
 def main():
-    rclpy.init()  # picks up sys.argv automagically internally
+    # rclpy.init()  # picks up sys.argv automagically internally
     app = qt_widgets.QApplication(sys.argv)
-    main_window = qt_ui.loadUi(os.path.join(resources_directory(), 'main_window.ui'))
-    reconfigure_group_box = qt_ui.loadUi(os.path.join(resources_directory(), 'reconfigure.ui'))
-    dashboard = Dashboard()
-    main_window.central_layout.addWidget(dashboard)
-    main_window.central_layout.addWidget(reconfigure_group_box)
-    threading.Thread(target=dashboard.spin).start()
+    main_window = MainWindow()
+    # reconfigure_group_box = qt_ui.loadUi(os.path.join(resources_directory(), 'reconfigure.ui'))
+    # dashboard = Dashboard()
+    # threading.Thread(target=dashboard.spin).start()
     main_window.show()
     signal.signal(signal.SIGINT, signal.SIG_DFL)
     sys.exit(app.exec_())

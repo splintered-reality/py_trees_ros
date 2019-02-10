@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>MainWindow</class>
+ <widget class="QMainWindow" name="MainWindow">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>551</width>
+    <height>356</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Robot Mock</string>
+  </property>
+  <property name="windowIcon">
+   <iconset resource="main_window.qrc">
+    <normaloff>:/images/tuxrobot.png</normaloff>:/images/tuxrobot.png</iconset>
+  </property>
+  <widget class="QWidget" name="central_layout">
+   <layout class="QHBoxLayout" name="horizontalLayout">
+    <item>
+     <widget class="DashboardGroupBox" name="dashboard_group_box">
+      <property name="title">
+       <string notr="true">Dashboard</string>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="ReconfigureGroupBox" name="reconfigure_group_box">
+      <property name="title">
+       <string>Dynamic Reconfigure</string>
+      </property>
+     </widget>
+    </item>
+   </layout>
+  </widget>
+  <widget class="QMenuBar" name="menubar">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>551</width>
+     <height>29</height>
+    </rect>
+   </property>
+   <property name="defaultUp">
+    <bool>false</bool>
+   </property>
+  </widget>
+  <widget class="QStatusBar" name="statusbar"/>
+ </widget>
+ <customwidgets>
+  <customwidget>
+   <class>DashboardGroupBox</class>
+   <extends>QGroupBox</extends>
+   <header location="global">py_trees_ros.mock.gui.dashboard_group_box</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>ReconfigureGroupBox</class>
+   <extends>QGroupBox</extends>
+   <header location="global">py_trees_ros.mock.gui.reconfigure_group_box</header>
+   <container>1</container>
+  </customwidget>
+ </customwidgets>
+ <resources>
+  <include location="main_window.qrc"/>
+ </resources>
+ <connections/>
+</ui>

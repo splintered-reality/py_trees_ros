@@ -24,7 +24,7 @@ setup(
                  'scripts/py-trees-latched-echo'
                  ]),
     ],
-    package_data={'py_trees_ros': ['resources/*']},
+    package_data={'py_trees_ros': ['mock/gui/*']},
     install_requires=install_requires,
     extras_require={},
     author='Daniel Stonier, Naveed Usmani, Michal Staniaszek',
@@ -57,6 +57,7 @@ setup(
          'console_scripts': [
              # These are redirected to lib/<package_name> by setup.cfg
              'py-trees-demo-exchange = py_trees_ros.demos.exchange:main',
+             'testies = py_trees_ros.demos.testies:main',
              'py-trees-ros-tutorial-tree-one = py_trees_ros.tutorials.one:main',
              'mock-battery = py_trees_ros.mock.battery:main',
              'mock-dashboard = py_trees_ros.mock.dashboard:main',

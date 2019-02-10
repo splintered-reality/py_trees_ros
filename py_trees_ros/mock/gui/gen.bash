@@ -70,7 +70,10 @@ install_package ()
 
 install_package pyqt5-dev-tools || return
 
-pyuic5 main_window.ui -o main_window.py
+# Uncomment to gen & import instead of load ui's
+pyuic5 --from-imports -o main_window.py main_window.ui
+
+# No way of loading resources
 pyrcc5 main_window.qrc -o main_window_rc.py
 
 echo ""
