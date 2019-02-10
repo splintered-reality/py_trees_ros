@@ -29,6 +29,7 @@ import py_trees.console as console
 # Main
 ##############################################################################
 
+
 def main(argv=sys.argv[1:]):
     """
     Entry point for the launcher.

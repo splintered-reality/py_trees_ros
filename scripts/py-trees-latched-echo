@@ -8,29 +8,17 @@
 # Documentation
 ##############################################################################
 """
-Launch a qt dashboard for the tutorials.
+Latched (TRANSIENT_LOCAL) version of ros2 topic echo for latched publishers.
 """
 ##############################################################################
 # Imports
 ##############################################################################
 
-import py_trees_ros
-import rospy
-import signal
-import sys
-
-from python_qt_binding.QtWidgets import QApplication, QMainWindow
+import py_trees_ros.programs
 
 ##############################################################################
 # Main
 ##############################################################################
 
 if __name__ == '__main__':
-    rospy.init_node('dashboard')
-    app = QApplication(sys.argv)
-    window = QMainWindow()
-    dashboard = py_trees_ros.tutorials.qt.Dashboard()
-    window.setCentralWidget(dashboard)
-    window.show()
-    signal.signal(signal.SIGINT, signal.SIG_DFL)
-    sys.exit(app.exec_())
+    py_trees_ros.programs.latched_echo.main()

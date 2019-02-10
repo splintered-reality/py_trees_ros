@@ -1,14 +1,15 @@
 #!/usr/bin/env python
 
+import os
+
 from setuptools import find_packages, setup
 
 package_name = 'py_trees_ros'
 
-install_requires = [ # ] if os.environ.get('AMENT_PREFIX_PATH') else [
+install_requires = [] if os.environ.get('AMENT_PREFIX_PATH') else [
     # build
     'setuptools',
     # runtime
-
 ]
 
 setup(
@@ -19,8 +20,11 @@ setup(
         ('share/' + package_name, ['package.xml']),
         # global scripts (note: package specific scripts use the entry_points)
         ('bin', ['scripts/py-trees-blackboard-watcher',
-                 'scripts/py-trees-tree-watcher']),
+                 'scripts/py-trees-tree-watcher',
+                 'scripts/py-trees-latched-echo'
+                 ]),
     ],
+    package_data={'py_trees_ros': ['mock/gui/*']},
     install_requires=install_requires,
     extras_require={},
     author='Daniel Stonier, Naveed Usmani, Michal Staniaszek',
@@ -53,8 +57,10 @@ setup(
          'console_scripts': [
              # These are redirected to lib/<package_name> by setup.cfg
              'py-trees-demo-exchange = py_trees_ros.demos.exchange:main',
+             'testies = py_trees_ros.demos.testies:main',
              'py-trees-ros-tutorial-tree-one = py_trees_ros.tutorials.one:main',
              'mock-battery = py_trees_ros.mock.battery:main',
+             'mock-dashboard = py_trees_ros.mock.dashboard:main',
              'mock-led-strip = py_trees_ros.mock.led_strip:main',
          ],
      },

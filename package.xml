@@ -33,7 +33,7 @@
   <doc_depend>python-sphinx-rtd-theme</doc_depend>
   <doc_depend>python-catkin-pkg</doc_depend>
   <doc_depend>python-rospkg</doc_depend>
-  <doc_depend>python_qt_binding</doc_depend>
+  <doc_depend>python3-pyqt5</doc_depend>
   <doc_depend>py_trees</doc_depend>
   <doc_depend>py_trees_msgs</doc_depend>
   <doc_depend>rosbag</doc_depend>
@@ -70,10 +70,10 @@
   <!--
   <test_depend>py_trees</test_depend>
   <test_depend>geometry_msgs</test_depend>
-  <test_depend>python_qt_binding</test_depend>
   <test_depend>rostest</test_depend>
   <test_depend>rosunit</test_depend>
   -->
+  <test_depend>python3-pyqt5</test_depend>
 
   <export>
     <build_type>ament_python</build_type>

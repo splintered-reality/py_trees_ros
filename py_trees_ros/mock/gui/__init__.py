@@ -1,19 +1,16 @@
 #
 # License: BSD
-#   https://raw.github.com/stonier/py_trees_ros/license/LICENSE
+#   https://raw.githubusercontent.com/stonier/py_trees_ros/devel/LICENSE
 #
 ##############################################################################
 # Documentation
 ##############################################################################
 
 """
-Entry points to the programs (tools and utilities).
+Generated gui modules for the mock robot.
 """
-
 ##############################################################################
 # Imports
 ##############################################################################
 
-from . import blackboard_watcher
-from . import latched_echo
-from . import tree_watcher
+from . import main_window

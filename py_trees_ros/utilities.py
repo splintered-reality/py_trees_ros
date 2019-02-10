@@ -19,6 +19,8 @@ Assorted utility functions.
 import os
 import pathlib
 import py_trees.console as console
+import py_trees_msgs.msg as py_trees_msgs
+import py_trees_msgs.srv as py_trees_srvs
 import rclpy
 import std_msgs.msg as std_msgs
 
@@ -27,6 +29,7 @@ from . import exceptions
 ##############################################################################
 # Methods
 ##############################################################################
+
 
 def find_service(node, service_type, namespace=None):
     """
@@ -52,7 +55,7 @@ def find_service(node, service_type, namespace=None):
 
     # Returns a list of the form: [('exchange/blackboard', ['std_msgs/String'])
     service_names_and_types = node.get_service_names_and_types()
-    service_names = [name for name, types in service_names_and_types if service_type in types ]
+    service_names = [name for name, types in service_names_and_types if service_type in types]
     if namespace is not None:
         service_names = [name for name in service_names if namespace in name]
 
@@ -88,7 +91,7 @@ def find_topic(node, topic_type, namespace=None):
 
     # Returns a list of the form: [('exchange/blackboard', ['std_msgs/String'])
     topic_names_and_types = node.get_topic_names_and_types()
-    topic_names = [name for name, types in topic_names_and_types if topic_type in types ]
+    topic_names = [name for name, types in topic_names_and_types if topic_type in types]
     if namespace is not None:
         topic_names = [name for name in topic_names if namespace in name]
 
@@ -120,6 +123,7 @@ def basename(name):
     """
     return name.rsplit('/', 1)[-1].rsplit('~', 1)[-1]
 
+
 def get_py_trees_home():
     """
     Find the default home directory used for logging, bagging and other
@@ -129,68 +133,6 @@ def get_py_trees_home():
     home = os.path.join(str(pathlib.Path.home()), ".ros2", "py_trees")
     return home
 
-##############################################################################
-# Convenience Classes
-##############################################################################
-
-class Publishers(object):
-    """
-    Utility class that groups the publishers together in one convenient structure.
-
-    Args:
-        publishers (obj:`tuple`): list of (str, str, bool, int) tuples representing (topic_name, publisher_type, latched, queue_size) specifications to create publishers with
-
-    Examples:
-        Convert the incoming list of publisher name, type, latched, queue_size specifications into proper variables of this class.
-
-        .. code-block:: python
-
-           publishers = rocon_python_comms.utils.Publishers(
-               [
-                   ('~foo', std_msgs.String, True, 5),
-                   ('/foo/bar', std_msgs.String, False, 5),
-                   ('foobar', '/foo/bar', std_msgs.String, False, 5),
-               ]
-           )
-
-        Note: '~/introspection/dude' will become just 'dude' unless you prepend a field for the name
-        as in the third example above.
-    """
-    def __init__(self, node, publishers, introspection_topic_name="publishers"):
-        resolved_names = []
-        publisher_details = []
-        for info in publishers:
-            if len(info) == 3:
-                publisher_details.append((basename(info[0]), info[0], info[1], info[2]))
-            else:
-                # naively assume the user got it right and added exactly 5 fields
-                publisher_details.append(info)
-
-        # TODO: handle latched, queue size
-        for (name, topic_name, publisher_type, latched) in publisher_details:
-            if latched:
-                self.__dict__[name] = node.create_publisher(
-                    msg_type=publisher_type,
-                    topic=topic_name,
-                    qos_profile = qos_profile_latched_topic()
-                )
-            else:
-                self.__dict__[name] = node.create_publisher(
-                    msg_type=publisher_type,
-                    topic=topic_name
-                )
-            resolved_names.append(resolve_name(node, topic_name))
-
-        # TODO: handle latched, queue size
-        self.introspection_publisher = node.create_publisher(
-            msg_type=std_msgs.String,
-            topic="~/introspection/" + introspection_topic_name,
-            qos_profile = qos_profile_latched_topic()
-        )
-        s = console.bold + "\nPublishers\n\n" + console.reset
-        for name in resolved_names:
-            s += console.yellow + "  " + name + "\n" + console.reset
-        self.introspection_publisher.publish(std_msgs.String(data=s))
 
 def qos_profile_latched_topic():
     """
@@ -222,45 +164,125 @@ def resolve_name(node, name):
         node.get_namespace()
     )
 
-# ##############################################################################
-# # Classes
-# ##############################################################################
-#
-#
+##############################################################################
+# Convenience Classes
+##############################################################################
 
-# class Subscribers(object):
-#     """
-#     Converts the incoming list of subscriber name, msg type, callback triples into proper
-#     variables of this class. Optionally you can prefix an arg that forces the name of
-#     the variable created.
-#
-#     Args:
-#         subscribers (obj:`tuple`): list of (str, str, bool, int) tuples representing (topic_name, subscriber_type, latched, queue_size) specifications to create subscribers with
-#
-#     Examples:
-#
-#         .. code-block:: python
-#
-#            subscribers = rocon_python_comms.utils.Subscribers(
-#                [
-#                    ('~dudette', std_msgs.String, subscriber_callback),
-#                    ('/dudette/jane', std_msgs.String, subscriber_callback),
-#                    ('jane', /dudette/jane', std_msgs.String, subscriber_callback),
-#                ]
-#            )
-#
-#         Note: '~/introspection/dude' will become just 'dude' unless you prepend a field for the name
-#         as in the third example above.
-#     """
-#     def __init__(self, subscribers, introspection_topic_name="subscribers"):
-#         subscriber_details = []
-#         for info in subscribers:
-#             if len(info) == 3:
-#                 subscriber_details.append((basename(info[0]), info[0], info[1], info[2]))
-#             else:
-#                 # naively assume the user got it right and added exactly 4 fields
-#                 subscriber_details.append(info)
-#         self.__dict__ = {name: rospy.Subscriber(topic_name, subscriber_type, callback) for (name, topic_name, subscriber_type, callback) in subscriber_details}
-#         publisher = rospy.Publisher("~introspection/" + introspection_topic_name, std_msgs.String, latch=True, queue_size=1)
-#         publish_resolved_names(publisher, self.__dict__.values())
-#         self.introspection_publisher = publisher
+
+class Publishers(object):
+    """
+    Utility class that groups the publishers together in one convenient structure.
+
+    Args:
+        publisher_details (obj:`tuple`): list of (str, str, bool, int) tuples representing
+                                  (unique_name, topic_name, publisher_type, latched)
+                                  specifications for creating publishers
+
+    Examples:
+        Convert the incoming list of specifications into proper variables of this class.
+
+        .. code-block:: python
+
+           publishers = py_trees.utilities.Publishers(
+               [
+                   ('foo', ~/foo', std_msgs.String, True, 5),
+                   ('bar', /foo/bar', std_msgs.String, False, 5),
+                   ('foobar', '/foo/bar', std_msgs.String, False, 5),
+               ]
+           )
+    """
+    def __init__(self, node, publisher_details, introspection_topic_name="publishers"):
+        # TODO: check for the correct setting of publisher_details
+        self.publisher_details_msg = []
+        for (name, topic_name, publisher_type, latched) in publisher_details:
+            if latched:
+                self.__dict__[name] = node.create_publisher(
+                    msg_type=publisher_type,
+                    topic=topic_name,
+                    qos_profile=qos_profile_latched_topic()
+                )
+            else:
+                self.__dict__[name] = node.create_publisher(
+                    msg_type=publisher_type,
+                    topic=topic_name
+                )
+            resolved_name = resolve_name(node, topic_name)
+            message_type = publisher_type.__class__.__module__.split('.')[0] + "/" + publisher_type.__class__.__name__
+            self.publisher_details_msg.append(
+                py_trees_msgs.PublisherDetails(
+                    topic_name=resolved_name,
+                    message_type=message_type,
+                    latched=latched
+                )
+            )
+
+        self.introspection_service = node.create_service(
+            py_trees_srvs.IntrospectPublishers,
+            "~/introspection/" + introspection_topic_name,
+            self.introspection_callback
+        )
+
+    def introspection_callback(self, unused_request, response):
+        response.publisher_details = self.publisher_details_msg
+        return response
+
+
+class Subscribers(object):
+    """
+    Utility class that groups the publishers together in one convenient structure.
+
+    Args:
+        subscriber_details (obj:`tuple`): list of (str, str, bool, func) tuples representing
+                                  (unique_name, topic_name, subscriber_type, latched, callback)
+                                  specifications for creating subscribers
+
+    Examples:
+        Convert the incoming list of specifications into proper variables of this class.
+
+        .. code-block:: python
+
+           subscribers = py_trees.utilities.Subscribers(
+               [
+                   ('foo', ~/foo', std_msgs.String, True, foo),
+                   ('bar', /foo/bar', std_msgs.String, False, self.foo),
+                   ('foobar', '/foo/bar', std_msgs.String, False, foo.bar),
+               ]
+           )
+    """
+    def __init__(self, node, subscriber_details, introspection_topic_name="subscribers"):
+        # TODO: check for the correct setting of subscriber_details
+        self.subscriber_details_msg = []
+        for (name, topic_name, subscriber_type, latched, callback) in subscriber_details:
+            if latched:
+                self.__dict__[name] = node.create_subscription(
+                    msg_type=subscriber_type,
+                    topic=topic_name,
+                    qos_profile=qos_profile_latched_topic(),
+                    callback=callback
+                )
+            else:
+                self.__dict__[name] = node.create_subscription(
+                    msg_type=subscriber_type,
+                    topic=topic_name,
+                    callback=callback
+                )
+
+            resolved_name = resolve_name(node, topic_name)
+            message_type = subscriber_type.__class__.__module__.split('.')[0] + "/" + subscriber_type.__class__.__name__
+            self.subscriber_details_msg.append(
+                py_trees_msgs.SubscriberDetails(
+                    topic_name=resolved_name,
+                    message_type=message_type,
+                    latched=latched
+                )
+            )
+
+        self.introspection_service = node.create_service(
+            py_trees_srvs.IntrospectSubscribers,
+            "~/introspection/" + introspection_topic_name,
+            self.introspection_callback
+        )
+
+    def introspection_callback(self, unused_request, response):
+        response.subscriber_details = self.subscriber_details_msg
+        return response

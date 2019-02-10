@@ -167,7 +167,7 @@ def main():
     parser = argparse.ArgumentParser(description='Mock an led strip')
     command_line_args = rclpy.utilities.remove_ros_args(args=sys.argv)[1:]
     parser.parse_args(command_line_args)
-    rclpy.init(args=None)
+    rclpy.init(args=sys.argv)
     led_strip = LEDStrip()
     led_strip.spin()
     rclpy.shutdown()
