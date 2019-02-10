@@ -110,6 +110,7 @@ class LEDStrip(object):
 
             # map colour names in message to console colour escape sequences
             console_colour_map = {
+                'grey': console.dim + console.white,
                 'red': console.red,
                 'green': console.green,
                 'yellow': console.yellow,
@@ -122,6 +123,7 @@ class LEDStrip(object):
             return coloured_text
 
     def command_callback(self, msg):
+        print("Dude")
         with self.lock:
             text = self.generate_led_text(msg.data)
             # don't bother publishing if nothing changed.
@@ -129,6 +131,7 @@ class LEDStrip(object):
                 print("{}".format(text))
                 self.last_text = text
                 self.last_uuid = uuid.uuid4()
+                print("Publishing")
                 self.display_publisher.publish(std_msgs.String(data=text))
             if self.flashing_timer is not None:
                 self.flashing_timer.cancel()

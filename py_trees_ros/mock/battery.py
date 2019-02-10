@@ -72,9 +72,9 @@ class Battery:
         self.battery.capacity = float('nan')
         self.battery.design_capacity = float('nan')
         self.battery.percentage = 100.0
-        self.battery.power_supply_health=sensor_msgs.BatteryState.POWER_SUPPLY_HEALTH_GOOD
-        self.battery.power_supply_technology=sensor_msgs.BatteryState.POWER_SUPPLY_TECHNOLOGY_LION
-        self.battery.power_supply_status=sensor_msgs.BatteryState.POWER_SUPPLY_STATUS_FULL
+        self.battery.power_supply_health = sensor_msgs.BatteryState.POWER_SUPPLY_HEALTH_GOOD
+        self.battery.power_supply_technology = sensor_msgs.BatteryState.POWER_SUPPLY_TECHNOLOGY_LION
+        self.battery.power_supply_status = sensor_msgs.BatteryState.POWER_SUPPLY_STATUS_FULL
         self.battery.present = True
         self.battery.location = ""
         self.battery.serial_number = ""

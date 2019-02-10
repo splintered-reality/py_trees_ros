@@ -94,7 +94,7 @@ class Backend(qt_core.QObject):
             self.node,
             [
                 ("report", "/tree/report", std_msgs.String, latched, self.reality_report_callback),
-                ("led_strip", "/led_strip/display", std_msgs.String, unlatched, self.led_strip_display_callback)
+                ("led_strip", "/led_strip/display", std_msgs.String, latched, self.led_strip_display_callback)
             ]
         )
 
@@ -123,11 +123,12 @@ class Backend(qt_core.QObject):
             self.ui.ui.cancel_push_button.setEnabled(False)
 
     def led_strip_display_callback(self, msg):
+        print("Got callback")
         colour = "grey"
         if not msg.data:
-            self.node.get_logger().info("Dashboard: no color specified, setting 'grey'")
+            self.node.get_logger().info("Dashboard: no color specified, setting '{}'".format(colour))
         elif msg.data not in ["grey", "blue", "red", "green"]:
-            self.node.get_logger().info("Dashboard: received unsupported LED colour {0}, setting 'grey'".format(msg.data))
+            self.node.get_logger().info("Dashboard: received unsupported LED colour '{0}', setting '{}'".format(msg.data, colour))
         else:
             colour = msg.data
         self.led_colour_changed.emit(colour)

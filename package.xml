@@ -73,7 +73,10 @@
   <test_depend>rostest</test_depend>
   <test_depend>rosunit</test_depend>
   -->
+  <!-- For the tutorials actually, not the tests -->
+  <!-- TODO: move the tutorials out to another package -->
   <test_depend>python3-pyqt5</test_depend>
+  <test_depend>launch_ros</test_depend>
 
   <export>
     <build_type>ament_python</build_type>

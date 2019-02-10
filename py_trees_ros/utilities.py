@@ -255,10 +255,13 @@ class Subscribers(object):
         for (name, topic_name, subscriber_type, latched, callback) in subscriber_details:
             if latched:
                 self.__dict__[name] = node.create_subscription(
-                    msg_type=subscriber_type,
-                    topic=topic_name,
-                    qos_profile=qos_profile_latched_topic(),
-                    callback=callback
+                    subscriber_type,
+                    topic_name,
+                    callback,
+                    # msg_type=subscriber_type,
+                    # topic=topic_name,
+                    # callback=callback,
+                    qos_profile=qos_profile_latched_topic()
                 )
             else:
                 self.__dict__[name] = node.create_subscription(

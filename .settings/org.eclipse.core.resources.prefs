@@ -1,5 +1,7 @@
 eclipse.preferences.version=1
 encoding//doc/conf.py=utf-8
+encoding//launch/mock_robot.launch.py=utf-8
+encoding//launch/tutorial_one-data_gathering.launch.py=utf-8
 encoding//py_trees_ros/actions.py=utf-8
 encoding//py_trees_ros/battery.py=utf-8
 encoding//py_trees_ros/blackboard.py=utf-8
@@ -7,7 +9,6 @@ encoding//py_trees_ros/conversions.py=utf-8
 encoding//py_trees_ros/demos/exchange.py=utf-8
 encoding//py_trees_ros/demos/testies.py=utf-8
 encoding//py_trees_ros/exceptions.py=utf-8
-encoding//py_trees_ros/launch/tutorial_one.py=utf-8
 encoding//py_trees_ros/mock/action_server.py=utf-8
 encoding//py_trees_ros/mock/battery.py=utf-8
 encoding//py_trees_ros/mock/dashboard.py=utf-8

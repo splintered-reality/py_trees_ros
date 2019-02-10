@@ -18,11 +18,23 @@ setup(
     packages=find_packages(exclude=['tests*', 'docs*', 'launch*']),
     data_files=[
         ('share/' + package_name, ['package.xml']),
-        # global scripts (note: package specific scripts use the entry_points)
-        ('bin', ['scripts/py-trees-blackboard-watcher',
-                 'scripts/py-trees-tree-watcher',
-                 'scripts/py-trees-latched-echo'
-                 ]),
+        # launchers
+        ('share/' + package_name + '/launch',
+         [
+             'launch/mock_robot.launch.py',
+             'launch/tutorial_one-data_gathering.launch.py'
+         ]
+         ),
+        # global scripts
+        #   note: package specific scripts use the entry_points
+        #   configured by setup.cfg
+        ('bin',
+         [
+            'scripts/py-trees-blackboard-watcher',
+            'scripts/py-trees-tree-watcher',
+            'scripts/py-trees-latched-echo'
+         ]
+         ),
     ],
     package_data={'py_trees_ros': ['mock/gui/*']},
     install_requires=install_requires,
