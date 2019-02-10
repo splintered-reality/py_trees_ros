@@ -123,7 +123,6 @@ class LEDStrip(object):
             return coloured_text
 
     def command_callback(self, msg):
-        print("Dude")
         with self.lock:
             text = self.generate_led_text(msg.data)
             # don't bother publishing if nothing changed.
@@ -131,8 +130,7 @@ class LEDStrip(object):
                 print("{}".format(text))
                 self.last_text = text
                 self.last_uuid = uuid.uuid4()
-                print("Publishing")
-                self.display_publisher.publish(std_msgs.String(data=text))
+                self.display_publisher.publish(std_msgs.String(data=msg.data))
             if self.flashing_timer is not None:
                 self.flashing_timer.cancel()
                 self.node.destroy_timer(self.flashing_timer)

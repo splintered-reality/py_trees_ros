@@ -77,6 +77,10 @@
   <!-- TODO: move the tutorials out to another package -->
   <test_depend>python3-pyqt5</test_depend>
   <test_depend>launch_ros</test_depend>
+  <test_depend>ros2launch</test_depend>
+  <test_depend>ros2run</test_depend>
+  <test_depend>ros2service</test_depend>
+  <test_depend>ros2topic</test_depend>
 
   <export>
     <build_type>ament_python</build_type>
