@@ -153,15 +153,17 @@ class Backend(qt_core.QObject):
 
 
 def main():
-    rclpy.init()  # picks up sys.argv automagically internally
+    # picks up sys.argv automagically internally
+    rclpy.init()
+    # enable handling of ctrl-c (from roslaunch as well)
+    signal.signal(signal.SIGINT, signal.SIG_DFL)
 
-    # The players
+    # the players
     app = qt_widgets.QApplication(sys.argv)
     main_window = MainWindow()
     backend = Backend(main_window.ui.dashboard_group_box)
 
-    # Signals and slots now need to connect directly :/
-    # Heaven forbid you have to dig farther than one down in each.
+    # sigslots
     backend.led_colour_changed.connect(
         main_window.ui.dashboard_group_box.set_led_strip_colour
     )
@@ -169,12 +171,12 @@ def main():
         backend.shutdown_requested_callback
     )
 
+    # qt ... up
     ros_thread = threading.Thread(target=backend.spin)
     ros_thread.start()
     main_window.show()
-    # enable handling of ctrl-c (roslaunch as well?)
-    signal.signal(signal.SIGINT, signal.SIG_DFL)
     result = app.exec_()
+
     # shutdown
     ros_thread.join()
     rclpy.shutdown()
