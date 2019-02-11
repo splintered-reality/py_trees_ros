@@ -41,6 +41,9 @@ def resources_directory():
 
 
 class MainWindow(qt_widgets.QMainWindow):
+
+    request_shutdown = qt_core.pyqtSignal(name="requestShutdown")
+
     def __init__(self):
         super().__init__()
 
@@ -56,6 +59,9 @@ class MainWindow(qt_widgets.QMainWindow):
 
         self.ui.setupUi(self)
 
+    def closeEvent(self, unused_event):
+        self.request_shutdown.emit()
+
 
 class Backend(qt_core.QObject):
 
@@ -66,6 +72,8 @@ class Backend(qt_core.QObject):
 
         self.ui = dashboard_group_box
         self.node = rclpy.create_node("dashboard")
+
+        self.shutdown_requested = False
 
         not_latched = False  # latched = True
         self.publishers = py_trees_ros.utilities.Publishers(
@@ -89,7 +97,7 @@ class Backend(qt_core.QObject):
         )
 
         latched = True
-        unlatched = False
+        # unlatched = False
         self.subscribers = py_trees_ros.utilities.Subscribers(
             self.node,
             [
@@ -100,12 +108,17 @@ class Backend(qt_core.QObject):
 
     def spin(self):
         try:
-            rclpy.spin(self.node)
+            while rclpy.ok() and not self.shutdown_requested:
+                rclpy.spin_once(self.node, timeout_sec=0.1)
         except KeyboardInterrupt:
             pass
+        self.node.destroy_node()
 
     def publish_button_message(self, publisher):
         publisher.publish(std_msgs.Empty())
+
+    def shutdown_requested_callback(self):
+        self.shutdown_requested = True
 
     # TODO: shift to the ui
     def reality_report_callback(self, msg):
@@ -141,15 +154,28 @@ class Backend(qt_core.QObject):
 
 def main():
     rclpy.init()  # picks up sys.argv automagically internally
+
+    # The players
     app = qt_widgets.QApplication(sys.argv)
     main_window = MainWindow()
-
     backend = Backend(main_window.ui.dashboard_group_box)
+
+    # Signals and slots now need to connect directly :/
+    # Heaven forbid you have to dig farther than one down in each.
     backend.led_colour_changed.connect(
         main_window.ui.dashboard_group_box.set_led_strip_colour
     )
+    main_window.request_shutdown.connect(
+        backend.shutdown_requested_callback
+    )
 
-    threading.Thread(target=backend.spin).start()
+    ros_thread = threading.Thread(target=backend.spin)
+    ros_thread.start()
     main_window.show()
+    # enable handling of ctrl-c (roslaunch as well?)
     signal.signal(signal.SIGINT, signal.SIG_DFL)
-    sys.exit(app.exec_())
+    result = app.exec_()
+    # shutdown
+    ros_thread.join()
+    rclpy.shutdown()
+    sys.exit(result)
