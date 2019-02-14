@@ -24,14 +24,11 @@ Example interaction with the services of a :class:`Blackboard Exchange <py_trees
 ##############################################################################
 
 import argparse
-import collections
 import os
 import py_trees.console as console
 import py_trees_ros.utilities
 import rclpy
 import ros2topic.api
-import sys
-import yaml
 
 ##############################################################################
 # Module Constants

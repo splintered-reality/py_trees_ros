@@ -41,6 +41,9 @@ def resources_directory():
 
 
 class MainWindow(qt_widgets.QMainWindow):
+
+    request_shutdown = qt_core.pyqtSignal(name="requestShutdown")
+
     def __init__(self):
         super().__init__()
 
@@ -56,6 +59,9 @@ class MainWindow(qt_widgets.QMainWindow):
 
         self.ui.setupUi(self)
 
+    def closeEvent(self, unused_event):
+        self.request_shutdown.emit()
+
 
 class Backend(qt_core.QObject):
 
@@ -66,6 +72,8 @@ class Backend(qt_core.QObject):
 
         self.ui = dashboard_group_box
         self.node = rclpy.create_node("dashboard")
+
+        self.shutdown_requested = False
 
         not_latched = False  # latched = True
         self.publishers = py_trees_ros.utilities.Publishers(
@@ -89,23 +97,28 @@ class Backend(qt_core.QObject):
         )
 
         latched = True
-        unlatched = False
+        # unlatched = False
         self.subscribers = py_trees_ros.utilities.Subscribers(
             self.node,
             [
                 ("report", "/tree/report", std_msgs.String, latched, self.reality_report_callback),
-                ("led_strip", "/led_strip/display", std_msgs.String, unlatched, self.led_strip_display_callback)
+                ("led_strip", "/led_strip/display", std_msgs.String, latched, self.led_strip_display_callback)
             ]
         )
 
     def spin(self):
         try:
-            rclpy.spin(self.node)
+            while rclpy.ok() and not self.shutdown_requested:
+                rclpy.spin_once(self.node, timeout_sec=0.1)
         except KeyboardInterrupt:
             pass
+        self.node.destroy_node()
 
     def publish_button_message(self, publisher):
         publisher.publish(std_msgs.Empty())
+
+    def shutdown_requested_callback(self):
+        self.shutdown_requested = True
 
     # TODO: shift to the ui
     def reality_report_callback(self, msg):
@@ -123,11 +136,12 @@ class Backend(qt_core.QObject):
             self.ui.ui.cancel_push_button.setEnabled(False)
 
     def led_strip_display_callback(self, msg):
+        print("Got callback")
         colour = "grey"
         if not msg.data:
-            self.node.get_logger().info("Dashboard: no color specified, setting 'grey'")
+            self.node.get_logger().info("Dashboard: no color specified, setting '{}'".format(colour))
         elif msg.data not in ["grey", "blue", "red", "green"]:
-            self.node.get_logger().info("Dashboard: received unsupported LED colour {0}, setting 'grey'".format(msg.data))
+            self.node.get_logger().info("Dashboard: received unsupported LED colour '{0}', setting '{1}'".format(msg.data, colour))
         else:
             colour = msg.data
         self.led_colour_changed.emit(colour)
@@ -139,16 +153,31 @@ class Backend(qt_core.QObject):
 
 
 def main():
-    rclpy.init()  # picks up sys.argv automagically internally
+    # picks up sys.argv automagically internally
+    rclpy.init()
+    # enable handling of ctrl-c (from roslaunch as well)
+    signal.signal(signal.SIGINT, signal.SIG_DFL)
+
+    # the players
     app = qt_widgets.QApplication(sys.argv)
     main_window = MainWindow()
-
     backend = Backend(main_window.ui.dashboard_group_box)
+
+    # sigslots
     backend.led_colour_changed.connect(
         main_window.ui.dashboard_group_box.set_led_strip_colour
     )
+    main_window.request_shutdown.connect(
+        backend.shutdown_requested_callback
+    )
 
-    threading.Thread(target=backend.spin).start()
+    # qt ... up
+    ros_thread = threading.Thread(target=backend.spin)
+    ros_thread.start()
     main_window.show()
-    signal.signal(signal.SIGINT, signal.SIG_DFL)
-    sys.exit(app.exec_())
+    result = app.exec_()
+
+    # shutdown
+    ros_thread.join()
+    rclpy.shutdown()
+    sys.exit(result)
