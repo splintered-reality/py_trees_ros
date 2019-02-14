@@ -18,13 +18,6 @@ setup(
     packages=find_packages(exclude=['tests*', 'docs*', 'launch*']),
     data_files=[
         ('share/' + package_name, ['package.xml']),
-        # launchers
-        ('share/' + package_name + '/launch',
-         [
-             'launch/mock_robot.launch.py',
-             'launch/tutorial_one-data_gathering.launch.py'
-         ]
-         ),
         # global scripts
         #   note: package specific scripts use the entry_points
         #   configured by setup.cfg
