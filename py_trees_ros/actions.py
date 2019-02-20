@@ -89,7 +89,6 @@ class ActionClient(py_trees.behaviour.Behaviour):
             return py_trees.Status.INVALID
         # pity there is no 'is_connected' api like there is for c++
         if not self.sent_goal:
-            print("Goal %s" % str(self.action_goal))
             self.action_client.send_goal(self.action_goal)
             self.sent_goal = True
             self.feedback_message = "sent goal to the action server"
