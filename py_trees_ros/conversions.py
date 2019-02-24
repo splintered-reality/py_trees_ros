@@ -20,7 +20,7 @@ py_trees objects and ros messages.
 import unique_id
 import uuid_msgs.msg as uuid_msgs
 import py_trees
-import py_trees_interfaces.msg as py_trees_msgs
+import py_trees_ros_interfaces.msg as py_trees_msgs
 
 ##############################################################################
 # <etjpds

@@ -30,7 +30,7 @@ import copy
 import operator
 import pickle
 import py_trees
-import py_trees_interfaces.srv as py_trees_srvs
+import py_trees_ros_interfaces.srv as py_trees_srvs
 import rclpy.expand_topic_name
 
 import py_trees.console as console

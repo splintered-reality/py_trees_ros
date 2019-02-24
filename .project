@@ -4,7 +4,7 @@
 	<comment></comment>
 	<projects>
 		<project>py_trees</project>
-		<project>py_trees_msgs</project>
+		<project>py_trees_ros_interfaces</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>
