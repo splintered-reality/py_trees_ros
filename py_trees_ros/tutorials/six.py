@@ -93,7 +93,7 @@ switching as the context runs.
 import py_trees
 import py_trees_ros
 import py_trees.console as console
-import py_trees_msgs.msg as py_trees_msgs
+import py_trees_interfaces.msg as py_trees_msgs
 import rospy
 import std_msgs.msg as std_msgs
 import sys

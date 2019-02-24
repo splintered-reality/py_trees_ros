@@ -19,7 +19,7 @@ A few behaviours to support the tutorials.
 import copy
 import move_base_msgs.msg as move_base_msgs
 import py_trees
-import py_trees_msgs.msg as py_trees_msgs
+import py_trees_interfaces.msg as py_trees_msgs
 import py_trees_ros
 import rospy
 import std_msgs.msg as std_msgs

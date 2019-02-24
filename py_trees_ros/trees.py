@@ -26,7 +26,7 @@ import datetime
 import os
 import py_trees
 import py_trees.console as console
-import py_trees_msgs.msg as py_trees_msgs
+import py_trees_interfaces.msg as py_trees_msgs
 # import rosbag
 # TODO: import rospkg
 import rclpy

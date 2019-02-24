@@ -25,7 +25,7 @@ runs its own method on the behaviour to do as it wishes - logging, introspecting
 ##############################################################################
 
 import py_trees
-import py_trees_msgs.msg as py_trees_msgs
+import py_trees_interfaces.msg as py_trees_msgs
 import rclpy
 
 from . import conversions
