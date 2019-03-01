@@ -18,11 +18,14 @@ Assorted utility functions.
 
 import os
 import pathlib
+import uuid
+
 import py_trees.console as console
 import py_trees_ros_interfaces.msg as py_trees_msgs
 import py_trees_ros_interfaces.srv as py_trees_srvs
 import rclpy
 import std_msgs.msg as std_msgs
+import unique_identifier_msgs.msg as unique_identifier_msgs
 
 from . import exceptions
 
@@ -163,6 +166,16 @@ def resolve_name(node, name):
         node.get_name(),
         node.get_namespace()
     )
+
+
+def uuid4_to_msg():
+    """
+    Convert a uuid4 python object to a ros unique identifier, UUID type.
+
+    Returns:
+        :class:`unique_identifier_msgs.msg.UUID`: the ros message type
+    """
+    return unique_identifier_msgs.UUID(uuid=list(uuid.uuid4().bytes))
 
 ##############################################################################
 # Convenience Classes
