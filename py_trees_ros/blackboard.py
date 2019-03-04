@@ -31,10 +31,9 @@ import operator
 import os
 import pickle
 import py_trees
+import py_trees.console as console
 import py_trees_ros_interfaces.srv as py_trees_srvs
 import rclpy.expand_topic_name
-
-import py_trees.console as console
 import std_msgs.msg as std_msgs
 
 from . import exceptions
@@ -149,7 +148,11 @@ class Exchange(object):
     _counter = 0
     """Incremental counter guaranteeing unique watcher names"""
 
-    def __init__(self, node_name="exchange", namespace=""):
+    def __init__(self,
+                 node_name=py_trees.common.Name.AUTO_GENERATED,
+                 namespace=""):
+        if not node_name or node_name == py_trees.common.Name.AUTO_GENERATED:
+                node_name = self.__class__.__name__.lower()
         self.node = None
         self.blackboard = py_trees.blackboard.Blackboard()
         self.cached_blackboard_dict = {}
@@ -168,12 +171,6 @@ class Exchange(object):
         :meth:`~py_trees.trees.BehaviourTree.setup` method has - to enable construction
         of behaviours and trees offline (away from their execution environment) so that
         dot graphs and other visualisations of the tree can be created.
-
-        Args:
-             timeout (:obj:`float`): time to wait (0.0 is blocking forever)
-
-        Return:
-            :obj:`bool`: suceess or failure of the operation
 
         Examples:
 
@@ -302,7 +299,8 @@ class Exchange(object):
         Perform any ros-specific shutdown. This does not
         return the exchange to a re-usable state.
         """
-        self.node.destroy_node()
+        if self.node:
+            self.node.destroy_node()
 
 ##############################################################################
 # Blackboard Watcher
@@ -356,6 +354,7 @@ class BlackboardWatcher(object):
         """
         self.node = rclpy.create_node(
             node_name='watcher' + "_" + str(os.getpid()),
+            start_parameter_services=False
         )
         # Note: this assumes that the services are not dynamically available (i.e.
         # go up and down frequently)
@@ -448,4 +447,5 @@ class BlackboardWatcher(object):
         """
         Perform any ros-specific shutdown.
         """
-        self.node.destroy_node()
+        if self.node:
+            self.node.destroy_node()
