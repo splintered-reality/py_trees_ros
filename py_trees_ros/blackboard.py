@@ -28,6 +28,7 @@ means of interacting with the watching services.
 
 import copy
 import operator
+import os
 import pickle
 import py_trees
 import py_trees_ros_interfaces.srv as py_trees_srvs
@@ -148,15 +149,19 @@ class Exchange(object):
     _counter = 0
     """Incremental counter guaranteeing unique watcher names"""
 
-    def __init__(self):
+    def __init__(self, node_name="exchange", namespace=""):
         self.node = None
         self.blackboard = py_trees.blackboard.Blackboard()
         self.cached_blackboard_dict = {}
         self.views = []
         self.publisher = None
         self.services = {}
+        self.parameters = {
+            "node_name": node_name,
+            "namespace": namespace
+        }
 
-    def setup(self, node):
+    def setup(self):
         """
         This is where the ros initialisation of publishers and services happens. It is kept
         outside of the constructor for the same reasons that the familiar py_trees
@@ -188,15 +193,19 @@ class Exchange(object):
 
         .. seealso:: This method is called in the way illustrated above in :class:`~py_trees_ros.trees.BehaviourTree`.
         """
-        self.node = node
+        self.node = rclpy.create_node(
+            node_name=self.parameters["node_name"],
+            namespace=self.parameters["namespace"],
+            start_parameter_services=False
+        )
 
-        self.publisher = node.create_publisher(std_msgs.String, '~/blackboard')
+        self.publisher = self.node.create_publisher(std_msgs.String, '~/blackboard')
 
         for name in ["get_blackboard_variables",
                      "open_blackboard_watcher",
                      "close_blackboard_watcher"]:
             camel_case_name = ''.join(x.capitalize() for x in name.split('_'))
-            self.services[name] = node.create_service(
+            self.services[name] = self.node.create_service(
                 srv_type=getattr(py_trees_srvs, camel_case_name),
                 srv_name='~/' + name,
                 callback=getattr(self, "_{}_service".format(name))
@@ -288,22 +297,17 @@ class Exchange(object):
         self.views.append(view)
         return response
 
-    def unregister_services(self):
+    def shutdown(self):
         """
-        Use this method to make sure services are cleaned up when you wish
-        to subsequently discard the Exchange instance. This should be a
-        fairly atypical use case however - first consider if there are
-        ways to modify trees on the fly instead of destructing/recreating
-        all of the peripheral machinery.
+        Perform any ros-specific shutdown. This does not
+        return the exchange to a re-usable state.
         """
-        for srv in [self.get_blackboard_variables_srv, self.open_blackboard_watcher_srv, self.close_blackboard_watcher_srv]:
-            if srv is not None:
-                srv.shutdown()
-
+        self.node.destroy_node()
 
 ##############################################################################
 # Blackboard Watcher
 ##############################################################################
+
 
 class BlackboardWatcher(object):
     """
@@ -329,9 +333,9 @@ class BlackboardWatcher(object):
             'close': None
         }
         self.service_type_strings = {
-            'list': 'py_trees_msgs/GetBlackboardVariables',
-            'open': 'py_trees_msgs/OpenBlackboardWatcher',
-            'close': 'py_trees_msgs/CloseBlackboardWatcher'
+            'list': 'py_trees_ros_interfaces/GetBlackboardVariables',
+            'open': 'py_trees_ros_interfaces/OpenBlackboardWatcher',
+            'close': 'py_trees_ros_interfaces/CloseBlackboardWatcher'
         }
         self.service_types = {
             'list': py_trees_srvs.GetBlackboardVariables,
@@ -342,7 +346,7 @@ class BlackboardWatcher(object):
         self.watcher_subscriber = None
         self.callback = callback
 
-    def setup(self, node, timeout_sec):
+    def setup(self):
         """
         Args:
             node (:class:`~rclpy.node.Node`): nodes have the discovery methods
@@ -350,15 +354,17 @@ class BlackboardWatcher(object):
             :class:`~py_trees_ros.exceptions.NotFoundError`: if no services were found
             :class:`~py_trees_ros.exceptions.MultipleFoundError`: if multiple services were found
         """
+        self.node = rclpy.create_node(
+            node_name='watcher' + "_" + str(os.getpid()),
+        )
         # Note: this assumes that the services are not dynamically available (i.e.
         # go up and down frequently)
         for service_name in self.service_names.keys():
             self.service_names[service_name] = utilities.find_service(
-                node,
+                self.node,
                 self.service_type_strings[service_name],
                 self.namespace_hint
             )
-        self.node = node
 
     def list_variables(self):
         """
@@ -437,3 +443,9 @@ class BlackboardWatcher(object):
 
     def blackboard_contents_callback(self, msg):
         self.callback(msg.data)
+
+    def shutdown(self):
+        """
+        Perform any ros-specific shutdown.
+        """
+        self.node.destroy_node()

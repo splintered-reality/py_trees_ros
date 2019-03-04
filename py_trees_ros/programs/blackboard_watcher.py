@@ -24,7 +24,6 @@ Example interaction with the services of a :class:`Blackboard Exchange <py_trees
 ##############################################################################
 
 import argparse
-import os
 import py_trees.console as console
 import py_trees_ros
 import rclpy
@@ -132,25 +131,23 @@ def main():
     )
 
     rclpy.init(args=None)
-    node = rclpy.create_node(
-        node_name='watcher' + "_" + str(os.getpid()),
-    )
 
     ####################
     # Setup
     ####################
-    time.sleep(0.1) # ach, the magic foo before discovery works
+    time.sleep(0.1)  # ach, the magic foo before discovery works
     try:
-        blackboard_watcher.setup(node, timeout_sec=15)
+        blackboard_watcher.setup()
     except py_trees_ros.exceptions.NotFoundError as e:
-        print(console.red + "\nERROR: {}".format(str(e)) + console.reset)
+        print(console.red + "\nERROR: {}\n".format(str(e)) + console.reset)
         sys.exit(1)
     except py_trees_ros.exceptions.MultipleFoundError as e:
-        print(console.red + "\nERROR: {}".format(str(e)) + console.reset)
+        print(console.red + "\nERROR: {}\n".format(str(e)) + console.reset)
         if args.namespace is None:
-            print(console.red + "\nERROR: select one with the --namespace argument" + console.reset)
+            print(console.red + "\nERROR: select one with the --namespace argument\n" + console.reset)
         else:
-            print(console.red + "\nERROR: but none matching the requested '%s'" % args.namespace + console.reset)
+            print(console.red + "\nERROR: but none matching the requested '{}'\n".format(args.namespace) + console.reset)
+        sys.exit(1)
 
     ####################
     # Execute
@@ -172,7 +169,7 @@ def main():
             print(console.red + "ERROR: {}".format(str(e)) + console.reset)
             sys.exit(1)
         try:
-            rclpy.spin(node)
+            rclpy.spin(blackboard_watcher.node)
         except KeyboardInterrupt:
             pass
         try:
@@ -182,5 +179,5 @@ def main():
                 py_trees_ros.exceptions.TimedOutError) as e:
             print(console.red + "ERROR: {}".format(str(e)) + console.reset)
             sys.exit(1)
-        node.destroy_node()
+        blackboard_watcher.shutdown()
         rclpy.shutdown()
