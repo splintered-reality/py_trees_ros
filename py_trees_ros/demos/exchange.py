@@ -70,17 +70,21 @@ def command_line_argument_parser():
                                      )
     return parser
 
+
 def periodically_increment(exchange):
     exchange.blackboard.count += 1
-    print("[DJS] Increment: {}".format(exchange.blackboard.count))
+    print("[DJS] Timer 1: increment blackboard.count {}".format(exchange.blackboard.count))
+
 
 def periodically_publish(exchange):
-    print("[DJS] Publish")
+    print("[DJS] Timer 2: publishing")
     exchange.publish_blackboard()
+    print(exchange.blackboard)
 
 ##############################################################################
 # Main
 ##############################################################################
+
 
 def main():
     """
@@ -110,7 +114,7 @@ def main():
     ####################
     rclpy.init(args=None)
     node = rclpy.node.Node('exchange')
-    exchange.setup(node=node, timeout=15)
+    exchange.setup(node=node)
     publisher_timer = node.create_timer(
         timer_period_sec=1.0,
         callback=functools.partial(periodically_publish, exchange=exchange)
@@ -133,5 +137,3 @@ def main():
     node.destroy_timer(publisher_timer)
     node.destroy_timer(increment_timer)
     node.destroy_node()
-
-

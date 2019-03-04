@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # License: BSD
-#   https://raw.github.com/stonier/py_trees_ros/license/LICENSE
+#   https://raw.github.com/splintered-reality/py_trees_ros/license/LICENSE
 #
 ##############################################################################
 # Documentation
@@ -110,6 +110,7 @@ class BlackboardView(object):
 # Exchange
 ##############################################################################
 
+
 class Exchange(object):
     """
     Establishes ros communications around a :class:`~py_trees.blackboard.Blackboard`
@@ -131,7 +132,7 @@ class Exchange(object):
 
           * close a previously opened watcher
 
-    Watching could be more simply enabled by just providing a *get* stye service
+    Watching could be more simply enabled by just providing a *get* style service
     on a particular variable(s), however that would introduce an asynchronous
     interrupt on the library's usage and subsequently, locking. Instead, a
     watcher service requests for a stream, i.e. a publisher to be created for private
@@ -150,23 +151,12 @@ class Exchange(object):
     def __init__(self):
         self.node = None
         self.blackboard = py_trees.blackboard.Blackboard()
-        """
-        Internal handle to the blackboard. Users can utilise this, or create their own handles via the
-        usual, e.g.
-
-        .. code-block:: python
-
-            my_blackboard = py_trees.blackboard.Blackboard()
-
-        """
         self.cached_blackboard_dict = {}
         self.views = []
         self.publisher = None
-        self.get_blackboard_variables_srv = None
-        self.open_blackboard_watcher_srv = None
-        self.close_blackboard_watcher_srv = None
+        self.services = {}
 
-    def setup(self, node, timeout):
+    def setup(self, node):
         """
         This is where the ros initialisation of publishers and services happens. It is kept
         outside of the constructor for the same reasons that the familiar py_trees
@@ -199,22 +189,18 @@ class Exchange(object):
         .. seealso:: This method is called in the way illustrated above in :class:`~py_trees_ros.trees.BehaviourTree`.
         """
         self.node = node
+
         self.publisher = node.create_publisher(std_msgs.String, '~/blackboard')
-        self.get_blackboard_variables_srv = node.create_service(
-            srv_type=py_trees_srvs.GetBlackboardVariables,
-            srv_name='~/get_blackboard_variables',
-            callback=self._get_blackboard_variables_service
-        )
-        self.open_blackboard_watcher_srv = node.create_service(
-            srv_type=py_trees_srvs.OpenBlackboardWatcher,
-            srv_name='~/open_blackboard_watcher',
-            callback=self._open_blackboard_watcher_service
-        )
-        self.close_blackboard_watcher_srv = node.create_service(
-            srv_type=py_trees_srvs.CloseBlackboardWatcher,
-            srv_name='~/close_blackboard_watcher',
-            callback=self._close_blackboard_watcher_service
-        )
+
+        for name in ["get_blackboard_variables",
+                     "open_blackboard_watcher",
+                     "close_blackboard_watcher"]:
+            camel_case_name = ''.join(x.capitalize() for x in name.split('_'))
+            self.services[name] = node.create_service(
+                srv_type=getattr(py_trees_srvs, camel_case_name),
+                srv_name='~/' + name,
+                callback=getattr(self, "_{}_service".format(name))
+            )
         return True
 
     def _get_nested_keys(self):
@@ -356,7 +342,6 @@ class BlackboardWatcher(object):
         self.watcher_subscriber = None
         self.callback = callback
 
-
     def setup(self, node, timeout_sec):
         """
         Args:
@@ -369,10 +354,10 @@ class BlackboardWatcher(object):
         # go up and down frequently)
         for service_name in self.service_names.keys():
             self.service_names[service_name] = utilities.find_service(
-            node,
-            self.service_type_strings[service_name],
-            self.namespace_hint
-        )
+                node,
+                self.service_type_strings[service_name],
+                self.namespace_hint
+            )
         self.node = node
 
     def list_variables(self):
@@ -414,7 +399,7 @@ class BlackboardWatcher(object):
         self.watcher_subscriber = self.node.create_subscription(
             msg_type=std_msgs.String,
             topic=self.watcher_topic_name,
-            callback= self.blackboard_contents_callback
+            callback=self.blackboard_contents_callback
         )
 
     def close_connection(self):
