@@ -115,13 +115,12 @@ def echo_blackboard_contents(contents):
 ##############################################################################
 
 
-def main():
+def main(command_line_args=sys.argv[1:]):
     """
     Entry point for the blackboard watcher script.
     """
     # Until there is support for a ros arg stripper
-    # command_line_args = rospy.myargv(argv=sys.argv)[1:]
-    command_line_args = None
+    # command_line_args = rospy.myargv(argv=command_line_args)[1:]
     parser = command_line_argument_parser(formatted_for_sphinx=False)
     args = parser.parse_args(command_line_args)
 
