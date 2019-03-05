@@ -114,6 +114,38 @@ def echo_blackboard_contents(contents):
 # Main
 ##############################################################################
 
+def functional_main(
+        namespace_hint=None,
+        list_variables=False,
+        variables=list(),
+    ):
+    """
+    Blackboard watchs sans argparse and rclpy init, i.e. where the
+    functionality lives.
+    """
+    blackboard_watcher = py_trees_ros.blackboard.BlackboardWatcher(
+        callback=echo_blackboard_contents,
+        namespace_hint=namespace_hint
+    )
+    ####################
+    # Setup
+    ####################
+    time.sleep(0.1)  # ach, the magic foo before discovery works
+    blackboard_watcher.setup()
+
+    ####################
+    # Execute
+    ####################
+    if list_variables:
+        pretty_print_variables(blackboard_watcher.list_variables())
+    else:
+        blackboard_watcher.open_connection(variables)
+        try:
+            rclpy.spin(blackboard_watcher.node)
+        except KeyboardInterrupt:
+            pass
+        blackboard_watcher.close_connection()
+    blackboard_watcher.shutdown()
 
 def main(command_line_args=sys.argv[1:]):
     """
@@ -124,22 +156,18 @@ def main(command_line_args=sys.argv[1:]):
     parser = command_line_argument_parser(formatted_for_sphinx=False)
     args = parser.parse_args(command_line_args)
 
-    blackboard_watcher = py_trees_ros.blackboard.BlackboardWatcher(
-        callback=echo_blackboard_contents,
-        namespace_hint=args.namespace
-    )
-
     rclpy.init(args=None)
-
-    ####################
-    # Setup
-    ####################
-    time.sleep(0.1)  # ach, the magic foo before discovery works
     try:
-        blackboard_watcher.setup()
+        functional_main(
+            list_variables=args.list_variables,
+            variables = args.variables,
+            namespace_hint=args.namespace
+        )
+    # setup discovery fails
     except py_trees_ros.exceptions.NotFoundError as e:
         print(console.red + "\nERROR: {}\n".format(str(e)) + console.reset)
         sys.exit(1)
+    # setup discovery finds duplicates
     except py_trees_ros.exceptions.MultipleFoundError as e:
         print(console.red + "\nERROR: {}\n".format(str(e)) + console.reset)
         if args.namespace is None:
@@ -147,36 +175,11 @@ def main(command_line_args=sys.argv[1:]):
         else:
             print(console.red + "\nERROR: but none matching the requested '{}'\n".format(args.namespace) + console.reset)
         sys.exit(1)
+    # connection problems
+    except (py_trees_ros.exceptions.NotReadyError,
+            py_trees_ros.exceptions.ServiceError,
+            py_trees_ros.exceptions.TimedOutError) as e:
+        print(console.red + "\nERROR: {}".format(str(e)) + console.reset)
+        sys.exit(1)
+    rclpy.shutdown()
 
-    ####################
-    # Execute
-    ####################
-    if args.list_variables:
-        try:
-            pretty_print_variables(blackboard_watcher.list_variables())
-        except (py_trees_ros.exceptions.NotReadyError,
-                py_trees_ros.exceptions.ServiceError,
-                py_trees_ros.exceptions.TimedOutError) as e:
-            print(console.red + "ERROR: {}".format(str(e)) + console.reset)
-            sys.exit(1)
-    else:
-        try:
-            blackboard_watcher.open_connection(args.variables)
-        except (py_trees_ros.exceptions.NotReadyError,
-                py_trees_ros.exceptions.ServiceError,
-                py_trees_ros.exceptions.TimedOutError) as e:
-            print(console.red + "ERROR: {}".format(str(e)) + console.reset)
-            sys.exit(1)
-        try:
-            rclpy.spin(blackboard_watcher.node)
-        except KeyboardInterrupt:
-            pass
-        try:
-            blackboard_watcher.close_connection()
-        except (py_trees_ros.exceptions.NotReadyError,
-                py_trees_ros.exceptions.ServiceError,
-                py_trees_ros.exceptions.TimedOutError) as e:
-            print(console.red + "ERROR: {}".format(str(e)) + console.reset)
-            sys.exit(1)
-        blackboard_watcher.shutdown()
-        rclpy.shutdown()
