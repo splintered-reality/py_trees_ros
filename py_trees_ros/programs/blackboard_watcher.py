@@ -28,7 +28,6 @@ import py_trees.console as console
 import py_trees_ros
 import rclpy
 import sys
-import time
 
 ##############################################################################
 # Classes
@@ -114,38 +113,6 @@ def echo_blackboard_contents(contents):
 # Main
 ##############################################################################
 
-def functional_main(
-        namespace_hint=None,
-        list_variables=False,
-        variables=list(),
-    ):
-    """
-    Blackboard watchs sans argparse and rclpy init, i.e. where the
-    functionality lives.
-    """
-    blackboard_watcher = py_trees_ros.blackboard.BlackboardWatcher(
-        callback=echo_blackboard_contents,
-        namespace_hint=namespace_hint
-    )
-    ####################
-    # Setup
-    ####################
-    time.sleep(0.1)  # ach, the magic foo before discovery works
-    blackboard_watcher.setup()
-
-    ####################
-    # Execute
-    ####################
-    if list_variables:
-        pretty_print_variables(blackboard_watcher.list_variables())
-    else:
-        blackboard_watcher.open_connection(variables)
-        try:
-            rclpy.spin(blackboard_watcher.node)
-        except KeyboardInterrupt:
-            pass
-        blackboard_watcher.close_connection()
-    blackboard_watcher.shutdown()
 
 def main(command_line_args=sys.argv[1:]):
     """
@@ -157,12 +124,15 @@ def main(command_line_args=sys.argv[1:]):
     args = parser.parse_args(command_line_args)
 
     rclpy.init(args=None)
+    blackboard_watcher = py_trees_ros.blackboard.BlackboardWatcher(
+        callback=echo_blackboard_contents,
+        namespace_hint=args.namespace
+    )
+    ####################
+    # Setup
+    ####################
     try:
-        functional_main(
-            list_variables=args.list_variables,
-            variables = args.variables,
-            namespace_hint=args.namespace
-        )
+        blackboard_watcher.setup(timeout_sec=1.0)
     # setup discovery fails
     except py_trees_ros.exceptions.NotFoundError as e:
         print(console.red + "\nERROR: {}\n".format(str(e)) + console.reset)
@@ -175,6 +145,28 @@ def main(command_line_args=sys.argv[1:]):
         else:
             print(console.red + "\nERROR: but none matching the requested '{}'\n".format(args.namespace) + console.reset)
         sys.exit(1)
+
+    ####################
+    # Execute
+    ####################
+    try:
+        if args.list_variables:
+            # pretty_print_variables(blackboard_watcher.list_variables())
+            future = blackboard_watcher.request_list_variables()
+            rclpy.spin_until_future_complete(blackboard_watcher.node, future)
+            if future.result() is None:
+                raise py_trees_ros.exceptions.ServiceError(
+                    "service call failed [{}]".format(future.exception())
+                )
+            pretty_print_variables(future.result().variables)
+        else:
+            blackboard_watcher.open_connection(args.variables)
+            try:
+                rclpy.spin(blackboard_watcher.node)
+            except KeyboardInterrupt:
+                pass
+            blackboard_watcher.close_connection()
+        blackboard_watcher.shutdown()
     # connection problems
     except (py_trees_ros.exceptions.NotReadyError,
             py_trees_ros.exceptions.ServiceError,

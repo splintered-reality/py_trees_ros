@@ -28,13 +28,13 @@ means of interacting with the watching services.
 
 import copy
 import operator
-import os
 import pickle
 import py_trees
 import py_trees.console as console
 import py_trees_ros_interfaces.srv as py_trees_srvs
 import rclpy.expand_topic_name
 import std_msgs.msg as std_msgs
+import time
 
 from . import exceptions
 from . import utilities
@@ -317,7 +317,9 @@ class BlackboardWatcher(object):
 
     .. seealso:: :ref:`py-trees-blackboard-watcher`
     """
-    def __init__(self, callback, namespace_hint):
+    def __init__(self,
+                 callback=lambda *args, **kwargs: None,  # a noop
+                 namespace_hint=None):
         """
         Args:
             callback: any method that accepts a string as an input argument
@@ -344,35 +346,60 @@ class BlackboardWatcher(object):
         self.watcher_subscriber = None
         self.callback = callback
 
-    def setup(self):
+    def setup(self, timeout_sec):
         """
         Args:
-            node (:class:`~rclpy.node.Node`): nodes have the discovery methods
+            timeout_sec (:obj:`float`): time (s) to wait (use common.Duration.INFINITE to block indefinitely)
+
         Raises:
             :class:`~py_trees_ros.exceptions.NotFoundError`: if no services were found
             :class:`~py_trees_ros.exceptions.MultipleFoundError`: if multiple services were found
         """
         self.node = rclpy.create_node(
-            node_name='watcher' + "_" + str(os.getpid()),
+            node_name=utilities.create_anonymous_node_name(node_name='watcher'),
             start_parameter_services=False
         )
         # Note: this assumes that the services are not dynamically available (i.e.
         # go up and down frequently)
+        scanned_time = 0.0
+        scanning_period = 0.1
         for service_name in self.service_names.keys():
-            self.service_names[service_name] = utilities.find_service(
-                self.node,
-                self.service_type_strings[service_name],
-                self.namespace_hint
-            )
+            while True:
+                try:
+                    self.service_names[service_name] = utilities.find_service(
+                        self.node,
+                        self.service_type_strings[service_name],
+                        self.namespace_hint
+                    )
+                    break
+                except exceptions.NotFoundError:
+                    time.sleep(scanning_period)
+                    scanned_time += scanning_period
+                    if scanned_time > timeout_sec:
+                        raise exceptions.NotFoundError("Timed out scanning for blackboard services")
+                    else:
+                        continue
+                except exceptions.MultipleFoundError as e:
+                    raise e
 
     def list_variables(self):
         """
+        Request a list of the variables on the blackboard.
+
+        Returns:
+            :obj:`list(str)`: a string list of variables on the blackboard
+
         Raises:
             :class:`~py_trees_ros.exceptions.NotReadyError`: if setup not executed or it hitherto failed
             :class:`~py_trees_ros.exceptions.ServiceError`: if the services could not be reached
             :class:`~py_trees_ros.exceptions.TimedOutError`: if the services could not be reached
         """
-        request, client = self.create_service_client('list')
+        # this doesn't work...?
+        # request, client = self._create_service_client('list')
+        # result = client.call(request)
+        # return result.variables
+#         future = self.request_list_variables()
+        request, client = self._create_service_client('list')
         future = client.call_async(request)
         rclpy.spin_until_future_complete(self.node, future)
         if future.result() is None:
@@ -381,6 +408,17 @@ class BlackboardWatcher(object):
             )
         return future.result().variables
 
+    def request_list_variables(self):
+        """
+        Request of the blackboard a list of it's variables.
+
+        Returns:
+            :class:`~rclpy.task.Future`
+        """
+        request, client = self._create_service_client('list')
+        future = client.call_async(request)
+        return future
+
     def open_connection(self, variables):
         """
         Raises:
@@ -388,7 +426,7 @@ class BlackboardWatcher(object):
             :class:`~py_trees_ros.exceptions.ServiceError`: if the service failed to respond
             :class:`~py_trees_ros.exceptions.TimedOutError`: if the services could not be reached
         """
-        request, client = self.create_service_client('open')
+        request, client = self._create_service_client('open')
         # convenience, just in case someone wrote the list of variables for argparse like a python list instead
         # of a space separated list of variables, i.e.
         #    py_trees-blackboard-watcher [count, dude] → ['[count,', 'dude]']  → ['count', 'dude']
@@ -415,7 +453,7 @@ class BlackboardWatcher(object):
         """
         if not self.watcher_topic_name:
             return  # Nothing to do
-        request, client = self.create_service_client('close')
+        request, client = self._create_service_client('close')
         request.topic_name = self.watcher_topic_name
         future = client.call_async(request)
         rclpy.spin_until_future_complete(self.node, future)
@@ -424,7 +462,7 @@ class BlackboardWatcher(object):
         self.watcher_topic_name = None
         self.watcher_subscriber = None
 
-    def create_service_client(self, key):
+    def _create_service_client(self, key):
         if self.service_names[key] is None:
             raise exceptions.NotReadyError(
                 "no known '{}' service known [did you call setup()?]".format(self.service_types[key])
