@@ -382,32 +382,6 @@ class BlackboardWatcher(object):
                 except exceptions.MultipleFoundError as e:
                     raise e
 
-    def list_variables(self):
-        """
-        Request a list of the variables on the blackboard.
-
-        Returns:
-            :obj:`list(str)`: a string list of variables on the blackboard
-
-        Raises:
-            :class:`~py_trees_ros.exceptions.NotReadyError`: if setup not executed or it hitherto failed
-            :class:`~py_trees_ros.exceptions.ServiceError`: if the services could not be reached
-            :class:`~py_trees_ros.exceptions.TimedOutError`: if the services could not be reached
-        """
-        # this doesn't work...?
-        # request, client = self._create_service_client('list')
-        # result = client.call(request)
-        # return result.variables
-#         future = self.request_list_variables()
-        request, client = self._create_service_client('list')
-        future = client.call_async(request)
-        rclpy.spin_until_future_complete(self.node, future)
-        if future.result() is None:
-            raise exceptions.ServiceError(
-                "service call failed [{}]".format(future.exception())
-            )
-        return future.result().variables
-
     def request_list_variables(self):
         """
         Request of the blackboard a list of it's variables.
