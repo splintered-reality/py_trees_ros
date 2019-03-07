@@ -32,6 +32,7 @@ import pickle
 import py_trees
 import py_trees.console as console
 import py_trees_ros_interfaces.srv as py_trees_srvs
+import rclpy.executors
 import rclpy.expand_topic_name
 import std_msgs.msg as std_msgs
 import time
@@ -393,20 +394,40 @@ class BlackboardWatcher(object):
         future = client.call_async(request)
         return future
 
-    def open_connection(self, variables):
+    def open_connection(self,
+                        variables,
+                        callback=None,
+                        executor=None):
         """
+        First alls the exchange to get details on the connect the watcher is required
+        to open and then initiates that tunnel. Note that this does some spinning waiting
+        for the service call, so if the executor must be shared with other nodes (e.g. for
+        testing) make sure you pass in your own executor.
+
+        Args:
+            variables (:obj:`[str]`): list of variables to listen for
+            callback (func, optional): method with a std_msgs/String argument, defaults to
+                :meth:`blackboard_contents_callback()` in this class
+            executor (:class:`~rclpy.executors.Executor`) used to spin the node looking for service callbacks
+
         Raises:
             :class:`~py_trees_ros.exceptions.NotReadyError`: if setup not executed or it hitherto failed
             :class:`~py_trees_ros.exceptions.ServiceError`: if the service failed to respond
             :class:`~py_trees_ros.exceptions.TimedOutError`: if the services could not be reached
         """
+        if callback is None:
+            callback = self.blackboard_contents_callback
+
         request, client = self._create_service_client('open')
         # convenience, just in case someone wrote the list of variables for argparse like a python list instead
         # of a space separated list of variables, i.e.
         #    py_trees-blackboard-watcher [count, dude] → ['[count,', 'dude]']  → ['count', 'dude']
         request.variables = [variable.strip(',[]') for variable in variables]
         future = client.call_async(request)
-        rclpy.spin_until_future_complete(self.node, future)
+        if executor is None:
+            executor = rclpy.executors.SingleThreadedExecutor()
+        executor.add_node(self.node)
+        executor.spin_until_future_complete(future)
         response = future.result()
         if response is None:
             raise exceptions.ServiceError(
@@ -416,7 +437,7 @@ class BlackboardWatcher(object):
         self.watcher_subscriber = self.node.create_subscription(
             msg_type=std_msgs.String,
             topic=self.watcher_topic_name,
-            callback=self.blackboard_contents_callback
+            callback=callback
         )
 
     def close_connection(self):

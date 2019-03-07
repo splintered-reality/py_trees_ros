@@ -9,7 +9,6 @@
 # Imports
 ##############################################################################
 
-import multiprocessing
 import py_trees.console as console
 import rclpy
 import rclpy.executors
@@ -32,6 +31,14 @@ class create_and_setup_exchange(object):
 
     def __exit__(self, unused_type, unused_value, unused_traceback):
         self.exchange.shutdown()
+
+
+class BlackboardListener(object):
+    def __init__(self):
+        self.data = None  # str object
+
+    def callback(self, msg):
+        self.data = msg.data
 
 ##############################################################################
 # Tests
@@ -103,6 +110,57 @@ class TestExchange(unittest.TestCase):
                 "dude" in future.result().variables)
             )
             self.assertTrue("dude" in future.result().variables)
+
+    def test_watcher(self):
+        console.banner("Test Watcher")
+        executor = rclpy.executors.SingleThreadedExecutor()
+        with create_and_setup_exchange() as exchange:
+            exchange.blackboard.count = 1
+            blackboard_watcher = py_trees_ros.blackboard.BlackboardWatcher()
+            blackboard_watcher.setup(timeout_sec=1.0)
+            blackboard_listener = BlackboardListener()
+            executor.add_node(blackboard_watcher.node)
+            executor.add_node(exchange.node)
+            blackboard_watcher.open_connection(
+                variables=[],
+                callback=blackboard_listener.callback,
+                executor=executor
+            )
+            while not blackboard_listener.data:
+                exchange.blackboard.count += 1
+                exchange.publish_blackboard()
+                executor.spin_once(timeout_sec=0.5)
+            print("----- Asserts -----")
+            print("'count' in blackboard contents [{}]".format(
+                "count" in blackboard_listener.data)
+            )
+            self.assertTrue("count" in blackboard_listener.data)
+
+    def test_view(self):
+        console.banner("Test View")
+        executor = rclpy.executors.SingleThreadedExecutor()
+        with create_and_setup_exchange() as exchange:
+            exchange.blackboard.dude = "Bob"
+            exchange.blackboard.count = 1
+            blackboard_watcher = py_trees_ros.blackboard.BlackboardWatcher()
+            blackboard_watcher.setup(timeout_sec=1.0)
+            blackboard_listener = BlackboardListener()
+            executor.add_node(blackboard_watcher.node)
+            executor.add_node(exchange.node)
+            blackboard_watcher.open_connection(
+                variables=["count"],
+                callback=blackboard_listener.callback,
+                executor=executor
+            )
+            while not blackboard_listener.data:
+                exchange.blackboard.count += 1
+                exchange.publish_blackboard()
+                executor.spin_once(timeout_sec=0.5)
+            print("----- Asserts -----")
+            print("'count' in blackboard contents [{}]".format(
+                "count" in blackboard_listener.data)
+            )
+            self.assertTrue("count" in blackboard_listener.data)
 
 
 if __name__ == '__main__':
