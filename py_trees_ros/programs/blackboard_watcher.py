@@ -24,12 +24,10 @@ Example interaction with the services of a :class:`Blackboard Exchange <py_trees
 ##############################################################################
 
 import argparse
-import os
 import py_trees.console as console
 import py_trees_ros
 import rclpy
 import sys
-import time
 
 ##############################################################################
 # Classes
@@ -116,71 +114,64 @@ def echo_blackboard_contents(contents):
 ##############################################################################
 
 
-def main():
+def main(command_line_args=sys.argv[1:]):
     """
     Entry point for the blackboard watcher script.
     """
     # Until there is support for a ros arg stripper
-    # command_line_args = rospy.myargv(argv=sys.argv)[1:]
-    command_line_args = None
+    # command_line_args = rospy.myargv(argv=command_line_args)[1:]
     parser = command_line_argument_parser(formatted_for_sphinx=False)
     args = parser.parse_args(command_line_args)
 
+    rclpy.init(args=None)
     blackboard_watcher = py_trees_ros.blackboard.BlackboardWatcher(
         callback=echo_blackboard_contents,
         namespace_hint=args.namespace
     )
-
-    rclpy.init(args=None)
-    node = rclpy.create_node(
-        node_name='watcher' + "_" + str(os.getpid()),
-    )
-
     ####################
     # Setup
     ####################
-    time.sleep(0.1) # ach, the magic foo before discovery works
     try:
-        blackboard_watcher.setup(node, timeout_sec=15)
+        blackboard_watcher.setup(timeout_sec=1.0)
+    # setup discovery fails
     except py_trees_ros.exceptions.NotFoundError as e:
-        print(console.red + "\nERROR: {}".format(str(e)) + console.reset)
+        print(console.red + "\nERROR: {}\n".format(str(e)) + console.reset)
         sys.exit(1)
+    # setup discovery finds duplicates
     except py_trees_ros.exceptions.MultipleFoundError as e:
-        print(console.red + "\nERROR: {}".format(str(e)) + console.reset)
+        print(console.red + "\nERROR: {}\n".format(str(e)) + console.reset)
         if args.namespace is None:
-            print(console.red + "\nERROR: select one with the --namespace argument" + console.reset)
+            print(console.red + "\nERROR: select one with the --namespace argument\n" + console.reset)
         else:
-            print(console.red + "\nERROR: but none matching the requested '%s'" % args.namespace + console.reset)
+            print(console.red + "\nERROR: but none matching the requested '{}'\n".format(args.namespace) + console.reset)
+        sys.exit(1)
 
     ####################
     # Execute
     ####################
-    if args.list_variables:
-        try:
-            pretty_print_variables(blackboard_watcher.list_variables())
-        except (py_trees_ros.exceptions.NotReadyError,
-                py_trees_ros.exceptions.ServiceError,
-                py_trees_ros.exceptions.TimedOutError) as e:
-            print(console.red + "ERROR: {}".format(str(e)) + console.reset)
-            sys.exit(1)
-    else:
-        try:
+    try:
+        if args.list_variables:
+            # pretty_print_variables(blackboard_watcher.list_variables())
+            future = blackboard_watcher.request_list_variables()
+            rclpy.spin_until_future_complete(blackboard_watcher.node, future)
+            if future.result() is None:
+                raise py_trees_ros.exceptions.ServiceError(
+                    "service call failed [{}]".format(future.exception())
+                )
+            pretty_print_variables(future.result().variables)
+        else:
             blackboard_watcher.open_connection(args.variables)
-        except (py_trees_ros.exceptions.NotReadyError,
-                py_trees_ros.exceptions.ServiceError,
-                py_trees_ros.exceptions.TimedOutError) as e:
-            print(console.red + "ERROR: {}".format(str(e)) + console.reset)
-            sys.exit(1)
-        try:
-            rclpy.spin(node)
-        except KeyboardInterrupt:
-            pass
-        try:
+            try:
+                rclpy.spin(blackboard_watcher.node)
+            except KeyboardInterrupt:
+                pass
             blackboard_watcher.close_connection()
-        except (py_trees_ros.exceptions.NotReadyError,
-                py_trees_ros.exceptions.ServiceError,
-                py_trees_ros.exceptions.TimedOutError) as e:
-            print(console.red + "ERROR: {}".format(str(e)) + console.reset)
-            sys.exit(1)
-        node.destroy_node()
-        rclpy.shutdown()
+        blackboard_watcher.shutdown()
+    # connection problems
+    except (py_trees_ros.exceptions.NotReadyError,
+            py_trees_ros.exceptions.ServiceError,
+            py_trees_ros.exceptions.TimedOutError) as e:
+        print(console.red + "\nERROR: {}".format(str(e)) + console.reset)
+        sys.exit(1)
+    rclpy.shutdown()
+

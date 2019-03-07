@@ -20,11 +20,10 @@ import os
 import pathlib
 import uuid
 
-import py_trees.console as console
 import py_trees_ros_interfaces.msg as py_trees_msgs
 import py_trees_ros_interfaces.srv as py_trees_srvs
 import rclpy
-import std_msgs.msg as std_msgs
+import time
 import unique_identifier_msgs.msg as unique_identifier_msgs
 
 from . import exceptions
@@ -176,6 +175,17 @@ def uuid4_to_msg():
         :class:`unique_identifier_msgs.msg.UUID`: the ros message type
     """
     return unique_identifier_msgs.UUID(uuid=list(uuid.uuid4().bytes))
+
+
+def create_anonymous_node_name(node_name="node") -> str:
+    """
+    Creates an anonoymous node name by adding a suffix created from
+    a monotonic timestamp, sans the decimal.
+
+    Returns:
+        :obj:`str`: the unique, anonymous node name
+    """
+    return node_name + "_" + str(time.monotonic()).replace('.', '')
 
 ##############################################################################
 # Convenience Classes

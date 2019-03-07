@@ -1,6 +1,6 @@
 #
 # License: BSD
-#   https://raw.github.com/stonier/py_trees_ros/license/LICENSE
+#   https://raw.github.com/splintered-reality/py_trees_ros/license/LICENSE
 #
 ##############################################################################
 # Documentation
@@ -14,9 +14,8 @@ ROS extensions, behaviours and utilities for py_trees.
 # Imports
 ##############################################################################
 
-# from . import blackboard
+from . import blackboard
 # from . import exceptions
-from . import mock
 from . import programs
 # from . import trees
 # from . import tutorials

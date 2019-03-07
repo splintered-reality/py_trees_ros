@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # License: BSD
-#   https://raw.github.com/stonier/py_trees_ros/license/LICENSE
+#   https://raw.github.com/splintered-reality/py_trees_ros/license/LICENSE
 #
 ##############################################################################
 # Documentation
@@ -30,11 +30,12 @@ import copy
 import operator
 import pickle
 import py_trees
-import py_trees_ros_interfaces.srv as py_trees_srvs
-import rclpy.expand_topic_name
-
 import py_trees.console as console
+import py_trees_ros_interfaces.srv as py_trees_srvs
+import rclpy.executors
+import rclpy.expand_topic_name
 import std_msgs.msg as std_msgs
+import time
 
 from . import exceptions
 from . import utilities
@@ -110,6 +111,7 @@ class BlackboardView(object):
 # Exchange
 ##############################################################################
 
+
 class Exchange(object):
     """
     Establishes ros communications around a :class:`~py_trees.blackboard.Blackboard`
@@ -131,7 +133,7 @@ class Exchange(object):
 
           * close a previously opened watcher
 
-    Watching could be more simply enabled by just providing a *get* stye service
+    Watching could be more simply enabled by just providing a *get* style service
     on a particular variable(s), however that would introduce an asynchronous
     interrupt on the library's usage and subsequently, locking. Instead, a
     watcher service requests for a stream, i.e. a publisher to be created for private
@@ -147,38 +149,29 @@ class Exchange(object):
     _counter = 0
     """Incremental counter guaranteeing unique watcher names"""
 
-    def __init__(self):
+    def __init__(self,
+                 node_name=py_trees.common.Name.AUTO_GENERATED,
+                 namespace=""):
+        if not node_name or node_name == py_trees.common.Name.AUTO_GENERATED:
+                node_name = self.__class__.__name__.lower()
         self.node = None
         self.blackboard = py_trees.blackboard.Blackboard()
-        """
-        Internal handle to the blackboard. Users can utilise this, or create their own handles via the
-        usual, e.g.
-
-        .. code-block:: python
-
-            my_blackboard = py_trees.blackboard.Blackboard()
-
-        """
         self.cached_blackboard_dict = {}
         self.views = []
         self.publisher = None
-        self.get_blackboard_variables_srv = None
-        self.open_blackboard_watcher_srv = None
-        self.close_blackboard_watcher_srv = None
+        self.services = {}
+        self.parameters = {
+            "node_name": node_name,
+            "namespace": namespace
+        }
 
-    def setup(self, node, timeout):
+    def setup(self):
         """
         This is where the ros initialisation of publishers and services happens. It is kept
         outside of the constructor for the same reasons that the familiar py_trees
         :meth:`~py_trees.trees.BehaviourTree.setup` method has - to enable construction
         of behaviours and trees offline (away from their execution environment) so that
         dot graphs and other visualisations of the tree can be created.
-
-        Args:
-             timeout (:obj:`float`): time to wait (0.0 is blocking forever)
-
-        Return:
-            :obj:`bool`: suceess or failure of the operation
 
         Examples:
 
@@ -198,23 +191,23 @@ class Exchange(object):
 
         .. seealso:: This method is called in the way illustrated above in :class:`~py_trees_ros.trees.BehaviourTree`.
         """
-        self.node = node
-        self.publisher = node.create_publisher(std_msgs.String, '~/blackboard')
-        self.get_blackboard_variables_srv = node.create_service(
-            srv_type=py_trees_srvs.GetBlackboardVariables,
-            srv_name='~/get_blackboard_variables',
-            callback=self._get_blackboard_variables_service
+        self.node = rclpy.create_node(
+            node_name=self.parameters["node_name"],
+            namespace=self.parameters["namespace"],
+            start_parameter_services=False
         )
-        self.open_blackboard_watcher_srv = node.create_service(
-            srv_type=py_trees_srvs.OpenBlackboardWatcher,
-            srv_name='~/open_blackboard_watcher',
-            callback=self._open_blackboard_watcher_service
-        )
-        self.close_blackboard_watcher_srv = node.create_service(
-            srv_type=py_trees_srvs.CloseBlackboardWatcher,
-            srv_name='~/close_blackboard_watcher',
-            callback=self._close_blackboard_watcher_service
-        )
+
+        self.publisher = self.node.create_publisher(std_msgs.String, '~/blackboard')
+
+        for name in ["get_blackboard_variables",
+                     "open_blackboard_watcher",
+                     "close_blackboard_watcher"]:
+            camel_case_name = ''.join(x.capitalize() for x in name.split('_'))
+            self.services[name] = self.node.create_service(
+                srv_type=getattr(py_trees_srvs, camel_case_name),
+                srv_name='~/' + name,
+                callback=getattr(self, "_{}_service".format(name))
+            )
         return True
 
     def _get_nested_keys(self):
@@ -302,22 +295,18 @@ class Exchange(object):
         self.views.append(view)
         return response
 
-    def unregister_services(self):
+    def shutdown(self):
         """
-        Use this method to make sure services are cleaned up when you wish
-        to subsequently discard the Exchange instance. This should be a
-        fairly atypical use case however - first consider if there are
-        ways to modify trees on the fly instead of destructing/recreating
-        all of the peripheral machinery.
+        Perform any ros-specific shutdown. This does not
+        return the exchange to a re-usable state.
         """
-        for srv in [self.get_blackboard_variables_srv, self.open_blackboard_watcher_srv, self.close_blackboard_watcher_srv]:
-            if srv is not None:
-                srv.shutdown()
-
+        if self.node:
+            self.node.destroy_node()
 
 ##############################################################################
 # Blackboard Watcher
 ##############################################################################
+
 
 class BlackboardWatcher(object):
     """
@@ -329,7 +318,9 @@ class BlackboardWatcher(object):
 
     .. seealso:: :ref:`py-trees-blackboard-watcher`
     """
-    def __init__(self, callback, namespace_hint):
+    def __init__(self,
+                 callback=lambda *args, **kwargs: None,  # a noop
+                 namespace_hint=None):
         """
         Args:
             callback: any method that accepts a string as an input argument
@@ -343,9 +334,9 @@ class BlackboardWatcher(object):
             'close': None
         }
         self.service_type_strings = {
-            'list': 'py_trees_msgs/GetBlackboardVariables',
-            'open': 'py_trees_msgs/OpenBlackboardWatcher',
-            'close': 'py_trees_msgs/CloseBlackboardWatcher'
+            'list': 'py_trees_ros_interfaces/GetBlackboardVariables',
+            'open': 'py_trees_ros_interfaces/OpenBlackboardWatcher',
+            'close': 'py_trees_ros_interfaces/CloseBlackboardWatcher'
         }
         self.service_types = {
             'list': py_trees_srvs.GetBlackboardVariables,
@@ -356,55 +347,87 @@ class BlackboardWatcher(object):
         self.watcher_subscriber = None
         self.callback = callback
 
-
-    def setup(self, node, timeout_sec):
+    def setup(self, timeout_sec):
         """
         Args:
-            node (:class:`~rclpy.node.Node`): nodes have the discovery methods
+            timeout_sec (:obj:`float`): time (s) to wait (use common.Duration.INFINITE to block indefinitely)
+
         Raises:
             :class:`~py_trees_ros.exceptions.NotFoundError`: if no services were found
             :class:`~py_trees_ros.exceptions.MultipleFoundError`: if multiple services were found
         """
+        self.node = rclpy.create_node(
+            node_name=utilities.create_anonymous_node_name(node_name='watcher'),
+            start_parameter_services=False
+        )
         # Note: this assumes that the services are not dynamically available (i.e.
         # go up and down frequently)
+        scanned_time = 0.0
+        scanning_period = 0.1
         for service_name in self.service_names.keys():
-            self.service_names[service_name] = utilities.find_service(
-            node,
-            self.service_type_strings[service_name],
-            self.namespace_hint
-        )
-        self.node = node
+            while True:
+                try:
+                    self.service_names[service_name] = utilities.find_service(
+                        self.node,
+                        self.service_type_strings[service_name],
+                        self.namespace_hint
+                    )
+                    break
+                except exceptions.NotFoundError:
+                    time.sleep(scanning_period)
+                    scanned_time += scanning_period
+                    if scanned_time > timeout_sec:
+                        raise exceptions.NotFoundError("Timed out scanning for blackboard services")
+                    else:
+                        continue
+                except exceptions.MultipleFoundError as e:
+                    raise e
 
-    def list_variables(self):
+    def request_list_variables(self):
         """
-        Raises:
-            :class:`~py_trees_ros.exceptions.NotReadyError`: if setup not executed or it hitherto failed
-            :class:`~py_trees_ros.exceptions.ServiceError`: if the services could not be reached
-            :class:`~py_trees_ros.exceptions.TimedOutError`: if the services could not be reached
+        Request of the blackboard a list of it's variables.
+
+        Returns:
+            :class:`~rclpy.task.Future`
         """
-        request, client = self.create_service_client('list')
+        request, client = self._create_service_client('list')
         future = client.call_async(request)
-        rclpy.spin_until_future_complete(self.node, future)
-        if future.result() is None:
-            raise exceptions.ServiceError(
-                "service call failed [{}]".format(future.exception())
-            )
-        return future.result().variables
+        return future
 
-    def open_connection(self, variables):
+    def open_connection(self,
+                        variables,
+                        callback=None,
+                        executor=None):
         """
+        First alls the exchange to get details on the connect the watcher is required
+        to open and then initiates that tunnel. Note that this does some spinning waiting
+        for the service call, so if the executor must be shared with other nodes (e.g. for
+        testing) make sure you pass in your own executor.
+
+        Args:
+            variables (:obj:`[str]`): list of variables to listen for
+            callback (func, optional): method with a std_msgs/String argument, defaults to
+                :meth:`blackboard_contents_callback()` in this class
+            executor (:class:`~rclpy.executors.Executor`) used to spin the node looking for service callbacks
+
         Raises:
             :class:`~py_trees_ros.exceptions.NotReadyError`: if setup not executed or it hitherto failed
             :class:`~py_trees_ros.exceptions.ServiceError`: if the service failed to respond
             :class:`~py_trees_ros.exceptions.TimedOutError`: if the services could not be reached
         """
-        request, client = self.create_service_client('open')
+        if callback is None:
+            callback = self.blackboard_contents_callback
+
+        request, client = self._create_service_client('open')
         # convenience, just in case someone wrote the list of variables for argparse like a python list instead
         # of a space separated list of variables, i.e.
         #    py_trees-blackboard-watcher [count, dude] → ['[count,', 'dude]']  → ['count', 'dude']
         request.variables = [variable.strip(',[]') for variable in variables]
         future = client.call_async(request)
-        rclpy.spin_until_future_complete(self.node, future)
+        if executor is None:
+            executor = rclpy.executors.SingleThreadedExecutor()
+        executor.add_node(self.node)
+        executor.spin_until_future_complete(future)
         response = future.result()
         if response is None:
             raise exceptions.ServiceError(
@@ -414,7 +437,7 @@ class BlackboardWatcher(object):
         self.watcher_subscriber = self.node.create_subscription(
             msg_type=std_msgs.String,
             topic=self.watcher_topic_name,
-            callback= self.blackboard_contents_callback
+            callback=callback
         )
 
     def close_connection(self):
@@ -425,7 +448,7 @@ class BlackboardWatcher(object):
         """
         if not self.watcher_topic_name:
             return  # Nothing to do
-        request, client = self.create_service_client('close')
+        request, client = self._create_service_client('close')
         request.topic_name = self.watcher_topic_name
         future = client.call_async(request)
         rclpy.spin_until_future_complete(self.node, future)
@@ -434,7 +457,7 @@ class BlackboardWatcher(object):
         self.watcher_topic_name = None
         self.watcher_subscriber = None
 
-    def create_service_client(self, key):
+    def _create_service_client(self, key):
         if self.service_names[key] is None:
             raise exceptions.NotReadyError(
                 "no known '{}' service known [did you call setup()?]".format(self.service_types[key])
@@ -452,3 +475,10 @@ class BlackboardWatcher(object):
 
     def blackboard_contents_callback(self, msg):
         self.callback(msg.data)
+
+    def shutdown(self):
+        """
+        Perform any ros-specific shutdown.
+        """
+        if self.node:
+            self.node.destroy_node()

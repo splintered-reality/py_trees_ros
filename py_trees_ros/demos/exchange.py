@@ -27,6 +27,7 @@ import argparse
 import functools
 import py_trees_ros
 import rclpy
+import rclpy.executors
 import rclpy.node
 
 import py_trees.console as console
@@ -70,17 +71,21 @@ def command_line_argument_parser():
                                      )
     return parser
 
+
 def periodically_increment(exchange):
     exchange.blackboard.count += 1
-    print("[DJS] Increment: {}".format(exchange.blackboard.count))
+    print("[DJS] Timer 1: increment blackboard.count {}".format(exchange.blackboard.count))
+
 
 def periodically_publish(exchange):
-    print("[DJS] Publish")
+    print("[DJS] Timer 2: publishing")
     exchange.publish_blackboard()
+    print(exchange.blackboard)
 
 ##############################################################################
 # Main
 ##############################################################################
+
 
 def main():
     """
@@ -109,29 +114,39 @@ def main():
     # Rclpy
     ####################
     rclpy.init(args=None)
-    node = rclpy.node.Node('exchange')
-    exchange.setup(node=node, timeout=15)
-    publisher_timer = node.create_timer(
+
+    # demo mechanisms
+    demo_node = rclpy.node.Node(
+        node_name='demo',
+        start_parameter_services=False
+    )
+    publisher_timer = demo_node.create_timer(
         timer_period_sec=1.0,
         callback=functools.partial(periodically_publish, exchange=exchange)
     )
-    increment_timer = node.create_timer(
+    increment_timer = demo_node.create_timer(
         timer_period_sec=2.0,
         callback=functools.partial(periodically_increment, exchange=exchange)
     )
-    print("Name:  {}".format(node.get_name()))
-    print("Namespace: {}".format(node.get_namespace()))
-    print("Node Names: {}".format(node.get_node_names()))
-    # In crystal
-    # print("Node Names & Namespaces\n  {}".format(node.get_node_names_and_namespaces()))
+
+    # exchange
+    exchange.setup()
+
+    # executors
+    executor = rclpy.executors.SingleThreadedExecutor()
+    executor.add_node(demo_node)
+    executor.add_node(exchange.node)
+
+    # spin
     try:
-        rclpy.spin(node)
+        executor.spin()
     except KeyboardInterrupt:
         pass
+
+    # cleanup
     publisher_timer.cancel()
     increment_timer.cancel()
-    node.destroy_timer(publisher_timer)
-    node.destroy_timer(increment_timer)
-    node.destroy_node()
-
-
+    demo_node.destroy_timer(publisher_timer)
+    demo_node.destroy_timer(increment_timer)
+    demo_node.destroy_node()
+    exchange.shutdown()
