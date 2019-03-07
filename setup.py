@@ -55,7 +55,7 @@ setup(
         "visualisation, logging and various tutorials."
     ),
     license='BSD',
-    # test_suite = 'nose.collector',
+    test_suite='tests',
     # tests_require=['nose', 'pytest', 'flake8', 'yanc', 'nose-htmloutput']
     # tests_require=['pytest'],
     entry_points={
