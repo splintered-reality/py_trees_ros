@@ -16,17 +16,20 @@ Custom exception types for py_trees_ros.
 # Imports
 ##############################################################################
 
+
 class MultipleFoundError(Exception):
     """
     Middleware connection found when but one was expected.
     """
     pass
 
+
 class NotFoundError(Exception):
     """
     Middleware connection not found.
     """
     pass
+
 
 class NotReadyError(Exception):
     """
@@ -36,11 +39,13 @@ class NotReadyError(Exception):
     """
     pass
 
+
 class ServiceError(Exception):
     """
     Failure in a service request-response process (usually no response).
     """
     pass
+
 
 class TimedOutError(Exception):
     """

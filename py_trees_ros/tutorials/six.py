@@ -32,12 +32,12 @@ Tree
 
 .. graphviz:: dot/tutorial-six.dot
 
-.. literalinclude:: ../py_trees_ros/tutorials/six.py
+.. literalinclude:: ../py_trees_ros_tutorials/six.py
    :language: python
    :linenos:
    :lines: 102-161
    :emphasize-lines: 38,58
-   :caption: py_trees_ros/tutorials/six.py#create_root
+   :caption: py_trees_ros_tutorials/six.py#create_root
 
 **Context Switch**
 
@@ -52,11 +52,11 @@ Behaviours
 
 Introducing the scan context behaviour!
 
-.. literalinclude:: ../py_trees_ros/tutorials/behaviours.py
+.. literalinclude:: ../py_trees_ros_tutorials/behaviours.py
    :language: python
    :linenos:
    :lines: 81-168
-   :caption: py_trees_ros/tutorials/behaviours.py#scan_context
+   :caption: py_trees_ros_tutorials/behaviours.py#scan_context
 
 As you can see, all the action is happening in the :meth:`~py_trees.behaviour.Behaviour.initialise`
 and :meth:`~py_trees.behaviour.Behaviour.terminate` methods. This class is intended for use

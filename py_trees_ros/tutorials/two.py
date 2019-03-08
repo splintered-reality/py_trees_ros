@@ -24,11 +24,11 @@ The white coloured ellipse shown here is a decorated behaviour (in this
 case a :class:`~py_trees.composites.Selector` with the :func:`~py_trees.meta.success_is_failure`
 decorator (looking forward to better visualisations for this in the future).
 
-.. literalinclude:: ../py_trees_ros/tutorials/two.py
+.. literalinclude:: ../py_trees_ros_tutorials/two.py
    :language: python
    :linenos:
    :lines: 104-129
-   :caption: py_trees_ros/tutorials/two.py
+   :caption: py_trees_ros_tutorials/two.py
 
 Here we've added a high priority branch for
 dealing with a low battery that causes the hardware strip to flash.
@@ -58,11 +58,11 @@ Behaviours
 
 Introducing the flashing behaviour!
 
-.. literalinclude:: ../py_trees_ros/tutorials/behaviours.py
+.. literalinclude:: ../py_trees_ros_tutorials/behaviours.py
    :language: python
    :linenos:
    :lines: 27-77
-   :caption: py_trees_ros/tutorials/behaviours.py#Flashing
+   :caption: py_trees_ros_tutorials/behaviours.py#Flashing
 
 A new feature here is the way it uses the terminate method to put a 'fullstop'
 to the commands sent when ticking. Note also that it is permanently in the

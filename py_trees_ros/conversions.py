@@ -17,10 +17,11 @@ py_trees objects and ros messages.
 # Imports
 ##############################################################################
 
-import unique_id
-import uuid_msgs.msg as uuid_msgs
 import py_trees
 import py_trees_ros_interfaces.msg as py_trees_msgs
+import unique_identifier_msgs.msg as unique_identifier_msgs
+
+from . import utilities
 
 ##############################################################################
 # <etjpds
@@ -108,15 +109,15 @@ def behaviour_to_msg(behaviour):
     msg = py_trees_msgs.Behaviour()
     msg.name = behaviour.name
     msg.class_name = str(behaviour.__module__) + '.' + str(type(behaviour).__name__)
-    msg.own_id = unique_id.toMsg(behaviour.id)
-    msg.parent_id = unique_id.toMsg(behaviour.parent.id) if behaviour.parent else uuid_msgs.UniqueID()
-    msg.child_ids = [unique_id.toMsg(child.id) for child in behaviour.iterate(direct_descendants=True) if not child.id == behaviour.id]
+    msg.own_id = utilities.uuid4_to_msg(behaviour.id)
+    msg.parent_id = utilities.uuid4_to_msg(behaviour.parent.id) if behaviour.parent else unique_identifier_msgs.UUID()
+    msg.child_ids = [utilities.uuid4_to_msg(child.id) for child in behaviour.iterate(direct_descendants=True) if not child.id == behaviour.id]
 
     tip = behaviour.tip()
     # tip_id is empty if the behaviour is invalid or if it is a valid
     # leaf
     if tip is not None and tip != behaviour:
-        msg.tip_id = unique_id.toMsg(tip.id)
+        msg.tip_id = utilities.uuid4_to_msg(tip.id)
 
     msg.type = behaviour_type_to_msg_constant(behaviour)
     msg.blackbox_level = blackbox_enum_to_msg_constant(behaviour.blackbox_level)

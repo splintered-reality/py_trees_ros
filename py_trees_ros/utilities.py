@@ -167,9 +167,12 @@ def resolve_name(node, name):
     )
 
 
-def uuid4_to_msg():
+def uuid4_to_msg(uuid4=uuid.uuid4()):
     """
     Convert a uuid4 python object to a ros unique identifier, UUID type.
+
+    Args:
+        :class:`uuid.UUID`, optional: unique identifier to convert, defaults to auto-generated uuid4
 
     Returns:
         :class:`unique_identifier_msgs.msg.UUID`: the ros message type

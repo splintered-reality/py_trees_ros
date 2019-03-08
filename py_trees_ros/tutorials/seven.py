@@ -27,11 +27,11 @@ Tree
 
 .. graphviz:: dot/tutorial-seven.dot
 
-.. literalinclude:: ../py_trees_ros/tutorials/seven.py
+.. literalinclude:: ../py_trees_ros_tutorials/seven.py
    :language: python
    :linenos:
    :lines: 80-184
-   :caption: py_trees_ros/tutorials/seven.py#create_root
+   :caption: py_trees_ros_tutorials/seven.py#create_root
 
 Tree Status Reports
 ^^^^^^^^^^^^^^^^^^^
@@ -41,11 +41,11 @@ tree introspection and publish a status report. In this example
 the status report is very simple, it merely publishes whether
 it is "scanning", "cancelling" or is "idle'.
 
-.. literalinclude:: ../py_trees_ros/tutorials/seven.py
+.. literalinclude:: ../py_trees_ros_tutorials/seven.py
    :language: python
    :linenos:
    :lines: 187-211
-   :caption: py_trees_ros/tutorials/seven.py#reality_report
+   :caption: py_trees_ros_tutorials/seven.py#reality_report
 
 Running
 ^^^^^^^

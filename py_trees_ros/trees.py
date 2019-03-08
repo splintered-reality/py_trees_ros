@@ -33,7 +33,6 @@ import rclpy
 import std_msgs.msg as std_msgs
 import threading
 import time
-import unique_id
 
 from . import blackboard
 from . import conversions
@@ -85,13 +84,6 @@ class BehaviourTree(py_trees.trees.BehaviourTree):
         AssertionError: if incoming root variable is not the correct type
     """
     def __init__(self, root):
-        """
-        Initialise the tree with a root.
-
-        :param root: root node of the tree.
-        :type root: instance or descendant of :py:class:`Behaviour <py_trees.behaviours.Behaviour>`
-        :raises AssertionError: if incoming root variable is not the correct type.
-        """
         super(BehaviourTree, self).__init__(root)
         self.snapshot_visitor = visitors.SnapshotVisitor()
         self.logging_visitor = visitors.LoggingVisitor()
@@ -121,30 +113,29 @@ class BehaviourTree(py_trees.trees.BehaviourTree):
         # _cleanup must come last as it assumes the existence of the bag
         # TODO: rospy.on_shutdown(self._cleanup)
 
-    def setup(self, timeout):
+    def setup(self, timeout: float=py_trees.common.Duration.INFINITE):
         """
         Setup the publishers, exechange and add ros-relevant pre/post tick handlers to the tree.
         Ultimately relays this call down to all the behaviours in the tree.
 
         Args:
-            timeout (:obj:`float`): time to wait (0.0 is blocking forever)
+            timeout (:obj:`float`): time (s) to wait (use common.Duration.INFINITE to block indefinitely)
 
-        Returns:
-            :obj:`bool`: suceess or failure of the operation
+        Raises:
+            Exception: be ready to catch if any of the behaviours raise an exception
         """
         default_node_name = "tree"
         try:
             self.node = rclpy.create_node(default_node_name)
         except rclpy.exceptions.NotInitializedException:
-            print(console.red + "ERROR: rlcpy not yet initialised [{}]".format(default_node_name) + console.reset)
-            return False
+            return RuntimeError("rlcpy not yet initialised [{}]".format(default_node_name))
         self._setup_publishers()
         self.blackboard_exchange = blackboard.Exchange()
-        if not self.blackboard_exchange.setup(self.node, timeout):
+        if not self.blackboard_exchange.setup():
             return False
         self.post_tick_handlers.append(self._publish_tree_snapshots)
         self.post_tick_handlers.append(self.blackboard_exchange.publish_blackboard)
-        return super(BehaviourTree, self).setup(timeout)
+        super().setup(timeout)
 
     def _setup_publishers(self):
         latched = True
@@ -179,11 +170,10 @@ class BehaviourTree(py_trees.trees.BehaviourTree):
                 data=py_trees.display.ascii_tree(root)
             )
         )
-        self.publishers.dot_tree.publish(
-            std_msgs.String(
-                data=py_trees.display.stringify_dot_tree(root)
-            )
+        dot_tree = py_trees.console.forceably_replace_unicode_chars(
+            py_trees.display.stringify_dot_tree(root)
         )
+        self.publishers.dot_tree.publish(std_msgs.String(data=dot_tree))
 
     def _publish_tree_snapshots(self, tree):
         """
@@ -225,6 +215,7 @@ class BehaviourTree(py_trees.trees.BehaviourTree):
 # Tree Watcher
 ##############################################################################
 
+
 class Watcher(object):
     """
     The tree watcher sits on the other side of a running
@@ -263,7 +254,6 @@ class Watcher(object):
         }
         self.subscribers = {}
 
-
     def setup(self, timeout):
         """
         Args:
@@ -275,7 +265,7 @@ class Watcher(object):
         default_node_name = "watcher_" + str(os.getpid())
         try:
             self.node = rclpy.create_node(default_node_name)
-            time.sleep(0.1) # ach, the magic foo before discovery works
+            time.sleep(0.1)  # ach, the magic foo before discovery works
         except rclpy.exceptions.NotInitializedException:
             print(console.red + "ERROR: rlcpy not yet initialised [{}]".format(default_node_name) + console.reset)
             return False
@@ -289,10 +279,10 @@ class Watcher(object):
 
         # fineprint: assumption that the others are set relative to that and not remapped!
         root = "/" + "".join(self.topic_names['log/tree'].split('/')[:-2])
-        self.topic_names['ascii/snapshot'] = root + "/ascii/snapshot"
-        self.topic_names['ascii/tree']     = root + "/ascii/tree"
-        self.topic_names['dot/tree']       = root + "/dot/tree"
-        self.topic_names['tip']            = root + "/tip"
+        self.topic_names['ascii/snapshot'] = root + "/ascii/snapshot"  # noqa
+        self.topic_names['ascii/tree']     = root + "/ascii/tree"      # noqa
+        self.topic_names['dot/tree']       = root + "/dot/tree"        # noqa
+        self.topic_names['tip']            = root + "/tip"             # noqa
 
     def connect_to_ascii_tree(self):
         key = 'ascii/tree'
