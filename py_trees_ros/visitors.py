@@ -79,7 +79,7 @@ class SnapshotVisitor(py_trees.visitors.VisitorBase):
             self.running_nodes.append(behaviour.id)
 
 
-class LoggingVisitor(py_trees.visitors.VisitorBase):
+class TreeToMsgVisitor(py_trees.visitors.VisitorBase):
     """
     Visits the entire tree and gathers all behaviours as
     messages for the tree logging publishers.
@@ -88,7 +88,7 @@ class LoggingVisitor(py_trees.visitors.VisitorBase):
         tree (:class:`py_trees_msgs.msg.BehaviourTree`): tree representation in message form
     """
     def __init__(self):
-        super(LoggingVisitor, self).__init__()
+        super(TreeToMsgVisitor, self).__init__()
         self.full = True  # examine all nodes
 
     def initialise(self):
@@ -102,7 +102,7 @@ class LoggingVisitor(py_trees.visitors.VisitorBase):
 
     def run(self, behaviour):
         """
-        Convert the behaviour into a message and appendd it to the tree.
+        Convert the behaviour into a message and append to the tree.
 
         Args:
             behaviour (:class:`~py_trees.behaviour.Behaviour`): behaviour to convert

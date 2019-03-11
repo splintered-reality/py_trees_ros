@@ -28,12 +28,10 @@ instance.
 ##############################################################################
 
 import argparse
-import os
 import py_trees.console as console
 import py_trees_ros
 import rclpy
 import sys
-import time
 
 ##############################################################################
 # Classes
@@ -148,14 +146,16 @@ def main():
     try:
         tree_watcher.setup(timeout=15)
     except py_trees_ros.exceptions.NotFoundError as e:
-        print(console.red + "\nERROR: {}".format(str(e)) + console.reset)
+        print(console.red + "\nERROR: {}\n".format(str(e)) + console.reset)
         sys.exit(1)
     except py_trees_ros.exceptions.MultipleFoundError as e:
-        print(console.red + "\nERROR: {}".format(str(e)) + console.reset)
+        print(console.red + "\nERROR: {}\n".format(str(e)) + console.reset)
         if args.namespace is None:
-            print(console.red + "\nERROR: select one with the --namespace argument" + console.reset)
+            print(console.red + "\nERROR: select one with the --namespace argument\n" + console.reset)
+            sys.exit(1)
         else:
-            print(console.red + "\nERROR: but none matching the requested '%s'" % args.namespace + console.reset)
+            print(console.red + "\nERROR: but none matching the requested '%s'\n" % args.namespace + console.reset)
+            sys.exit(1)
 
     ####################
     # Arg Handling

@@ -86,24 +86,25 @@ class BehaviourTree(py_trees.trees.BehaviourTree):
     def __init__(self, root):
         super(BehaviourTree, self).__init__(root)
         self.snapshot_visitor = visitors.SnapshotVisitor()
-        self.logging_visitor = visitors.LoggingVisitor()
+        self.winds_of_change_visitor = py_trees.visitors.WindsOfChangeVisitor()
+        # self.logging_visitor = visitors.LoggingVisitor()
         self.visitors.append(self.snapshot_visitor)
-        self.visitors.append(self.logging_visitor)
-        self._bag_closed = False
+        # self.visitors.append(self.logging_visitor)
+        # self._bag_closed = False
 
-        now = datetime.datetime.now()
-        topdir = utilities.get_py_trees_home()
-        subdir = os.path.join(topdir, now.strftime('%Y-%m-%d'))
-        if not os.path.exists(topdir):
-            os.makedirs(topdir)
-        if not os.path.exists(subdir):
-            os.makedirs(subdir)
+        # now = datetime.datetime.now()
+        # topdir = utilities.get_py_trees_home()
+        # subdir = os.path.join(topdir, now.strftime('%Y-%m-%d'))
+        # if not os.path.exists(topdir):
+        #     os.makedirs(topdir)
+        # if not os.path.exists(subdir):
+        #     os.makedirs(subdir)
 
         # opens in ros home directory for the user
         # TODO: self.bag = rosbag.Bag(subdir + '/behaviour_tree_' + now.strftime("%H-%M-%S") + '.bag', 'w')
 
-        self.last_tree = py_trees_msgs.BehaviourTree()
-        self.lock = threading.Lock()
+        # self.last_tree = py_trees_msgs.BehaviourTree()
+        # self.lock = threading.Lock()
 
         # delay ROS specific artifacts so we can create/introsepct on this class
         # without having to go live.
@@ -139,7 +140,8 @@ class BehaviourTree(py_trees.trees.BehaviourTree):
 
     def _setup_publishers(self):
         latched = True
-        self.publishers = utilities.Publishers(self.node,
+        self.publishers = utilities.Publishers(
+            self.node,
             [
                 ("ascii_tree", "~/ascii/tree", std_msgs.String, latched),
                 ("ascii_snapshot", "~/ascii/snapshot", std_msgs.String, latched),
@@ -151,8 +153,9 @@ class BehaviourTree(py_trees.trees.BehaviourTree):
 
         # publish current state
         self._publish_tree_modifications(self.root)
-        # set a handler to publish future modifiactions
-        # tree_update_handler is in the base class, set this to the callback function here.
+        # set a handler to publish future modifications whenever the tree is modified
+        # (e.g. pruned). The tree_update_handler method is in the base class, set this
+        # to the callback function here.
         self.tree_update_handler = self._publish_tree_modifications
 
     def _publish_tree_modifications(self, root):
@@ -170,6 +173,7 @@ class BehaviourTree(py_trees.trees.BehaviourTree):
                 data=py_trees.display.ascii_tree(root)
             )
         )
+        # TODO: remove once ROS2 supports unicode in message strings
         dot_tree = py_trees.console.forceably_replace_unicode_chars(
             py_trees.display.stringify_dot_tree(root)
         )
@@ -183,27 +187,36 @@ class BehaviourTree(py_trees.trees.BehaviourTree):
         :param tree: the behaviour tree
         :type tree: :py:class:`BehaviourTree <py_trees.trees.BehaviourTree>`
         """
+        # checks
         if self.publishers is None:
-            rospy.logerr("BehaviourTree: call setup() on this tree to initialise the ros components")
+            self.node.get_logger().error("call setup() on this tree to initialise the ros components")
             return
-        snapshot = "\n\n%s" % py_trees.display.ascii_tree(self.root, snapshot_information=self.snapshot_visitor)
-        self.publishers.ascii_snapshot.publish(std_msgs.String(snapshot))
+        if self.root.tip() is None:
+            self.node.get_logger().error("the root behaviour failed to return a tip [cause: tree is in an INVALID state]")
+            return
 
-        for behaviour in self.logging_visitor.tree.behaviours:
-            behaviour.is_active = True if unique_id.fromMsg(behaviour.own_id) in self.snapshot_visitor.nodes else False
-        # We're not interested in sending every single tree - only send a
-        # message when the tree changes.
-        if self.logging_visitor.tree.behaviours != self.last_tree.behaviours:
-            if self.root.tip() is None:
-                rospy.logerr("Behaviours: your tree is returning in an INVALID state (should always be FAILURE, RUNNING or SUCCESS)")
-                return
+        # snapshot
+        snapshot = "\n\n{}".format(py_trees.display.ascii_tree(self.root, snapshot_information=self.snapshot_visitor))
+        snapshot = py_trees.console.forceably_replace_unicode_chars(snapshot)
+        self.publishers.ascii_snapshot.publish(std_msgs.String(data=snapshot))
+
+        # if there's been a change, serialise, publish and log
+        if self.winds_of_change_visitor.changed:
+            # serialisation
+            tree_message = py_trees_msgs.BehaviourTree()
+            tree_message.tick = self.count
+            tree_message.stamp = rclpy.clock.Clock().now().to_msg()
+            for behaviour in tree.root.iterate():
+                msg = conversions.behaviour_to_msg(behaviour)
+                msg.is_active = True if behaviour.id in self.snapshot_visitor.nodes else False
+                tree_message.behaviours.append(msg)
+            # publish
+            self.publishers.log_tree.publish(tree_message)
             self.publishers.tip.publish(conversions.behaviour_to_msg(self.root.tip()))
-            self.publishers.log_tree.publish(self.logging_visitor.tree)
-            with self.lock:
-                if not self._bag_closed:
-                    # self.bag.write(self.publishers.log_tree.name, self.logging_visitor.tree)
-                    pass
-            self.last_tree = self.logging_visitor.tree
+            # with self.lock:
+            #     if not self._bag_closed:
+            #         # self.bag.write(self.publishers.log_tree.name, self.logging_visitor.tree)
+            #         pass
 
     def _cleanup(self):
         with self.lock:
@@ -242,8 +255,8 @@ class Watcher(object):
             'ascii/snapshot': 'std_msgs/String',
             'ascii/tree': 'std_msgs/String',
             'dot/tree': 'std_msgs/String',
-            'log/tree': 'py_trees_msgs/BehaviourTree',
-            'tip': 'py_trees_msgs/Behaviour',
+            'log/tree': 'py_trees_ros_interfaces/BehaviourTree',
+            'tip': 'py_trees_ros_interfaces/Behaviour',
         }
         self.topic_types = {
             'ascii/snapshot': std_msgs.String,
