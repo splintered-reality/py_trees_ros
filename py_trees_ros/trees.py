@@ -23,6 +23,7 @@ with a few ROS style adornments. The major features currently include:
 ##############################################################################
 
 import datetime
+import enum
 import os
 import py_trees
 import py_trees.console as console
@@ -33,6 +34,8 @@ import rclpy
 import std_msgs.msg as std_msgs
 import threading
 import time
+import unique_identifier_msgs.msg as unique_identifier_msgs
+import uuid
 
 from . import blackboard
 from . import conversions
@@ -79,16 +82,25 @@ class BehaviourTree(py_trees.trees.BehaviourTree):
 
     Args:
         root (:class:`~py_trees.behaviour.Behaviour`): root node of the tree
+        ascii_tree_debug (:obj:`bool`, optional): print to console the visited ascii tree after every tick
 
     Raises:
         AssertionError: if incoming root variable is not the correct type
     """
-    def __init__(self, root):
+    def __init__(self,
+                 root,
+                 ascii_tree_debug=False):
         super(BehaviourTree, self).__init__(root)
-        self.snapshot_visitor = visitors.SnapshotVisitor()
+        self.snapshot_visitor = py_trees.visitors.SnapshotVisitor()
+        if ascii_tree_debug:
+            self.add_post_tick_handler(
+                lambda tree: self._ascii_tree_post_tick_handler(self.snapshot_visitor, tree)
+            )
         self.winds_of_change_visitor = py_trees.visitors.WindsOfChangeVisitor()
-        # self.logging_visitor = visitors.LoggingVisitor()
         self.visitors.append(self.snapshot_visitor)
+        self.visitors.append(self.winds_of_change_visitor)
+
+        # self.logging_visitor = visitors.LoggingVisitor()
         # self.visitors.append(self.logging_visitor)
         # self._bag_closed = False
 
@@ -134,7 +146,7 @@ class BehaviourTree(py_trees.trees.BehaviourTree):
         self.blackboard_exchange = blackboard.Exchange()
         if not self.blackboard_exchange.setup():
             return False
-        self.post_tick_handlers.append(self._publish_tree_snapshots)
+        self.post_tick_handlers.append(self._publish_snapshots)
         self.post_tick_handlers.append(self.blackboard_exchange.publish_blackboard)
         super().setup(timeout)
 
@@ -146,7 +158,7 @@ class BehaviourTree(py_trees.trees.BehaviourTree):
                 ("ascii_tree", "~/ascii/tree", std_msgs.String, latched),
                 ("ascii_snapshot", "~/ascii/snapshot", std_msgs.String, latched),
                 ("dot_tree", "~/dot/tree", std_msgs.String, latched),
-                ("log_tree", "~/log/tree", py_trees_msgs.BehaviourTree, latched),
+                ("snapshot", "~/snapshot", py_trees_msgs.BehaviourTree, latched),
                 ("tip", "~/tip", py_trees_msgs.Behaviour, latched)
             ]
         )
@@ -174,18 +186,18 @@ class BehaviourTree(py_trees.trees.BehaviourTree):
             )
         )
         # TODO: remove once ROS2 supports unicode in message strings
-        dot_tree = py_trees.console.forceably_replace_unicode_chars(
-            py_trees.display.stringify_dot_tree(root)
-        )
-        self.publishers.dot_tree.publish(std_msgs.String(data=dot_tree))
+        # dot_tree = py_trees.console.forceably_replace_unicode_chars(
+        #     py_trees.display.stringify_dot_tree(root)
+        # )
+        # self.publishers.dot_tree.publish(std_msgs.String(data=dot_tree))
 
-    def _publish_tree_snapshots(self, tree):
+    def _publish_snapshots(self, tree: py_trees.trees.BehaviourTree):
         """
-        Callback that runs on a :class:`BehaviourTree <py_trees.trees.BehaviourTree>` after
-        it has ticked.
+        Post-tick handler that checks for changes in the tree as a result
+        of it's last tick and publishes an update on a ROS topic.
 
-        :param tree: the behaviour tree
-        :type tree: :py:class:`BehaviourTree <py_trees.trees.BehaviourTree>`
+        Args:
+            tree (:class:`~py_trees.trees.BehaviourTree`): the behaviour tree that has just been ticked
         """
         # checks
         if self.publishers is None:
@@ -196,27 +208,36 @@ class BehaviourTree(py_trees.trees.BehaviourTree):
             return
 
         # snapshot
-        snapshot = "\n\n{}".format(py_trees.display.ascii_tree(self.root, snapshot_information=self.snapshot_visitor))
-        snapshot = py_trees.console.forceably_replace_unicode_chars(snapshot)
-        self.publishers.ascii_snapshot.publish(std_msgs.String(data=snapshot))
+        # snapshot = "\n\n{}".format(py_trees.display.ascii_tree(self.root, snapshot_information=self.snapshot_visitor))
+        # snapshot = py_trees.console.forceably_replace_unicode_chars(snapshot)
+        # self.publishers.ascii_snapshot.publish(std_msgs.String(data=snapshot))
 
         # if there's been a change, serialise, publish and log
         if self.winds_of_change_visitor.changed:
-            # serialisation
+            # serialisationd
             tree_message = py_trees_msgs.BehaviourTree()
             tree_message.tick = self.count
             tree_message.stamp = rclpy.clock.Clock().now().to_msg()
             for behaviour in tree.root.iterate():
                 msg = conversions.behaviour_to_msg(behaviour)
-                msg.is_active = True if behaviour.id in self.snapshot_visitor.nodes else False
+                msg.is_active = True if behaviour.id in self.snapshot_visitor.visited else False
                 tree_message.behaviours.append(msg)
             # publish
-            self.publishers.log_tree.publish(tree_message)
-            self.publishers.tip.publish(conversions.behaviour_to_msg(self.root.tip()))
+            self.publishers.snapshot.publish(tree_message)
+            # self.publishers.tip.publish(conversions.behaviour_to_msg(self.root.tip()))
             # with self.lock:
             #     if not self._bag_closed:
             #         # self.bag.write(self.publishers.log_tree.name, self.logging_visitor.tree)
             #         pass
+
+    def _ascii_tree_post_tick_handler(self, snapshot_visitor, tree):
+        print(
+            py_trees.display.ascii_tree(
+                tree.root,
+                visited=snapshot_visitor.visited,
+                previously_visited=tree.snapshot_visitor.previously_visited
+            )
+        )
 
     def _cleanup(self):
         with self.lock:
@@ -229,45 +250,43 @@ class BehaviourTree(py_trees.trees.BehaviourTree):
 ##############################################################################
 
 
+class WatcherMode(enum.Enum):
+    """An enumerator specifying the view mode for the watcher"""
+
+    ASCII_SNAPSHOT = "ASCII_SNAPSHOT"
+    """Print an ascii art view of the behaviour tree's current state after the last tick"""
+    ASCII_TREE = "ASCII_TREE"
+    """Print an ascii art representation of the static tree (sans visited path/status/feedback messages)."""
+    DOT_TREE = "DOT_TREE"
+    """Render with the dot graph representation of the static tree (using an application or text to console)."""
+    TIP = "TIP"
+    """Print details about the tip of the tree to the console."""
+
+
 class Watcher(object):
     """
     The tree watcher sits on the other side of a running
     :class:`~py_trees_ros.trees.BehaviourTree` and is a useful mechanism for
     quick introspection of it's current state.
 
+    Args:
+        namespace_hint (:obj:`str`): (optionally) used to locate the blackboard
+                                     if there exists more than one
+        mode (:class:`~py_trees_ros.trees.WatcherMode`): viewing mode for the watcher
+
     .. seealso:: :ref:`py-trees-tree-watcher`, :ref:`py-trees-blackboard-watcher`
     """
-    def __init__(self, namespace_hint):
-        """
-        Args:
-            namespace_hint (:obj:`str`): (optionally) used to locate the blackboard
-                                         if there exists more than one
-        """
+    def __init__(
+            self,
+            namespace_hint: str,
+            mode: WatcherMode=WatcherMode.ASCII_SNAPSHOT
+         ):
         self.namespace_hint = namespace_hint
-        self.topic_names = {
-            'ascii/snapshot': None,
-            'ascii/tree': None,
-            'dot/tree': None,
-            'log/tree': None,
-            'tip': None,
-        }
-        self.topic_type_strings = {
-            'ascii/snapshot': 'std_msgs/String',
-            'ascii/tree': 'std_msgs/String',
-            'dot/tree': 'std_msgs/String',
-            'log/tree': 'py_trees_ros_interfaces/BehaviourTree',
-            'tip': 'py_trees_ros_interfaces/Behaviour',
-        }
-        self.topic_types = {
-            'ascii/snapshot': std_msgs.String,
-            'ascii/tree': std_msgs.String,
-            'dot/tree': std_msgs.String,
-            'log/tree': py_trees_msgs.BehaviourTree,
-            'tip': py_trees_msgs.Behaviour,
-        }
-        self.subscribers = {}
+        self.subscribers = None
+        self.viewing_mode = mode
+        self.snapshot_visitor = py_trees.visitors.SnapshotVisitor()
 
-    def setup(self, timeout):
+    def setup(self):
         """
         Args:
             timeout (:obj:`float`): time to wait (0.0 is blocking forever)
@@ -282,53 +301,77 @@ class Watcher(object):
         except rclpy.exceptions.NotInitializedException:
             print(console.red + "ERROR: rlcpy not yet initialised [{}]".format(default_node_name) + console.reset)
             return False
-        # Note: this assumes that the services are not dynamically available (i.e.
-        # go up and down frequently)
-        self.topic_names['log/tree'] = utilities.find_topic(
-            self.node,
-            self.topic_type_strings['log/tree'],
-            self.namespace_hint
+        # taking advantage of there being only one publisher per message
+        # type in the namespace to do auto-discovery of names
+        topic_names = {}
+        for key, topic_type_string in [
+            ('snapshot', 'py_trees_ros_interfaces/BehaviourTree'),
+            ('tip', 'py_trees_ros_interfaces/BehaviourTree')
+        ]:
+            topic_names[key] = utilities.find_topic(
+                self.node,
+                topic_type_string,
+                self.namespace_hint
+            )
+        self.subscribers = utilities.Subscribers(
+            node=self.node,
+            subscriber_details=[
+                ("snapshot", topic_names["snapshot"], py_trees_msgs.BehaviourTree, True, self.callback_snapshot),
+            ]
         )
 
-        # fineprint: assumption that the others are set relative to that and not remapped!
-        root = "/" + "".join(self.topic_names['log/tree'].split('/')[:-2])
-        self.topic_names['ascii/snapshot'] = root + "/ascii/snapshot"  # noqa
-        self.topic_names['ascii/tree']     = root + "/ascii/tree"      # noqa
-        self.topic_names['dot/tree']       = root + "/dot/tree"        # noqa
-        self.topic_names['tip']            = root + "/tip"             # noqa
-
-    def connect_to_ascii_tree(self):
-        key = 'ascii/tree'
-        print("[DJS] Connection to: {}".format(self.topic_names[key]))
-        self.subscribers[key] = self.node.create_subscription(
-            msg_type=self.topic_types[key],
-            topic=self.topic_names[key],
-            callback=self.callback_string_to_stdout,
-            qos_profile=utilities.qos_profile_latched_topic()
-        )
-
-    def connect_to_dot_tree(self):
-        key = 'dot/tree'
-        self.subscribers[key] = self.node.create_subscription(
-            msg_type=self.topic_types[key],
-            topic=self.topic_names[key],
-            callback=self.callback_string_to_stdout,
-            qos_profile=utilities.qos_profile_latched_topic()
-        )
-
-    def connect_to_ascii_snapshot(self):
-        key = 'ascii/snapshot'
-        self.subscribers[key] = self.node.create_subscription(
-            msg_type=self.topic_types[key],
-            topic=self.topic_names[key],
-            callback=self.callback_string_to_stdout,
-            qos_profile=utilities.qos_profile_latched_topic()
-        )
-
-    def callback_string_to_stdout(self, msg):
+    def callback_snapshot(self, msg):
         """
-        Formats the string message coming in
+        Formats the string message coming in.
+
         Args
-            timeout (:class:`std_msgs.msg.String`): string message
+            msg (:class:`py_trees_ros_interfaces.msg.BehaviourTree`):serialised snapshot
         """
-        print("{}".format(msg.data))
+        ####################
+        # Processing
+        ####################
+        self.snapshot_visitor.previously_visited = self.snapshot_visitor.visited
+        self.snapshot_visitor.visited = {}
+        serialised_behaviours = {}
+        root_id = None
+        for serialised_behaviour in msg.behaviours:
+            if serialised_behaviour.parent_id == unique_identifier_msgs.UUID():
+                root_id = conversions.msg_to_uuid4(serialised_behaviour.own_id)
+            serialised_behaviours[
+                conversions.msg_to_uuid4(serialised_behaviour.own_id)
+            ] = serialised_behaviour
+
+        def deserialise_tree_recursively(msg):
+            behaviour = conversions.msg_to_behaviour(msg)
+            for serialised_child_id in msg.child_ids:
+                child_id = conversions.msg_to_uuid4(serialised_child_id)
+                child = deserialise_tree_recursively(
+                    serialised_behaviours[child_id]
+                )
+                child.parent = behaviour
+                behaviour.children.append(child)
+            if msg.is_active:
+                self.snapshot_visitor.visited[behaviour.id] = behaviour.status
+            return behaviour
+
+        # we didn't set the tip in any behaviour, but nothing depends
+        # on that right now
+        root = deserialise_tree_recursively(serialised_behaviours[root_id])
+
+        ####################
+        # Printing
+        ####################
+        if self.viewing_mode == WatcherMode.ASCII_SNAPSHOT:
+            print(py_trees.display.ascii_tree(
+                root=root,
+                visited=self.snapshot_visitor.visited,
+                previously_visited=self.snapshot_visitor.previously_visited
+                )
+            )
+        elif self.viewing_mode == WatcherMode.ASCII_TREE:
+            print(py_trees.display.ascii_tree(root=root))
+        elif self.viewing_mode == WatcherMode.DOT_TREE:
+            print(py_trees.display.dot_graph(root=root).to_string())
+        elif self.viewing_mode == WatcherMode.TIP:
+            print(msg.root)
+

@@ -35,50 +35,6 @@ from . import conversions
 ##############################################################################
 
 
-class SnapshotVisitor(py_trees.visitors.VisitorBase):
-    """
-    Visits the tree in tick-tock, recording runtime information for publishing
-    the information as a snapshot view of the tree after the iteration has
-    finished.
-
-    Attributes:
-        nodes (dict): dictionary of behaviour id (uuid.UUID) and status (:class:`~py_trees.common.Status`) pairs
-        running_nodes([uuid.UUID]): list of id's for behaviours which were traversed in the current tick
-        previously_running_nodes([uuid.UUID]): list of id's for behaviours which were traversed in the last tick
-
-    .. seealso::
-
-        This visitor should be used with the :class:`~py_trees_ros.trees.BehaviourTree` class to collect
-        information to publish for both bagging and the rqt monitoring plugin.
-    """
-    def __init__(self):
-        super(SnapshotVisitor, self).__init__()
-        self.nodes = {}
-        self.running_nodes = []
-        self.previously_running_nodes = []
-
-    def initialise(self):
-        """
-        Switch running to previously running and then reset all other variables. This will
-        get called before a tree ticks.
-        """
-        self.nodes = {}
-        self.previously_running_nodes = self.running_nodes
-        self.running_nodes = []
-
-    def run(self, behaviour):
-        """
-        This method gets run as each behaviour is ticked. Catch the id and status and store it.
-        Additionally add it to the running list if it is :data:`~py_trees.common.Status.RUNNING`.
-
-        Args:
-            behaviour (:class:`~py_trees.behaviour.Behaviour`): behaviour that is ticking
-        """
-        self.nodes[behaviour.id] = behaviour.status
-        if behaviour.status == py_trees.common.Status.RUNNING:
-            self.running_nodes.append(behaviour.id)
-
-
 class TreeToMsgVisitor(py_trees.visitors.VisitorBase):
     """
     Visits the entire tree and gathers all behaviours as
