@@ -194,7 +194,8 @@ def main():
     # Execute
     ####################
     try:
-        rclpy.spin(tree_watcher.node)
+        while rclpy.ok() and not tree_watcher.done:
+            rclpy.spin_once(tree_watcher.node, timeout_sec=0.1)
     except KeyboardInterrupt:
         pass
     tree_watcher.node.destroy_node()
