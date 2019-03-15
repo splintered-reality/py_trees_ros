@@ -19,6 +19,7 @@ py_trees objects and ros messages.
 
 import py_trees
 import py_trees_ros_interfaces.msg as py_trees_msgs
+import rclpy
 import unique_identifier_msgs.msg as unique_identifier_msgs
 import uuid
 
@@ -263,4 +264,3 @@ def msg_to_behaviour(msg: py_trees_msgs.Behaviour) -> py_trees.behaviour.Behavio
     behaviour.blackbox_level = msg_constant_to_blackbox_level_enum(msg.blackbox_level)
     behaviour.feedback_message = msg.message
     return behaviour
-

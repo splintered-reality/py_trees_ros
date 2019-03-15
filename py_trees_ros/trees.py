@@ -129,7 +129,7 @@ class BehaviourTree(py_trees.trees.BehaviourTree):
         self.blackboard_exchange = blackboard.Exchange()
         if not self.blackboard_exchange.setup():
             return False
-        self.post_tick_handlers.append(self._publish_snapshots)
+        self.post_tick_handlers.append(self._on_change_post_tick_handler)
         self.post_tick_handlers.append(self.blackboard_exchange.publish_blackboard)
         super().setup(timeout)
 
@@ -143,25 +143,14 @@ class BehaviourTree(py_trees.trees.BehaviourTree):
         )
 
         # publish current state
-        self._publish_tree_modifications(self.root)
+        self._publish_serialised_tree()
+
         # set a handler to publish future modifications whenever the tree is modified
         # (e.g. pruned). The tree_update_handler method is in the base class, set this
         # to the callback function here.
-        self.tree_update_handler = self._publish_tree_modifications
+        self.tree_update_handler = self._publish_serialised_tree
 
-    def _publish_tree_modifications(self, root):
-        """
-        Publishes updates when the whole tree has been modified.
-
-        This function is passed in as a visitor to the underlying behaviour tree and triggered
-        when there has been a change.
-        """
-        if self.publishers is None:
-            self.node.get_logger().error("call setup() on this tree to initialise the ros components")
-            return
-        # TODO: publish a snapshot
-
-    def _publish_snapshots(self, tree: py_trees.trees.BehaviourTree):
+    def _on_change_post_tick_handler(self, tree: py_trees.trees.BehaviourTree):
         """
         Post-tick handler that checks for changes in the tree as a result
         of it's last tick and publishes an update on a ROS topic.
@@ -179,20 +168,26 @@ class BehaviourTree(py_trees.trees.BehaviourTree):
 
         # if there's been a change, serialise, publish and log
         if self.winds_of_change_visitor.changed:
-            # serialisation
-            tree_message = py_trees_msgs.BehaviourTree()
-            tree_message.statistics.count = self.count
-            tree_message.statistics.stamp = rclpy.clock.Clock().now().to_msg()
-            for behaviour in tree.root.iterate():
-                msg = conversions.behaviour_to_msg(behaviour)
-                msg.is_active = True if behaviour.id in self.snapshot_visitor.visited else False
-                tree_message.behaviours.append(msg)
-            # publish
-            self.publishers.snapshots.publish(tree_message)
+            self._publish_serialised_tree()
             # with self.lock:
             #     if not self._bag_closed:
             #         # self.bag.write(self.publishers.log_tree.name, self.logging_visitor.tree)
             #         pass
+
+    def _publish_serialised_tree(self):
+        """"
+        Args:
+            tree (:class:`~py_trees.trees_ros.BehaviourTree`): the behaviour tree that has just been ticked
+        """
+        # could just use 'self' here...
+        tree_message = py_trees_msgs.BehaviourTree()
+        tree_message.statistics.count = self.count
+        tree_message.statistics.stamp = rclpy.clock.Clock().now().to_msg()
+        for behaviour in self.root.iterate():
+            msg = conversions.behaviour_to_msg(behaviour)
+            msg.is_active = True if behaviour.id in self.snapshot_visitor.visited else False
+            tree_message.behaviours.append(msg)
+        self.publishers.snapshots.publish(tree_message)
 
     def _ascii_tree_post_tick_handler(self, snapshot_visitor, tree):
         print(
