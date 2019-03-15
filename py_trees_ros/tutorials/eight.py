@@ -55,11 +55,11 @@ The class includes additional machinery listening for triggers to initiate job s
 
 .. graphviz:: dot/tutorial-eight-scan.dot
 
-.. literalinclude:: ../py_trees_ros/tutorials/jobs.py
+.. literalinclude:: ../py_trees_ros_tutorials/jobs.py
    :language: python
    :linenos:
    :lines: 32-160
-   :caption: py_trees_ros/tutorials/jobs.py#scan
+   :caption: py_trees_ros_tutorials/jobs.py#scan
 
 Job Loading
 ^^^^^^^^^^^
@@ -68,12 +68,12 @@ Job handlers are loaded via a string at runtime. This ensures decoupling of the
 the tree implementation from the job providers. **The SplinteredReality** class here
 is responsible for setting up and tick tocking the tree.
 
-.. literalinclude:: ../py_trees_ros/tutorials/eight.py
+.. literalinclude:: ../py_trees_ros_tutorials/eight.py
    :language: python
    :linenos:
    :lines: 152-171
    :emphasize-lines: 3,8-9,15-19
-   :caption: py_trees_ros/tutorials/eight.py#job_loading
+   :caption: py_trees_ros_tutorials/eight.py#job_loading
 
 Just in Time
 ^^^^^^^^^^^^
@@ -85,11 +85,11 @@ Job subtrees are inserted and pruned via the tree pre and post tick handlers.
    This is done in the free window between ticks, but the checking/insertion/deletion
    logic could alternatively have been achieved from behaviours inside the tree.
 
-.. literalinclude:: ../py_trees_ros/tutorials/eight.py
+.. literalinclude:: ../py_trees_ros_tutorials/eight.py
    :language: python
    :linenos:
    :lines: 182-224
-   :caption: py_trees_ros/tutorials/eight.py#just_in_time
+   :caption: py_trees_ros_tutorials/eight.py#just_in_time
 
 Running
 ^^^^^^^

@@ -167,16 +167,6 @@ def resolve_name(node, name):
     )
 
 
-def uuid4_to_msg():
-    """
-    Convert a uuid4 python object to a ros unique identifier, UUID type.
-
-    Returns:
-        :class:`unique_identifier_msgs.msg.UUID`: the ros message type
-    """
-    return unique_identifier_msgs.UUID(uuid=list(uuid.uuid4().bytes))
-
-
 def create_anonymous_node_name(node_name="node") -> str:
     """
     Creates an anonoymous node name by adding a suffix created from

@@ -25,11 +25,11 @@ Tree
 
 .. graphviz:: dot/tutorial-five.dot
 
-.. literalinclude:: ../py_trees_ros/tutorials/five.py
+.. literalinclude:: ../py_trees_ros_tutorials/five.py
    :language: python
    :linenos:
    :lines: 121-179
-   :caption: py_trees_ros/tutorials/five.py#create_root
+   :caption: py_trees_ros_tutorials/five.py#create_root
 
 **Guards**
 
@@ -69,11 +69,11 @@ Behaviours
 
 Introducing the rotate action client behaviour!
 
-.. literalinclude:: ../py_trees_ros/tutorials/five.py
+.. literalinclude:: ../py_trees_ros_tutorials/five.py
    :language: python
    :linenos:
    :lines: 158-163
-   :caption: py_trees_ros/tutorials/five.py#action_client_instantiation
+   :caption: py_trees_ros_tutorials/five.py#action_client_instantiation
 
 .. literalinclude:: ../py_trees_ros/actions.py
    :language: python
