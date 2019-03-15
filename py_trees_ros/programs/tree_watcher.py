@@ -7,7 +7,6 @@
 ##############################################################################
 # Documentation
 ##############################################################################
-from _ast import Or
 
 """
 .. argparse::
@@ -111,12 +110,6 @@ def command_line_argument_parser(formatted_for_sphinx=True):
         action='store_const',
         const=py_trees_ros.trees.WatcherMode.DOT_TREE,
         help='print a dot representation of the tree structure')
-    group.add_argument(
-        '-t', '--tip',
-        dest='viewing_mode',
-        action='store_const',
-        const=py_trees_ros.trees.WatcherMode.TIP,
-        help='print detailed information about the current tip of the tree')
     return parser
 
 

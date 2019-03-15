@@ -52,14 +52,11 @@ class BehaviourTree(py_trees.trees.BehaviourTree):
     Extend the :class:`py_trees.trees.BehaviourTree` class with
     a few bells and whistles for ROS:
 
-    * ros publishers with snapshot ascii/dot graph views of the tree
-    * ros publisher with data representation of the entire tree for monitoring/bagging
-    * ros publisher showing what the current tip is
+    * ros publishers that serialises a snapshot of the tree for viewing/logging
     * a blackboard exchange with introspection and watcher services
 
 
     ROS Publishers:
-          * static dot graph of the entire tree (debugging)
         * **~/snapshots** (:class:`py_trees_msgs.msg.BehaviourTree`)
 
     .. seealso::
@@ -142,7 +139,6 @@ class BehaviourTree(py_trees.trees.BehaviourTree):
             self.node,
             [
                 ("snapshots", "~/snapshots", py_trees_msgs.BehaviourTree, latched),
-                ("tip", "~/tip", py_trees_msgs.Behaviour, latched)
             ]
         )
 
@@ -193,7 +189,6 @@ class BehaviourTree(py_trees.trees.BehaviourTree):
                 tree_message.behaviours.append(msg)
             # publish
             self.publishers.snapshots.publish(tree_message)
-            # self.publishers.tip.publish(conversions.behaviour_to_msg(self.root.tip()))
             # with self.lock:
             #     if not self._bag_closed:
             #         # self.bag.write(self.publishers.log_tree.name, self.logging_visitor.tree)
@@ -228,8 +223,6 @@ class WatcherMode(enum.Enum):
     """Print an ascii art representation of the static tree (sans visited path/status/feedback messages)."""
     DOT_TREE = "DOT_TREE"
     """Render with the dot graph representation of the static tree (using an application or text to console)."""
-    TIP = "TIP"
-    """Print details about the tip of the tree to the console."""
 
 
 class Watcher(object):
@@ -383,9 +376,3 @@ class Watcher(object):
                 except KeyboardInterrupt:
                     pass
             self.done = True
-        ####################
-        # Tip
-        ####################
-        elif self.viewing_mode == WatcherMode.TIP:
-            print(msg.root)
-
