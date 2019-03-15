@@ -22,15 +22,18 @@ with a few ROS style adornments. The major features currently include:
 # Imports
 ##############################################################################
 
+import collections
 import datetime
 import enum
 import os
+import math
 import py_trees
 import py_trees.console as console
 import py_trees_ros_interfaces.msg as py_trees_msgs
 # import rosbag
 # TODO: import rospkg
 import rclpy
+import statistics
 import subprocess
 import tempfile
 import time
@@ -83,8 +86,15 @@ class BehaviourTree(py_trees.trees.BehaviourTree):
         self.visitors.append(self.snapshot_visitor)
         self.visitors.append(self.winds_of_change_visitor)
 
-        # self.logging_visitor = visitors.LoggingVisitor()
-        # self.visitors.append(self.logging_visitor)
+        self.statistics = None
+        self.tick_start_time = None
+        self.time_series = collections.deque([])
+        self.tick_interval_series = collections.deque([])
+        self.tick_duration_series = collections.deque([])
+
+        self.pre_tick_handlers.append(self._statistics_pre_tick_handler)
+        self.post_tick_handlers.append(self._statistics_post_tick_handler)
+
         # self._bag_closed = False
 
         # now = datetime.datetime.now()
@@ -150,6 +160,60 @@ class BehaviourTree(py_trees.trees.BehaviourTree):
         # to the callback function here.
         self.tree_update_handler = self._publish_serialised_tree
 
+    def _statistics_pre_tick_handler(self, tree: py_trees.trees.BehaviourTree):
+        """
+        Pre-tick handler that resets the statistics and starts the clock.
+
+        Args:
+            tree (:class:`~py_trees.trees.BehaviourTree`): the behaviour tree that has just been ticked
+        """
+        if len(self.time_series) == 10:
+            self.time_series.popleft()
+            self.tick_interval_series.popleft()
+
+        rclpy_start_time = rclpy.clock.Clock().now()
+        self.time_series.append(conversions.rclpy_time_to_float(rclpy_start_time))
+        if len(self.time_series) == 1:
+            self.tick_interval_series.append(0.0)
+        else:
+            self.tick_interval_series.append(self.time_series[-1] - self.time_series[-2])
+
+        self.statistics = py_trees_msgs.Statistics()
+        self.statistics.count = self.count
+        self.statistics.stamp = rclpy_start_time.to_msg()
+        self.statistics.tick_interval = self.tick_interval_series[-1]
+        self.statistics.tick_interval_average = sum(self.tick_interval_series) / len(self.tick_interval_series)
+        if len(self.tick_interval_series) > 1:
+            self.statistics.tick_interval_variance = statistics.variance(
+                self.tick_interval_series,
+                self.statistics.tick_interval_average
+            )
+        else:
+            self.statistics.tick_interval_variance = 0.0
+
+    def _statistics_post_tick_handler(self, tree: py_trees.trees.BehaviourTree):
+        """
+        Post-tick handler that completes the statistics generation.
+
+        Args:
+            tree (:class:`~py_trees.trees.BehaviourTree`): the behaviour tree that has just been ticked
+        """
+        duration = conversions.rclpy_time_to_float(rclpy.clock.Clock().now()) - self.time_series[-1]
+
+        if len(self.tick_duration_series) == 10:
+            self.tick_duration_series.popleft()
+        self.tick_duration_series.append(duration)
+
+        self.statistics.tick_duration = duration
+        self.statistics.tick_duration_average = sum(self.tick_duration_series) / len(self.tick_duration_series)
+        if len(self.tick_duration_series) > 1:
+            self.statistics.tick_duration_variance = statistics.variance(
+                self.tick_duration_series,
+                self.statistics.tick_duration_average
+            )
+        else:
+            self.statistics.tick_duration_variance = 0.0
+
     def _on_change_post_tick_handler(self, tree: py_trees.trees.BehaviourTree):
         """
         Post-tick handler that checks for changes in the tree as a result
@@ -181,8 +245,8 @@ class BehaviourTree(py_trees.trees.BehaviourTree):
         """
         # could just use 'self' here...
         tree_message = py_trees_msgs.BehaviourTree()
-        tree_message.statistics.count = self.count
-        tree_message.statistics.stamp = rclpy.clock.Clock().now().to_msg()
+        if self.statistics is not None:
+            tree_message.statistics = self.statistics
         for behaviour in self.root.iterate():
             msg = conversions.behaviour_to_msg(behaviour)
             msg.is_active = True if behaviour.id in self.snapshot_visitor.visited else False
@@ -321,12 +385,35 @@ class Watcher(object):
         # Streaming
         ####################
         if self.viewing_mode == WatcherMode.ASCII_SNAPSHOT:
+            console.banner("Tick {}".format(msg.statistics.count))
             print(py_trees.display.ascii_tree(
                 root=root,
                 visited=self.snapshot_visitor.visited,
                 previously_visited=self.snapshot_visitor.previously_visited
                 )
             )
+            print(console.green + "-"*80 + "\n" + console.reset)
+            print("Timestamp: {}".format(
+                conversions.rclpy_time_to_float(
+                    rclpy.time.Time.from_msg(
+                        msg.statistics.stamp
+                        )
+                    )
+                )
+            )
+            print("Duration : {:.3f}/{:.3f}/{:.3f} (ms) [time/avg/stddev]".format(
+                msg.statistics.tick_duration*1000,
+                msg.statistics.tick_duration_average*1000,
+                math.sqrt(msg.statistics.tick_duration_variance)*1000
+                )
+            )
+            print("Interval : {:.3f}/{:.3f}/{:.3f} (s) [time/avg/stddev]".format(
+                msg.statistics.tick_interval,
+                msg.statistics.tick_interval_average,
+                math.sqrt(msg.statistics.tick_interval_variance)
+                )
+            )
+
         ####################
         # Printing
         ####################

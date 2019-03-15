@@ -264,3 +264,23 @@ def msg_to_behaviour(msg: py_trees_msgs.Behaviour) -> py_trees.behaviour.Behavio
     behaviour.blackbox_level = msg_constant_to_blackbox_level_enum(msg.blackbox_level)
     behaviour.feedback_message = msg.message
     return behaviour
+
+
+def rclpy_time_to_float(time: rclpy.time.Time) -> float:
+    """
+    Convert a ros2 time (seconds/nanoseconds) to a float.
+
+    Args:
+        time (:class:`~rclpy.time.Time`): time to convert
+    """
+    return float(time.nanoseconds) / 1e9
+
+
+def rclpy_duration_to_float(duration: rclpy.time.Duration) -> float:
+    """
+    Convert a ros2 duration (seconds/nanoseconds) to a float.
+
+    Args:
+        time (:class:`~rclpy.time.Time`): time to convert
+    """
+    return float(duration.nanoseconds) / 1e9
