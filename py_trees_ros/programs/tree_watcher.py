@@ -7,6 +7,7 @@
 ##############################################################################
 # Documentation
 ##############################################################################
+from _ast import Or
 
 """
 .. argparse::
@@ -194,9 +195,19 @@ def main():
     # Execute
     ####################
     try:
-        while rclpy.ok() and not tree_watcher.done:
+        while True:
+            if not rclpy.ok():
+                break
+            if tree_watcher.done:
+                if tree_watcher.xdot_process is None:
+                    break
+                elif tree_watcher.xdot_process.poll() is not None:
+                    break
             rclpy.spin_once(tree_watcher.node, timeout_sec=0.1)
     except KeyboardInterrupt:
         pass
+    if tree_watcher.xdot_process is not None:
+        if tree_watcher.xdot_process.poll() is not None:
+            tree_watcher.xdot_process.terminate()
     tree_watcher.node.destroy_node()
     rclpy.shutdown()

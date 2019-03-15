@@ -179,7 +179,7 @@ def msg_constant_to_blackbox_level_enum(value: int) -> py_trees.common.BlackBoxL
     elif value == py_trees_msgs.Behaviour.BLACKBOX_LEVEL_BIG_PICTURE:
         return py_trees.common.BlackBoxLevel.BIG_PICTURE
     elif value == py_trees_msgs.Behaviour.BLACKBOX_LEVEL_NOT_A_BLACKBOX:
-        return None
+        return py_trees.common.BlackBoxLevel.NOT_A_BLACKBOX
     else:
         raise TypeError("invalid blackbox level specified in message [{}]".format(value))
 

@@ -31,11 +31,10 @@ import py_trees_ros_interfaces.msg as py_trees_msgs
 # import rosbag
 # TODO: import rospkg
 import rclpy
-import std_msgs.msg as std_msgs
-import threading
+import subprocess
+import tempfile
 import time
 import unique_identifier_msgs.msg as unique_identifier_msgs
-import uuid
 
 from . import blackboard
 from . import conversions
@@ -60,21 +59,8 @@ class BehaviourTree(py_trees.trees.BehaviourTree):
 
 
     ROS Publishers:
-        * **~ascii/tree** (:class:`std_msgs.msg.String`)
-
-          * static view of the entire tree (debugging)
-        * **~ascii/snapshot** (:class:`std_msgs.msg.String`)
-
-          * runtime ascii snapshot view of the ticking tree (debugging)
-        * **~dot/tree** (:class:`std_msgs.msg.String`)
-
           * static dot graph of the entire tree (debugging)
-        * **~log/tree** (:class:`py_trees_msgs.msg.BehaviourTree`)
-
-          * representation of the entire tree in message form for rqt/bagging
-        * **~tip** (:class:`py_trees_msgs.msg.Behaviour`)
-
-          * the tip of the tree after the last tick
+        * **~/snapshots** (:class:`py_trees_msgs.msg.BehaviourTree`)
 
     .. seealso::
         It also exposes publishers and services from the blackboard exchange
@@ -195,14 +181,9 @@ class BehaviourTree(py_trees.trees.BehaviourTree):
             self.node.get_logger().error("the root behaviour failed to return a tip [cause: tree is in an INVALID state]")
             return
 
-        # snapshot
-        # snapshot = "\n\n{}".format(py_trees.display.ascii_tree(self.root, snapshot_information=self.snapshot_visitor))
-        # snapshot = py_trees.console.forceably_replace_unicode_chars(snapshot)
-        # self.publishers.ascii_snapshot.publish(std_msgs.String(data=snapshot))
-
         # if there's been a change, serialise, publish and log
         if self.winds_of_change_visitor.changed:
-            # serialisationd
+            # serialisation
             tree_message = py_trees_msgs.BehaviourTree()
             tree_message.statistics.count = self.count
             tree_message.statistics.stamp = rclpy.clock.Clock().now().to_msg()
@@ -274,6 +255,8 @@ class Watcher(object):
         self.viewing_mode = mode
         self.snapshot_visitor = py_trees.visitors.SnapshotVisitor()
         self.done = False
+        self.xdot_process = None
+        self.rendered = None
 
     def setup(self):
         """
@@ -347,7 +330,7 @@ class Watcher(object):
         root = deserialise_tree_recursively(serialised_behaviours[root_id])
 
         ####################
-        # Printing
+        # Streaming
         ####################
         if self.viewing_mode == WatcherMode.ASCII_SNAPSHOT:
             print(py_trees.display.ascii_tree(
@@ -356,6 +339,9 @@ class Watcher(object):
                 previously_visited=self.snapshot_visitor.previously_visited
                 )
             )
+        ####################
+        # Printing
+        ####################
         elif self.viewing_mode == WatcherMode.ASCII_TREE:
             print("")
             print(py_trees.display.ascii_tree(
@@ -366,8 +352,40 @@ class Watcher(object):
                 )
             )
             self.done = True
-        elif self.viewing_mode == WatcherMode.DOT_TREE:
-            print(py_trees.display.dot_graph(root=root).to_string())
+        ####################
+        # Dot Graph
+        ####################
+        elif self.viewing_mode == WatcherMode.DOT_TREE and not self.rendered:
+            self.rendered = True
+            directory_name = tempfile.mkdtemp()
+            py_trees.display.render_dot_tree(
+                root=root,
+                target_directory=directory_name
+            )
+            xdot_program = py_trees.utilities.which('xdot')
+
+            if not xdot_program:
+                console.logerror("No xdot viewer found, skipping display [hint: sudo apt install xdot]")
+                print(py_trees.display.dot_graph(root=root).to_string())
+                self.done = True
+                self.xdot_process = 1
+                return
+
+            filename = py_trees.utilities.get_valid_filename(root.name) + '.dot'
+            if xdot_program:
+                try:
+                    self.xdot_process = subprocess.Popen(
+                        [
+                            xdot_program,
+                            os.path.join(directory_name, filename)
+                        ]
+                    )
+                except KeyboardInterrupt:
+                    pass
+            self.done = True
+        ####################
+        # Tip
+        ####################
         elif self.viewing_mode == WatcherMode.TIP:
             print(msg.root)
 
