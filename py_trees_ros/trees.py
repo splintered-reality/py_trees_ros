@@ -25,6 +25,7 @@ with a few ROS style adornments. The major features currently include:
 import collections
 import datetime
 import enum
+import functools
 import os
 import math
 import py_trees
@@ -95,6 +96,8 @@ class BehaviourTree(py_trees.trees.BehaviourTree):
         self.pre_tick_handlers.append(self._statistics_pre_tick_handler)
         self.post_tick_handlers.append(self._statistics_post_tick_handler)
 
+        self.timer = None
+
         # self._bag_closed = False
 
         # now = datetime.datetime.now()
@@ -159,6 +162,73 @@ class BehaviourTree(py_trees.trees.BehaviourTree):
         # (e.g. pruned). The tree_update_handler method is in the base class, set this
         # to the callback function here.
         self.tree_update_handler = self._publish_serialised_tree
+
+    def tick_tock(
+            self,
+            period_ms,
+            number_of_iterations=py_trees.trees.CONTINUOUS_TICK_TOCK,
+            pre_tick_handler=None,
+            post_tick_handler=None
+         ):
+        """
+        Tick continuously at the period specified.
+
+        This is a re-implementation of the
+        :meth:`~py_trees.trees.BehaviourTree.tick_tock`
+        tick_tock that takes advantage of the rclpy timers so callbacks are interleaved inbetween
+        rclpy callbacks (keeps everything synchronous so no need for locks).
+
+        Args:
+            period_ms (:obj:`float`): sleep this much between ticks (milliseconds)
+            number_of_iterations (:obj:`int`): number of iterations to tick-tock
+            pre_tick_handler (:obj:`func`): function to execute before ticking
+            post_tick_handler (:obj:`func`): function to execute after ticking
+        """
+        print("Period: %s" % (period_ms / 1000.0))
+        period_s = period_ms / 1000.0
+        self.timer = self.node.create_timer(
+            period_s,
+            functools.partial(
+                self._tick_tock_timer_callback,
+                period_ms=period_ms,
+                number_of_iterations=number_of_iterations,
+                pre_tick_handler=pre_tick_handler,
+                post_tick_handler=post_tick_handler
+            )
+        )
+        self.tick_tock_count = 0
+
+    def shutdown(self):
+        """
+        Cleanly shut down rclpy timers and nodes.
+        """
+        if self.timer is not None:
+            self.timer.cancel()
+            self.node.destroy_timer(self.timer)
+        self.node.destroy_node()
+
+    def _tick_tock_timer_callback(
+            self,
+            period_ms,
+            number_of_iterations,
+            pre_tick_handler,
+            post_tick_handler
+         ):
+        """
+        Tick tock callback passed to the timer to be periodically triggered.
+
+        Args:
+            period_ms (:obj:`float`): sleep this much between ticks (milliseconds)
+            number_of_iterations (:obj:`int`): number of iterations to tick-tock
+            pre_tick_handler (:obj:`func`): function to execute before ticking
+            post_tick_handler (:obj:`func`): function to execute after ticking
+        """
+        if (number_of_iterations == py_trees.trees.CONTINUOUS_TICK_TOCK or
+                self.tick_tock_count < number_of_iterations):
+            self.tick(pre_tick_handler, post_tick_handler)
+            self.tick_tock_count += 1
+        else:
+            self.timer.cancel()
 
     def _statistics_pre_tick_handler(self, tree: py_trees.trees.BehaviourTree):
         """
