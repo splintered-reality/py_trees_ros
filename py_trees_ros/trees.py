@@ -184,7 +184,6 @@ class BehaviourTree(py_trees.trees.BehaviourTree):
             pre_tick_handler (:obj:`func`): function to execute before ticking
             post_tick_handler (:obj:`func`): function to execute after ticking
         """
-        print("Period: %s" % (period_ms / 1000.0))
         period_s = period_ms / 1000.0
         self.timer = self.node.create_timer(
             period_s,
