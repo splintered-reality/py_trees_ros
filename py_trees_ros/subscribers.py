@@ -28,9 +28,10 @@ permitted to be used or written to the blackboard.
 import copy
 import operator
 import py_trees
-import rospy
 import std_msgs.msg as std_msgs
 import threading
+
+from . import utilities
 
 ##############################################################################
 # Behaviours
@@ -74,12 +75,14 @@ class Handler(py_trees.behaviour.Behaviour):
         name (:obj:`str`): name of the behaviour
         topic_name (:obj:`str`): name of the topic to connect to
         topic_type (:obj:`any`): class of the message type (e.g. :obj:`std_msgs.msg.String`)
+        qos_profile (:obj:`bool`): qos profile for the subscriber
         clearing_policy (:class:`~py_trees.common.ClearingPolicy`): when to clear the data
     """
     def __init__(self,
                  name="Subscriber Handler",
                  topic_name="/foo",
                  topic_type=None,
+                 qos_profile=utilities.qos_profile_latched_topic(),
                  clearing_policy=py_trees.common.ClearingPolicy.ON_INITIALISE
                  ):
         super(Handler, self).__init__(name)
@@ -89,21 +92,31 @@ class Handler(py_trees.behaviour.Behaviour):
         self.subscriber = None
         self.data_guard = threading.Lock()
         self.clearing_policy = clearing_policy
+        self.qos_profile = qos_profile
+        self.node = None
 
-    def setup(self, timeout):
+    def setup(self, **kwargs):
         """
         Initialises the subscriber.
 
         Args:
-            timeout (:obj:`float`): time to wait (0.0 is blocking forever)
+            **kwargs (:obj:`dict`): distribute arguments to this
+               behaviour and in turn, all of it's children
 
-        Returns:
-            :obj:`bool`: whether it timed out trying to setup
+        Raises:
+            KeyError: if a ros2 node isn't passed under the key 'node' in kwargs
         """
-        # ros doesn't care if it is init'd or not for subscriber construction, but
-        # good to have here anyway so initialisation can occur before the callback is connected
-        self.subscriber = rospy.Subscriber(self.topic_name, self.topic_type, self._callback, queue_size=5)
-        return True
+        try:
+            self.node = kwargs['node']
+        except KeyError as e:
+            error_message = "didn't find 'node' in setup's kwargs [{}][{}]".format(self.name, self.__class__.__name__)
+            raise KeyError(error_message) from e  # 'direct cause' traceability
+        self.node.create_subscription(
+            msg_type=self.topic_type,
+            topic=self.topic_name,
+            callback=self._callback,
+            qos_profile=self.qos_profile
+        )
 
     def initialise(self):
         """
@@ -149,6 +162,7 @@ class CheckData(Handler):
         name (:obj:`str`): name of the behaviour
         topic_name (:obj:`str`): name of the topic to connect to
         topic_type (:obj:`any`): class of the message type (e.g. :obj:`std_msgs.msg.String`)
+        qos_profile (:obj:`bool`): qos profile for the subscriber
         variable_name (:obj:`str`): name of the variable to check
         expected_value (:obj:`any`): expected value of the variable
         fail_if_no_data (:obj:`bool`): :attr:`~py_trees.common.Status.FAILURE` instead of :attr:`~py_trees.common.Status.RUNNING` if there is no data yet
@@ -168,6 +182,7 @@ class CheckData(Handler):
                  name="Check Data",
                  topic_name="/foo",
                  topic_type=None,
+                 qos_profile=utilities.qos_profile_latched_topic(),
                  variable_name="bar",
                  expected_value=None,
                  fail_if_no_data=False,
@@ -179,6 +194,7 @@ class CheckData(Handler):
             name,
             topic_name=topic_name,
             topic_type=topic_type,
+            qos_profile=qos_profile,
             clearing_policy=clearing_policy,
         )
         self.variable_name = variable_name
@@ -205,22 +221,24 @@ class CheckData(Handler):
         try:
             value = check_attr(msg)
         except AttributeError:
-            rospy.logerr("Behaviours [%s" % self.name + "]: variable name not found [%s]" % self.variable_name)
-            print("%s" % msg)
+            self.node.get_logger().error("Behaviour [{}]: variable name not found [{}]".format(self.name, self.variable_name))
+            print("{}".format(msg))
             with self.data_guard:
-                self.feedback_message = "variable name not found [%s]" % self.variable_name
+                self.feedback_message = "variable name not found [{}]".format(self.variable_name)
                 return py_trees.common.Status.FAILURE
 
         success = self.comparison_operator(value, self.expected_value)
 
         if success:
-            self.feedback_message = "'%s' comparison succeeded [v: %s][e: %s]" % (self.variable_name, value, self.expected_value)
+            self.feedback_message = "'{}' comparison succeeded [v: {}][e: {}]".format(
+                self.variable_name, value, self.expected_value)
             if self.clearing_policy == py_trees.common.ClearingPolicy.ON_SUCCESS:
                 with self.data_guard:
                     self.msg = None
             return py_trees.common.Status.SUCCESS
         else:
-            self.feedback_message = "'%s' comparison failed [v: %s][e: %s]" % (self.variable_name, value, self.expected_value)
+            self.feedback_message = "'{}' comparison failed [v: {}][e: {}]".format(
+                self.variable_name, value, self.expected_value)
             return py_trees.common.Status.FAILURE if self.fail_if_bad_comparison else py_trees.common.Status.RUNNING
 
 
@@ -260,18 +278,21 @@ class WaitForData(Handler):
         name (:obj:`str`): name of the behaviour
         topic_name (:obj:`str`): name of the topic to connect to
         topic_type (:obj:`any`): class of the message type (e.g. :obj:`std_msgs.msg.String`)
+        qos_profile (:obj:`bool`): qos profile for the subscriber
         clearing_policy (:class:`~py_trees.common.ClearingPolicy`): when to clear the data
     """
     def __init__(self,
                  name="Wait For Data",
                  topic_name="chatter",
                  topic_type=None,
+                 qos_profile=utilities.qos_profile_latched_topic(),
                  clearing_policy=py_trees.common.ClearingPolicy.ON_INITIALISE
                  ):
         super(WaitForData, self).__init__(
             name,
             topic_name=topic_name,
             topic_type=topic_type,
+            qos_profile=qos_profile,
             clearing_policy=clearing_policy
         )
 
@@ -305,6 +326,7 @@ class ToBlackboard(Handler):
         name (:obj:`str`): name of the behaviour
         topic_name (:obj:`str`): name of the topic to connect to
         topic_type (:obj:`any`): class of the message type (e.g. :obj:`std_msgs.msg.String`)
+        qos_profile (:obj:`bool`): qos profile for the subscriber
         blackboard_variables (:obj:`dict`): blackboard variable string or dict {names (keys) - message subfields (values)}, use a value of None to indicate the entire message
         initialise_variables (:obj:`bool`): initialise the blackboard variables to some defaults
         clearing_policy (:class:`~py_trees.common.ClearingPolicy`): when to clear the data
@@ -339,6 +361,7 @@ class ToBlackboard(Handler):
                  name="ToBlackboard",
                  topic_name="chatter",
                  topic_type=None,
+                 qos_profile=utilities.qos_profile_latched_topic(),
                  blackboard_variables={"chatter": None},
                  initialise_variables={},
                  clearing_policy=py_trees.common.ClearingPolicy.ON_INITIALISE
@@ -347,11 +370,12 @@ class ToBlackboard(Handler):
             name,
             topic_name=topic_name,
             topic_type=topic_type,
+            qos_profile=qos_profile,
             clearing_policy=clearing_policy
         )
         self.logger = py_trees.logging.Logger("%s" % self.name)
         self.blackboard = py_trees.blackboard.Blackboard()
-        if isinstance(blackboard_variables, basestring):
+        if isinstance(blackboard_variables, str):
             self.blackboard_variable_mapping = {blackboard_variables: None}
             if not isinstance(initialise_variables, dict):
                 self.blackboard_initial_variable_mapping = {blackboard_variables: initialise_variables}
@@ -365,22 +389,10 @@ class ToBlackboard(Handler):
             self.blackboard_variable_mapping = blackboard_variables
             self.blackboard_initial_variable_mapping = initialise_variables
         # initialise the variables
-        for name, value in self.blackboard_initial_variable_mapping.iteritems():
+        for name, value in self.blackboard_initial_variable_mapping.items():
             if not self.blackboard.set(name, value):
                 # do we actually want to log an error?
                 self.logger.error("tried to initialise an already initialised blackboard variable '{0}', check that you do not have a conflict with another behaviour [{1}]".format(name, self.name))
-
-    def setup(self, timeout):
-        """
-        Initialise the subscriber.
-
-        Args:
-            timeout (:obj:`float`): time to wait (0.0 is blocking forever)
-
-        Returns:
-            :obj:`bool`: whether it timed out trying to setup
-        """
-        return super(ToBlackboard, self).setup(timeout)
 
     def update(self):
         """
@@ -428,21 +440,24 @@ class EventToBlackboard(Handler):
     Args:
         name (:obj:`str`): name of the behaviour
         topic_name (:obj:`str`): name of the topic to connect to
+        qos_profile (:obj:`bool`): qos profile for the subscriber
         variable_name (:obj:`str`): name to write the boolean result on the blackboard
     """
     def __init__(self,
                  name="Event to Blackboard",
                  topic_name="/event",
+                 qos_profile=utilities.qos_profile_latched_topic(),
                  variable_name="event"
                  ):
         super(EventToBlackboard, self).__init__(
             name=name,
             topic_name=topic_name,
             topic_type=std_msgs.Empty,
+            qos_profile=qos_profile,
             clearing_policy=py_trees.common.ClearingPolicy.ON_SUCCESS
         )
         self.variable_name = variable_name
-        self.blackboard = py_trees.Blackboard()
+        self.blackboard = py_trees.blackboard.Blackboard()
 
     def update(self):
         """

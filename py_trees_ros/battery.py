@@ -17,7 +17,6 @@ Getting the most out of your battery.
 ##############################################################################
 
 import py_trees
-import rospy
 import sensor_msgs.msg as sensor_msgs
 
 from . import subscribers
@@ -73,7 +72,8 @@ class ToBlackboard(subscribers.ToBlackboard):
                 self.blackboard.battery_low_warning = False
             elif self.blackboard.battery.percentage < self.threshold:
                     self.blackboard.battery_low_warning = True
-                    rospy.logwarn_throttle(60, "%s: battery level is low!" % self.name)
+                    # TODO: make this throttled
+                    self.node.get_logger().error("{}: battery level is low!".format(self.name))
             # else don't do anything in between - i.e. avoid the ping pong problems
 
             self.feedback_message = "Battery level is low" if self.blackboard.battery_low_warning else "Battery level is ok"
