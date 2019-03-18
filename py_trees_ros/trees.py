@@ -140,11 +140,12 @@ class BehaviourTree(py_trees.trees.BehaviourTree):
             return RuntimeError("rlcpy not yet initialised [{}]".format(default_node_name))
         self._setup_publishers()
         self.blackboard_exchange = blackboard.Exchange()
-        if not self.blackboard_exchange.setup():
-            return False
+        self.blackboard_exchange.setup()
         self.post_tick_handlers.append(self._on_change_post_tick_handler)
         self.post_tick_handlers.append(self.blackboard_exchange.publish_blackboard)
-        super().setup(timeout)
+
+        # share the tree's node with it's behaviours
+        super().setup(timeout, node=self.node)
 
     def _setup_publishers(self):
         latched = True
