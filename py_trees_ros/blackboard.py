@@ -208,7 +208,6 @@ class Exchange(object):
                 srv_name='~/' + name,
                 callback=getattr(self, "_{}_service".format(name))
             )
-        return True
 
     def _get_nested_keys(self):
         variables = []

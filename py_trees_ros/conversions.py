@@ -23,8 +23,6 @@ import rclpy
 import unique_identifier_msgs.msg as unique_identifier_msgs
 import uuid
 
-from . import utilities
-
 ##############################################################################
 # <etjpds
 ##############################################################################
