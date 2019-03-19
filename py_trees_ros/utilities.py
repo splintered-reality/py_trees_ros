@@ -18,13 +18,12 @@ Assorted utility functions.
 
 import os
 import pathlib
-import uuid
 
 import py_trees_ros_interfaces.msg as py_trees_msgs
 import py_trees_ros_interfaces.srv as py_trees_srvs
 import rclpy
+import rclpy.qos
 import time
-import unique_identifier_msgs.msg as unique_identifier_msgs
 
 from . import exceptions
 
@@ -268,12 +267,9 @@ class Subscribers(object):
         for (name, topic_name, subscriber_type, latched, callback) in subscriber_details:
             if latched:
                 self.__dict__[name] = node.create_subscription(
-                    subscriber_type,
-                    topic_name,
-                    callback,
-                    # msg_type=subscriber_type,
-                    # topic=topic_name,
-                    # callback=callback,
+                    msg_type=subscriber_type,
+                    topic=topic_name,
+                    callback=callback,
                     qos_profile=qos_profile_latched_topic()
                 )
             else:

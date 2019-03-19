@@ -34,6 +34,7 @@ import py_trees.console as console
 import py_trees_ros_interfaces.srv as py_trees_srvs
 import rclpy.executors
 import rclpy.expand_topic_name
+import rclpy.node
 import std_msgs.msg as std_msgs
 import time
 
@@ -149,29 +150,24 @@ class Exchange(object):
     _counter = 0
     """Incremental counter guaranteeing unique watcher names"""
 
-    def __init__(self,
-                 node_name=py_trees.common.Name.AUTO_GENERATED,
-                 namespace=""):
-        if not node_name or node_name == py_trees.common.Name.AUTO_GENERATED:
-                node_name = self.__class__.__name__.lower()
+    def __init__(self):
         self.node = None
         self.blackboard = py_trees.blackboard.Blackboard()
         self.cached_blackboard_dict = {}
         self.views = []
         self.publisher = None
         self.services = {}
-        self.parameters = {
-            "node_name": node_name,
-            "namespace": namespace
-        }
 
-    def setup(self):
+    def setup(self, node: rclpy.node.Node):
         """
         This is where the ros initialisation of publishers and services happens. It is kept
         outside of the constructor for the same reasons that the familiar py_trees
         :meth:`~py_trees.trees.BehaviourTree.setup` method has - to enable construction
         of behaviours and trees offline (away from their execution environment) so that
         dot graphs and other visualisations of the tree can be created.
+
+        Args:
+            node (:class:`~rclpy.node.Node`): node to hook ros communications on
 
         Examples:
 
@@ -191,24 +187,17 @@ class Exchange(object):
 
         .. seealso:: This method is called in the way illustrated above in :class:`~py_trees_ros.trees.BehaviourTree`.
         """
-        self.node = rclpy.create_node(
-            node_name=self.parameters["node_name"],
-            namespace=self.parameters["namespace"],
-            start_parameter_services=False
-        )
-
-        self.publisher = self.node.create_publisher(std_msgs.String, '~/blackboard')
-
+        self.node = node
+        self.publisher = self.node.create_publisher(std_msgs.String, '~/exchange/blackboard')
         for name in ["get_blackboard_variables",
                      "open_blackboard_watcher",
                      "close_blackboard_watcher"]:
             camel_case_name = ''.join(x.capitalize() for x in name.split('_'))
             self.services[name] = self.node.create_service(
                 srv_type=getattr(py_trees_srvs, camel_case_name),
-                srv_name='~/' + name,
+                srv_name='~/exchange/' + name,
                 callback=getattr(self, "_{}_service".format(name))
             )
-        return True
 
     def _get_nested_keys(self):
         variables = []
@@ -262,6 +251,9 @@ class Exchange(object):
             return
 
         # publish blackboard
+        #   the blackboard watcher doesn't actually use the lazy publisher, but
+        #   if latching and string formatting in ROS gets up to speed, it will be a
+        #   more useful thing to have around - easy to detect and rostopic echo the contents
         if self.node.count_subscribers("~/blackboard") > 0:
             if self._is_changed():
                 msg = std_msgs.String()
@@ -399,7 +391,7 @@ class BlackboardWatcher(object):
                         callback=None,
                         executor=None):
         """
-        First alls the exchange to get details on the connect the watcher is required
+        First calls the exchange to get details on the connect the watcher is required
         to open and then initiates that tunnel. Note that this does some spinning waiting
         for the service call, so if the executor must be shared with other nodes (e.g. for
         testing) make sure you pass in your own executor.
