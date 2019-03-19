@@ -151,7 +151,6 @@ def main(command_line_args=sys.argv[1:]):
     ####################
     try:
         if args.list_variables:
-            # pretty_print_variables(blackboard_watcher.list_variables())
             future = blackboard_watcher.request_list_variables()
             rclpy.spin_until_future_complete(blackboard_watcher.node, future)
             if future.result() is None:

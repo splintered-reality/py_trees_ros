@@ -140,7 +140,7 @@ class BehaviourTree(py_trees.trees.BehaviourTree):
             return RuntimeError("rlcpy not yet initialised [{}]".format(default_node_name))
         self._setup_publishers()
         self.blackboard_exchange = blackboard.Exchange()
-        self.blackboard_exchange.setup()
+        self.blackboard_exchange.setup(self.node)
         self.post_tick_handlers.append(self._on_change_post_tick_handler)
         self.post_tick_handlers.append(self.blackboard_exchange.publish_blackboard)
 
