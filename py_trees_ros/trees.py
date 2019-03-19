@@ -23,7 +23,7 @@ with a few ROS style adornments. The major features currently include:
 ##############################################################################
 
 import collections
-import datetime
+# import datetime
 import enum
 import functools
 import os
@@ -32,7 +32,6 @@ import py_trees
 import py_trees.console as console
 import py_trees_ros_interfaces.msg as py_trees_msgs
 # import rosbag
-# TODO: import rospkg
 import rclpy
 import statistics
 import subprocess
@@ -42,9 +41,7 @@ import unique_identifier_msgs.msg as unique_identifier_msgs
 
 from . import blackboard
 from . import conversions
-from . import exceptions
 from . import utilities
-from . import visitors
 
 ##############################################################################
 # ROS Trees
@@ -325,6 +322,7 @@ class BehaviourTree(py_trees.trees.BehaviourTree):
 
     def _ascii_tree_post_tick_handler(self, snapshot_visitor, tree):
         print(
+            "\n" +
             py_trees.display.ascii_tree(
                 tree.root,
                 visited=snapshot_visitor.visited,

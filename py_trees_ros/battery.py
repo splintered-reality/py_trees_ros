@@ -46,12 +46,12 @@ class ToBlackboard(subscribers.ToBlackboard):
         threshold (:obj:`float`) : percentage level threshold for flagging as low (0-100)
     """
     def __init__(self, name, topic_name="/battery/state", threshold=30.0):
-        super(ToBlackboard, self).__init__(name=name,
-                                           topic_name=topic_name,
-                                           topic_type=sensor_msgs.BatteryState,
-                                           blackboard_variables={"battery": None},
-                                           clearing_policy=py_trees.common.ClearingPolicy.NEVER
-                                           )
+        super().__init__(name=name,
+                         topic_name=topic_name,
+                         topic_type=sensor_msgs.BatteryState,
+                         blackboard_variables={"battery": None},
+                         clearing_policy=py_trees.common.ClearingPolicy.NEVER
+                         )
         self.blackboard = py_trees.blackboard.Blackboard()
         self.blackboard.battery = sensor_msgs.BatteryState()
         self.blackboard.battery.percentage = 0.0

@@ -28,6 +28,7 @@ permitted to be used or written to the blackboard.
 import copy
 import operator
 import py_trees
+import rclpy.qos
 import std_msgs.msg as std_msgs
 import threading
 
@@ -82,7 +83,7 @@ class Handler(py_trees.behaviour.Behaviour):
                  name="Subscriber Handler",
                  topic_name="/foo",
                  topic_type=None,
-                 qos_profile=utilities.qos_profile_latched_topic(),
+                 qos_profile=rclpy.qos.qos_profile_default,
                  clearing_policy=py_trees.common.ClearingPolicy.ON_INITIALISE
                  ):
         super(Handler, self).__init__(name)
@@ -111,11 +112,11 @@ class Handler(py_trees.behaviour.Behaviour):
         except KeyError as e:
             error_message = "didn't find 'node' in setup's kwargs [{}][{}]".format(self.name, self.__class__.__name__)
             raise KeyError(error_message) from e  # 'direct cause' traceability
-        self.node.create_subscription(
+        self.subscriber = self.node.create_subscription(
             msg_type=self.topic_type,
             topic=self.topic_name,
             callback=self._callback,
-            qos_profile=self.qos_profile
+            # qos_profile=self.qos_profile
         )
 
     def initialise(self):
@@ -406,7 +407,7 @@ class ToBlackboard(Handler):
                 self.feedback_message = "no message received yet"
                 return py_trees.common.Status.RUNNING
             else:
-                for k, v in self.blackboard_variable_mapping.iteritems():
+                for k, v in self.blackboard_variable_mapping.items():
                     if v is None:
                         self.blackboard.set(k, self.msg, overwrite=True)
                     else:
