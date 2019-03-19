@@ -287,14 +287,6 @@ class Exchange(object):
         self.views.append(view)
         return response
 
-    def shutdown(self):
-        """
-        Perform any ros-specific shutdown. This does not
-        return the exchange to a re-usable state.
-        """
-        if self.node:
-            self.node.destroy_node()
-
 ##############################################################################
 # Blackboard Watcher
 ##############################################################################

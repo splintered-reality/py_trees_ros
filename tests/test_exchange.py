@@ -24,13 +24,14 @@ import py_trees_ros
 class create_and_setup_exchange(object):
     def __init__(self):
         self.exchange = py_trees_ros.blackboard.Exchange()
+        self.node = rclpy.create_node('test_exchange', start_parameter_services=False)
 
     def __enter__(self):
-        self.exchange.setup()
+        self.exchange.setup(self.node)
         return self.exchange
 
     def __exit__(self, unused_type, unused_value, unused_traceback):
-        self.exchange.shutdown()
+        self.node.destroy_node()
 
 
 class BlackboardListener(object):
@@ -50,19 +51,11 @@ class TestExchange(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         console.banner("ROS Init")
-        print(" - init")
         rclpy.init()
-        print(" - node")
-        cls.node = rclpy.create_node(
-            'test_exchange',
-            start_parameter_services=False
-            )
-        print(" - exchange")
 
     @classmethod
     def tearDownClass(cls):
         console.banner("ROS Shutdown")
-        cls.node.destroy_node()
         rclpy.shutdown()
 
     def setUp(self):
@@ -73,8 +66,9 @@ class TestExchange(unittest.TestCase):
         print("----- Asserts -----")
         try:
             exchange = py_trees_ros.blackboard.Exchange()
-            exchange.setup()
-            exchange.shutdown()
+            node = rclpy.create_node('test_exchange', start_parameter_services=False)
+            exchange.setup(node)
+            node.destroy_node()
             print("no exceptions [True]")
         except Exception as e:
             print("no exceptions [False]")
