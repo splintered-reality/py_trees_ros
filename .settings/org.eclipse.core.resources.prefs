@@ -26,5 +26,6 @@ encoding//tests/rostests/subscriber_check/subscriber_check_talker.py=utf-8
 encoding//tests/rostests/subscriber_check/subscriber_nested_check_talker.py=utf-8
 encoding//tests/rostests/subscriber_check/test_subscriber_check.py=utf-8
 encoding//tests/rostests/subscriber_check/test_subscriber_nested_check.py=utf-8
+encoding//tests/test_battery.py=utf-8
 encoding//tests/test_exchange.py=utf-8
 encoding//tests/test_trees.py=utf-8
