@@ -75,6 +75,7 @@ class TestBattery(unittest.TestCase):
     def setUpClass(cls):
         console.banner("ROS Init")
         rclpy.init()
+        cls.timeout = 0.4
 
     @classmethod
     def tearDownClass(cls):
@@ -92,9 +93,8 @@ class TestBattery(unittest.TestCase):
         with create_and_setup_tree() as tree:
             executor.add_node(tree.node)
             executor.add_node(battery.node)
-            tree.tick_tock(period_ms=100, number_of_iterations=3)
             start_time = time.monotonic()
-            while (time.monotonic() - start_time) < 0.4:
+            while (time.monotonic() - start_time) < self.timeout:
                 executor.spin_once(timeout_sec=0.1)
                 tree.tick()
                 if tree.root.status == py_trees.common.Status.SUCCESS:
@@ -107,6 +107,7 @@ class TestBattery(unittest.TestCase):
             blackboard.battery.percentage)
         )
         self.assertTrue(blackboard.battery.percentage == 80.0)
+        battery.shutdown()
 
 
 if __name__ == '__main__':
