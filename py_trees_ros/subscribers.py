@@ -289,7 +289,7 @@ class WaitForData(Handler):
                  qos_profile=utilities.qos_profile_latched_topic(),
                  clearing_policy=py_trees.common.ClearingPolicy.ON_INITIALISE
                  ):
-        super(WaitForData, self).__init__(
+        super().__init__(
             name,
             topic_name=topic_name,
             topic_type=topic_type,
@@ -367,7 +367,7 @@ class ToBlackboard(Handler):
                  initialise_variables={},
                  clearing_policy=py_trees.common.ClearingPolicy.ON_INITIALISE
                  ):
-        super(ToBlackboard, self).__init__(
+        super().__init__(
             name,
             topic_name=topic_name,
             topic_type=topic_type,
@@ -450,7 +450,7 @@ class EventToBlackboard(Handler):
                  qos_profile=utilities.qos_profile_latched_topic(),
                  variable_name="event"
                  ):
-        super(EventToBlackboard, self).__init__(
+        super().__init__(
             name=name,
             topic_name=topic_name,
             topic_type=std_msgs.Empty,
