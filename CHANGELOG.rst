@@ -2,6 +2,10 @@
 Changelog
 =========
 
+0.5.18 (2019-03-23)
+-------------------
+* [infra] merge kinetic and melodic release branches
+
 0.5.17 (2019-02-20)
 -------------------
 * [actions] remove redundant prints in the action behaviour
