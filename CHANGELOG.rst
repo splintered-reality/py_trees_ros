@@ -2,6 +2,10 @@
 Changelog
 =========
 
+0.5.17 (2019-02-20)
+-------------------
+* [actions] remove redundant prints in the action behaviour
+
 0.5.16 (2019-02-02)
 -------------------
 * [trees] added serialisation to Decorator
