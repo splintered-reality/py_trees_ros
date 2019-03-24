@@ -19,7 +19,7 @@ with ROS.
 [kinetic-build-status-image]: http://build.ros.org/job/Kbin_uX64__py_trees_ros__ubuntu_xenial_amd64__binary/badge/icon?style=plastic
 [kinetic-build-status]: http://build.ros.org/job/Kbin_uX64__py_trees_ros__ubuntu_xenial_amd64__binary
 
-[0.5.x-docs-image]: http://img.shields.io/badge/docs-0.5-brightgreen.svg?style=plastic
+[0.5.x-docs-image]: http://img.shields.io/badge/docs-0.5.x-brightgreen.svg?style=plastic
 [py-trees-ros-docs-melodic]: http://docs.ros.org/melodic/api/py_trees_ros/html/
 [py-trees-ros-docs-kinetic]: http://docs.ros.org/kinetic/api/py_trees_ros/html/
 
