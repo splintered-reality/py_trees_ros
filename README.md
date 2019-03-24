@@ -11,7 +11,7 @@ with ROS.
 | Continuous Integration | [![melodic-Status][melodic-build-status-image]][melodic-build-status] | [![kinetic-Status][kinetic-build-status-image]][kinetic-build-status] | |
 | Documentation | [![0.5.x-Docs][0.5.x-docs-image]][py-trees-ros-docs-melodic] | [![0.5.x-Docs][0.5.x-docs-image]][py-trees-ros-docs-kinetic] |
 
-[0.5.x-sources-image]: http://img.shields.io/badge/sources-0.5--kinetic-blue.svg?style=plastic
+[0.5.x-sources-image]: http://img.shields.io/badge/sources-0.5.x-blue.svg?style=plastic
 [0.5.x-sources]: https://github.com/splintered-reality/py_trees_ros/tree/release/0.5.x
 
 [melodic-build-status-image]: http://build.ros.org/job/Mbin_uB64__py_trees_ros__ubuntu_bionic_amd64__binary/badge/icon?style=plastic
