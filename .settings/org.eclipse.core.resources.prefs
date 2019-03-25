@@ -1,4 +1,6 @@
 eclipse.preferences.version=1
+encoding//doc/old.conf.py=utf-8
+encoding//doc/source/conf.py=utf-8
 encoding//py_trees_ros/actions.py=utf-8
 encoding//py_trees_ros/battery.py=utf-8
 encoding//py_trees_ros/blackboard.py=utf-8
