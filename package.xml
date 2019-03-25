@@ -43,6 +43,9 @@
   <doc_depend>unique_id</doc_depend>
   <doc_depend>unique_identifier_msgs</doc_depend>
   -->
+  <doc_depend>python3-sphinx</doc_depend>
+  <doc_depend>python3-sphinx-argparse</doc_depend>
+  <doc_depend>python3-sphinx-rtd-theme</doc_depend>
 
   <!-- mocking & simulation dependencies -->
   <exec_depend>sensor_msgs</exec_depend>
