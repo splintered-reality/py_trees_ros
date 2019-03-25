@@ -16,7 +16,6 @@ Contents:
 
    about
    features
-   tutorials
    terminology
    faq
 
@@ -27,6 +26,8 @@ Contents:
    programs
    modules
    changelog
+
+
 
 
 Indices and tables
