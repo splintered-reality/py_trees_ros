@@ -57,96 +57,18 @@ py_trees_ros.trees
     :show-inheritance:
     :synopsis: extensions with ros handles for debugging, visualisation messages and more
 
-py_trees.utilities
-------------------
+py_trees_ros.utilities
+----------------------
 
 .. automodule:: py_trees_ros.utilities
     :members:
     :show-inheritance:
     :synopsis: assorted utility functions
 
-py_trees.visitors
------------------
+py_trees_ros.visitors
+---------------------
 
 .. automodule:: py_trees_ros.visitors
     :members:
     :show-inheritance:
     :synopsis: entities that visit behaviours as a tree is traversed
-
-py_trees_ros.mock
------------------
-
-.. automodule:: py_trees_ros.mock
-   :synopsis: utilities and components for mocking a robot
-
-py_trees_ros.mock.action_server
--------------------------------
-
-.. automodule:: py_trees_ros.mock.action_server
-    :members:
-    :special-members:
-    :show-inheritance:
-    :synopsis: reusable action server for mock components
-
-py_trees_ros.mock.battery
--------------------------
-
-.. automodule:: py_trees_ros.mock.battery
-    :members:
-    :special-members:
-    :show-inheritance:
-    :synopsis: mock the state of a battery component
-
-py_trees_ros.mock.move_base
----------------------------
-
-.. automodule:: py_trees_ros.mock.move_base
-    :members:
-    :special-members:
-    :show-inheritance:
-    :synopsis: mock the ROS navistack move base
-
-py_trees_ros.mock.rotate
-------------------------
-
-.. automodule:: py_trees_ros.mock.rotate
-    :members:
-    :special-members:
-    :show-inheritance:
-    :synopsis: mock a very simple rotation action server
-
-py_trees_ros.tutorials
-----------------------
-
-.. automodule:: py_trees_ros.tutorials
-    :members:
-    :special-members:
-    :show-inheritance:
-    :synopsis: everything to support the tutorials
-
-py_trees_ros.tutorials.behaviours
----------------------------------
-
-.. automodule:: py_trees_ros.tutorials.behaviours
-    :members:
-    :special-members:
-    :show-inheritance:
-    :synopsis: behaviours crafted specifically for the tutorials
-
-py_trees_ros.tutorials.jobs
----------------------------
-
-.. automodule:: py_trees_ros.tutorials.jobs
-    :members:
-    :special-members:
-    :show-inheritance:
-    :synopsis: behaviours crafted specifically for the tutorials
-
-py_trees_ros.tutorials.qt
--------------------------
-
-.. automodule:: py_trees_ros.tutorials.qt
-    :members:
-    :special-members:
-    :show-inheritance:
-    :synopsis: graphical widgets specifically for interaction with the tutorials

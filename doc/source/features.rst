@@ -25,13 +25,22 @@ Trees
 .. automodule:: py_trees_ros.trees
     :noindex:
 
-Visualisation
--------------
+Programs
+--------
 
-You can visualise the trees in ROS via either the ascii tree publishers:
+.. _py-trees-blackboard-watcher:
 
-.. code-block:: bash
+py-trees-blackboard-watcher
+^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-   rostopic echo /tree/ascii/snapshot
+.. automodule:: py_trees_ros.programs.blackboard_watcher
+    :synopsis: call Exchange services to open up a watcher to a blackboard
 
-.. image:: images/ascii-snapshot.png
+.. _py-trees-tree-watcher:
+
+py-trees-tree-watcher
+^^^^^^^^^^^^^^^^^^^^^
+
+.. automodule:: py_trees_ros.programs.tree_watcher
+    :synopsis: visualise the tree as dot graph, ascii tree, or ascii snapshot
+

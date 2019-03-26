@@ -9,17 +9,17 @@
 ##############################################################################
 
 """
-The :class:`Blackboard Exchange <py_trees_ros.blackboard.Exchange>` wraps a
-:ref:`Blackboard <pt:blackboards-section>` with a ROS API to provide easy
-introspection of a blackboard from outside the tree. This includes both
-lazily publishing of the entire board when there's a change as well as
-services to open windows onto parts of the blackboard for when the
-entirity becomes too noisy to track.
+The :class:`py_trees_ros.blackboard.Exchange` class wraps a
+:ref:`PyTrees Blackboard <pt:blackboards-section>` with a ROS API to provide easy
+introspection of either the entire board or a window onto a smaller part
+of the board from oustide the tree via the :ref:`py-trees-blackboard-watcher`
+command line utility.
 
-You get this for free in the
-:class:`ROS Behaviour Tree <py_trees_ros.trees.BehaviourTree>` manager and the
-:ref:`py-trees-blackboard-watcher` command line utility provides a convenient
-means of interacting with the watching services.
+.. note::
+
+   You get an exchange for free with the
+   :class:`py_trees_ros.trees.BehaviourTree` manager.
+
 """
 
 ##############################################################################

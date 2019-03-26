@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # License: BSD
-#   https://raw.githubusercontent.com/stonier/py_trees/devel/LICENSE
+#   https://raw.githubusercontent.com/splintered-reality/py_trees/devel/LICENSE
 #
 ##############################################################################
 # Documentation
@@ -14,9 +14,9 @@
    :func: command_line_argument_parser
    :prog: py-trees-blackboard-watcher
 
-Example interaction with the services of a :class:`Blackboard Exchange <py_trees_ros.blackboard.Exchange>`:
+Example interaction with the services of an :class:`py_trees_ros.blackboard.Exchange`:
 
-.. image:: images/watcher.gif
+.. image:: images/blackboard-watcher.gif
 """
 
 ##############################################################################
@@ -36,7 +36,7 @@ import sys
 
 def description(formatted_for_sphinx):
     short = "Open up a window onto the blackboard!\n"
-    examples = ["--list-variables", "access_point odom/pose/pose/position"]
+    examples = ["", "--list-variables", "access_point odom/pose/pose/position"]
     script_name = "py-trees-blackboard-watcher"
 
     if formatted_for_sphinx:

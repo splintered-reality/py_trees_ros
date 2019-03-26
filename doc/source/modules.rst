@@ -9,6 +9,14 @@ py_trees_ros
 .. automodule:: py_trees_ros
    :synopsis: is your robot misbehaving?
 
+py_trees_ros.actions
+--------------------
+
+.. automodule:: py_trees_ros.actions
+    :members:
+    :show-inheritance:
+    :synopsis: behaviours that work with action servers/clients
+
 py_trees_ros.battery
 --------------------
 
@@ -49,16 +57,16 @@ py_trees_ros.trees
     :show-inheritance:
     :synopsis: extensions with ros handles for debugging, visualisation messages and more
 
-py_trees.utilities
-------------------
+py_trees_ros.utilities
+----------------------
 
 .. automodule:: py_trees_ros.utilities
     :members:
     :show-inheritance:
     :synopsis: assorted utility functions
 
-py_trees.visitors
------------------
+py_trees_ros.visitors
+---------------------
 
 .. automodule:: py_trees_ros.visitors
     :members:
