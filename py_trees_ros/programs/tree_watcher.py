@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # License: BSD
-#   https://raw.githubusercontent.com/stonier/py_trees/devel/LICENSE
+#   https://raw.githubusercontent.com/splintered-reality/py_trees/devel/LICENSE
 #
 ##############################################################################
 # Documentation
@@ -14,13 +14,13 @@
    :func: command_line_argument_parser
    :prog: py-trees-tree-watcher
 
-Simple tool to interact with a running :class:`~py_trees_ros.trees.BehaviourTree`
-instance.
+Command line utility to interact with a running
+:class:`~py_trees_ros.trees.BehaviourTree` instance. Print a static ascii
+art view of the tree, view snapshots of the tree and tick statistics as
+a stream or display the dot graph of the tree.
 
-.. warning::
+.. image:: images/tree-watcher.gif
 
-   Interim solution only until (hopefully) string formatting is handled better
-   by ros2cli.
 """
 
 ##############################################################################

@@ -34,7 +34,7 @@ setup(
     extras_require={},
     author='Daniel Stonier, Naveed Usmani, Michal Staniaszek',
     maintainer='Daniel Stonier <d.stonier@gmail.com>',
-    url='https://github.com/stonier/py_trees_ros',
+    url='https://github.com/splintered-reality/py_trees_ros',
     keywords=['ROS', 'behaviour-trees'],
     zip_safe=True,
     classifiers=[

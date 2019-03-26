@@ -16,18 +16,9 @@ Contents:
 
    about
    features
-   tutorials
-   terminology
    faq
-
-.. toctree::
-   :maxdepth: 2
-   :caption: Reference
-
-   programs
    modules
    changelog
-
 
 Indices and tables
 ==================

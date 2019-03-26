@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # License: BSD
-#   https://raw.githubusercontent.com/stonier/py_trees_ros/devel/LICENSE
+#   https://raw.githubusercontent.com/splintered-reality/py_trees_ros/devel/LICENSE
 #
 ##############################################################################
 # Description
@@ -41,6 +41,11 @@ from . import utilities
 
 class Handler(py_trees.behaviour.Behaviour):
     """
+    .. warning::
+        Do not use - it will always return
+        :attr:`~py_trees.common.Status.INVALID`. Subclass it to create a functional
+        behaviour.
+
     Not intended for direct use, as this just absorbs the mechanics of setting up
     a subscriber for inheritance by user-defined behaviour classes. There are several
     options for the mechanism of clearing the data so that a new result can be processed.
@@ -66,11 +71,6 @@ class Handler(py_trees.behaviour.Behaviour):
     :meth:`initialise` does not do anything with the currently stored data. Useful
     as a blocking behaviour to wait on some some topic having been initialised with
     some data (e.g. CameraInfo).
-
-    .. warning::
-        Do not use - it will always return
-        :attr:`~py_trees.common.Status.INVALID`. Subclass it to create a functional
-        behaviour.
 
     Args:
         name (:obj:`str`): name of the behaviour

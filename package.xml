@@ -2,7 +2,7 @@
 <?xml-model href="http://download.ros.org/schema/package_format2.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
 <package format="3">
   <name>py_trees_ros</name>
-  <version>0.5.14</version>
+  <version>0.6.0</version>
   <description>
     ROS2 extensions and behaviours for py_trees.
   </description>
@@ -29,11 +29,8 @@
   <doc_depend>geometry_msgs</doc_depend>
   <doc_depend>move_base_msgs</doc_depend>
   <doc_depend>nav_msgs</doc_depend>
-  <doc_depend>python-sphinx-argparse</doc_depend>
-  <doc_depend>python-sphinx-rtd-theme</doc_depend>
   <doc_depend>python-catkin-pkg</doc_depend>
   <doc_depend>python-rospkg</doc_depend>
-  <doc_depend>python3-pyqt5</doc_depend>
   <doc_depend>py_trees</doc_depend>
   <doc_depend>py_trees_msgs</doc_depend>
   <doc_depend>rosbag</doc_depend>
@@ -43,28 +40,19 @@
   <doc_depend>unique_id</doc_depend>
   <doc_depend>unique_identifier_msgs</doc_depend>
   -->
-
-  <!-- mocking & simulation dependencies -->
-  <exec_depend>sensor_msgs</exec_depend>
-  <!--
-  <exec_depend>dynamic_reconfigure</exec_depend>
-  <exec_depend>geometry_msgs</exec_depend>
-  <exec_depend>move_base_msgs</exec_depend>
-  <exec_depend>nav_msgs</exec_depend>
-  -->
+  <doc_depend>python3-sphinx</doc_depend>
+  <doc_depend>python3-sphinx-argparse</doc_depend>
+  <doc_depend>python3-sphinx-rtd-theme</doc_depend>
 
   <!-- core dependencies -->
-  <exec_depend>py_trees</exec_depend>
-  <exec_depend>py_trees_ros_interfaces</exec_depend>
-  <exec_depend>rclpy</exec_depend>
-  <exec_depend>std_msgs</exec_depend>
-  <exec_depend>unique_identifier_msgs</exec_depend>
-  <!--
-  <exec_depend>actionlib</exec_depend>
-  <exec_depend>actionlib_msgs</exec_depend>
-  <exec_depend>python-rospkg</exec_depend>
-  <exec_depend>rosbag</exec_depend>
-  -->
+  <depend>py_trees</depend>
+  <depend>py_trees_ros_interfaces</depend>
+  <depend>rclpy</depend>
+  <depend>std_msgs</depend>
+  <depend>unique_identifier_msgs</depend>
+
+  <!-- behaviour dependencies -->
+  <depend>sensor_msgs</depend>
 
   <!--
   <test_depend>py_trees</test_depend>

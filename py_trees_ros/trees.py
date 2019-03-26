@@ -9,13 +9,13 @@
 ##############################################################################
 
 """
-The :class:`ROS Behaviour Tree <py_trees_ros.trees.BehaviourTree>`
-extends the core :class:`Behaviour Tree <py_trees.trees.BehaviourTree>` class
-with a few ROS style adornments. The major features currently include:
+The :class:`py_trees_ros.trees.BehaviourTree` class
+extends the core :class:`py_trees.trees.BehaviourTree` class
+with a ROS publisher that publishes the initial and updated snapshots of
+the tree whenever the tree changes.
 
-* Publishers for ascii/dot tree visualisations and the blackboard
-* A publisher which dumps the entire tree at every change for the rqt plugin
-* Bagging of the tree for offline visualisation and debugging
+'Change' is defined by deletion or insertion of behaviours into the tree
+or the status of any behaviour in the tree changing from tick to tick.
 """
 
 ##############################################################################
@@ -363,7 +363,7 @@ class Watcher(object):
                                      if there exists more than one
         mode (:class:`~py_trees_ros.trees.WatcherMode`): viewing mode for the watcher
 
-    .. seealso:: :ref:`py-trees-tree-watcher`, :ref:`py-trees-blackboard-watcher`
+    .. seealso:: :mod:`py_trees_ros.programs.tree_watcher`
     """
     def __init__(
             self,
