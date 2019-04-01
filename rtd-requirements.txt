@@ -8,7 +8,7 @@
 ##############################################################################
 
 # extras_require[docs]
-#Sphinx
-#sphinx-argparse
-#sphinx_rtd_theme
-#sphinx-autodoc-annotation
+Sphinx
+sphinx-argparse
+sphinx_rtd_theme
+sphinx-autodoc-annotation
