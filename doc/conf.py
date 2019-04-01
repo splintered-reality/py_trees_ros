@@ -51,30 +51,19 @@ version = "1.0"
 release = "1.0a1"
 
 ##############################################################################
-# Autodoc Mocks
+# Regular Sphinx Configuration
 ##############################################################################
 
-class Mock(MagicMock):
-    @classmethod
-    def __getattr__(cls, name):
-        return MagicMock()
+html_theme = 'sphinx_rtd_theme'
 
+# List of patterns, relative to source directory, that match files and
+# directories to ignore when looking for source files.
+exclude_patterns = ['.build', 'weblinks.rst']
 
-MOCK_MODULES = [
-    'rclpy', 'rclpy.executors', 'rclpy.expand_topic_name',
-    'rclpy.node', 'rclpy.qos',
-    'py_trees', 'py_trees.console',
-    'py_trees_ros_interfaces', 'py_trees_ros_interfaces.msg',
-    'py_trees_ros_interfaces.srv',
-    'ros2topic', 'ros2topic.api',
-    'sensor_msgs', 'sensor_msgs.msg',
-    'std_msgs', 'std_msgs.msg',
-    'unique_identifier_msgs', 'unique_identifier_msgs.msg'
-]
-sys.modules.update((mod_name, Mock()) for mod_name in MOCK_MODULES)
-
-# This would be nice if it worked, but it doesn't handle submodules well
-# autodoc_mock_imports = MOCK_MODULES
+intersphinx_mapping = {
+    'python': ('https://docs.python.org/3', None),
+    'pt': ('https://py-trees.readthedocs.io/en/release-1.1.x', None),
+}
 
 ##############################################################################
 # Extensions & Extension Configuration
@@ -102,6 +91,32 @@ napoleon_use_ivar = True
 todo_include_todos = True
 
 ##############################################################################
+# Autodoc Mocks
+##############################################################################
+
+class Mock(MagicMock):
+    @classmethod
+    def __getattr__(cls, name):
+        return MagicMock()
+
+
+MOCK_MODULES = [
+    'rclpy', 'rclpy.executors', 'rclpy.expand_topic_name',
+    'rclpy.node', 'rclpy.qos',
+    'py_trees', 'py_trees.console',
+    'py_trees_ros_interfaces', 'py_trees_ros_interfaces.msg',
+    'py_trees_ros_interfaces.srv',
+    'ros2topic', 'ros2topic.api',
+    'sensor_msgs', 'sensor_msgs.msg',
+    'std_msgs', 'std_msgs.msg',
+    'unique_identifier_msgs', 'unique_identifier_msgs.msg'
+]
+sys.modules.update((mod_name, Mock()) for mod_name in MOCK_MODULES)
+
+# This would be nice if it worked, but it doesn't handle submodules well
+# autodoc_mock_imports = MOCK_MODULES
+
+##############################################################################
 # Default Sphinx
 ##############################################################################
 
@@ -126,10 +141,6 @@ master_doc = 'index'
 # today = ''
 # Else, today_fmt is used as the format for a strftime call.
 # today_fmt = '%B %d, %Y'
-
-# List of patterns, relative to source directory, that match files and
-# directories to ignore when looking for source files.
-exclude_patterns = ['.build', 'weblinks.rst']
 
 # The reST default role (used for this markup: `text`) to use for all
 # documents.
