@@ -21,19 +21,9 @@ extras_require = {} if os.environ.get('AMENT_PREFIX_PATH') else {
 setup(
     name=package_name,
     version='0.5.14',  # also update package.xml and version.py
-    packages=find_packages(exclude=['tests*', 'docs*', 'graveyard*', 'scripts*']),
+    packages=find_packages(exclude=['docs*']),
     data_files=[
         ('share/' + package_name, ['package.xml']),
-        # global scripts
-        #   note: package specific scripts use the entry_points
-        #   configured by setup.cfg
-        ('bin',
-         [
-            'scripts/py-trees-blackboard-watcher',
-            'scripts/py-trees-tree-watcher',
-            'scripts/py-trees-latched-echo'
-         ]
-         ),
     ],
     package_data={'py_trees_ros': ['mock/gui/*']},
     install_requires=install_requires,
@@ -61,13 +51,11 @@ setup(
         "visualisation, logging and various tutorials."
     ),
     license='BSD',
-    test_suite='tests',
+    # test_suite='tests',
     # tests_require=['nose', 'pytest', 'flake8', 'yanc', 'nose-htmloutput']
     # tests_require=['pytest'],
     entry_points={
          'console_scripts': [
-             # These are redirected to lib/<package_name> by setup.cfg
-             'py-trees-demo-exchange = py_trees_ros.demos.exchange:main',
          ],
      },
 )
