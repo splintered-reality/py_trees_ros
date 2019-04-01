@@ -13,6 +13,7 @@ Behaviour trees for ros in python.
    :caption: Contents
 
    about
+   features
    faq
    modules
    changelog
