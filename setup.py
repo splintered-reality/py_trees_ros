@@ -9,6 +9,20 @@ setup(
     name=package_name,
     version='pre-1.0',
     packages=find_packages(exclude=['doc*', 'tests*', 'graveyard*']),
+    data_files=[
+        ('share/' + package_name, ['package.xml']),
+        # global scripts
+        #   note: package specific scripts use the entry_points
+        #   configured by setup.cfg
+        ('bin',
+         [
+            'scripts/py-trees-blackboard-watcher',
+            'scripts/py-trees-tree-watcher',
+            'scripts/py-trees-latched-echo'
+         ]
+         ),
+    ],
+    package_data={},
     install_requires = {},
     extras_require = {},
     author='Daniel Stonier, Naveed Usmani, Michal Staniaszek',
@@ -34,4 +48,12 @@ setup(
         "visualisation, logging and various tutorials."
     ),
     license='BSD',
+    test_suite='tests',
+    tests_require=[],  # using vanilla py unit tests
+    entry_points={
+         'console_scripts': [
+             # These are redirected to lib/<package_name> by setup.cfg
+             'py-trees-demo-exchange = py_trees_ros.demos.exchange:main',
+         ],
+     },
 )
