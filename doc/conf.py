@@ -54,7 +54,7 @@ release = "1.0a1"
 # Regular Sphinx Configuration
 ##############################################################################
 
-html_theme = 'sphinx_rtd_theme'
+# -- General Configuration ------------------------------------------------
 
 # List of patterns, relative to source directory, that match files and
 # directories to ignore when looking for source files.
@@ -64,6 +64,53 @@ intersphinx_mapping = {
     'python': ('https://docs.python.org/3', None),
     'pt': ('https://py-trees.readthedocs.io/en/release-1.1.x', None),
 }
+
+# -- Options for HTML output ----------------------------------------------
+
+html_theme = 'sphinx_rtd_theme'
+
+# Add any paths that contain custom themes here, relative to this directory.
+html_theme_path = [sphinx_rtd_theme.get_html_theme_path()]
+
+# If true, "(C) Copyright ..." is shown in the HTML footer. Default is True.
+html_show_copyright = False
+
+# If true, "Created using Sphinx" is shown in the HTML footer. Default is True.
+# html_show_sphinx = True
+html_show_sphinx = False
+
+# Output file base name for HTML help builder.
+htmlhelp_basename = 'py_trees_ros_doc'
+
+# -- Options for LaTeX output ---------------------------------------------
+
+# Grouping the document tree into LaTeX files. List of tuples
+# (source start file, target name, title,
+#  author, documentclass [howto, manual, or own class]).
+latex_documents = [
+  ('index', 'py_trees.tex', u'py\\_trees Documentation',
+   u'Daniel Stonier', 'manual'),
+]
+
+# -- Options for manual page output ---------------------------------------
+
+# One entry per manual page. List of tuples
+# (source start file, name, description, authors, manual section).
+man_pages = [
+    ('index', 'py_trees_ros', u'py_trees_ros Documentation',
+     [u'Daniel Stonier'], 1)
+]
+
+# -- Options for Texinfo output -------------------------------------------
+
+# Grouping the document tree into Texinfo files. List of tuples
+# (source start file, target name, title, author,
+#  dir menu entry, description, category)
+texinfo_documents = [
+  ('index', 'py_trees_ros', u'py_trees_ros Documentation',
+   u'Daniel Stonier', 'py_trees', 'One line description of project.',
+   'Miscellaneous'),
+]
 
 ##############################################################################
 # Extensions & Extension Configuration
@@ -169,23 +216,10 @@ pygments_style = 'sphinx'
 
 # -- Options for HTML output ----------------------------------------------
 
-# The theme to use for HTML and HTML Help pages.  See the documentation for
-# a list of builtin themes.
-# html_theme = 'agogo'
-# html_theme = 'nature'
-# html_theme = 'scrolls'
-# html_theme = 'sphinxdoc'
-# html_theme = 'haiku'
-html_theme = 'sphinx_rtd_theme'
-# html_theme = 'linfiniti-sphinx-theme'
-
 # Theme options are theme-specific and customize the look and feel of a theme
 # further.  For a list of options available for each theme, see the
 # documentation.
 # html_theme_options = {}
-
-# Add any paths that contain custom themes here, relative to this directory.
-html_theme_path = [sphinx_rtd_theme.get_html_theme_path()]
 
 # The name for this set of Sphinx documents.  If None, it defaults to
 # "<project> v<release> documentation".
@@ -240,14 +274,6 @@ html_theme_path = [sphinx_rtd_theme.get_html_theme_path()]
 # If true, links to the reST sources are added to the pages.
 # html_show_sourcelink = True
 
-# If true, "Created using Sphinx" is shown in the HTML footer. Default is True.
-# html_show_sphinx = True
-html_show_sphinx = False
-
-# If true, "(C) Copyright ..." is shown in the HTML footer. Default is True.
-# html_show_copyright = True
-html_show_copyright = False
-
 # If true, an OpenSearch description file will be output, and all pages will
 # contain a <link> tag referring to it.  The value of this option must be the
 # base URL from which the finished HTML is served.
@@ -255,10 +281,6 @@ html_show_copyright = False
 
 # This is the file name suffix for HTML files (e.g. ".xhtml").
 # html_file_suffix = None
-
-# Output file base name for HTML help builder.
-htmlhelp_basename = 'py_treesdoc'
-
 
 # -- Options for LaTeX output ---------------------------------------------
 
@@ -272,14 +294,6 @@ latex_elements = {
     # Additional stuff for the LaTeX preamble.
     # 'preamble': '',
 }
-
-# Grouping the document tree into LaTeX files. List of tuples
-# (source start file, target name, title,
-#  author, documentclass [howto, manual, or own class]).
-latex_documents = [
-  ('index', 'py_trees.tex', u'py\\_trees Documentation',
-   u'Daniel Stonier', 'manual'),
-]
 
 # The name of an image file (relative to this directory) to place at the top of
 # the title page.
@@ -304,27 +318,11 @@ latex_documents = [
 
 # -- Options for manual page output ---------------------------------------
 
-# One entry per manual page. List of tuples
-# (source start file, name, description, authors, manual section).
-man_pages = [
-    ('index', 'py_trees', u'py_trees Documentation',
-     [u'Daniel Stonier'], 1)
-]
-
 # If true, show URL addresses after external links.
 # man_show_urls = False
 
 
 # -- Options for Texinfo output -------------------------------------------
-
-# Grouping the document tree into Texinfo files. List of tuples
-# (source start file, target name, title, author,
-#  dir menu entry, description, category)
-texinfo_documents = [
-  ('index', 'py_trees', u'py_trees Documentation',
-   u'Daniel Stonier', 'py_trees', 'One line description of project.',
-   'Miscellaneous'),
-]
 
 # Documents to append as an appendix to all manuals.
 # texinfo_appendices = []
@@ -337,7 +335,3 @@ texinfo_documents = [
 
 # If true, do not generate a @detailmenu in the "Top" node's menu.
 # texinfo_no_detailmenu = False
-
-
-# Example configuration for intersphinx: refer to the Python standard library.
-intersphinx_mapping = {'python': ('https://docs.python.org/3', None)}
