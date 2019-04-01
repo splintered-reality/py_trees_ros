@@ -1,0 +1,14 @@
+digraph tutorial {
+graph [fontname="times-roman"];
+node [fontname="times-roman"];
+edge [fontname="times-roman"];
+"Preempt?" [fillcolor=cyan, fontcolor=black, fontsize=11, shape=octagon, style=filled];
+"Scan?\n(Success is Running)" [fillcolor=gray, fontcolor=black, fontsize=11, shape=ellipse, style=filled];
+"Preempt?" -> "Scan?\n(Success is Running)";
+Scanning [fillcolor=gold, fontcolor=black, fontsize=11, shape=note, style=filled];
+"Preempt?" -> Scanning;
+Rotate [fillcolor=gray, fontcolor=black, fontsize=11, shape=ellipse, style=filled];
+Scanning -> Rotate;
+"Flash Blue" [fillcolor=gray, fontcolor=black, fontsize=11, shape=ellipse, style=filled];
+Scanning -> "Flash Blue";
+}

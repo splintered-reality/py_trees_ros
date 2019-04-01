@@ -1,0 +1,10 @@
+digraph tutorial {
+graph [fontname="times-roman"];
+node [fontname="times-roman"];
+edge [fontname="times-roman"];
+"Scan (Guard)" [fillcolor=orange, fontcolor=black, fontsize=11, shape=box, style=filled];
+"Scan?" [fillcolor=gray, fontcolor=black, fontsize=11, shape=ellipse, style=filled];
+"Scan (Guard)" -> "Scan?";
+"Preempt?" [fillcolor=gray20, fontcolor=dodgerblue, fontsize=11, shape=box, style=filled];
+"Scan (Guard)" -> "Preempt?";
+}

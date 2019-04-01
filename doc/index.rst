@@ -15,6 +15,7 @@ Contents:
    :caption: Guide
 
    about
+   changelog
 
 Indices and tables
 ==================
