@@ -22,20 +22,20 @@ import sphinx_rtd_theme
 import sys
 from unittest.mock import MagicMock
 
-dir_path = os.path.dirname(os.path.realpath(__file__))
-sys.path.insert(
-    0,
-    os.path.abspath(
-        os.path.join(
-            dir_path,
-            os.pardir,
-            os.pardir
-        )
-    )
-)
+#dir_path = os.path.dirname(os.path.realpath(__file__))
+#sys.path.insert(
+#    0,
+#    os.path.abspath(
+#        os.path.join(
+#            dir_path,
+#            os.pardir,
+#            os.pardir
+#        )
+#    )
+#)
 
-for path in sys.path:
-    print("Path: %s" % path)
+#for path in sys.path:
+#    print("Path: %s" % path)
 
 ##############################################################################
 # Autodoc Mocks
@@ -75,6 +75,12 @@ napoleon_use_ivar = True
 # Customised Sphinx (commented these in 'Default Sphinx')
 ##############################################################################
 
+# General information about the project.
+project = 'py_trees_ros'
+copyright = '2019, Daniel Stonier'
+author = 'Daniel Stonier'
+version = '0.6.0'
+
 # Example configuration for intersphinx: refer to the Python standard library.
 intersphinx_mapping = {
     'python': ('https://docs.python.org/3', None),
@@ -83,23 +89,9 @@ intersphinx_mapping = {
 
 html_theme = 'sphinx_rtd_theme'
 
-# DJS: Do I need this?
-# Add any paths that contain custom themes here, relative to this directory.
-# html_theme_path = [sphinx_rtd_theme.get_html_theme_path()]
-
 # Avoid this file giving a warning that it isn't built into the toctree. It
 # is only used in the docstrings in the package.
 exclude_patterns = ['weblinks.rst']
-
-##############################################################################
-# Default Sphinx
-##############################################################################
-
-# -- General configuration ------------------------------------------------
-
-# If your documentation needs a minimal Sphinx version, state it here.
-#
-# needs_sphinx = '1.0'
 
 # Add any Sphinx extension module names here, as strings. They can be
 # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
@@ -120,6 +112,21 @@ extensions = [
     'sphinxarg.ext',
 ]
 
+##############################################################################
+# Default Sphinx
+##############################################################################
+
+# -- General configuration ------------------------------------------------
+
+# If your documentation needs a minimal Sphinx version, state it here.
+#
+# needs_sphinx = '1.0'
+
+# Add any Sphinx extension module names here, as strings. They can be
+# extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
+# ones.
+#extensions = []
+
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['.templates']
 
@@ -133,16 +140,16 @@ source_suffix = '.rst'
 master_doc = 'index'
 
 # General information about the project.
-project = 'py_trees_ros'
-copyright = '2019, Daniel Stonier'
-author = 'Daniel Stonier'
+# project = 'py_trees_ros'
+# copyright = '2019, Daniel Stonier'
+# author = 'Daniel Stonier'
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
 # built documents.
 #
 # The short X.Y version.
-version = '0.6.0'
+# version = '0.6.0'
 # The full version, including alpha/beta/rc tags.
 release = version
 
