@@ -12,19 +12,54 @@
 # All configuration values have a default; values that are commented out
 # serve to show the default.
 
+##############################################################################
+# Imports
+##############################################################################
+
 import os
 import sphinx_rtd_theme
 import sys
+from unittest.mock import MagicMock
 
-# Pull in __version__
-project_dir = os.path.abspath(os.path.join(os.path.abspath(__file__), os.pardir, os.pardir))
+##############################################################################
+# Paths
+##############################################################################
 
-# If extensions (or modules to document with autodoc) are in another directory,
-# add these directories to sys.path here. If the directory is relative to the
-# documentation root, use os.path.abspath to make it absolute, like shown here.
-# import sys
-# sys.path.insert(0, os.path.abspath('.'))
+project_dir = os.path.abspath(
+    os.path.join(
+        os.path.abspath(__file__), os.pardir, os.pardir
+    )
+)
+
 sys.path.insert(0, project_dir)
+
+##############################################################################
+# Autodoc Mocks
+##############################################################################
+
+
+class Mock(MagicMock):
+    @classmethod
+    def __getattr__(cls, name):
+        return MagicMock()
+
+
+MOCK_MODULES = [
+    'rclpy', 'rclpy.executors', 'rclpy.expand_topic_name',
+    'rclpy.node', 'rclpy.qos',
+    'py_trees', 'py_trees.console',
+    'py_trees_ros_interfaces', 'py_trees_ros_interfaces.msg',
+    'py_trees_ros_interfaces.srv',
+    'ros2topic', 'ros2topic.api',
+    'sensor_msgs', 'sensor_msgs.msg',
+    'std_msgs', 'std_msgs.msg',
+    'unique_identifier_msgs', 'unique_identifier_msgs.msg'
+]
+sys.modules.update((mod_name, Mock()) for mod_name in MOCK_MODULES)
+
+# This would be nice if it worked, but it doesn't handle submodules well
+# autodoc_mock_imports = MOCK_MODULES
+
 
 # -- General configuration ------------------------------------------------
 
