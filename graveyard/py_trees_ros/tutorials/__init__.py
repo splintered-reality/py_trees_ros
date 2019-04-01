@@ -1,5 +1,3 @@
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
 #
 # License: BSD
 #   https://raw.github.com/splintered-reality/py_trees_ros/license/LICENSE
@@ -9,11 +7,20 @@
 ##############################################################################
 
 """
-ROS extensions, behaviours and utilities for py_trees.
+Entry points to the tutorials
 """
 
 ##############################################################################
 # Imports
 ##############################################################################
 
-from . import utilities
+# from . import behaviours
+# from . import qt
+# from . import jobs
+
+from . import one
+# from . import two
+# from . import five
+# from . import six
+# from . import seven
+# from . import eight
