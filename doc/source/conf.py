@@ -38,33 +38,6 @@ from unittest.mock import MagicMock
 #    print("Path: %s" % path)
 
 ##############################################################################
-# Autodoc Mocks
-##############################################################################
-
-
-class Mock(MagicMock):
-    @classmethod
-    def __getattr__(cls, name):
-        return MagicMock()
-
-
-MOCK_MODULES = [
-    'rclpy', 'rclpy.executors', 'rclpy.expand_topic_name',
-    'rclpy.node', 'rclpy.qos',
-    'py_trees', 'py_trees.console',
-    'py_trees_ros_interfaces', 'py_trees_ros_interfaces.msg',
-    'py_trees_ros_interfaces.srv',
-    'ros2topic', 'ros2topic.api',
-    'sensor_msgs', 'sensor_msgs.msg',
-    'std_msgs', 'std_msgs.msg',
-    'unique_identifier_msgs', 'unique_identifier_msgs.msg'
-]
-sys.modules.update((mod_name, Mock()) for mod_name in MOCK_MODULES)
-
-# This would be nice if it worked, but it doesn't handle submodules well
-# autodoc_mock_imports = MOCK_MODULES
-
-##############################################################################
 # Napolean
 ##############################################################################
 
