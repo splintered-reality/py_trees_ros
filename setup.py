@@ -21,7 +21,7 @@ extras_require = {} if os.environ.get('AMENT_PREFIX_PATH') else {
 setup(
     name=package_name,
     version='0.5.14',  # also update package.xml and version.py
-    packages=find_packages(exclude=['tests*', 'docs*', 'launch*']),
+    packages=find_packages(exclude=['tests*', 'docs*', 'graveyard*', 'scripts*']),
     data_files=[
         ('share/' + package_name, ['package.xml']),
         # global scripts
