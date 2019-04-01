@@ -26,7 +26,7 @@ import sys
 ##############################################################################
 
 # True to use the :ivar: role for instance variables. False to use the .. attribute:: directive instead.
-napoleon_use_ivar = True
+# napoleon_use_ivar = True
 
 ##############################################################################
 # Customised Sphinx (commented these in 'Default Sphinx')
@@ -44,19 +44,19 @@ html_theme = 'sphinx_rtd_theme'
 # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
 # ones.
 extensions = [
-    'sphinx.ext.autodoc',
-    'sphinx.ext.autosummary',
-    'sphinx.ext.coverage',
-    'sphinx.ext.doctest',
-    'sphinx.ext.githubpages',
-    'sphinx.ext.graphviz',
-    'sphinx.ext.ifconfig',
-    'sphinx.ext.intersphinx',
-    'sphinx.ext.mathjax',
-    'sphinx.ext.napoleon',
-    'sphinx.ext.todo',
-    'sphinx.ext.viewcode',
-    'sphinxarg.ext',
+#    'sphinx.ext.autodoc',
+#    'sphinx.ext.autosummary',
+#    'sphinx.ext.coverage',
+#    'sphinx.ext.doctest',
+#    'sphinx.ext.githubpages',
+#    'sphinx.ext.graphviz',
+#    'sphinx.ext.ifconfig',
+#    'sphinx.ext.intersphinx',
+#    'sphinx.ext.mathjax',
+#    'sphinx.ext.napoleon',
+#    'sphinx.ext.todo',
+#    'sphinx.ext.viewcode',
+#    'sphinxarg.ext',
 ]
 
 ##############################################################################
