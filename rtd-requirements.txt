@@ -1,14 +1,2 @@
-##############################################################################
-#
-# Requirements for a minimal environment that permits rtd docs generation.
-# 
-# Note that most of the dependent packages are mocked for autodoc, so this
-# is *very* minimal.
-#
-##############################################################################
 
-# extras_require[docs]
-Sphinx
-sphinx-argparse
 sphinx_rtd_theme
-sphinx-autodoc-annotation
