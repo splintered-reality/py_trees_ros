@@ -46,9 +46,9 @@ copyright = u'2019, Daniel Stonier'
 # built documents.
 #
 # The short X.Y version.
-version = "1.0"
+version = "pre-1.0"
 # The full version, including alpha/beta/rc tags.
-release = "1.0a1"
+release = "pre-1.0"
 
 ##############################################################################
 # Regular Sphinx Configuration

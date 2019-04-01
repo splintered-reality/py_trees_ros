@@ -3,9 +3,11 @@
 
 from setuptools import find_packages, setup
 
+package_name = 'py_trees_ros'
+
 setup(
-    name='py_trees_ros',
-    version='0.5.14',
+    name=package_name,
+    version='pre-1.0',
     packages=find_packages(exclude=['docs*']),
     author='Daniel Stonier, Naveed Usmani, Michal Staniaszek',
     maintainer='Daniel Stonier <d.stonier@gmail.com>',
