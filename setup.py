@@ -12,6 +12,12 @@ install_requires = [] if os.environ.get('AMENT_PREFIX_PATH') else [
     # runtime
 ]
 
+extras_require = {} if os.environ.get('AMENT_PREFIX_PATH') else {
+    'test': [],
+    'docs': ["Sphinx", "sphinx-argparse", "sphinx_rtd_theme", "sphinx-autodoc-annotation"],
+    'debs': ['stdeb', 'twine']
+}
+
 setup(
     name=package_name,
     version='0.5.14',  # also update package.xml and version.py
@@ -31,7 +37,7 @@ setup(
     ],
     package_data={'py_trees_ros': ['mock/gui/*']},
     install_requires=install_requires,
-    extras_require={},
+    extras_require=extras_require,
     author='Daniel Stonier, Naveed Usmani, Michal Staniaszek',
     maintainer='Daniel Stonier <d.stonier@gmail.com>',
     url='https://github.com/splintered-reality/py_trees_ros',
