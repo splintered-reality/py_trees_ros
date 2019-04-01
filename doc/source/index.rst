@@ -15,10 +15,6 @@ Contents:
    :caption: Guide
 
    about
-   features
-   faq
-   modules
-   changelog
 
 Indices and tables
 ==================
