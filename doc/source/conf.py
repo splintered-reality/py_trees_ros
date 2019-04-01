@@ -17,12 +17,83 @@
 # add these directories to sys.path here. If the directory is relative to the
 # documentation root, use os.path.abspath to make it absolute, like shown here.
 #
-# import os
-# import sys
-# sys.path.insert(0, os.path.abspath('.'))
-
+import os
 import sphinx_rtd_theme
+import sys
+from unittest.mock import MagicMock
 
+dir_path = os.path.dirname(os.path.realpath(__file__))
+sys.path.insert(
+    0,
+    os.path.abspath(
+        os.path.join(
+            dir_path,
+            os.pardir,
+            os.pardir
+        )
+    )
+)
+
+for path in sys.path:
+    print("Path: %s" % path)
+
+##############################################################################
+# Autodoc Mocks
+##############################################################################
+
+
+class Mock(MagicMock):
+    @classmethod
+    def __getattr__(cls, name):
+        return MagicMock()
+
+
+MOCK_MODULES = [
+    'rclpy', 'rclpy.executors', 'rclpy.expand_topic_name',
+    'rclpy.node', 'rclpy.qos',
+    'py_trees', 'py_trees.console',
+    'py_trees_ros_interfaces', 'py_trees_ros_interfaces.msg',
+    'py_trees_ros_interfaces.srv',
+    'ros2topic', 'ros2topic.api',
+    'sensor_msgs', 'sensor_msgs.msg',
+    'std_msgs', 'std_msgs.msg',
+    'unique_identifier_msgs', 'unique_identifier_msgs.msg'
+]
+sys.modules.update((mod_name, Mock()) for mod_name in MOCK_MODULES)
+
+# This would be nice if it worked, but it doesn't handle submodules well
+# autodoc_mock_imports = MOCK_MODULES
+
+##############################################################################
+# Napolean
+##############################################################################
+
+# True to use the :ivar: role for instance variables. False to use the .. attribute:: directive instead.
+napoleon_use_ivar = True
+
+##############################################################################
+# Customised Sphinx (commented these in 'Default Sphinx')
+##############################################################################
+
+# Example configuration for intersphinx: refer to the Python standard library.
+intersphinx_mapping = {
+    'python': ('https://docs.python.org/3', None),
+    'pt': ('https://py-trees.readthedocs.io/en/release-1.1.x', None),
+}
+
+html_theme = 'sphinx_rtd_theme'
+
+# DJS: Do I need this?
+# Add any paths that contain custom themes here, relative to this directory.
+# html_theme_path = [sphinx_rtd_theme.get_html_theme_path()]
+
+# Avoid this file giving a warning that it isn't built into the toctree. It
+# is only used in the docstrings in the package.
+exclude_patterns = ['weblinks.rst']
+
+##############################################################################
+# Default Sphinx
+##############################################################################
 
 # -- General configuration ------------------------------------------------
 
@@ -48,50 +119,6 @@ extensions = [
     'sphinx.ext.viewcode',
     'sphinxarg.ext',
 ]
-
-##############################################################################
-# Autodoc
-##############################################################################
-
-# This would be nice if it worked, but it doesn't handle submodules well
-# autodoc_mock_imports = [
-#     'actionlib',
-#     'dynamic_reconfigure',
-#     'geometry_msgs.msg',
-#     'nav_msgs.msg',
-#     'py_trees_msgs.msg',
-#     'py_trees_msgs.srv',
-#     'rospy',
-#     'sensor_msgs.msg',
-#     'std_mgs.msg',
-# ]
-
-##############################################################################
-# Napolean
-##############################################################################
-
-# True to use the :ivar: role for instance variables. False to use the .. attribute:: directive instead.
-napoleon_use_ivar = True
-
-##############################################################################
-# Customised Sphinx (commented these in 'Default Sphinx')
-##############################################################################
-
-# Example configuration for intersphinx: refer to the Python standard library.
-intersphinx_mapping = {
-    'python': ('https://docs.python.org/3', None),
-    'pt': ('https://py-trees.readthedocs.io/en/release-1.1.x', None),
-}
-
-html_theme = 'sphinx_rtd_theme'
-
-# DJS: Do I need this?
-# Add any paths that contain custom themes here, relative to this directory.
-# html_theme_path = [sphinx_rtd_theme.get_html_theme_path()]
-
-##############################################################################
-# Default Sphinx
-##############################################################################
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['.templates']
@@ -129,7 +156,7 @@ language = None
 # List of patterns, relative to source directory, that match files and
 # directories to ignore when looking for source files.
 # This patterns also effect to html_static_path and html_extra_path
-exclude_patterns = []
+# exclude_patterns = []
 
 # The name of the Pygments (syntax highlighting) style to use.
 pygments_style = 'sphinx'
