@@ -8,7 +8,7 @@ package_name = 'py_trees_ros'
 setup(
     name=package_name,
     version='pre-1.0',
-    packages=find_packages(exclude=['doc*', 'tests*', 'graveyard*']),
+    packages=find_packages(exclude=['doc*', 'tests*', 'graveyard*', 'scripts*]),
     data_files=[
         ('share/' + package_name, ['package.xml']),
         # global scripts
