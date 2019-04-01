@@ -8,7 +8,9 @@ package_name = 'py_trees_ros'
 setup(
     name=package_name,
     version='pre-1.0',
-    packages=find_packages(exclude=['docs*']),
+    packages=find_packages(exclude=['doc*', 'tests*', 'graveyard*']),
+    install_requires = {},
+    extras_require = {},
     author='Daniel Stonier, Naveed Usmani, Michal Staniaszek',
     maintainer='Daniel Stonier <d.stonier@gmail.com>',
     url='https://github.com/splintered-reality/py_trees_ros',
@@ -21,7 +23,15 @@ setup(
         'Topic :: Scientific/Engineering :: Artificial Intelligence',
         'Topic :: Software Development :: Libraries'
     ],
-    description=("Short"),
-    long_description=("Long"),
+    description=(
+        "ROS extensions for py-trees, a pythonic implementation of "
+        "behaviour trees."
+    ),
+    long_description=(
+        "ROS extensions for py-trees, a pythonic implementation of "
+        "behaviour trees. It includes ROS specific behaviours a tree"
+        "manager with ROS communication handles for debugging and"
+        "visualisation, logging and various tutorials."
+    ),
     license='BSD',
 )
