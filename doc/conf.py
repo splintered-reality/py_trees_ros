@@ -129,9 +129,10 @@ extensions = [
     'sphinx.ext.todo',
     'sphinx.ext.viewcode',
     'sphinxarg.ext',
-#    'sphinx_autodoc_typehints',
-#    type hinting used to generate errors without this, but seems ok now
-#    'sphinx_autodoc_annotation',
+    # this plays nicely with mock
+    'sphinx_autodoc_typehints',
+    # an alternative
+    # 'sphinx_autodoc_annotation',
 ]
 
 # True to use the :ivar: role for instance variables. False to use the .. attribute:: directive instead.
