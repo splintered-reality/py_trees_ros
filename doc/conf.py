@@ -118,6 +118,7 @@ texinfo_documents = [
 
 extensions = [
     'sphinx.ext.autodoc',
+    'sphinx.ext.autosummary',
     'sphinx.ext.coverage',
     'sphinx.ext.doctest',
     'sphinx.ext.graphviz',
@@ -128,7 +129,7 @@ extensions = [
     'sphinx.ext.todo',
     'sphinx.ext.viewcode',
     'sphinxarg.ext',
-    'sphinx_autodoc_annotation',  # type hinting will cause errors without this
+#    'sphinx_autodoc_annotation',  # type hinting will cause errors without this
 ]
 
 # True to use the :ivar: role for instance variables. False to use the .. attribute:: directive instead.
