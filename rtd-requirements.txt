@@ -11,4 +11,4 @@
 Sphinx
 sphinx-argparse
 sphinx_rtd_theme
-sphinx-autodoc-annotation
+# sphinx-autodoc-annotation
