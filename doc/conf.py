@@ -19,7 +19,7 @@
 import os
 import sphinx_rtd_theme
 import sys
-from unittest.mock import MagicMock
+import unittest.mock
 
 ##############################################################################
 # Paths
@@ -129,7 +129,9 @@ extensions = [
     'sphinx.ext.todo',
     'sphinx.ext.viewcode',
     'sphinxarg.ext',
-#    'sphinx_autodoc_annotation',  # type hinting will cause errors without this
+#    'sphinx_autodoc_typehints',
+#    type hinting used to generate errors without this, but seems ok now
+#    'sphinx_autodoc_annotation',
 ]
 
 # True to use the :ivar: role for instance variables. False to use the .. attribute:: directive instead.
@@ -142,10 +144,10 @@ todo_include_todos = True
 # Autodoc Mocks
 ##############################################################################
 
-class Mock(MagicMock):
-    @classmethod
-    def __getattr__(cls, name):
-        return MagicMock()
+#class Mock(MagicMock):
+#    @classmethod
+#    def __getattr__(cls, name):
+#        return MagicMock()
 
 
 MOCK_MODULES = [
@@ -159,7 +161,9 @@ MOCK_MODULES = [
     'std_msgs', 'std_msgs.msg',
     'unique_identifier_msgs', 'unique_identifier_msgs.msg'
 ]
-sys.modules.update((mod_name, Mock()) for mod_name in MOCK_MODULES)
+# sys.modules.update((mod_name, Mock()) for mod_name in MOCK_MODULES)
+for mod_name in MOCK_MODULES:
+    sys.modules[mod_name] = unittest.mock.Mock()
 
 # This would be nice if it worked, but it doesn't handle submodules well
 # autodoc_mock_imports = MOCK_MODULES

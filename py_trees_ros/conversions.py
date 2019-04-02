@@ -248,10 +248,10 @@ def msg_to_behaviour(msg: py_trees_msgs.Behaviour) -> py_trees.behaviour.Behavio
     visualisation applications.
 
     Args:
-        msg (:class:`~py_trees_msgs.msg.Behaviour`): a ros message representation of a behaviour
+        msg (:class:`py_trees_msgs.msg.Behaviour`): a ros message representation of a behaviour
 
     Returns:
-        :class:`~py_trees.behaviour.Behaviour`: converted, skeleton of the original behaviour
+        :class:`py_trees.behaviour.Behaviour`: converted, skeleton of the original behaviour
     """
     BehaviourType = msg_constant_to_behaviour_type(msg.type)
     behaviour = BehaviourType(name=msg.name)
