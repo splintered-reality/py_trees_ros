@@ -129,7 +129,7 @@ extensions = [
     'sphinx.ext.todo',
     'sphinx.ext.viewcode',
     'sphinxarg.ext',
-#    'sphinx_autodoc_typehints',
+    'sphinx_autodoc_typehints',
 #    type hinting used to generate errors without this, but seems ok now
 #    'sphinx_autodoc_annotation',
 ]
