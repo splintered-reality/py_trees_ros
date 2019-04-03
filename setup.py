@@ -5,10 +5,23 @@ from setuptools import find_packages, setup
 
 package_name = 'py_trees_ros'
 
+extras_require = {
+    'test': [],
+    'docs': ["Sphinx",
+             "sphinx-argparse",
+             "sphinx_rtd_theme",
+             # "sphinx-autodoc-annotation",
+             "sphinx-autodoc-typehints",
+             ],
+    'debs': ['stdeb', 'twine']
+}
+
 setup(
     name=package_name,
-    version='pre-1.0',
-    packages=find_packages(exclude=['doc*', 'tests*', 'graveyard*', 'scripts*]),
+    version='1.0.0',
+    packages=find_packages(
+        exclude=['doc*', 'tests*', 'graveyard*', 'scripts*']
+    ),
     data_files=[
         ('share/' + package_name, ['package.xml']),
         # global scripts
@@ -23,8 +36,8 @@ setup(
          ),
     ],
     package_data={},
-    install_requires = {},
-    extras_require = {},
+    install_requires=[],
+    extras_require=extras_require,
     author='Daniel Stonier, Naveed Usmani, Michal Staniaszek',
     maintainer='Daniel Stonier <d.stonier@gmail.com>',
     url='https://github.com/splintered-reality/py_trees_ros',

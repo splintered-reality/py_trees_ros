@@ -46,9 +46,9 @@ copyright = u'2019, Daniel Stonier'
 # built documents.
 #
 # The short X.Y version.
-version = "pre-1.0"
+version = "1.0"
 # The full version, including alpha/beta/rc tags.
-release = "pre-1.0"
+release = "1.0.0"
 
 ##############################################################################
 # Regular Sphinx Configuration
@@ -135,7 +135,8 @@ extensions = [
     # 'sphinx_autodoc_annotation',
 ]
 
-# True to use the :ivar: role for instance variables. False to use the .. attribute:: directive instead.
+# True to use the :ivar: role for instance variables.
+# False to use the .. attribute:: directive instead.
 napoleon_use_ivar = True
 
 # If you don't add this, todos don't appear
@@ -145,7 +146,7 @@ todo_include_todos = True
 # Autodoc Mocks
 ##############################################################################
 
-#class Mock(MagicMock):
+# class Mock(MagicMock):
 #    @classmethod
 #    def __getattr__(cls, name):
 #        return MagicMock()
