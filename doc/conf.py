@@ -139,6 +139,10 @@ extensions = [
 # False to use the .. attribute:: directive instead.
 napoleon_use_ivar = True
 
+# Might need this to have napolean and sphinx_autodoc_typehints to play nicely
+#   https://github.com/agronholm/sphinx-autodoc-typehints/issues/15#issuecomment-403540299
+# napolean_use_param = True
+
 # If you don't add this, todos don't appear
 todo_include_todos = True
 
