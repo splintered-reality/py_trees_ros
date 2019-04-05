@@ -5,11 +5,11 @@ ROS Py Trees extends the `py_trees`_ package with wrappers, patterns
 and debugging tools for use in ROS.
 
 If you are new to behaviour trees, start with the
-, browse
-through a few of the readings and try the demos contained therein.
+:ref:`py_trees documentation <py_trees:introduction-section>`,
+browse through a few of the readings and try the demos contained therein.
 
-The documentation here includes the module level api documentation and
-instructions for the command line utilities. 
+The documentation in this package includes the module level api documentation
+and instructions for the command line utilities.
 
 For a set of tutorials that walk through the construction of a behaviour tree
 for a typical robot application, refer to the documentation included with the
