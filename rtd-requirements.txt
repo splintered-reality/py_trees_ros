@@ -2,14 +2,12 @@
 #
 # Requirements for a minimal environment that permits rtd docs generation.
 #
-# Note that most of the dependent packages are mocked for autodoc, so this
-# is *very* minimal.
+# Note that the dependent packages are mocked for autodoc (see doc/conf.py),
+# so this is simply the doc building applications and extensions
 #
 ##############################################################################
 
-# extras_require[docs]
-Sphinx
-sphinx-argparse
-sphinx_rtd_theme
-# sphinx-autodoc-annotation
-sphinx-autodoc-typehints
+Sphinx<2
+sphinx-argparse<0.3
+sphinx_rtd_theme<0.5
+sphinx-autodoc-typehints==1.6.0

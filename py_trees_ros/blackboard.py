@@ -10,7 +10,7 @@
 
 """
 The :class:`py_trees_ros.blackboard.Exchange` class wraps a
-:ref:`PyTrees Blackboard <pt:blackboards-section>` with a ROS API to provide easy
+:ref:`PyTrees Blackboard <py_trees:blackboards-section>` with a ROS API to provide easy
 introspection of either the entire board or a window onto a smaller part
 of the board from oustide the tree via the :ref:`py-trees-blackboard-watcher`
 command line utility.

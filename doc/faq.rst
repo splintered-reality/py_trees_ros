@@ -5,7 +5,7 @@ Frequently Asked Questions
 
 ROS related frequently asked questions.
 
-.. seealso:: The :ref:`pt:faq-section-label` from the py_trees package.
+.. seealso:: The :ref:`py_trees:faq-section-label` from the py_trees package.
 
 Parameter/Remap Proliferation
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -62,6 +62,6 @@ In hindsight, this makes good sense.
 Prior to the behaviour trees there was a different state machine implementation in each
 controller - having just one decision making engine with shared code and design patterns
 is more efficient. It also frees them of the need to bring dependencies to other
-subsystems that need to work in concert with their control algorithm 
+subsystems that need to work in concert with their control algorithm
 (e.g. the LED or sound notification subsystems). Such co-ordination is most easily managed
-at the tree level. 
+at the tree level.

@@ -6,14 +6,11 @@ from setuptools import find_packages, setup
 package_name = 'py_trees_ros'
 
 extras_require = {
-    'test': [],
-    'docs': ["Sphinx",
-             "sphinx-argparse",
-             "sphinx_rtd_theme",
-             # "sphinx-autodoc-annotation",
-             "sphinx-autodoc-typehints",
+    'docs': ["Sphinx<2",
+             "sphinx-argparse<0.3",
+             "sphinx_rtd_theme<0.5",
+             "sphinx-autodoc-typehints==1.6.0"
              ],
-    'debs': ['stdeb', 'twine']
 }
 
 setup(
@@ -24,16 +21,6 @@ setup(
     ),
     data_files=[
         ('share/' + package_name, ['package.xml']),
-        # global scripts
-        #   note: package specific scripts use the entry_points
-        #   configured by setup.cfg
-        ('bin',
-         [
-            'scripts/py-trees-blackboard-watcher',
-            'scripts/py-trees-tree-watcher',
-            'scripts/py-trees-latched-echo'
-         ]
-         ),
     ],
     package_data={},
     install_requires=[],
@@ -65,8 +52,9 @@ setup(
     tests_require=[],  # using vanilla py unit tests
     entry_points={
          'console_scripts': [
-             # These are redirected to lib/<package_name> by setup.cfg
-             'py-trees-demo-exchange = py_trees_ros.demos.exchange:main',
+            'py-trees-blackboard-watcher = py_trees_ros.programs.blackboard_watcher:main',
+            'py-trees-tree-watcher = py_trees_ros.programs.tree_watcher:main',
+            'py-trees-latched-echo = py_trees_ros.programs.latched_echo:main'
          ],
      },
 )

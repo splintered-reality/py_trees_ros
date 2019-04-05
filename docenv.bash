@@ -87,10 +87,8 @@ if [ "${VIRTUAL_ENV}" == "" ]; then
   fi
 fi
 
-# Get all dependencies for testing, doc generation
-mv setup.cfg setup.unused
+# Get all dependencies for doc generation
 pip install -e .[docs]
-mv setup.unused setup.cfg
 
 # NB: this automagically nabs install_requires
 python setup.py develop
