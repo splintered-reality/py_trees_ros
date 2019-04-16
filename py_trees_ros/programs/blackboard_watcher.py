@@ -173,4 +173,3 @@ def main(command_line_args=sys.argv[1:]):
         print(console.red + "\nERROR: {}".format(str(e)) + console.reset)
         sys.exit(1)
     rclpy.shutdown()
-

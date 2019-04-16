@@ -1,37 +1,31 @@
-#!/usr/bin/env python
-
-import os
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
 
 from setuptools import find_packages, setup
 
 package_name = 'py_trees_ros'
 
-install_requires = [] if os.environ.get('AMENT_PREFIX_PATH') else [
-    # build
-    'setuptools',
-    # runtime
-]
+extras_require = {
+    'docs': ["Sphinx<2",
+             "sphinx-argparse<0.3",
+             "sphinx_rtd_theme<0.5",
+             "sphinx-autodoc-typehints==1.6.0",
+             'py_trees'
+             ],
+}
 
 setup(
     name=package_name,
-    version='0.5.14',  # also update package.xml and version.py
-    packages=find_packages(exclude=['tests*', 'docs*', 'launch*']),
+    version='1.0.0',
+    packages=find_packages(
+        exclude=['doc*', 'tests*', 'graveyard*', 'scripts*']
+    ),
     data_files=[
         ('share/' + package_name, ['package.xml']),
-        # global scripts
-        #   note: package specific scripts use the entry_points
-        #   configured by setup.cfg
-        ('bin',
-         [
-            'scripts/py-trees-blackboard-watcher',
-            'scripts/py-trees-tree-watcher',
-            'scripts/py-trees-latched-echo'
-         ]
-         ),
     ],
-    package_data={'py_trees_ros': ['mock/gui/*']},
-    install_requires=install_requires,
-    extras_require={},
+    package_data={},
+    install_requires=[],
+    extras_require=extras_require,
     author='Daniel Stonier, Naveed Usmani, Michal Staniaszek',
     maintainer='Daniel Stonier <d.stonier@gmail.com>',
     url='https://github.com/splintered-reality/py_trees_ros',
@@ -56,12 +50,12 @@ setup(
     ),
     license='BSD',
     test_suite='tests',
-    # tests_require=['nose', 'pytest', 'flake8', 'yanc', 'nose-htmloutput']
-    # tests_require=['pytest'],
+    tests_require=[],  # using vanilla py unit tests
     entry_points={
          'console_scripts': [
-             # These are redirected to lib/<package_name> by setup.cfg
-             'py-trees-demo-exchange = py_trees_ros.demos.exchange:main',
+            'py-trees-blackboard-watcher = py_trees_ros.programs.blackboard_watcher:main',
+            'py-trees-tree-watcher = py_trees_ros.programs.tree_watcher:main',
+            'py-trees-latched-echo = py_trees_ros.programs.latched_echo:main'
          ],
      },
 )

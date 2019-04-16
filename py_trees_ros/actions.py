@@ -9,7 +9,7 @@
 ##############################################################################
 
 """
-Various instantiable templates for action client/server style behaviours.
+Behaviours for ROS actions.
 """
 
 ##############################################################################

@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # License: BSD
-#   https://raw.githubusercontent.com/splintered-reality/py_trees/devel/LICENSE
+#   https://raw.githubusercontent.com/splintered-reality/py_trees_ros/devel/LICENSE
 #
 ##############################################################################
 # Documentation
@@ -24,9 +24,9 @@ runs its own method on the behaviour to do as it wishes - logging, introspecting
 # Imports
 ##############################################################################
 
-import py_trees
+
+import py_trees.visitors
 import py_trees_ros_interfaces.msg as py_trees_msgs
-import rclpy
 
 from . import conversions
 
@@ -44,6 +44,9 @@ class TreeToMsgVisitor(py_trees.visitors.VisitorBase):
         tree (:class:`py_trees_msgs.msg.BehaviourTree`): tree representation in message form
     """
     def __init__(self):
+        """
+        Well
+        """
         super(TreeToMsgVisitor, self).__init__()
         self.full = True  # examine all nodes
 
