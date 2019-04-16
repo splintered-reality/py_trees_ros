@@ -1,4 +1,3 @@
-# read-the-docs.yaml
 # Read the Docs configuration file
 # See https://docs.readthedocs.io/en/stable/config-file/v2.html for details
 
@@ -10,15 +9,16 @@ sphinx:
   configuration: doc/conf.py
   fail_on_warning: true
 
-# Optionally build your docs in additional formats such as PDF and ePub
+# Build your docs in additional formats such as PDF and ePub
 # [], all, or - epub, - pdf
 formats: []
 
-# Optionally set the version of Python and requirements required to build your docs
 python:
-  version: 3.6
-  install:
-    - method: pip
-      path: .
-      extra_requirements:
-        - docs
+   version: 3.6
+   install:
+      - requirements: doc/requirements.txt
+      # Unfortunately can only do this from pip
+      # - method: setuptools
+      #   path: .
+      #   extra_requirements:
+      #       - docs
