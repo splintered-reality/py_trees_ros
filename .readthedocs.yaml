@@ -16,7 +16,7 @@ formats: []
 python:
    version: 3.6
    install:
-      - requirements: docs/requirements.txt
+      - requirements: doc/requirements.txt
       # Unfortunately can only do this from pip
       # - method: setuptools
       #   path: .
