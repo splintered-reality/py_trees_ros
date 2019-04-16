@@ -5,15 +5,6 @@ from setuptools import find_packages, setup
 
 package_name = 'py_trees_ros'
 
-extras_require = {
-    'docs': ["Sphinx<2",
-             "sphinx-argparse<0.3",
-             "sphinx_rtd_theme<0.5",
-             "sphinx-autodoc-typehints==1.6.0",
-             'py_trees'
-             ],
-}
-
 setup(
     name=package_name,
     version='1.0.0',
@@ -25,7 +16,7 @@ setup(
     ],
     package_data={},
     install_requires=[],
-    extras_require=extras_require,
+    extras_require={},
     author='Daniel Stonier, Naveed Usmani, Michal Staniaszek',
     maintainer='Daniel Stonier <d.stonier@gmail.com>',
     url='https://github.com/splintered-reality/py_trees_ros',

@@ -88,7 +88,8 @@ if [ "${VIRTUAL_ENV}" == "" ]; then
 fi
 
 # Get all dependencies for doc generation
-pip install -e .[docs]
+# pip install -e .[docs]
+pip install -r doc/requirements.txt
 
 # NB: this automagically nabs install_requires
 python setup.py develop
