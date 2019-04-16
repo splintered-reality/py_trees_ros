@@ -9,17 +9,12 @@
 ##############################################################################
 
 """
-The :class:`py_trees_ros.blackboard.Exchange` class wraps a
-:ref:`PyTrees Blackboard <py_trees:blackboards-section>` with a ROS API to provide easy
+This module provides the :class:`py_trees_ros.blackboard.Exchange` class,
+a ROS wrapper around a
+:ref:`Blackboard <py_trees:blackboards-section>` that permits
 introspection of either the entire board or a window onto a smaller part
-of the board from oustide the tree via the :ref:`py-trees-blackboard-watcher`
+of the board over a ROS API via the :ref:`py-trees-blackboard-watcher`
 command line utility.
-
-.. note::
-
-   You get an exchange for free with the
-   :class:`py_trees_ros.trees.BehaviourTree` manager.
-
 """
 
 ##############################################################################

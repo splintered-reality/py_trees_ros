@@ -9,7 +9,8 @@ extras_require = {
     'docs': ["Sphinx<2",
              "sphinx-argparse<0.3",
              "sphinx_rtd_theme<0.5",
-             "sphinx-autodoc-typehints==1.6.0"
+             "sphinx-autodoc-typehints==1.6.0",
+             'py_trees'
              ],
 }
 

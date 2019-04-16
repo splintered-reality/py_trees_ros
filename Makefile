@@ -1,5 +1,5 @@
 docs:
-	sphinx-build -b html doc html
+	sphinx-build -v -b html doc html
 
 clean:
 	rm -rf build html

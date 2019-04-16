@@ -151,16 +151,18 @@ todo_include_todos = True
 # Autodoc Mocks
 ##############################################################################
 
-# class Mock(MagicMock):
-#    @classmethod
-#    def __getattr__(cls, name):
-#        return MagicMock()
+
+# Caveats: Currently autodoc is failing on classes which
+# inherit from a mocked class. I don't know if this is a bug
+# in sphinx, or something I'm not implementing correctly.
+
+# Workaround: I only inherit from py_trees, so make sure that
+# is in the environment and not mocked.
 
 
 MOCK_MODULES = [
     'rclpy', 'rclpy.executors', 'rclpy.expand_topic_name',
     'rclpy.node', 'rclpy.qos', 'rclpy.time',
-    'py_trees', 'py_trees.console',
     'py_trees_ros_interfaces', 'py_trees_ros_interfaces.msg',
     'py_trees_ros_interfaces.srv',
     'ros2topic', 'ros2topic.api',
