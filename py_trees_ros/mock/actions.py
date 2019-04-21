@@ -140,7 +140,7 @@ class GenericServer(object):
             goal_handle: rclpy.action.server.ServerGoalHandle
          ) -> rclpy.action.CancelResponse:
         """
-        No cancellations.
+        Cancel any currently executing goal
 
         Args:
             cancel_request (:class:`~rclpy.action.server.ServerGoalHandle`):
@@ -188,14 +188,14 @@ class GenericServer(object):
                         return result
                     elif self.percent_completed >= 100.0:
                         self.percent_completed = 100.0
-                        self.node.get_logger().info("feedback 100%%")
+                        self.node.get_logger().info("sending feedback 100%%")
                         result = self.action_type.Result()
                         result.message = "goal executed with success"
                         self.node.get_logger().info(result.message)
                         goal_handle.set_succeeded()
                         return result
                     else:
-                        self.node.get_logger().info("feedback {percentage:.2f}%%".format(
+                        self.node.get_logger().info("sending feedback {percentage:.2f}%%".format(
                             percentage=self.percent_completed))
                         goal_handle.publish_feedback(
                             self.generate_feedback_message()
