@@ -86,7 +86,7 @@ class TestActionServers(unittest.TestCase):
 # Success
 ##############################################################################
 
-    def foo_test_success(self):
+    def test_success(self):
         console.banner("Client Success")
 
         root = create_action_client()
@@ -119,19 +119,23 @@ class TestActionServers(unittest.TestCase):
         assert_details("root.status", "SUCCESS", root.status)
         self.assertEqual(root.status, py_trees.common.Status.SUCCESS)
 
-        tree.shutdown()
-        executor.shutdown()
+        # 1. segfaults galore if I try to shut things down
+        # 2. if I don't shutdown, publishers/services aren't closed down and
+        #    you get the "Publisher already registered for provided node name."
+        #    warning.
+        # executor.shutdown()
+        # tree.shutdown()
 
     def test_priority_interrupt(self):
         console.banner("Priority Interrupt")
 
-        number_of_iterations = 5
+        number_of_iterations = 50
 
         action_client = create_action_client()
         success_eventually = py_trees.behaviours.Count(
             name="Success Eventually",
-            fail_until=number_of_iterations-1,
-            success_until=100
+            fail_until=4,
+            success_until=1000
         )
         root = py_trees.composites.Selector()
         root.add_children([success_eventually, action_client])
@@ -155,18 +159,18 @@ class TestActionServers(unittest.TestCase):
             number_of_iterations=number_of_iterations
         )
 
-        while tree.count < number_of_iterations:
+        while tree.count < number_of_iterations and "cancelled" not in action_client.feedback_message:
             executor.spin_once(timeout_sec=0.1)
         print_ascii_tree(tree)
         assert_details("action_client.status", "INVALID", action_client.status)
         self.assertEqual(action_client.status, py_trees.common.Status.INVALID)
 
-        try:
-            executor.spin()
-        except KeyboardInterrupt:
-            pass
-        tree.shutdown()
-        executor.shutdown()
+        # 1. segfaults galore if I try to shut things down
+        # 2. if I don't shutdown, publishers/services aren't closed down and
+        #    you get the "Publisher already registered for provided node name."
+        #    warning.
+        # executor.shutdown()
+        # tree.shutdown()
 
 ##############################################################################
 # Preemption

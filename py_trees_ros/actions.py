@@ -106,13 +106,12 @@ class ActionClient(py_trees.behaviour.Behaviour):
         )
         result = self.action_client.wait_for_server(timeout_sec=2.0)
         if not result:
-            message = "timed out waiting for the server [{}]".format(
-                    self.action_name
-                )
-            self.node.get_logger().error(message)
-            raise exceptions.TimedOutError(message)
+            self.feedback_message = "timed out waiting for the server [{}]".format(self.action_name)
+            self.node.get_logger().error("{}[{}]".format(self.feedback_message, self.qualified_name))
+            raise exceptions.TimedOutError(self.feedback_message)
         else:
-            self.node.get_logger().info("... connected [{}]".format(self.qualified_name))
+            self.feedback_message = "... connected to action server [{}]".format(self.action_name)
+            self.node.get_logger().info("{}[{}]".format(self.feedback_message, self.qualified_name))
 
     def initialise(self):
         """
@@ -155,14 +154,22 @@ class ActionClient(py_trees.behaviour.Behaviour):
         )
         self.send_cancel_request()
 
+    def shutdown(self):
+        """
+        Clean up the action client when shutting down.
+        """
+        print("SHUUTTTTTDOOOOWNNNN")
+        self.action_client.destroy()
+
     ########################################
     # Action Client Methods
     ########################################
     def feedback_callback(self, msg):
         if self.generate_feedback_message is not None:
+            self.feedback_message = "feedback: {}".format(self.generate_feedback_message(msg))
             self.node.get_logger().info(
-                'feedback: {} [{}]'.format(
-                    self.generate_feedback_message(msg),
+                '{} [{}]'.format(
+                    self.feedback_message,
                     self.qualified_name
                 )
             )
@@ -175,7 +182,12 @@ class ActionClient(py_trees.behaviour.Behaviour):
         Returns:
             :class:`rclpy.task.Future`
         """
-        self.node.get_logger().info('sending goal ... [{}]'.format(self.qualified_name))
+        self.feedback_message = "sending goal ..."
+        self.node.get_logger().info("{} [{}]".format(
+                self.feedback_message,
+                self.qualified_name
+            )
+        )
         self.send_goal_future = self.action_client.send_goal_async(
                 self.action_goal,
                 feedback_callback=self.feedback_callback,
@@ -189,35 +201,40 @@ class ActionClient(py_trees.behaviour.Behaviour):
         """
         Handle goal response, proceed to listen for the result if accepted.
         """
-        self._goal_handle = future.result()
-        if not self._goal_handle.accepted:
-            self.node.get_logger().info('... goal rejected :( [{}]\n{!r}'.format(self.qualified_name, future.exception()))
+        self.goal_handle = future.result()
+        if not self.goal_handle.accepted:
+            self.feedback_message = "goal rejected :( [{}]\n{!r}".format(self.qualified_name, future.exception())
+            self.node.get_logger().info('... {}'.format(self.feedback_message))
             return
-        self.node.get_logger().info("... goal accepted :) [{}]".format(self.qualified_name))
-        self.node.get_logger().debug("  {!s}".format(future.result()))
+        else:
+            self.feedback_message = "goal accepted :) [{}]".format(self.qualified_name)
+            self.node.get_logger().info("... {}".format(self.feedback_message))
+            self.node.get_logger().debug("  {!s}".format(future.result()))
 
-        self.get_result_future = self._goal_handle.get_result_async()
+        self.get_result_future = self.goal_handle.get_result_async()
         self.get_result_future.add_done_callback(self.get_result_callback)
 
     def send_cancel_request(self):
 
-        self.node.get_logger().info('cancelling goal ... [{}]'.format(self.qualified_name))
+        self.feedback_message = "cancelling goal ... [{}]".format(self.qualified_name)
+        self.node.get_logger().info(self.feedback_message)
 
         if self.goal_handle is not None:
-            future = self._goal_handle.cancel_goal_async()
+            future = self.goal_handle.cancel_goal_async()
             future.add_done_callback(self.cancel_response_callback)
 
     def cancel_response_callback(self, future):
         cancel_response = future.result()
         if len(cancel_response.goals_canceling) > 0:
-            self.node.get_logger().info('... goal successfully cancelled [{}]'.format(self.qualified_name))
+            self.feedback_message = "goal successfully cancelled [{}]".format(self.qualified_name)
         else:
-            self.node.get_logger().info('... goal failed to cancel [{}]'.format(self.qualified_name))
+            self.feedback_message = "goal failed to cancel [{}]".format(self.qualified_name)
+        self.node.get_logger().info('... {}'.format(self.feedback_message))
 
     def get_result_callback(self, future):
         """
         Handle result.
         """
-        self.result_message = future.result().message
+        self.result_message = future.result()
         self.result_status = future.result().action_status
         self.result_status_string = self.status_strings[self.result_status]

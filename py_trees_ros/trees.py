@@ -209,6 +209,7 @@ class BehaviourTree(py_trees.trees.BehaviourTree):
             self.timer.cancel()
             self.node.destroy_timer(self.timer)
         self.node.destroy_node()
+        super().shutdown()
 
     def _tick_tock_timer_callback(
             self,
