@@ -158,7 +158,6 @@ class ActionClient(py_trees.behaviour.Behaviour):
         """
         Clean up the action client when shutting down.
         """
-        print("SHUUTTTTTDOOOOWNNNN")
         self.action_client.destroy()
 
     ########################################
@@ -235,6 +234,7 @@ class ActionClient(py_trees.behaviour.Behaviour):
         """
         Handle result.
         """
+        print("Done: %s" % future.done())
         self.result_message = future.result()
         self.result_status = future.result().action_status
         self.result_status_string = self.status_strings[self.result_status]

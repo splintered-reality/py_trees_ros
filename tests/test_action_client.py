@@ -68,7 +68,6 @@ class TestActionServers(unittest.TestCase):
     def setUpClass(cls):
         console.banner("ROS Init")
         rclpy.init()
-        cls.server = py_trees_ros.mock.dock.Dock(duration=1.5)
 
         cls.timeout = 3.0
         cls.blackboard = py_trees.blackboard.Blackboard()
@@ -76,7 +75,6 @@ class TestActionServers(unittest.TestCase):
     @classmethod
     def tearDownClass(cls):
         console.banner("ROS Shutdown")
-        cls.server.shutdown()
         rclpy.shutdown()
 
     def setUp(self):
@@ -86,15 +84,17 @@ class TestActionServers(unittest.TestCase):
 # Success
 ##############################################################################
 
-    def test_success(self):
+    def foo_test_success(self):
         console.banner("Client Success")
+
+        server = py_trees_ros.mock.dock.Dock(duration=1.5)
 
         root = create_action_client()
         tree = py_trees_ros.trees.BehaviourTree(root=root, ascii_tree_debug=False)
         tree.setup()
 
         executor = rclpy.executors.MultiThreadedExecutor(num_threads=4)
-        executor.add_node(self.server.node)
+        executor.add_node(server.node)
         executor.add_node(tree.node)
 
         assert_banner()
@@ -119,17 +119,18 @@ class TestActionServers(unittest.TestCase):
         assert_details("root.status", "SUCCESS", root.status)
         self.assertEqual(root.status, py_trees.common.Status.SUCCESS)
 
-        # 1. segfaults galore if I try to shut things down
-        # 2. if I don't shutdown, publishers/services aren't closed down and
-        #    you get the "Publisher already registered for provided node name."
-        #    warning.
-        # executor.shutdown()
-        # tree.shutdown()
+        # If I don't shutdown, publishers/services aren't closed down and
+        # you get the "Publisher already registered for provided node name." warning
+        executor.shutdown()
+        server.shutdown()  # often causes PyCapsule_GetPointer called with invalid PyCapsule object
+        tree.shutdown()  # if before server, get frequent segfaults (hence can't permit the server to stay alive)
 
     def test_priority_interrupt(self):
         console.banner("Priority Interrupt")
 
         number_of_iterations = 50
+
+        server = py_trees_ros.mock.dock.Dock(duration=1.5)
 
         action_client = create_action_client()
         success_eventually = py_trees.behaviours.Count(
@@ -143,7 +144,7 @@ class TestActionServers(unittest.TestCase):
         tree.setup()
 
         executor = rclpy.executors.MultiThreadedExecutor(num_threads=4)
-        executor.add_node(self.server.node)
+        executor.add_node(server.node)
         executor.add_node(tree.node)
 
         assert_banner()
@@ -162,15 +163,14 @@ class TestActionServers(unittest.TestCase):
         while tree.count < number_of_iterations and "cancelled" not in action_client.feedback_message:
             executor.spin_once(timeout_sec=0.1)
         print_ascii_tree(tree)
+        print(action_client.get_result_future.done())
         assert_details("action_client.status", "INVALID", action_client.status)
         self.assertEqual(action_client.status, py_trees.common.Status.INVALID)
 
-        # 1. segfaults galore if I try to shut things down
-        # 2. if I don't shutdown, publishers/services aren't closed down and
-        #    you get the "Publisher already registered for provided node name."
-        #    warning.
-        # executor.shutdown()
-        # tree.shutdown()
+        # Different to the earlier test, causes segfaults no matter what way we spin it
+        executor.shutdown()
+        server.shutdown()
+        tree.shutdown()
 
 ##############################################################################
 # Preemption
