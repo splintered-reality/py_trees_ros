@@ -19,6 +19,7 @@ from . import battery
 from . import blackboard
 from . import conversions
 from . import exceptions
+from . import mock
 from . import programs
 from . import subscribers
 from . import trees

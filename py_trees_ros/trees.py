@@ -41,6 +41,7 @@ import unique_identifier_msgs.msg as unique_identifier_msgs
 
 from . import blackboard
 from . import conversions
+from . import exceptions
 from . import utilities
 
 ##############################################################################
@@ -128,13 +129,12 @@ class BehaviourTree(py_trees.trees.BehaviourTree):
             timeout (:obj:`float`): time (s) to wait (use common.Duration.INFINITE to block indefinitely)
 
         Raises:
+            rclpy.exceptions.NotInitializedException: rclpy not yet initialised
             Exception: be ready to catch if any of the behaviours raise an exception
         """
         default_node_name = "tree"
-        try:
-            self.node = rclpy.create_node(default_node_name)
-        except rclpy.exceptions.NotInitializedException:
-            return RuntimeError("rlcpy not yet initialised [{}]".format(default_node_name))
+        # rclpy.create_node can raise rclpy.exceptions.NotInitializedException
+        self.node = rclpy.create_node(default_node_name)
         self._setup_publishers()
         self.blackboard_exchange = blackboard.Exchange()
         self.blackboard_exchange.setup(self.node)
@@ -142,7 +142,13 @@ class BehaviourTree(py_trees.trees.BehaviourTree):
         self.post_tick_handlers.append(self.blackboard_exchange.publish_blackboard)
 
         # share the tree's node with it's behaviours
-        super().setup(timeout, node=self.node)
+        try:
+            super().setup(timeout, node=self.node)
+        except RuntimeError as e:
+            if str(e) == "tree setup timed out":
+                raise exceptions.TimedOutError("tree setup timed out")
+            else:
+                raise
 
     def _setup_publishers(self):
         latched = True
@@ -203,6 +209,7 @@ class BehaviourTree(py_trees.trees.BehaviourTree):
             self.timer.cancel()
             self.node.destroy_timer(self.timer)
         self.node.destroy_node()
+        super().shutdown()
 
     def _tick_tock_timer_callback(
             self,
