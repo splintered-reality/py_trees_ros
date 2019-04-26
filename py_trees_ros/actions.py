@@ -19,6 +19,7 @@ Behaviours for ROS actions.
 import action_msgs.msg as action_msgs  # GoalStatus
 import py_trees
 import rclpy.action
+import time
 
 from typing import Any, Callable
 
@@ -118,6 +119,7 @@ class ActionClient(py_trees.behaviour.Behaviour):
         Reset the internal variables.
         """
         self.logger.debug("{}.initialise()".format(self.qualified_name))
+        self.feedback_message = "sent goal request"
         self.send_goal_request()
 
     def update(self):
@@ -130,7 +132,12 @@ class ActionClient(py_trees.behaviour.Behaviour):
 
         if self.result_status is None:
             return py_trees.common.Status.RUNNING
+        elif not self.get_result_future.done():
+            # should never get here
+            self.node.get_logger().warn("got result, but future not yet done [{}]".format(self.qualified_name))
+            return py_trees.common.Status.RUNNING
         else:
+            self.feedback_message = "successfully completed"
             self.node.get_logger().info("goal result [{}]".format(self.qualified_name))
             self.node.get_logger().info("  status: {}".format(self.result_status_string))
             self.node.get_logger().info("  message: {}".format(self.result_message))
@@ -152,7 +159,8 @@ class ActionClient(py_trees.behaviour.Behaviour):
                 "{}->{}".format(self.status, new_status) if self.status != new_status else "{}".format(new_status)
             )
         )
-        self.send_cancel_request()
+        if self.status != new_status and new_status == py_trees.common.Status.INVALID:
+            self.send_cancel_request()
 
     def shutdown(self):
         """
@@ -234,7 +242,6 @@ class ActionClient(py_trees.behaviour.Behaviour):
         """
         Handle result.
         """
-        print("Done: %s" % future.done())
         self.result_message = future.result()
         self.result_status = future.result().action_status
         self.result_status_string = self.status_strings[self.result_status]

@@ -84,13 +84,16 @@ class TestActionServers(unittest.TestCase):
 # Success
 ##############################################################################
 
-    def foo_test_success(self):
+    def test_success(self):
         console.banner("Client Success")
 
         server = py_trees_ros.mock.dock.Dock(duration=1.5)
 
         root = create_action_client()
-        tree = py_trees_ros.trees.BehaviourTree(root=root, ascii_tree_debug=False)
+        tree = py_trees_ros.trees.BehaviourTree(
+            root=root,
+            ascii_tree_debug=False
+        )
         tree.setup()
 
         executor = rclpy.executors.MultiThreadedExecutor(num_threads=4)
@@ -119,11 +122,9 @@ class TestActionServers(unittest.TestCase):
         assert_details("root.status", "SUCCESS", root.status)
         self.assertEqual(root.status, py_trees.common.Status.SUCCESS)
 
-        # If I don't shutdown, publishers/services aren't closed down and
-        # you get the "Publisher already registered for provided node name." warning
+        tree.shutdown()
+        server.shutdown()
         executor.shutdown()
-        server.shutdown()  # often causes PyCapsule_GetPointer called with invalid PyCapsule object
-        tree.shutdown()  # if before server, get frequent segfaults (hence can't permit the server to stay alive)
 
     def test_priority_interrupt(self):
         console.banner("Priority Interrupt")
@@ -163,14 +164,18 @@ class TestActionServers(unittest.TestCase):
         while tree.count < number_of_iterations and "cancelled" not in action_client.feedback_message:
             executor.spin_once(timeout_sec=0.1)
         print_ascii_tree(tree)
-        print(action_client.get_result_future.done())
         assert_details("action_client.status", "INVALID", action_client.status)
         self.assertEqual(action_client.status, py_trees.common.Status.INVALID)
 
-        # Different to the earlier test, causes segfaults no matter what way we spin it
-        executor.shutdown()
-        server.shutdown()
+        # hack to make sure action client is in a state that lets it
+        # shut down without segfaulting
+        if action_client.get_result_future is not None:
+            while not action_client.get_result_future.done():
+                executor.spin_once(timeout_sec=0.1)
+
         tree.shutdown()
+        server.shutdown()
+        executor.shutdown()
 
 ##############################################################################
 # Preemption
