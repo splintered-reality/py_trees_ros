@@ -62,7 +62,7 @@ exclude_patterns = ['.build', 'weblinks.rst']
 
 intersphinx_mapping = {
     'python': ('https://docs.python.org/3', None),
-    'py_trees': ('https://py-trees.readthedocs.io/en/release-1.1.x', None),
+    'py_trees': ('https://py-trees.readthedocs.io/en/release-1.2.x', None),
     'rclpy': ('http://docs.ros2.org/crystal/api/rclpy/', None),
 }
 
@@ -161,10 +161,12 @@ todo_include_todos = True
 
 
 MOCK_MODULES = [
-    'rclpy', 'rclpy.executors', 'rclpy.expand_topic_name',
-    'rclpy.node', 'rclpy.qos', 'rclpy.time',
-    'py_trees_ros_interfaces', 'py_trees_ros_interfaces.msg',
-    'py_trees_ros_interfaces.srv',
+    'action_msgs', 'action_msgs.msg',
+    'py_trees_ros_interfaces', 'py_trees_ros_interfaces.action',
+    'py_trees_ros_interfaces.msg', 'py_trees_ros_interfaces.srv',
+    'rclpy', 'rclpy.action', 'rclpy.callback_groups', 'rclpy.executors',
+    'rclpy.expand_topic_name', 'rclpy.node', 'rclpy.parameter',
+    'rclpy.qos', 'rclpy.time',
     'ros2topic', 'ros2topic.api',
     'sensor_msgs', 'sensor_msgs.msg',
     'std_msgs', 'std_msgs.msg',
