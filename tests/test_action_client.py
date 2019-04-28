@@ -77,6 +77,16 @@ class RejectGoalServer(object):
         self.action_server.destroy()
         self.node.destroy_node()
 
+
+class DockFailedServer(py_trees_ros.mock.dock.Dock):
+    def __init__(self):
+        super().__init__()
+
+    def execute_goal_callback(self, goal_handle):
+        result = self.action_type.Result()
+        goal_handle.set_aborted()
+        return result
+
 ##############################################################################
 # Tests
 ##############################################################################
@@ -91,6 +101,7 @@ class TestActionServers(unittest.TestCase):
 
         cls.timeout = 3.0
         cls.blackboard = py_trees.blackboard.Blackboard()
+        cls.number_of_iterations = 100
 
     @classmethod
     def tearDownClass(cls):
@@ -130,13 +141,12 @@ class TestActionServers(unittest.TestCase):
         assert_details("root.status", "RUNNING", root.status)
         self.assertEqual(root.status, py_trees.common.Status.RUNNING)
 
-        number_of_iterations = 100
         tree.tick_tock(
             period_ms=100,
-            number_of_iterations=number_of_iterations
+            number_of_iterations=self.number_of_iterations
         )
 
-        while tree.count < number_of_iterations and root.status == py_trees.common.Status.RUNNING:
+        while tree.count < self.number_of_iterations and root.status == py_trees.common.Status.RUNNING:
             executor.spin_once(timeout_sec=0.05)
 
         assert_details("root.status", "SUCCESS", root.status)
@@ -152,8 +162,6 @@ class TestActionServers(unittest.TestCase):
 
     def test_priority_interrupt(self):
         console.banner("Priority Interrupt")
-
-        number_of_iterations = 50
 
         server = py_trees_ros.mock.dock.Dock(duration=1.5)
 
@@ -182,10 +190,10 @@ class TestActionServers(unittest.TestCase):
 
         tree.tick_tock(
             period_ms=100,
-            number_of_iterations=number_of_iterations
+            number_of_iterations=self.number_of_iterations
         )
 
-        while tree.count < number_of_iterations and "cancelled" not in action_client.feedback_message:
+        while tree.count < self.number_of_iterations and "cancelled" not in action_client.feedback_message:
             executor.spin_once(timeout_sec=0.1)
         print_unicode_tree(tree)
         assert_details("action_client.status", "INVALID", action_client.status)
@@ -215,22 +223,51 @@ class TestActionServers(unittest.TestCase):
         )
 
         root = create_action_client()
-        tree = py_trees_ros.trees.BehaviourTree(
-            root=root,
-            unicode_tree_debug=False
-        )
+        tree = py_trees_ros.trees.BehaviourTree(root=root)
 
         # ROS Setup
-        number_of_iterations = 100
         tree.setup()
         executor = rclpy.executors.MultiThreadedExecutor(num_threads=4)
         executor.add_node(server.node)
         executor.add_node(tree.node)
         tree.tick()
-        tree.tick_tock(period_ms=100, number_of_iterations=number_of_iterations)
+        tree.tick_tock(period_ms=100, number_of_iterations=self.number_of_iterations)
 
         # ROS Spin
-        while tree.count < number_of_iterations and root.status == py_trees.common.Status.RUNNING:
+        while tree.count < self.number_of_iterations and root.status == py_trees.common.Status.RUNNING:
+            executor.spin_once(timeout_sec=0.05)
+
+        print("")
+        assert_banner()
+        assert_details("root.status", "FAILURE", root.status)
+        self.assertEqual(root.status, py_trees.common.Status.FAILURE)
+
+        tree.shutdown()
+        server.shutdown()
+        executor.shutdown()
+
+    ########################################
+    # Aborted
+    ########################################
+
+    def test_aborted(self):
+        console.banner("Server Aborted")
+
+        server = DockFailedServer()
+
+        root = create_action_client()
+        tree = py_trees_ros.trees.BehaviourTree(root=root)
+
+        # ROS Setup
+        tree.setup()
+        executor = rclpy.executors.MultiThreadedExecutor(num_threads=4)
+        executor.add_node(server.node)
+        executor.add_node(tree.node)
+        tree.tick()
+        tree.tick_tock(period_ms=100, number_of_iterations=self.number_of_iterations)
+
+        # ROS Spin
+        while tree.count < self.number_of_iterations and root.status == py_trees.common.Status.RUNNING:
             executor.spin_once(timeout_sec=0.05)
 
         print("")
