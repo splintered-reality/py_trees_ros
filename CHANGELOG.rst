@@ -4,13 +4,21 @@ Changelog
 
 Forthcoming
 -----------
-Noteworthy changes from 0.5.x -> 0.6.x:
 
-* [infra] stripped down and rebuilt for ROS2
+1.0.0 (2019-04-28)
+------------------
 
-Regular changelog details:
+Stripped down and rebuilt for ROS2:
 
-* [infra] builds in a colcon environment
+* [behaviours] the familiar subscriber and action client behaviours
+* [blackboard] the exchange, mostly unmodified
+* [infra] colcon build environment
+* [trees] simpler communications, just one serialised tree snapshot, watchers do the rest
+* [watchers] revamped 'blackboard' and new 'tree' watcher 
+
+What's missing:
+
+* [logging] the basic mechanisms have moved to py_trees, the rosbag implementation is to come
 
 0.5.13 (2017-05-28)
 -------------------
