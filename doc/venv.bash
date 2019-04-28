@@ -89,10 +89,10 @@ fi
 
 # Get all dependencies for doc generation
 # pip install -e .[docs]
-pip install -r doc/requirements.txt
+pip install -r requirements.txt
 
 # NB: this automagically nabs install_requires
-python setup.py develop
+python ../setup.py develop
 
 echo ""
 echo "Leave the virtual environment with 'deactivate'"
