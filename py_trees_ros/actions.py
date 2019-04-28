@@ -58,13 +58,6 @@ class ActionClient(py_trees.behaviour.Behaviour):
 
         self.node = None
         self.action_client = None
-        self.goal_handle = None
-        self.send_goal_future = None
-        self.get_result_future = None
-
-        self.result_message = None
-        self.result_status = None
-        self.result_status_string = None
 
         self.status_strings = {
                 action_msgs.GoalStatus.STATUS_UNKNOWN : "STATUS_UNKNOWN",  # noqa
@@ -119,6 +112,16 @@ class ActionClient(py_trees.behaviour.Behaviour):
         Reset the internal variables.
         """
         self.logger.debug("{}.initialise()".format(self.qualified_name))
+
+        # initialise some temporary variables
+        self.goal_handle = None
+        self.send_goal_future = None
+        self.get_result_future = None
+
+        self.result_message = None
+        self.result_status = None
+        self.result_status_string = None
+
         self.feedback_message = "sent goal request"
         self.send_goal_request()
 
@@ -130,6 +133,10 @@ class ActionClient(py_trees.behaviour.Behaviour):
         """
         self.logger.debug("{}.update()".format(self.qualified_name))
 
+        if self.goal_handle is not None and not self.goal_handle.accepted:
+            # goal was rejected
+            self.feedback_message = "goal rejected"
+            return py_trees.common.Status.FAILURE
         if self.result_status is None:
             return py_trees.common.Status.RUNNING
         elif not self.get_result_future.done():
@@ -208,9 +215,13 @@ class ActionClient(py_trees.behaviour.Behaviour):
         """
         Handle goal response, proceed to listen for the result if accepted.
         """
+        if future.result() is None:
+            self.feedback_message = "goal request failed :[ [{}]\n{!r}".format(self.qualified_name, future.exception())
+            self.node.get_logger().info('... {}'.format(self.feedback_message))
+            return
         self.goal_handle = future.result()
         if not self.goal_handle.accepted:
-            self.feedback_message = "goal rejected :( [{}]\n{!r}".format(self.qualified_name, future.exception())
+            self.feedback_message = "goal rejected :( [{}]".format(self.qualified_name)
             self.node.get_logger().info('... {}'.format(self.feedback_message))
             return
         else:
