@@ -1,0 +1,73 @@
+# Python CircleCI 2.0 configuration file
+#
+# Check https://circleci.com/docs/2.0/language-python/ for more details
+#
+version: 2
+jobs:
+  build:
+    docker:
+      # specify the version you desire here
+      - image: osrf/ros2:devel
+      
+      # Specify service dependencies here if necessary
+      # CircleCI maintains a library of pre-built images
+      # documented at https://circleci.com/docs/2.0/circleci-images/
+      # - image: circleci/postgres:9.4
+
+    working_directory: ~/repo
+
+    steps:
+      - checkout
+
+      # Download and cache dependencies
+      - restore_cache:
+          keys:
+          - package-xml-{{ checksum "package.xml" }}
+          # fallback to using the latest cache if no exact match is found
+          - package-xml-
+
+      - run:
+          name: Install Dependencies
+          command: |
+            echo "Working Directory: `pwd`" > install_dependencies_output
+            sudo apt-get update
+            sudo apt-get install -y python3-colcon-core
+            # python3 -m venv venv >> install_dependencies_output
+            # . venv/bin/activate >> install_dependencies_output
+            # pip install -e .[test] >> install_dependencies_output
+
+      # - save_cache:
+      #     paths:
+      #       - ./venv
+      #     key: package-xml-{{ checksum "package.xml" }}
+        
+      # run tests!
+      # this example uses Django's built-in test-runner
+      # other common Python testing frameworks include pytest and nose
+      # https://pytest.org
+      # https://nose.readthedocs.io
+      - run:
+          name: Tests
+          command: |
+            echo "Tests"
+            # . venv/bin/activate
+            # python setup.py nosetests
+
+      - run:
+          name: Linters
+          command: |
+            echo "Linters"
+            # . venv/bin/activate
+            # ./lint/flake8 | tee lint_output
+
+      - store_artifacts:
+          path: install_dependencies_output
+          destination: install_dependencies_output
+            
+      # - store_artifacts:
+      #     path: nosetests.html
+      #     destination: nosetests.html
+          
+      # - store_artifacts:
+      #     path: lint_output
+      #     destination: lint_output
