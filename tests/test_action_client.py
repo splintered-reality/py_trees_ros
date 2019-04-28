@@ -47,10 +47,10 @@ def create_action_client():
     return behaviour
 
 
-def print_ascii_tree(tree):
+def print_unicode_tree(tree):
     print(
         "\n" +
-        py_trees.display.ascii_tree(
+        py_trees.display.unicode_tree(
             tree.root,
             visited=tree.snapshot_visitor.visited,
             previously_visited=tree.snapshot_visitor.previously_visited
@@ -92,7 +92,7 @@ class TestActionServers(unittest.TestCase):
         root = create_action_client()
         tree = py_trees_ros.trees.BehaviourTree(
             root=root,
-            ascii_tree_debug=False
+            unicode_tree_debug=False
         )
         tree.setup()
 
@@ -141,7 +141,7 @@ class TestActionServers(unittest.TestCase):
         )
         root = py_trees.composites.Selector()
         root.add_children([success_eventually, action_client])
-        tree = py_trees_ros.trees.BehaviourTree(root=root, ascii_tree_debug=False)
+        tree = py_trees_ros.trees.BehaviourTree(root=root, unicode_tree_debug=False)
         tree.setup()
 
         executor = rclpy.executors.MultiThreadedExecutor(num_threads=4)
@@ -151,7 +151,7 @@ class TestActionServers(unittest.TestCase):
         assert_banner()
 
         tree.tick()
-        print_ascii_tree(tree)
+        print_unicode_tree(tree)
 
         assert_details("action_client.status", "RUNNING", root.status)
         self.assertEqual(action_client.status, py_trees.common.Status.RUNNING)
@@ -163,7 +163,7 @@ class TestActionServers(unittest.TestCase):
 
         while tree.count < number_of_iterations and "cancelled" not in action_client.feedback_message:
             executor.spin_once(timeout_sec=0.1)
-        print_ascii_tree(tree)
+        print_unicode_tree(tree)
         assert_details("action_client.status", "INVALID", action_client.status)
         self.assertEqual(action_client.status, py_trees.common.Status.INVALID)
 

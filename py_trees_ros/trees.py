@@ -67,19 +67,19 @@ class BehaviourTree(py_trees.trees.BehaviourTree):
 
     Args:
         root (:class:`~py_trees.behaviour.Behaviour`): root node of the tree
-        ascii_tree_debug (:obj:`bool`, optional): print to console the visited ascii tree after every tick
+        unicode_tree_debug (:obj:`bool`, optional): print to console the visited ascii tree after every tick
 
     Raises:
         AssertionError: if incoming root variable is not the correct type
     """
     def __init__(self,
                  root,
-                 ascii_tree_debug=False):
+                 unicode_tree_debug=False):
         super(BehaviourTree, self).__init__(root)
         self.snapshot_visitor = py_trees.visitors.SnapshotVisitor()
-        if ascii_tree_debug:
+        if unicode_tree_debug:
             self.add_post_tick_handler(
-                lambda tree: self._ascii_tree_post_tick_handler(self.snapshot_visitor, tree)
+                lambda tree: self._unicode_tree_post_tick_handler(self.snapshot_visitor, tree)
             )
         self.winds_of_change_visitor = py_trees.visitors.WindsOfChangeVisitor()
         self.visitors.append(self.snapshot_visitor)
@@ -327,10 +327,10 @@ class BehaviourTree(py_trees.trees.BehaviourTree):
             tree_message.behaviours.append(msg)
         self.publishers.snapshots.publish(tree_message)
 
-    def _ascii_tree_post_tick_handler(self, snapshot_visitor, tree):
+    def _unicode_tree_post_tick_handler(self, snapshot_visitor, tree):
         print(
             "\n" +
-            py_trees.display.ascii_tree(
+            py_trees.display.unicode_tree(
                 tree.root,
                 visited=snapshot_visitor.visited,
                 previously_visited=tree.snapshot_visitor.previously_visited
@@ -461,7 +461,7 @@ class Watcher(object):
         ####################
         if self.viewing_mode == WatcherMode.ASCII_SNAPSHOT:
             console.banner("Tick {}".format(msg.statistics.count))
-            print(py_trees.display.ascii_tree(
+            print(py_trees.display.unicode_tree(
                 root=root,
                 visited=self.snapshot_visitor.visited,
                 previously_visited=self.snapshot_visitor.previously_visited
@@ -494,7 +494,7 @@ class Watcher(object):
         ####################
         elif self.viewing_mode == WatcherMode.ASCII_TREE:
             print("")
-            print(py_trees.display.ascii_tree(
+            print(py_trees.display.unicode_tree(
                 root=root,
                 show_status=True,
                 visited=self.snapshot_visitor.visited,

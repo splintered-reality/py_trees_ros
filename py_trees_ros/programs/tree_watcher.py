@@ -15,9 +15,9 @@
    :prog: py-trees-tree-watcher
 
 Command line utility to interact with a running
-:class:`~py_trees_ros.trees.BehaviourTree` instance. Print a static ascii
-art view of the tree, view snapshots of the tree and tick statistics as
-a stream or display the dot graph of the tree.
+:class:`~py_trees_ros.trees.BehaviourTree` instance. Print the tree structure
+or a live snapshot of the tree state as unicode art on your console,
+view tick statistics as a stream or display the tree as a dot graph.
 
 .. image:: images/tree-watcher.gif
 
@@ -40,12 +40,12 @@ import sys
 
 def description(formatted_for_sphinx):
     short = "Open up a window onto the behaviour tree!\n"
-    long = ("\nPrint static or dynamic (snapshot) ascii art views of the tree on the console\n"
+    long = ("\nPrint static or dynamic (snapshot) unicode art views of the tree on the console\n"
             "or render a dot graph (static view only). Use the namespace argument to select\n"
             "from trees when there are multiple available.\n"
             )
     examples = [
-        "", "--ascii-tree", "--dot-tree", "--namespace=foo --ascii-tree"
+        "", "--unicode-tree", "--dot-tree", "--namespace=foo --unicode-tree"
     ]
     script_name = "py-trees-tree-watcher"
 
@@ -93,23 +93,23 @@ def command_line_argument_parser(formatted_for_sphinx=True):
     parser.add_argument('-n', '--namespace', nargs='?', default=None, help='namespace of pytree communications (if there should be more than one tree active)')
     group = parser.add_mutually_exclusive_group()
     group.add_argument(
-        '-s', '--ascii-snapshot',
+        '-s', '--snapshot',
         dest='viewing_mode',
         action='store_const',
         const=py_trees_ros.trees.WatcherMode.ASCII_SNAPSHOT,
-        help='print an ascii snapshot of the tree state')
+        help='print a live snapshot of the tree state as unicode art on your console')
     group.add_argument(
-        '-a', '--ascii-tree',
+        '-t', '--tree',
         dest='viewing_mode',
         action='store_const',
         const=py_trees_ros.trees.WatcherMode.ASCII_TREE,
-        help='print an ascii representation of the tree structure')
+        help='print the tree structure as unicode art on your console')
     group.add_argument(
         '-d', '--dot-tree',
         dest='viewing_mode',
         action='store_const',
         const=py_trees_ros.trees.WatcherMode.DOT_TREE,
-        help='print a dot representation of the tree structure')
+        help='render the tree structure as a dot graph')
     return parser
 
 
