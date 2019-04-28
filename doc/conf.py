@@ -164,7 +164,7 @@ MOCK_MODULES = [
     'action_msgs', 'action_msgs.msg',
     'py_trees_ros_interfaces', 'py_trees_ros_interfaces.msg',
     'py_trees_ros_interfaces.srv',
-    'rclpy', 'rclpy.executors', 'rclpy.expand_topic_name',
+    'rclpy', 'rclpy.action', 'rclpy.executors', 'rclpy.expand_topic_name',
     'rclpy.node', 'rclpy.qos', 'rclpy.time',
     'ros2topic', 'ros2topic.api',
     'sensor_msgs', 'sensor_msgs.msg',
