@@ -9,14 +9,13 @@
 # Imports
 ##############################################################################
 
-import action_msgs.msg as action_msgs  # GoalStatus
 import py_trees
 import py_trees.console as console
 import py_trees_ros
 import py_trees_ros_interfaces.action as py_trees_actions
 import rclpy
+import rclpy.action
 import rclpy.executors
-import time
 import unittest
 
 ##############################################################################
@@ -57,6 +56,27 @@ def print_unicode_tree(tree):
         )
     )
 
+
+class RejectGoalServer(object):
+    def __init__(self, node_name, action_name, action_type):
+        self.node = rclpy.create_node(node_name)
+
+        self.action_server = rclpy.action.ActionServer(
+            node=self.node,
+            action_type=action_type,
+            action_name=action_name,
+            callback_group=rclpy.callback_groups.ReentrantCallbackGroup(),  # needed?
+            execute_callback=lambda goal_handle: None,
+            goal_callback=self.goal_callback
+        )
+
+    def goal_callback(self, unused_goal_request):
+        return rclpy.action.server.GoalResponse.REJECT
+
+    def shutdown(self):
+        self.action_server.destroy()
+        self.node.destroy_node()
+
 ##############################################################################
 # Tests
 ##############################################################################
@@ -80,9 +100,9 @@ class TestActionServers(unittest.TestCase):
     def setUp(self):
         pass
 
-##############################################################################
-# Success
-##############################################################################
+    ########################################
+    # Success
+    ########################################
 
     def test_success(self):
         console.banner("Client Success")
@@ -125,6 +145,10 @@ class TestActionServers(unittest.TestCase):
         tree.shutdown()
         server.shutdown()
         executor.shutdown()
+
+    ########################################
+    # Priority Interrupt
+    ########################################
 
     def test_priority_interrupt(self):
         console.banner("Priority Interrupt")
@@ -177,12 +201,49 @@ class TestActionServers(unittest.TestCase):
         server.shutdown()
         executor.shutdown()
 
-##############################################################################
-# Preemption
-##############################################################################
+    ########################################
+    # Rejection
+    ########################################
+
+    def test_rejection(self):
+        console.banner("Client Rejection")
+
+        server = RejectGoalServer(
+            node_name="reject",
+            action_name="dock",
+            action_type=py_trees_actions.Dock,
+        )
+
+        root = create_action_client()
+        tree = py_trees_ros.trees.BehaviourTree(
+            root=root,
+            unicode_tree_debug=False
+        )
+
+        # ROS Setup
+        number_of_iterations = 100
+        tree.setup()
+        executor = rclpy.executors.MultiThreadedExecutor(num_threads=4)
+        executor.add_node(server.node)
+        executor.add_node(tree.node)
+        tree.tick()
+        tree.tick_tock(period_ms=100, number_of_iterations=number_of_iterations)
+
+        # ROS Spin
+        while tree.count < number_of_iterations and root.status == py_trees.common.Status.RUNNING:
+            executor.spin_once(timeout_sec=0.05)
+
+        print("")
+        assert_banner()
+        assert_details("root.status", "FAILURE", root.status)
+        self.assertEqual(root.status, py_trees.common.Status.FAILURE)
+
+        tree.shutdown()
+        server.shutdown()
+        executor.shutdown()
 
 ##############################################################################
-# Cancel
+# Main
 ##############################################################################
 
 
