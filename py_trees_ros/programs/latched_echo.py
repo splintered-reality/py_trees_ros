@@ -17,6 +17,8 @@
 Example interaction with the services of a :class:`Blackboard Exchange <py_trees_ros.blackboard.Exchange>`:
 
 .. image:: images/watcher.gif
+
+.. todo:: switch to using py_tree_ros' robust find_topic call
 """
 
 ##############################################################################
@@ -29,6 +31,8 @@ import py_trees.console as console
 import py_trees_ros.utilities
 import rclpy
 import ros2topic.api
+import ros2cli.node.strategy
+import time
 
 ##############################################################################
 # Module Constants
@@ -90,7 +94,13 @@ def command_line_argument_parser():
 
 def subscriber(node, topic_name, message_type, callback):
     if message_type is None:
-        topic_names_and_types = ros2topic.api.get_topic_names_and_types(node=node, include_hidden_topics=True)
+
+        topic_names_and_types = ros2topic.api.get_topic_names_and_types(
+            node=node, include_hidden_topics=True
+        )
+        for n, t in topic_names_and_types:
+            print("Name: %s" % n)
+            print("Topic: %s" % t)
         try:
             expanded_name = rclpy.expand_topic_name.expand_topic_name(
                 topic_name,
@@ -147,7 +157,23 @@ def main():
     rclpy.init()  # picks up sys.argv automagically internally
     node = rclpy.create_node("latched_echo" + "_" + str(os.getpid()))
 
-    subscriber(node, args.topic_name, args.message_type, echo)
+    timeout_reached = False
+
+    def timer_callback():
+        nonlocal timeout_reached
+        timeout_reached = True
+
+#     timer = node.create_timer(0.5, timer_callback)
+#     while not timeout_reached:
+#         rclpy.spin_once(node)
+#     node.destroy_timer(timer)
+
+    for unused_i in range(0, 10):
+        try:
+            subscriber(node, args.topic_name, args.message_type, echo)
+        except Exception:
+            pass
+        time.sleep(0.1)
 
     try:
         rclpy.spin(node)
