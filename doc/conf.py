@@ -167,6 +167,7 @@ MOCK_MODULES = [
     'rclpy', 'rclpy.action', 'rclpy.callback_groups', 'rclpy.executors',
     'rclpy.expand_topic_name', 'rclpy.node', 'rclpy.parameter',
     'rclpy.qos', 'rclpy.time',
+    'ros2cli', 'ros2cli.node', 'ros2cli.node.strategy',
     'ros2topic', 'ros2topic.api',
     'sensor_msgs', 'sensor_msgs.msg',
     'std_msgs', 'std_msgs.msg',
