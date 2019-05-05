@@ -33,7 +33,10 @@ from . import exceptions
 ##############################################################################
 
 
-def find_service(node, service_type, namespace=None):
+def find_service(node: rclpy.node.Node,
+                 service_type: str,
+                 namespace: str=None,
+                 timeout: float=0.5):
     """
     Discover a service of the specified type and if necessary, under the specified
     namespace.
@@ -42,6 +45,7 @@ def find_service(node, service_type, namespace=None):
         node (:class:`~rclpy.node.Node`): nodes have the discovery methods
         service_type (:obj:`str`): primary lookup hint
         namespace (:obj:`str`): secondary lookup hint
+        timeout: immediately post node creation, can take time to discover the graph (sec)
 
     Returns:
         :obj:`str`: fully expanded the service name
@@ -55,11 +59,19 @@ def find_service(node, service_type, namespace=None):
     #    https://github.com/ros2/ros2cli/blob/master/ros2service/ros2service/verb/list.py
     #    https://github.com/ros2/ros2cli/blob/master/ros2cli/ros2cli/node/strategy.py
 
-    # Returns a list of the form: [('exchange/blackboard', ['std_msgs/String'])
-    service_names_and_types = node.get_service_names_and_types()
-    service_names = [name for name, types in service_names_and_types if service_type in types]
-    if namespace is not None:
-        service_names = [name for name in service_names if namespace in name]
+    loop_period = 0.1  # seconds
+    clock = rclpy.clock.Clock()
+    start_time = clock.now()
+    service_names = []
+    while clock.now() - start_time < rclpy.time.Duration(seconds=timeout):
+        # Returns a list of the form: [('exchange/blackboard', ['std_msgs/String'])
+        service_names_and_types = node.get_service_names_and_types()
+        service_names = [name for name, types in service_names_and_types if service_type in types]
+        if namespace is not None:
+            service_names = [name for name in service_names if namespace in name]
+        if service_names:
+            break
+        time.sleep(loop_period)
 
     if not service_names:
         raise exceptions.NotFoundError("service not found [type: {}]".format(service_type))
@@ -83,7 +95,7 @@ def find_topic(
         node: nodes have the discovery methods
         topic_type: primary lookup hint
         namespace: secondary lookup hint
-        timeout: immediately post node creation, can take time to discover the graph
+        timeout: immediately post node creation, can take time to discover the graph (sec)
 
     Returns:
         :obj:`str`: fully expanded the service name
@@ -96,13 +108,12 @@ def find_topic(
     # rcl (might get rid of the magic sleep this way). See:
     #    https://github.com/ros2/ros2cli/blob/master/ros2service/ros2service/verb/list.py
     #    https://github.com/ros2/ros2cli/blob/master/ros2cli/ros2cli/node/strategy.py
-
-    # Returns a list of the form: [('exchange/blackboard', ['std_msgs/String'])
     loop_period = 0.1  # seconds
     clock = rclpy.clock.Clock()
     start_time = clock.now()
     topic_names = []
     while clock.now() - start_time < rclpy.time.Duration(seconds=timeout):
+        # Returns a list of the form: [('exchange/blackboard', ['std_msgs/String'])
         topic_names_and_types = node.get_topic_names_and_types()
         topic_names = [name for name, types in topic_names_and_types if topic_type in types]
         if namespace is not None:
