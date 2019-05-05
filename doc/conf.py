@@ -63,6 +63,7 @@ exclude_patterns = ['.build', 'weblinks.rst']
 intersphinx_mapping = {
     'python': ('https://docs.python.org/3', None),
     'py_trees': ('https://py-trees.readthedocs.io/en/release-1.2.x', None),
+    'py_trees_ros_tutorials': ('https://py-trees-ros-tutorials.readthedocs.io/en/release-1.0.x', None),
     'rclpy': ('http://docs.ros2.org/crystal/api/rclpy/', None),
 }
 

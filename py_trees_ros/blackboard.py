@@ -27,11 +27,11 @@ import pickle
 import py_trees
 import py_trees.console as console
 import py_trees_ros_interfaces.srv as py_trees_srvs
-import rclpy.executors
 import rclpy.expand_topic_name
 import rclpy.node
 import std_msgs.msg as std_msgs
-import time
+
+from typing import Any
 
 from . import exceptions
 from . import utilities
@@ -48,10 +48,16 @@ class BlackboardView(object):
     :class:`~py_trees_ros.blackboard.Exchange` operator.
 
     Args:
-        topic_name (:obj:`str`): name of the topic for the publisher
+        node: an rclpy node for communications handling
+        topic_name: name of the topic for the publisher
         attrs (:obj:`???`):
     """
-    def __init__(self, node, topic_name, attrs):
+    def __init__(
+            self,
+            node: rclpy.node.Node,
+            topic_name: str,
+            attrs
+         ):
         self.blackboard = py_trees.blackboard.Blackboard()
         self.topic_name = topic_name
         self.attrs = attrs
@@ -61,6 +67,9 @@ class BlackboardView(object):
         self.publisher = self.node.create_publisher(std_msgs.String, topic_name)
 
     def shutdown(self):
+        """
+        Shutdown the temporarily created publisher.
+        """
         # print("      DJS: view.shutdown [%s]" % self.publisher.topic)
         self.node.destroy_publisher(self.publisher)
 
@@ -80,6 +89,16 @@ class BlackboardView(object):
                     pass
 
     def is_changed(self):
+        """
+        Checks the current blackboard against a cached version. This
+        then caches the current blackboard.
+
+        .. warning:: Since this caches the current blackboard, it can't be used
+            multiple times in succession.
+
+        Returns:
+            :class:`bool`
+        """
         self._update_sub_blackboard()
         current_pickle = pickle.dumps(self.dict, -1)
         blackboard_changed = current_pickle != self.cached_dict
@@ -88,6 +107,13 @@ class BlackboardView(object):
         return blackboard_changed
 
     def __str__(self):
+        """
+        A formatted string representation of the view, taking care to trim the
+        blackboard contents according to the view that was requested.
+
+        Returns:
+            :class:`str`
+        """
         s = ""
         max_length = 0
         for k in self.dict.keys():
@@ -185,7 +211,7 @@ class Exchange(object):
                         self.exchange = py_trees_ros.blackboard.Exchange()
                         self.exchange.setup(timeout)
 
-        .. seealso:: This method is called in the way illustrated above in :class:`~py_trees_ros.trees.BehaviourTree`.
+        .. seealso:: This class is used as illustrated above in :class:`~py_trees_ros.trees.BehaviourTree`.
         """
         self.node = node
         self.publisher = self.node.create_publisher(std_msgs.String, '~/exchange/blackboard')
@@ -302,18 +328,17 @@ class BlackboardWatcher(object):
     """
     The blackboard watcher sits on the other side of the exchange and is a
     useful mechanism from which to pull all or part of the blackboard contents.
-    This is extremely useful for logging, but also for introspecting in the
-    runtime for various uses (e.g. reporting out on the current state to
-    a fleet server).
+    This is useful for live introspection, or logging of the blackboard contents.
 
     .. seealso:: :ref:`py-trees-blackboard-watcher`
     """
-    def __init__(self,
-                 namespace_hint=None):
+    def __init__(
+            self,
+            namespace_hint: str=None
+         ):
         """
         Args:
-            namespace_hint (:obj:`str`): (optionally) used to locate the blackboard
-                                         if there exists more than one
+            namespace_hint: (optionally) used to locate the blackboard if there exists more than one
         """
         self.namespace_hint = namespace_hint
         self.service_names = {
@@ -332,10 +357,13 @@ class BlackboardWatcher(object):
             'close': py_trees_srvs.CloseBlackboardWatcher
         }
 
-    def setup(self, timeout_sec):
+    def setup(self, timeout_sec: float):
         """
+        Creates the node and checks that all of the server-side services are available
+        for calling on to open a connection.
+
         Args:
-            timeout_sec (:obj:`float`): time (s) to wait (use common.Duration.INFINITE to block indefinitely)
+            timeout_sec: time (s) to wait (use common.Duration.INFINITE to block indefinitely)
 
         Raises:
             :class:`~py_trees_ros.exceptions.NotFoundError`: if no services were found
@@ -354,7 +382,17 @@ class BlackboardWatcher(object):
                 timeout=timeout_sec
             )
 
-    def create_service_client(self, key):
+    def create_service_client(self, key: str):
+        """
+        Convenience api for opening a service client and waiting for the service to appear.
+
+        Args:
+            key: one of 'open', 'close'.
+
+        Raises:
+            :class:`~py_trees_ros.exceptions.NotReadyError`: if setup() wasn't called to identify the relevant services to connect to.
+            :class:`~py_trees_ros.exceptions.TimedOutError`: if it times out waiting for the server
+        """
         if self.service_names[key] is None:
             raise exceptions.NotReadyError(
                 "no known '{}' service known [did you call setup()?]".format(self.service_types[key])
@@ -370,7 +408,13 @@ class BlackboardWatcher(object):
             )
         return (self.service_types[key].Request(), client)
 
-    def echo_blackboard_contents(self, msg):
+    def echo_blackboard_contents(self, msg: std_msgs.String):
+        """
+        Very simple formatter of incoming messages.
+
+        Args:
+            msg (:class:`std_msgs.String`): incoming blackboard message as a string.
+        """
         # print("DJS: echo_blackboard_contents")
         print("{}".format(msg.data))
 

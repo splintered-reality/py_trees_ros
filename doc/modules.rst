@@ -41,6 +41,14 @@ py_trees_ros.conversions
     :show-inheritance:
     :synopsis: py_trees - ros messages conversion library
 
+py_trees_ros.exceptions
+-----------------------
+
+.. automodule:: py_trees_ros.exceptions
+    :members:
+    :show-inheritance:
+    :synopsis: custom exceptions for py_trees_ros
+
 py_trees_ros.subscribers
 ------------------------
 

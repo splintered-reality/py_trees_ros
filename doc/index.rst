@@ -16,7 +16,6 @@ Behaviour trees for ros in python.
 
    about
    features
-   faq
    modules
    changelog
 

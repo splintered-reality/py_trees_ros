@@ -41,11 +41,14 @@ class ToBlackboard(subscribers.ToBlackboard):
         * battery_low_warning (:obj:`bool`)[w]: False if battery is ok, True if critically low
 
     Args:
-        name (:obj:`str`): name of the behaviour
-        topic_name (:obj:`str`) : name of the battery state topic
-        threshold (:obj:`float`) : percentage level threshold for flagging as low (0-100)
+        name: name of the behaviour
+        topic_name: name of the battery state topic
+        threshold: percentage level threshold for flagging as low (0-100)
     """
-    def __init__(self, name, topic_name="/battery/state", threshold=30.0):
+    def __init__(self,
+                 name: str=py_trees.common.Name.AUTO_GENERATED,
+                 topic_name: str="/battery/state",
+                 threshold: float=30.0):
         super().__init__(name=name,
                          topic_name=topic_name,
                          topic_type=sensor_msgs.BatteryState,
@@ -55,14 +58,17 @@ class ToBlackboard(subscribers.ToBlackboard):
         self.blackboard = py_trees.blackboard.Blackboard()
         self.blackboard.battery = sensor_msgs.BatteryState()
         self.blackboard.battery.percentage = 0.0
-        self.blackboard.battery.power_supply_status = sensor_msgs.BatteryState.POWER_SUPPLY_STATUS_UNKNOWN
+        self.blackboard.battery.power_supply_status = sensor_msgs.BatteryState.POWER_SUPPLY_STATUS_UNKNOWN  # noqa
         self.blackboard.battery_low_warning = False   # decision making
         self.threshold = threshold
 
-    def update(self):
+    def update(self) -> py_trees.common.Status:
         """
         Call the parent to write the raw data to the blackboard and then check against the
         threshold to determine if the low warning flag should also be updated.
+
+        Returns:
+            :attr:`~py_trees.common.Status.SUCCESS` if a message was written, :attr:`~py_trees.common.Status.RUNNING` otherwise.
         """
         self.logger.debug("%s.update()" % self.__class__.__name__)
         status = super(ToBlackboard, self).update()

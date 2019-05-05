@@ -3,6 +3,7 @@ encoding//doc/conf.py=utf-8
 encoding//py_trees_ros/actions.py=utf-8
 encoding//py_trees_ros/battery.py=utf-8
 encoding//py_trees_ros/blackboard.py=utf-8
+encoding//py_trees_ros/conversions.py=utf-8
 encoding//py_trees_ros/exceptions.py=utf-8
 encoding//py_trees_ros/mock/actions.py=utf-8
 encoding//py_trees_ros/mock/dock.py=utf-8

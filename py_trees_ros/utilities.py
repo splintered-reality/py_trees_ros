@@ -223,8 +223,8 @@ class Publishers(object):
 
            publishers = py_trees.utilities.Publishers(
                [
-                   ('foo', ~/foo', std_msgs.String, True, 5),
-                   ('bar', /foo/bar', std_msgs.String, False, 5),
+                   ('foo', '~/foo', std_msgs.String, True, 5),
+                   ('bar', '/foo/bar', std_msgs.String, False, 5),
                    ('foobar', '/foo/bar', std_msgs.String, False, 5),
                ]
            )
@@ -281,8 +281,8 @@ class Subscribers(object):
 
            subscribers = py_trees.utilities.Subscribers(
                [
-                   ('foo', ~/foo', std_msgs.String, True, foo),
-                   ('bar', /foo/bar', std_msgs.String, False, self.foo),
+                   ('foo', '~/foo', std_msgs.String, True, foo),
+                   ('bar', '/foo/bar', std_msgs.String, False, self.foo),
                    ('foobar', '/foo/bar', std_msgs.String, False, foo.bar),
                ]
            )

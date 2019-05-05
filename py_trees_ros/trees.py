@@ -351,11 +351,11 @@ class BehaviourTree(py_trees.trees.BehaviourTree):
 class WatcherMode(enum.Enum):
     """An enumerator specifying the view mode for the watcher"""
 
-    ASCII_SNAPSHOT = "ASCII_SNAPSHOT"
+    STREAM = "STREAM"
     """Print an ascii art view of the behaviour tree's current state after the last tick"""
-    ASCII_TREE = "ASCII_TREE"
+    SNAPSHOT = "SNAPSHOT"
     """Print an ascii art representation of the static tree (sans visited path/status/feedback messages)."""
-    DOT_TREE = "DOT_TREE"
+    DOT_GRAPH = "DOT_GRAPH"
     """Render with the dot graph representation of the static tree (using an application or text to console)."""
 
 
@@ -375,7 +375,7 @@ class Watcher(object):
     def __init__(
             self,
             namespace_hint: str,
-            mode: WatcherMode=WatcherMode.ASCII_SNAPSHOT
+            mode: WatcherMode=WatcherMode.STREAM
          ):
         self.namespace_hint = namespace_hint
         self.subscribers = None
@@ -459,7 +459,7 @@ class Watcher(object):
         ####################
         # Streaming
         ####################
-        if self.viewing_mode == WatcherMode.ASCII_SNAPSHOT:
+        if self.viewing_mode == WatcherMode.STREAM:
             console.banner("Tick {}".format(msg.statistics.count))
             print(py_trees.display.unicode_tree(
                 root=root,
@@ -492,7 +492,7 @@ class Watcher(object):
         ####################
         # Printing
         ####################
-        elif self.viewing_mode == WatcherMode.ASCII_TREE:
+        elif self.viewing_mode == WatcherMode.SNAPSHOT:
             print("")
             print(py_trees.display.unicode_tree(
                 root=root,
@@ -505,7 +505,7 @@ class Watcher(object):
         ####################
         # Dot Graph
         ####################
-        elif self.viewing_mode == WatcherMode.DOT_TREE and not self.rendered:
+        elif self.viewing_mode == WatcherMode.DOT_GRAPH and not self.rendered:
             self.rendered = True
             directory_name = tempfile.mkdtemp()
             py_trees.display.render_dot_tree(

@@ -426,12 +426,12 @@ class ToBlackboard(Handler):
 
 class EventToBlackboard(Handler):
     """
-    Listen for events (:obj:`std_msgs.msg.Empty`) on a
+    Listen for events (:class:`std_msgs.msg.Empty`) on a
     subscriber and writes the result to the blackboard.
 
-    This will write True if at least one message was received,
-    False otherwise to a bool. This can then be consumed
-    by the tree's tick. No need to clean up, it will write anew on the next tick.
+    This will write True to the variable on the blackboard if a message
+    was received since the last tick, False otherwise. The behaviour itself
+    always returns :attr:`~py_trees.common.Status.SUCCESS`.
 
     .. tip::
         Ideally you need this at the very highest part of the tree so that it
@@ -463,6 +463,9 @@ class EventToBlackboard(Handler):
     def update(self):
         """
         Check for data and write to the board.
+
+        Returns:
+            Always returns :attr:`~py_trees.common.Status.SUCCESS`
         """
         self.logger.debug("%s.update()" % self.__class__.__name__)
         with self.data_guard:

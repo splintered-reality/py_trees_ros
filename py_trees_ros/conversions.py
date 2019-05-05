@@ -18,22 +18,24 @@ py_trees objects and ros messages.
 ##############################################################################
 
 import py_trees
-import py_trees_ros_interfaces.msg
+import py_trees_ros_interfaces.msg  # noqa
 import rclpy
 import unique_identifier_msgs.msg
 import uuid
+
+from typing import Any
 
 ##############################################################################
 # <etjpds
 ##############################################################################
 
 
-def behaviour_type_to_msg_constant(behaviour):
+def behaviour_type_to_msg_constant(behaviour: py_trees.behaviour.Behaviour):
     """
     Convert a behaviour class type to a message constant.
 
     Args:
-        behaviour (:class:`py_trees.behaviour.Behaviour`): investigate the type of this behaviour
+        behaviour: investigate the type of this behaviour
 
     Returns:
         :obj:`uint8`: from the type constants in :class:`py_trees_ros_interfaces.msg.Behaviour`
@@ -56,14 +58,14 @@ def behaviour_type_to_msg_constant(behaviour):
         return py_trees_ros_interfaces.msg.Behaviour.UNKNOWN_TYPE
 
 
-def msg_constant_to_behaviour_type(value):
+def msg_constant_to_behaviour_type(value: int) -> Any:
     """
     Convert one of the behaviour type constants in a
-    :class:`~py_trees_ros_interfaces.msg.Behaviour` message to
+    :class:`py_trees_ros_interfaces.msg.Behaviour` message to
     a type.
 
     Args:
-        value (obj:`int``: see the message definition for details
+        value: see the message definition for details
 
     Returns:
         a behaviour class type (e.g. :class:`py_trees.composites.Sequence`)
@@ -87,12 +89,12 @@ def msg_constant_to_behaviour_type(value):
         raise TypeError("invalid type specified in message [{}]".format(value))
 
 
-def status_enum_to_msg_constant(status):
+def status_enum_to_msg_constant(status: py_trees.common.Status):
     """
     Convert a status to a message constant.
 
     Args:
-        status (:class:`~py_trees.common.Status`): status enum of a behaviour
+        status: status enum of a behaviour
 
     Returns:
         :obj:`uint8`: from the status constants in :class:`py_trees_ros_interfaces.msg.Behaviour`
@@ -112,14 +114,14 @@ def status_enum_to_msg_constant(status):
 def msg_constant_to_status_enum(value: int) -> py_trees.common.Status:
     """
     Convert one of the status constants in a
-    :class:`~py_trees_ros_interfaces.msg.Behaviour` message to
+    :class:`py_trees_ros_interfaces.msg.Behaviour` message to
     a py_trees status enum.
 
     Args:
-        value (obj:`int``: see the message definition for details
+        value: see the message definition for details
 
     Returns:
-        :class:`~py_trees.common.Status`: a py_trees status
+        a py_trees status
 
     Raises:
         TypeError: if the status type is unrecognised
@@ -136,12 +138,12 @@ def msg_constant_to_status_enum(value: int) -> py_trees.common.Status:
         raise TypeError("invalid status specified in message [{}]".format(value))
 
 
-def blackbox_enum_to_msg_constant(blackbox_level):
+def blackbox_enum_to_msg_constant(blackbox_level: py_trees.common.BlackBoxLevel):
     """
     Convert a blackbox level enum to a message constant.
 
     Args:
-        blackbox_level (:class:`~py_trees.common.BlackboxLevel`): blackbox level of a behaviour
+        blackbox_level: blackbox level of a behaviour
 
     Returns:
         :obj:`uint8`: from the type constants in :class:`py_trees_ros_interfaces.msg.Behaviour`
@@ -163,10 +165,10 @@ def msg_constant_to_blackbox_level_enum(value: int) -> py_trees.common.BlackBoxL
     a py_trees status enum.
 
     Args:
-        value (obj:`int``: see the message definition for details
+        value: see the message definition for details
 
     Returns:
-        :class:`py_trees.common.BlackBoxLevel`: a py_trees blackbox level
+        a py_trees blackbox level
 
     Raises:
         TypeError: if the status type is unrecognised
@@ -183,28 +185,28 @@ def msg_constant_to_blackbox_level_enum(value: int) -> py_trees.common.BlackBoxL
         raise TypeError("invalid blackbox level specified in message [{}]".format(value))
 
 
-def uuid4_to_msg(uuid4: uuid.UUID=uuid.uuid4()):
+def uuid4_to_msg(uuid4: uuid.UUID=uuid.uuid4()) -> unique_identifier_msgs.msg.UUID:
     """
     Convert a uuid4 python object to a ros unique identifier, UUID type.
 
     Args:
-        uuid4 (:class:`uuid.UUID`), optional: unique identifier to convert, defaults to auto-generated uuid4
+        uuid4: unique identifier to convert, defaults to auto-generated uuid4
 
     Returns:
-        :class:`unique_identifier_msgs.msg.UUID`: the ros message type
+        the ros message type
     """
     return unique_identifier_msgs.msg.UUID(uuid=list(uuid4.bytes))
 
 
-def msg_to_uuid4(msg: unique_identifier_msgs.msg.UUID):
+def msg_to_uuid4(msg: unique_identifier_msgs.msg.UUID) -> uuid.UUID:
     """
     Convert a uuid4 python object to a ros unique identifier, UUID type.
 
     Args:
-        msg (:class:`unique_identifier_msgs.msg.UUID`): the ros message type
+        msg: the ros message type
 
     Returns:
-        :class:`uuid.UUID`: the behaviour's uuid, python style
+        the behaviour's uuid, python style
     """
     return uuid.UUID(bytes=bytes(msg.uuid), version=4)
 
@@ -214,10 +216,10 @@ def behaviour_to_msg(behaviour: py_trees.behaviour.Behaviour) -> py_trees_ros_in
     Convert a behaviour to a message.
 
     Args:
-        behaviour (:class:`py_trees.behaviour.Behaviour`): behaviour to convert
+        behaviour: behaviour to convert
 
     Returns:
-        :class:`py_trees_ros_interfaces.msg.Behaviour`: a ros message representation of a behaviour
+        a ros message representation of a behaviour
     """
     msg = py_trees_ros_interfaces.msg.Behaviour()
     msg.name = behaviour.name
@@ -248,10 +250,10 @@ def msg_to_behaviour(msg: py_trees_ros_interfaces.msg.Behaviour) -> py_trees.beh
     visualisation applications.
 
     Args:
-        msg (:class:`py_trees_ros_interfaces.msg.Behaviour`): a ros message representation of a behaviour
+        msg: a ros message representation of a behaviour
 
     Returns:
-        :class:`py_trees.behaviour.Behaviour`: converted, skeleton of the original behaviour
+        converted, skeleton of the original behaviour
     """
     BehaviourType = msg_constant_to_behaviour_type(msg.type)
     behaviour = BehaviourType(name=msg.name)
@@ -269,7 +271,10 @@ def rclpy_time_to_float(time: rclpy.time.Time) -> float:
     Convert a ros2 time (seconds/nanoseconds) to a float.
 
     Args:
-        time (:class:`rclpy.time.Time`): time to convert
+        time: time to convert
+
+    Return:
+        time (seconds) as a float
     """
     return float(time.nanoseconds) / 1e9
 
@@ -279,6 +284,9 @@ def rclpy_duration_to_float(duration: rclpy.time.Duration) -> float:
     Convert a ros2 duration (seconds/nanoseconds) to a float.
 
     Args:
-        time (:class:`rclpy.time.Duration`): time to convert
+        time: time to convert
+
+    Return:
+        time (seconds) as a float
     """
     return float(duration.nanoseconds) / 1e9
