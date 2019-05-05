@@ -45,7 +45,7 @@ def description(formatted_for_sphinx):
             "from trees when there are multiple available.\n"
             )
     examples = [
-        "", "--unicode-tree", "--dot-tree", "--namespace=foo --unicode-tree"
+        "", "--tree", "--dot-tree", "--namespace=foo --tree"
     ]
     script_name = "py-trees-tree-watcher"
 

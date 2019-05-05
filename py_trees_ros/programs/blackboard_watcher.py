@@ -27,7 +27,9 @@ import argparse
 import py_trees.console as console
 import py_trees_ros
 import rclpy
+import std_msgs.msg as std_msgs
 import sys
+import time
 
 ##############################################################################
 # Classes
@@ -98,17 +100,6 @@ def pretty_print_variables(variables):
     print("{}".format(s))
 
 
-def echo_blackboard_contents(contents):
-    """
-    Args:
-        contents (:obj:`str`): blackboard contents
-
-    .. note::
-        The string comes pre-formatted with bash color identifiers and newlines.
-        This is currently not especially good for anything other than debugging.
-    """
-    print("{}".format(contents))
-
 ##############################################################################
 # Main
 ##############################################################################
@@ -125,7 +116,6 @@ def main(command_line_args=sys.argv[1:]):
 
     rclpy.init(args=None)
     blackboard_watcher = py_trees_ros.blackboard.BlackboardWatcher(
-        callback=echo_blackboard_contents,
         namespace_hint=args.namespace
     )
     ####################
@@ -149,9 +139,11 @@ def main(command_line_args=sys.argv[1:]):
     ####################
     # Execute
     ####################
+    result = 0
     try:
         if args.list_variables:
-            future = blackboard_watcher.request_list_variables()
+            request, client = blackboard_watcher.create_service_client('list')
+            future = client.call_async(request)
             rclpy.spin_until_future_complete(blackboard_watcher.node, future)
             if future.result() is None:
                 raise py_trees_ros.exceptions.ServiceError(
@@ -159,17 +151,43 @@ def main(command_line_args=sys.argv[1:]):
                 )
             pretty_print_variables(future.result().variables)
         else:
-            blackboard_watcher.open_connection(args.variables)
+            # request connection
+            request, client = blackboard_watcher.create_service_client('open')
+            request.variables = [variable.strip(',[]') for variable in args.variables]
+            future = client.call_async(request)
+            rclpy.spin_until_future_complete(blackboard_watcher.node, future)
+            response = future.result()
+            blackboard_watcher.node.destroy_client(client)
+            # connect
+            watcher_topic_name = response.topic
+            blackboard_watcher.node.get_logger().info(
+                "creating subscription [{}]".format(watcher_topic_name)
+            )
+            blackboard_watcher.node.create_subscription(
+                msg_type=std_msgs.String,
+                topic=watcher_topic_name,
+                callback=blackboard_watcher.echo_blackboard_contents
+            )
+            # stream
             try:
                 rclpy.spin(blackboard_watcher.node)
             except KeyboardInterrupt:
                 pass
-            blackboard_watcher.close_connection()
-        blackboard_watcher.shutdown()
+            # close connection
+            request, client = blackboard_watcher.create_service_client('close')
+            request.topic_name = watcher_topic_name
+            future = client.call_async(request)
+            rclpy.spin_until_future_complete(blackboard_watcher.node, future)
+            if future.result() is None:
+                raise py_trees_ros.exceptions.ServiceError(
+                    "service call to close connection failed [{}]".format(future.exception())
+                )
     # connection problems
     except (py_trees_ros.exceptions.NotReadyError,
             py_trees_ros.exceptions.ServiceError,
             py_trees_ros.exceptions.TimedOutError) as e:
         print(console.red + "\nERROR: {}".format(str(e)) + console.reset)
-        sys.exit(1)
+        result = 1
+    blackboard_watcher.shutdown()
     rclpy.shutdown()
+    sys.exit(result)
