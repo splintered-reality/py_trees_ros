@@ -513,12 +513,15 @@ class Watcher(object):
                 target_directory=directory_name
             )
             xdot_program = py_trees.utilities.which('xdot')
+            xdot_program = None
 
             if not xdot_program:
-                console.logerror("No xdot viewer found, skipping display [hint: sudo apt install xdot]")
-                print(py_trees.display.dot_graph(root=root).to_string())
+                print("")
+                console.logerror("No xdot viewer found [hint: sudo apt install xdot]")
+                print("")
+                print(py_trees.display.dot_tree(root=root).to_string())
                 self.done = True
-                self.xdot_process = 1
+                self.xdot_process = None
                 return
 
             filename = py_trees.utilities.get_valid_filename(root.name) + '.dot'

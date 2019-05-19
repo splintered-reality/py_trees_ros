@@ -5,6 +5,7 @@ Changelog
 Forthcoming
 -----------
 * [conversions] bugfix msg_to_behaviour for decorators
+* [watchers] bugfix tree-watchers dot-graph to string functionality
 
 1.0.0 (2019-04-28)
 ------------------
