@@ -4,6 +4,7 @@ Changelog
 
 Forthcoming
 -----------
+* [conversions] bugfix msg_to_behaviour for decorators
 
 1.0.0 (2019-04-28)
 ------------------
