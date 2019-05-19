@@ -256,7 +256,14 @@ def msg_to_behaviour(msg: py_trees_ros_interfaces.msg.Behaviour) -> py_trees.beh
         converted, skeleton of the original behaviour
     """
     BehaviourType = msg_constant_to_behaviour_type(msg.type)
-    behaviour = BehaviourType(name=msg.name)
+    if BehaviourType == py_trees.decorators.Decorator:
+        behaviour = BehaviourType(
+            name=msg.name,
+            # to be replaced with the proper entity in a second pass
+            child=py_trees.behaviours.Dummy()
+        )
+    else:
+        behaviour = BehaviourType(name=msg.name)
     behaviour.id = msg_to_uuid4(msg.own_id)
     # parent, children and tip have to be filled in via a second pass on the
     # list of behaviours since they directly reference other objects
