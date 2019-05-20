@@ -35,7 +35,7 @@ class ActionClient(py_trees.behaviour.Behaviour):
     goal to the action client.
 
     Args:
-        action_type: spec type for the action (e.g. move_base_msgs.msg.MoveBaseAction)
+        action_type: spec type for the action (e.g. move_base_msgs.action.MoveBase)
         action_name: where you can find the action topics & services (e.g. "bob/move_base")
         action_goal: pre-configured action goal (e.g. move_base_msgs.action.MoveBaseGoal())
         name: name of the behaviour (default: lowercase class name)
