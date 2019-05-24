@@ -4,6 +4,7 @@ Changelog
 
 Forthcoming
 -----------
+* [actions] bugfix action client, don't cancel if not RUNNING
 * [conversions] bugfix msg_to_behaviour for decorators
 * [watchers] bugfix tree-watchers dot-graph to string functionality
 
@@ -16,7 +17,7 @@ Stripped down and rebuilt for ROS2:
 * [blackboard] the exchange, mostly unmodified
 * [infra] colcon build environment
 * [trees] simpler communications, just one serialised tree snapshot, watchers do the rest
-* [watchers] revamped 'blackboard' and new 'tree' watcher 
+* [watchers] revamped 'blackboard' and new 'tree' watcher
 
 What's missing:
 

@@ -168,7 +168,10 @@ class ActionClient(py_trees.behaviour.Behaviour):
                 "{}->{}".format(self.status, new_status) if self.status != new_status else "{}".format(new_status)
             )
         )
-        if self.status != new_status and new_status == py_trees.common.Status.INVALID:
+        if (
+            self.status == py_trees.common.Status.RUNNING
+            and new_status == py_trees.common.Status.INVALID
+        ):
             self.send_cancel_request()
 
     def shutdown(self):
