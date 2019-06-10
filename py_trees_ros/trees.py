@@ -30,7 +30,7 @@ import os
 import math
 import py_trees
 import py_trees.console as console
-import py_trees_ros_interfaces.msg as py_trees_msgs
+import py_trees_ros_interfaces.msg as py_trees_msgs  # noqa
 # import rosbag
 import rclpy
 import statistics
@@ -126,7 +126,7 @@ class BehaviourTree(py_trees.trees.BehaviourTree):
         Ultimately relays this call down to all the behaviours in the tree.
 
         Args:
-            timeout (:obj:`float`): time (s) to wait (use common.Duration.INFINITE to block indefinitely)
+            timeout: time (s) to wait (use common.Duration.INFINITE to block indefinitely)
 
         Raises:
             rclpy.exceptions.NotInitializedException: rclpy not yet initialised
