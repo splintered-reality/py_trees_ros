@@ -229,11 +229,13 @@ def behaviour_to_msg(behaviour: py_trees.behaviour.Behaviour) -> py_trees_ros_in
     msg.child_ids = [uuid4_to_msg(child.id) for child in behaviour.iterate(direct_descendants=True) if not child.id == behaviour.id]
 
     tip = behaviour.tip()
-    # tip_id is empty if the behaviour is invalid or if it is a valid
-    # leaf
+    # tip_id is empty if the behaviour is invalid or if it is a valid leaf
     if tip is not None and tip != behaviour:
         msg.tip_id = uuid4_to_msg(tip.id)
-
+    # else it gets the 'zero' uuid
+    if isinstance(behaviour, py_trees.composites.Composite):
+        if behaviour.current_child is not None:
+            msg.current_child_id = uuid4_to_msg(behaviour.current_child.id)
     msg.type = behaviour_type_to_msg_constant(behaviour)
     msg.blackbox_level = blackbox_enum_to_msg_constant(behaviour.blackbox_level)
     msg.status = status_enum_to_msg_constant(behaviour.status)

@@ -7,6 +7,7 @@ Forthcoming
 * [actions] bugfix action client, don't cancel if not RUNNING
 * [conversions] bugfix msg_to_behaviour for decorators
 * [watchers] bugfix tree-watchers dot-graph to string functionality
+* [watchers] bugfix missing tip in deserialised tree-watcher tree
 
 1.0.0 (2019-04-28)
 ------------------
