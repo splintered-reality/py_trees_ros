@@ -7,7 +7,6 @@
 ##############################################################################
 # Documentation
 ##############################################################################
-
 """
 The :class:`py_trees_ros.trees.BehaviourTree` class
 extends the core :class:`py_trees.trees.BehaviourTree` class
@@ -38,6 +37,7 @@ import subprocess
 import tempfile
 import time
 import unique_identifier_msgs.msg as unique_identifier_msgs
+import uuid
 
 from . import blackboard
 from . import conversions
@@ -446,8 +446,29 @@ class Watcher(object):
                 child = deserialise_tree_recursively(
                     serialised_behaviours[child_id]
                 )
+                # invasive hack to revert the dummy child we added in msg_to_behaviour
+                if isinstance(behaviour, py_trees.decorators.Decorator):
+                    behaviour.children = [child]
+                    behaviour.decorated = behaviour.children[0]
+                else:
+                    behaviour.children.append(child)
                 child.parent = behaviour
-                behaviour.children.append(child)
+            # set the current child so tip() works properly everywhere
+            if behaviour.children:
+                if msg.current_child_id != unique_identifier_msgs.UUID():
+                    current_child_id = conversions.msg_to_uuid4(msg.current_child_id)
+                    for index, child in enumerate(behaviour.children):
+                        if child.id == current_child_id:
+                            # somewhat ugly not having a consistent api here
+                            if isinstance(behaviour, py_trees.composites.Selector):
+                                behaviour.current_child = child
+                            elif isinstance(behaviour, py_trees.composites.Chooser):
+                                behaviour.current_child = child
+                            elif isinstance(behaviour, py_trees.composites.Sequence):
+                                behaviour.current_index = index
+                            # else Parallel, nothing to do since it infers
+                            # the current child from children's status on the fly
+                            break
             if msg.is_active:
                 self.snapshot_visitor.visited[behaviour.id] = behaviour.status
             return behaviour
