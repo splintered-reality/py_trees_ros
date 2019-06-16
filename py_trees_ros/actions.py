@@ -283,5 +283,5 @@ class ActionClient(py_trees.behaviour.Behaviour):
             future: incoming goal result delivered from the action server
         """
         self.result_message = future.result()
-        self.result_status = future.result().action_status
+        self.result_status = future.result().status
         self.result_status_string = self.status_strings[self.result_status]

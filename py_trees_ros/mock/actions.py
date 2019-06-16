@@ -177,14 +177,14 @@ class GenericServer(object):
                         result.message = "goal pre-empted at {percentage:.2f}%%".format(
                             percentage=self.percent_completed)
                         self.node.get_logger().info(result.message)
-                        goal_handle.set_aborted()
+                        goal_handle.abort()
                         return result
                     elif goal_handle.is_cancel_requested:
                         result = self.action_type.Result()
                         result.message = "goal cancelled at {percentage:.2f}%%".format(
                             percentage=self.percent_completed)
                         self.node.get_logger().info(result.message)
-                        goal_handle.set_canceled()
+                        goal_handle.canceled()
                         return result
                     elif self.percent_completed >= 100.0:
                         self.percent_completed = 100.0
@@ -192,7 +192,7 @@ class GenericServer(object):
                         result = self.action_type.Result()
                         result.message = "goal executed with success"
                         self.node.get_logger().info(result.message)
-                        goal_handle.set_succeeded()
+                        goal_handle.succeed()
                         return result
                     else:
                         self.node.get_logger().info("sending feedback {percentage:.2f}%%".format(
@@ -222,7 +222,7 @@ class GenericServer(object):
         with self.goal_lock:
             if self.goal_handle and self.goal_handle.is_active:
                 self.node.get_logger().info("aborting...")
-                self.goal_handle.set_aborted()
+                self.goal_handle.abort()
 
     def shutdown(self):
         """

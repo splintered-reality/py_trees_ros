@@ -51,7 +51,7 @@ class Dock(actions.GenericServer):
         Create some appropriate feedback.
         """
         # TODO: send some feedback message
-        msg = py_trees_actions.Dock_Feedback(
+        msg = py_trees_actions.Dock.Feedback(  # noqa
             percentage_completed=self.percent_completed
         )
         return msg
