@@ -74,13 +74,14 @@ class GenericServer(object):
                  duration=None):
         self.node = rclpy.create_node(
             node_name,
-            initial_parameters=[
+            parameter_overrides=[
                 rclpy.parameter.Parameter(
                     'duration',
                     rclpy.parameter.Parameter.Type.DOUBLE,
                     5.0  # seconds
                 ),
-            ]
+            ],
+            automatically_declare_parameters_from_overrides=True
         )
         # override
         if duration is not None:
