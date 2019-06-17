@@ -347,9 +347,9 @@ class BlackboardWatcher(object):
             'close': None
         }
         self.service_type_strings = {
-            'list': 'py_trees_ros_interfaces/GetBlackboardVariables',
-            'open': 'py_trees_ros_interfaces/OpenBlackboardWatcher',
-            'close': 'py_trees_ros_interfaces/CloseBlackboardWatcher'
+            'list': 'py_trees_ros_interfaces/srv/GetBlackboardVariables',
+            'open': 'py_trees_ros_interfaces/srv/OpenBlackboardWatcher',
+            'close': 'py_trees_ros_interfaces/srv/CloseBlackboardWatcher'
         }
         self.service_types = {
             'list': py_trees_srvs.GetBlackboardVariables,
@@ -399,7 +399,8 @@ class BlackboardWatcher(object):
             )
         client = self.node.create_client(
             srv_type=self.service_types[key],
-            srv_name=self.service_names[key]
+            srv_name=self.service_names[key],
+            qos_profile=rclpy.qos.qos_profile_services_default
             )
         # hardcoding timeouts will get us into trouble
         if not client.wait_for_service(timeout_sec=3.0):
