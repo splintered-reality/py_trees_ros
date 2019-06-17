@@ -146,13 +146,14 @@ class ActionClient(py_trees.behaviour.Behaviour):
             self.node.get_logger().warn("got result, but future not yet done [{}]".format(self.qualified_name))
             return py_trees.common.Status.RUNNING
         else:
-            self.feedback_message = "successfully completed"
             self.node.get_logger().info("goal result [{}]".format(self.qualified_name))
             self.node.get_logger().info("  status: {}".format(self.result_status_string))
             self.node.get_logger().info("  message: {}".format(self.result_message))
             if self.result_status == action_msgs.GoalStatus.STATUS_SUCCEEDED:  # noqa
+                self.feedback_message = "successfully completed"
                 return py_trees.common.Status.SUCCESS
             else:
+                self.feedback_message = "failed"
                 return py_trees.common.Status.FAILURE
 
     def terminate(self, new_status: py_trees.common.Status):
