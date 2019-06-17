@@ -213,7 +213,11 @@ class Exchange(object):
         .. seealso:: This class is used as illustrated above in :class:`~py_trees_ros.trees.BehaviourTree`.
         """
         self.node = node
-        self.publisher = self.node.create_publisher(std_msgs.String, '~/exchange/blackboard')
+        self.publisher = self.node.create_publisher(
+            msg_type=std_msgs.String,
+            topic='~/exchange/blackboard',
+            qos_profile=rclpy.qos.qos_profile_system_default
+        )
         for name in ["get_blackboard_variables",
                      "open_blackboard_watcher",
                      "close_blackboard_watcher"]:
@@ -221,7 +225,8 @@ class Exchange(object):
             self.services[name] = self.node.create_service(
                 srv_type=getattr(py_trees_srvs, camel_case_name),
                 srv_name='~/exchange/' + name,
-                callback=getattr(self, "_{}_service".format(name))
+                callback=getattr(self, "_{}_service".format(name)),
+                qos_profile=rclpy.qos.qos_profile_services_default
             )
 
     def _get_nested_keys(self):

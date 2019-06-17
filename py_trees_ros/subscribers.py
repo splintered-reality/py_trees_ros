@@ -83,7 +83,7 @@ class Handler(py_trees.behaviour.Behaviour):
                  name="Subscriber Handler",
                  topic_name="/foo",
                  topic_type=None,
-                 qos_profile=rclpy.qos.qos_profile_default,
+                 qos_profile=rclpy.qos.qos_profile_system_default,
                  clearing_policy=py_trees.common.ClearingPolicy.ON_INITIALISE
                  ):
         super(Handler, self).__init__(name)
@@ -116,7 +116,7 @@ class Handler(py_trees.behaviour.Behaviour):
             msg_type=self.topic_type,
             topic=self.topic_name,
             callback=self._callback,
-            # qos_profile=self.qos_profile
+            qos_profile=self.qos_profile
         )
 
     def initialise(self):
