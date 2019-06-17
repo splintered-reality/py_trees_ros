@@ -70,8 +70,7 @@ class BlackboardView(object):
         """
         Shutdown the temporarily created publisher.
         """
-        # print("      DJS: view.shutdown [%s]" % self.publisher.topic)
-        # self.node.destroy_publisher(self.publisher)
+        self.node.destroy_publisher(self.publisher)
 
     def _update_sub_blackboard(self):
         if not self.attrs:
