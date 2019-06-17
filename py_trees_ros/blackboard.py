@@ -71,7 +71,7 @@ class BlackboardView(object):
         Shutdown the temporarily created publisher.
         """
         # print("      DJS: view.shutdown [%s]" % self.publisher.topic)
-        self.node.destroy_publisher(self.publisher)
+        # self.node.destroy_publisher(self.publisher)
 
     def _update_sub_blackboard(self):
         if not self.attrs:
@@ -298,7 +298,7 @@ class Exchange(object):
         for view in self.views:
             # print("   DJS: close watcher? [%s][%s]" % (view.topic_name, request.topic_name))
             if view.topic_name == request.topic_name:
-                # view.shutdown()  # that node.destroy_publisher call makes havoc
+                view.shutdown()  # that node.destroy_publisher call makes havoc
                 response.result = True
                 break
         self.views[:] = [view for view in self.views if view.topic_name != request.topic_name]
