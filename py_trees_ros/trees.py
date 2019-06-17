@@ -409,7 +409,7 @@ class Watcher(object):
         # type in the namespace to do auto-discovery of names
         topic_names = {}
         for key, topic_type_string in [
-            ('snapshots', 'py_trees_ros_interfaces/BehaviourTree')
+            ('snapshots', 'py_trees_ros_interfaces/msg/BehaviourTree')
         ]:
             topic_names[key] = utilities.find_topic(
                 self.node,
