@@ -208,8 +208,13 @@ class BehaviourTree(py_trees.trees.BehaviourTree):
         if self.timer is not None:
             self.timer.cancel()
             self.node.destroy_timer(self.timer)
-        self.node.destroy_node()
+        # call shutdown on each node first, in case it has
+        # some esoteric shutdown steps that needs the node
         super().shutdown()
+        # shutdown the node - this *should* automagically clean
+        # up any non-estoeric shutdown of ros communications
+        # inside behaviours
+        self.node.destroy_node()
 
     def _tick_tock_timer_callback(
             self,
@@ -404,7 +409,7 @@ class Watcher(object):
         # type in the namespace to do auto-discovery of names
         topic_names = {}
         for key, topic_type_string in [
-            ('snapshots', 'py_trees_ros_interfaces/BehaviourTree')
+            ('snapshots', 'py_trees_ros_interfaces/msg/BehaviourTree')
         ]:
             topic_names[key] = utilities.find_topic(
                 self.node,

@@ -29,7 +29,6 @@ import py_trees_ros
 import rclpy
 import std_msgs.msg as std_msgs
 import sys
-import time
 
 ##############################################################################
 # Classes
@@ -118,6 +117,7 @@ def main(command_line_args=sys.argv[1:]):
     blackboard_watcher = py_trees_ros.blackboard.BlackboardWatcher(
         namespace_hint=args.namespace
     )
+    subscription = None
     ####################
     # Setup
     ####################
@@ -163,10 +163,11 @@ def main(command_line_args=sys.argv[1:]):
             blackboard_watcher.node.get_logger().info(
                 "creating subscription [{}]".format(watcher_topic_name)
             )
-            blackboard_watcher.node.create_subscription(
+            subscription = blackboard_watcher.node.create_subscription(
                 msg_type=std_msgs.String,
                 topic=watcher_topic_name,
-                callback=blackboard_watcher.echo_blackboard_contents
+                callback=blackboard_watcher.echo_blackboard_contents,
+                qos_profile=rclpy.qos.qos_profile_system_default
             )
             # stream
             try:
@@ -188,6 +189,8 @@ def main(command_line_args=sys.argv[1:]):
             py_trees_ros.exceptions.TimedOutError) as e:
         print(console.red + "\nERROR: {}".format(str(e)) + console.reset)
         result = 1
+    if subscription is not None:
+        blackboard_watcher.node.destroy_subscription(subscription)
     blackboard_watcher.shutdown()
     rclpy.shutdown()
     sys.exit(result)

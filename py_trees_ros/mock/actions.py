@@ -74,13 +74,14 @@ class GenericServer(object):
                  duration=None):
         self.node = rclpy.create_node(
             node_name,
-            initial_parameters=[
+            parameter_overrides=[
                 rclpy.parameter.Parameter(
                     'duration',
                     rclpy.parameter.Parameter.Type.DOUBLE,
                     5.0  # seconds
                 ),
-            ]
+            ],
+            automatically_declare_parameters_from_overrides=True
         )
         # override
         if duration is not None:
@@ -109,7 +110,6 @@ class GenericServer(object):
             self.generate_feedback_message = generate_feedback_message
         self.goal_received_callback = goal_received_callback
         self.goal_handle = None
-        self.preempt_goal_ids = []  # list of unique_identifier_msgs.UUID (goal_id's)
 
         self.action_server = rclpy.action.ActionServer(
             node=self.node,
@@ -171,20 +171,19 @@ class GenericServer(object):
             self.percent_completed += increment
             with self.goal_lock:
                 if goal_handle.is_active:
-                    if goal_handle.goal_id in self.preempt_goal_ids:
-                        self.preempt_goal_ids.remove(goal_handle.goal_id)
-                        result = self.action_type.Result()
-                        result.message = "goal pre-empted at {percentage:.2f}%%".format(
-                            percentage=self.percent_completed)
-                        self.node.get_logger().info(result.message)
-                        goal_handle.set_aborted()
-                        return result
-                    elif goal_handle.is_cancel_requested:
+                    if goal_handle.is_cancel_requested:
                         result = self.action_type.Result()
                         result.message = "goal cancelled at {percentage:.2f}%%".format(
                             percentage=self.percent_completed)
                         self.node.get_logger().info(result.message)
-                        goal_handle.set_canceled()
+                        goal_handle.canceled()
+                        return result
+                    elif goal_handle.goal_id != self.goal_handle.goal_id:
+                        result = self.action_type.Result()
+                        result.message = "goal pre-empted at {percentage:.2f}%%".format(
+                            percentage=self.percent_completed)
+                        self.node.get_logger().info(result.message)
+                        goal_handle.abort()
                         return result
                     elif self.percent_completed >= 100.0:
                         self.percent_completed = 100.0
@@ -192,7 +191,7 @@ class GenericServer(object):
                         result = self.action_type.Result()
                         result.message = "goal executed with success"
                         self.node.get_logger().info(result.message)
-                        goal_handle.set_succeeded()
+                        goal_handle.succeed()
                         return result
                     else:
                         self.node.get_logger().info("sending feedback {percentage:.2f}%%".format(
@@ -208,9 +207,6 @@ class GenericServer(object):
     def handle_accepted_callback(self, goal_handle):
         self.node.get_logger().info("handle accepted")
         with self.goal_lock:
-            if self.goal_handle is not None:
-                self.node.get_logger().info("pre-empting")
-                self.preempt_goal_ids.append(self.goal_handle.goal_id)
             self.goal_handle = goal_handle
             goal_handle.execute()
 
@@ -222,7 +218,7 @@ class GenericServer(object):
         with self.goal_lock:
             if self.goal_handle and self.goal_handle.is_active:
                 self.node.get_logger().info("aborting...")
-                self.goal_handle.set_aborted()
+                self.goal_handle.abort()
 
     def shutdown(self):
         """

@@ -40,8 +40,8 @@ def create_action_client():
         name="dock",
         action_type=py_trees_actions.Dock,
         action_name="dock",
-        action_goal=py_trees_actions.Dock.Goal(dock=True),
-        generate_feedback_message=lambda msg: "{:.2f}%%".format(msg.percentage_completed)
+        action_goal=py_trees_actions.Dock.Goal(dock=True),  # noqa
+        generate_feedback_message=lambda msg: "{:.2f}%%".format(msg.feedback.percentage_completed)
     )
     return behaviour
 
@@ -84,7 +84,7 @@ class DockFailedServer(py_trees_ros.mock.dock.Dock):
 
     def execute_goal_callback(self, goal_handle):
         result = self.action_type.Result()
-        goal_handle.set_aborted()
+        goal_handle.abort()
         return result
 
 ##############################################################################

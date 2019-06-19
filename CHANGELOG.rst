@@ -4,6 +4,11 @@ Changelog
 
 Forthcoming
 -----------
+* ...
+
+1.1.0 (2019-06-19)
+------------------
+
 * [actions] bugfix action client, don't cancel if not RUNNING
 * [conversions] bugfix msg_to_behaviour for decorators
 * [watchers] bugfix tree-watchers dot-graph to string functionality

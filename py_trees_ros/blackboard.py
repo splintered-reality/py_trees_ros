@@ -70,7 +70,6 @@ class BlackboardView(object):
         """
         Shutdown the temporarily created publisher.
         """
-        # print("      DJS: view.shutdown [%s]" % self.publisher.topic)
         self.node.destroy_publisher(self.publisher)
 
     def _update_sub_blackboard(self):
@@ -214,7 +213,11 @@ class Exchange(object):
         .. seealso:: This class is used as illustrated above in :class:`~py_trees_ros.trees.BehaviourTree`.
         """
         self.node = node
-        self.publisher = self.node.create_publisher(std_msgs.String, '~/exchange/blackboard')
+        self.publisher = self.node.create_publisher(
+            msg_type=std_msgs.String,
+            topic='~/exchange/blackboard',
+            qos_profile=rclpy.qos.qos_profile_system_default
+        )
         for name in ["get_blackboard_variables",
                      "open_blackboard_watcher",
                      "close_blackboard_watcher"]:
@@ -222,7 +225,8 @@ class Exchange(object):
             self.services[name] = self.node.create_service(
                 srv_type=getattr(py_trees_srvs, camel_case_name),
                 srv_name='~/exchange/' + name,
-                callback=getattr(self, "_{}_service".format(name))
+                callback=getattr(self, "_{}_service".format(name)),
+                qos_profile=rclpy.qos.qos_profile_services_default
             )
 
     def _get_nested_keys(self):
@@ -298,7 +302,7 @@ class Exchange(object):
         for view in self.views:
             # print("   DJS: close watcher? [%s][%s]" % (view.topic_name, request.topic_name))
             if view.topic_name == request.topic_name:
-                # view.shutdown()  # that node.destroy_publisher call makes havoc
+                view.shutdown()  # that node.destroy_publisher call makes havoc
                 response.result = True
                 break
         self.views[:] = [view for view in self.views if view.topic_name != request.topic_name]
@@ -347,9 +351,9 @@ class BlackboardWatcher(object):
             'close': None
         }
         self.service_type_strings = {
-            'list': 'py_trees_ros_interfaces/GetBlackboardVariables',
-            'open': 'py_trees_ros_interfaces/OpenBlackboardWatcher',
-            'close': 'py_trees_ros_interfaces/CloseBlackboardWatcher'
+            'list': 'py_trees_ros_interfaces/srv/GetBlackboardVariables',
+            'open': 'py_trees_ros_interfaces/srv/OpenBlackboardWatcher',
+            'close': 'py_trees_ros_interfaces/srv/CloseBlackboardWatcher'
         }
         self.service_types = {
             'list': py_trees_srvs.GetBlackboardVariables,
@@ -399,7 +403,8 @@ class BlackboardWatcher(object):
             )
         client = self.node.create_client(
             srv_type=self.service_types[key],
-            srv_name=self.service_names[key]
+            srv_name=self.service_names[key],
+            qos_profile=rclpy.qos.qos_profile_services_default
             )
         # hardcoding timeouts will get us into trouble
         if not client.wait_for_service(timeout_sec=3.0):
