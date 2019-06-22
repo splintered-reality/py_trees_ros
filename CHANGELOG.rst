@@ -6,6 +6,11 @@ Forthcoming
 -----------
 * ...
 
+1.1.1 (2019-06-22)
+------------------
+* [tests] add missing tests/__init.py,  `#94 <https://github.com/splintered-reality/py_trees_ros/pull/94>`_
+* [infra] add missing ros2topic dependency,  `#94 <https://github.com/splintered-reality/py_trees_ros/pull/94>`_
+
 1.1.0 (2019-06-19)
 ------------------
 
