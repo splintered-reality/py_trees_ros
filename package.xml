@@ -40,6 +40,7 @@
   <doc_depend>unique_id</doc_depend>
   <doc_depend>unique_identifier_msgs</doc_depend>
   -->
+
   <doc_depend>python3-sphinx</doc_depend>
   <doc_depend>python3-sphinx-argparse</doc_depend>
   <doc_depend>python3-sphinx-rtd-theme</doc_depend>
@@ -48,18 +49,12 @@
   <depend>py_trees</depend>
   <depend>py_trees_ros_interfaces</depend>
   <depend>rclpy</depend>
+  <depend>ros2topic</depend>
   <depend>std_msgs</depend>
   <depend>unique_identifier_msgs</depend>
 
   <!-- behaviour dependencies -->
   <depend>sensor_msgs</depend>
-
-  <!--
-  <test_depend>py_trees</test_depend>
-  <test_depend>geometry_msgs</test_depend>
-  <test_depend>rostest</test_depend>
-  <test_depend>rosunit</test_depend>
-  -->
 
   <export>
     <build_type>ament_python</build_type>
