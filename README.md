@@ -3,9 +3,11 @@
 Behaviours, trees and utilities that extend py_trees for use
 with ROS.
 
-## :construction: Under Construction
+## Documentation
 
-The `devel` branch is in the process of being rebuilt for ROS2.
+* Basics & Core Module API: [![docs][py-trees-docs-dashing-image]][py-trees-docs-1.2.x]
+* ROS2 Module API: [![docs][py-trees-ros-docs-dashing-image]][py-trees-ros-docs-1.1.x]
+* ROS2 Tutorials: [![docs][py-trees-ros-tutorials-docs-dashing-image]][py-trees-ros-tutorials-docs-1.0.x]
 
 ## PyTrees-ROS Ecosystem
 
@@ -13,7 +15,7 @@ The `devel` branch is in the process of being rebuilt for ROS2.
 | ROS2 | [Dashing][dashing-build-farm] |  ROS1 | [Melodic][melodic-build-farm] | [Kinetic][kinetic-build-farm] |
 |:---:|:---:|:---:|:---:|:---:|
 | [py_trees][py-trees-ros-index] | [![1.2.x][1.2.x-sources-image]][py-trees-sources-1.2.x]<br/>[![Build Status][py-trees-build-status-dashing-image]][py-trees-build-status-dashing]<br/>[![1.2.x-Docs][1.2.x-rtd-image]][py-trees-docs-1.2.x] | [py_trees][py-trees-wiki] | [![0.6.x][0.6.x-sources-image]][py-trees-sources-0.6.x]<br/>[![Build Status][py-trees-build-status-melodic-image]][py-trees-build-status-melodic]<br/>[![Docs Status][py-trees-docs-melodic-image]][py-trees-docs-melodic] | [![0.5.x][0.5.x-sources-image]][py-trees-sources-0.5.x]<br/>[![Build Status][py-trees-build-status-kinetic-image]][py-trees-build-status-kinetic]<br/>[![Docs Status][py-trees-docs-kinetic-image]][py-trees-docs-kinetic] |
-| [py_trees_ros_interfaces][py-trees-ros-interfaces-ros-index] | [![1.1.x][1.1.x-sources-image]][py-trees-ros-interfaces-sources-1.1.x]<br/>[![Build Status][py-trees-ros-interfaces-build-status-dashing-image]][py-trees-ros-interfaces-build-status-dashing]<br/>![1.1.x-Docs][not-available-docs-image] | [py_trees_msgs][py-trees-msgs-wiki] | [![0.3.x][0.3.x-sources-image]][py-trees-msgs-sources-melodic]<br/>[![Build Status][py-trees-msgs-build-status-melodic-image]][py-trees-msgs-build-status-melodic]<br/>[![Docs Status][py-trees-msgs-docs-melodic-image]][py-trees-msgs-docs-melodic] | [![0.3.x][0.3.x-sources-image]][py-trees-msgs-sources-kinetic]<br/>[![Build Status][py-trees-msgs-build-status-kinetic-image]][py-trees-msgs-build-status-kinetic]<br/>[![Docs Status][py-trees-msgs-docs-kinetic-image]][py-trees-msgs-docs-kinetic] |
+| [py_trees_ros_interfaces][py-trees-ros-interfaces-ros-index] | [![1.1.x][1.1.x-sources-image]][py-trees-ros-interfaces-sources-1.1.x]<br/>[![Build Status][py-trees-ros-interfaces-build-status-dashing-image]][py-trees-ros-interfaces-build-status-dashing]<br/>![1.1.x-Docs][not-available-docs-image] | [py_trees_msgs][py-trees-msgs-wiki] | [![0.3.x][0.3.x-sources-image]][py-trees-msgs-sources-melodic]<br/>[![Build Status][py-trees-msgs-build-status-melodic-image]][py-trees-msgs-build-status-melodic]<br/>![0.3.x-Docs][not-available-docs-image] | [![0.3.x][0.3.x-sources-image]][py-trees-msgs-sources-kinetic]<br/>[![Build Status][py-trees-msgs-build-status-kinetic-image]][py-trees-msgs-build-status-kinetic]<br/>![0.3.x-Docs][not-available-docs-image] |
 | [py_trees_ros][py-trees-ros-ros-index] | [![1.1.x][1.1.x-sources-image]][py-trees-ros-sources-1.1.x]<br/>[![Build Status][py-trees-ros-build-status-dashing-image]][py-trees-ros-build-status-dashing]<br/>[![1.1.x-Docs][1.1.x-rtd-image]][py-trees-ros-docs-1.1.x] | [py_trees_ros][py-trees-ros-wiki] | [![0.5.x][0.5.x-sources-image]][py-trees-ros-sources-0.5.x]<br/>[![Build Status][py-trees-ros-build-status-melodic-image]][py-trees-ros-build-status-melodic]<br/>[![Docs Status][py-trees-ros-docs-melodic-image]][py-trees-ros-docs-melodic] | [![0.5.x][0.5.x-sources-image]][py-trees-ros-sources-0.5.x]<br/>[![Build Status][py-trees-ros-build-status-kinetic-image]][py-trees-ros-build-status-kinetic]<br/>[![Docs Status][py-trees-ros-docs-kinetic-image]][py-trees-ros-docs-kinetic] |
 | [py_trees_ros_tutorials][py-trees-ros-tutorials-ros-index] | [![1.0.x][1.0.x-sources-image]][py-trees-ros-tutorials-sources-1.0.x]<br/>[![Build Status][py-trees-ros-tutorials-build-status-dashing-image]][py-trees-ros-tutorials-build-status-dashing]<br/>[![1.0.x-Docs][1.0.x-rtd-image]][py-trees-ros-tutorials-docs-1.0.x] |  | - | - |
 | | - | [rqt_py_trees][rqt-py-trees-wiki] | [![0.3.x][0.3.x-sources-image]][rqt-py-trees-sources-melodic]<br/>[![Build Status][rqt-py-trees-build-status-melodic-image]][rqt-py-trees-build-status-melodic] | [![0.3.x][0.3.x-sources-image]][rqt-py-trees-sources-kinetic]<br/>[![Build Status][rqt-py-trees-build-status-kinetic-image]][rqt-py-trees-build-status-kinetic] |
@@ -60,6 +62,7 @@ The `devel` branch is in the process of being rebuilt for ROS2.
 [py-trees-docs-0.6.x]: http://py-trees.readthedocs.io/en/release-0.6.x/
 [py-trees-docs-0.5.x]: http://docs.ros.org/kinetic/api/py_trees/html/
 [py-trees-docs-kinetic]: http://docs.ros.org/kinetic/api/py_trees/html/
+[py-trees-docs-dashing-image]: http://img.shields.io/badge/py_trees-dashing-brightgreen.svg?style=plastic
 [py-trees-docs-kinetic-image]: https://img.shields.io/jenkins/s/http/build.ros.org/job/Kdoc__py_trees__ubuntu_xenial_amd64.svg?label=docs&style=plastic
 [py-trees-docs-melodic]: http://docs.ros.org/melodic/api/py_trees/html/
 [py-trees-docs-melodic-image]: https://img.shields.io/jenkins/s/http/build.ros.org/job/Mdoc__py_trees__ubuntu_bionic_amd64.svg?label=docs&style=plastic
@@ -82,6 +85,7 @@ The `devel` branch is in the process of being rebuilt for ROS2.
 [py-trees-ros-build-status-melodic]: http://build.ros.org/job/Mbin_uB64__py_trees_ros__ubuntu_bionic_amd64__binary
 [py-trees-ros-build-status-melodic-image]: http://build.ros.org/job/Mbin_uB64__py_trees_ros__ubuntu_bionic_amd64__binary/badge/icon?style=plastic
 [py-trees-ros-docs-1.1.x]: http://py-trees-ros.readthedocs.io/en/release-1.1.x/
+[py-trees-ros-docs-dashing-image]: http://img.shields.io/badge/py_trees_ros-dashing-brightgreen.svg?style=plastic
 [py-trees-ros-docs-kinetic]: http://docs.ros.org/kinetic/api/py_trees_ros/html/
 [py-trees-ros-docs-kinetic-image]: https://img.shields.io/jenkins/s/http/build.ros.org/job/Kdoc__py_trees_ros__ubuntu_xenial_amd64.svg?label=docs&style=plastic
 [py-trees-ros-docs-melodic]: http://docs.ros.org/melodic/api/py_trees_ros/html/
@@ -97,6 +101,7 @@ The `devel` branch is in the process of being rebuilt for ROS2.
 [py-trees-ros-tutorials-docs-1.0.x]: http://py-trees-ros-tutorials.readthedocs.io/en/release-1.0.x/
 [py-trees-ros-tutorials-sources-1.0.x]: https://github.com/splintered-reality/py_trees_ros_tutorials/tree/release/1.0.x
 [py-trees-ros-tutorials-ros-index]: https://index.ros.org/p/py_trees_ros_tutorials/github-splintered-reality-py_trees_ros_tutorials
+[py-trees-ros-tutorials-docs-dashing-image]: http://img.shields.io/badge/py_trees_ros_tutorials-dashing-brightgreen.svg?style=plastic
 
 [py-trees-msgs-build-status-kinetic]: http://build.ros.org/job/Kbin_uX64__py_trees_msgs__ubuntu_xenial_amd64__binary
 [py-trees-msgs-build-status-kinetic-image]: http://build.ros.org/job/Kbin_uX64__py_trees_msgs__ubuntu_xenial_amd64__binary/badge/icon?style=plastic
