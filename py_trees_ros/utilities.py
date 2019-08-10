@@ -95,7 +95,9 @@ def find_topics(
         node: nodes have the discovery methods
         topic_type: primary lookup hint
         namespace: secondary lookup hint
-        timeout: immediately post node creation, can take time to discover the graph (sec)
+        timeout: check every 0.1s until this timeout is reached (can be None -> checks once)
+
+    .. note: Immediately post node creation, it can take some time to discover the graph.
 
     Returns:
         list of fully expanded topic names (can be empty)
@@ -108,7 +110,7 @@ def find_topics(
     clock = rclpy.clock.Clock()
     start_time = clock.now()
     topic_names = []
-    while clock.now() - start_time < rclpy.time.Duration(seconds=timeout):
+    while True:
         # Returns a list of the form: [('exchange/blackboard', ['std_msgs/String'])
         topic_names_and_types = node.get_topic_names_and_types()
         topic_names = [name for name, types in topic_names_and_types if topic_type in types]
@@ -116,7 +118,10 @@ def find_topics(
             topic_names = [name for name in topic_names if namespace in name]
         if topic_names:
             break
-        time.sleep(loop_period)
+        if timeout is None or (clock.now() - start_time) > rclpy.time.Duration(seconds=timeout):
+            break
+        else:
+            time.sleep(loop_period)
     return topic_names
 
 
