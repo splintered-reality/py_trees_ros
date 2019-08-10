@@ -380,8 +380,7 @@ class Watcher(object):
     def __init__(
             self,
             namespace_hint: str,
-            mode: WatcherMode=WatcherMode.STREAM
-         ):
+            mode: WatcherMode=WatcherMode.STREAM):
         self.namespace_hint = namespace_hint
         self.subscribers = None
         self.viewing_mode = mode
@@ -407,19 +406,22 @@ class Watcher(object):
             return False
         # taking advantage of there being only one publisher per message
         # type in the namespace to do auto-discovery of names
-        topic_names = {}
-        for key, topic_type_string in [
-            ('snapshots', 'py_trees_ros_interfaces/msg/BehaviourTree')
-        ]:
-            topic_names[key] = utilities.find_topic(
-                self.node,
-                topic_type_string,
-                self.namespace_hint
-            )
+        topic_type_string = 'py_trees_ros_interfaces/msg/BehaviourTree'
+        topic_names = utilities.find_topics(
+            self.node,
+            topic_type_string,
+            self.namespace_hint
+        )
+        if not topic_names:
+            raise exceptions.NotFoundError("topic not found [type: {}]".format(topic_type_string))
+        elif len(topic_names) > 1:
+            raise exceptions.MultipleFoundError("multiple topics found, use a namespace hint [type: {}]".format(topic_type_string))
+        else:
+            topic_name = topic_names[0]
         self.subscribers = utilities.Subscribers(
             node=self.node,
             subscriber_details=[
-                ("snapshots", topic_names["snapshots"], py_trees_msgs.BehaviourTree, True, self.callback_snapshot),
+                ("snapshots", topic_name, py_trees_msgs.BehaviourTree, True, self.callback_snapshot),
             ]
         )
 

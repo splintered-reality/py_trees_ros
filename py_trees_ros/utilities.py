@@ -25,6 +25,7 @@ import rclpy
 import rclpy.node
 import rclpy.qos
 import time
+import typing
 
 from . import exceptions
 
@@ -48,7 +49,7 @@ def find_service(node: rclpy.node.Node,
         timeout: immediately post node creation, can take time to discover the graph (sec)
 
     Returns:
-        :obj:`str`: fully expanded the service name
+        :obj:`str`: fully expanded service name
 
     Raises:
         :class:`~py_trees_ros.exceptions.NotFoundError`: if no services were found
@@ -81,12 +82,11 @@ def find_service(node: rclpy.node.Node,
         raise exceptions.MultipleFoundError("multiple services found [type: {}]".format(service_type))
 
 
-def find_topic(
+def find_topics(
         node: rclpy.node.Node,
         topic_type: str,
         namespace: str=None,
-        timeout: float=0.5
-        ):
+        timeout: float=0.5) -> typing.List[str]:
     """
     Discover a topic of the specified type and if necessary, under the specified
     namespace.
@@ -95,14 +95,12 @@ def find_topic(
         node: nodes have the discovery methods
         topic_type: primary lookup hint
         namespace: secondary lookup hint
-        timeout: immediately post node creation, can take time to discover the graph (sec)
+        timeout: check every 0.1s until this timeout is reached (can be None -> checks once)
+
+    .. note: Immediately post node creation, it can take some time to discover the graph.
 
     Returns:
-        :obj:`str`: fully expanded the service name
-
-    Raises:
-        :class:`~py_trees_ros.exceptions.NotFoundError`: if no services were found
-        :class:`~py_trees_ros.exceptions.MultipleFoundError`: if multiple services were found
+        list of fully expanded topic names (can be empty)
     """
     # TODO: follow the pattern of ros2cli to create a node without the need to init
     # rcl (might get rid of the magic sleep this way). See:
@@ -112,7 +110,7 @@ def find_topic(
     clock = rclpy.clock.Clock()
     start_time = clock.now()
     topic_names = []
-    while clock.now() - start_time < rclpy.time.Duration(seconds=timeout):
+    while True:
         # Returns a list of the form: [('exchange/blackboard', ['std_msgs/String'])
         topic_names_and_types = node.get_topic_names_and_types()
         topic_names = [name for name, types in topic_names_and_types if topic_type in types]
@@ -120,14 +118,11 @@ def find_topic(
             topic_names = [name for name in topic_names if namespace in name]
         if topic_names:
             break
-        time.sleep(loop_period)
-
-    if not topic_names:
-        raise exceptions.NotFoundError("topic not found [type: {}]".format(topic_type))
-    elif len(topic_names) == 1:
-        return topic_names[0]
-    else:
-        raise exceptions.MultipleFoundError("multiple topics found [type: {}]".format(topic_type))
+        if timeout is None or (clock.now() - start_time) > rclpy.time.Duration(seconds=timeout):
+            break
+        else:
+            time.sleep(loop_period)
+    return topic_names
 
 
 def basename(name):

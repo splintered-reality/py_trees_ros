@@ -4,7 +4,7 @@ Changelog
 
 Forthcoming
 -----------
-* ...
+* [utilities] permit discovery of multiples with find_topics, `#94 <https://github.com/splintered-reality/py_trees_ros/pull/97>`_
 
 1.1.1 (2019-06-22)
 ------------------
