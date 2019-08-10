@@ -43,11 +43,11 @@ setup(
     test_suite='tests',
     tests_require=[],  # using vanilla py unit tests
     entry_points={
-         'console_scripts': [
+        'console_scripts': [
             'py-trees-blackboard-watcher = py_trees_ros.programs.blackboard_watcher:main',
-            'py-trees-echo = py_trees_ros.programs.echo:main',
-            'py-trees-multi-talker = py_trees_ros.programs.multi_talker:main',
+            # 'py-trees-echo = py_trees_ros.programs.echo:main',
+            # 'py-trees-multi-talker = py_trees_ros.programs.multi_talker:main',
             'py-trees-tree-watcher = py_trees_ros.programs.tree_watcher:main',
-         ],
-     },
+        ],
+    },
 )
