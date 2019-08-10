@@ -1,3 +1,0 @@
-<launch>
-  <include file="$(find py_trees_ros)/launch/tutorial_eight.launch"/>
-</launch>
