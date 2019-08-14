@@ -9,6 +9,8 @@ with ROS.
 * ROS2 Module API: [![docs][py-trees-ros-docs-dashing-image]][py-trees-ros-docs-1.1.x]
 * ROS2 Tutorials: [![docs][py-trees-ros-tutorials-docs-dashing-image]][py-trees-ros-tutorials-docs-1.0.x]
 
+For older versions of the documentation, refer to the links in the matrix below.
+
 ## PyTrees-ROS Ecosystem
 
 
