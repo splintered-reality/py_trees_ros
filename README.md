@@ -46,7 +46,7 @@ For older versions of the documentation, refer to the links in the matrix below.
 [0.5.x-docs-image]: http://img.shields.io/badge/docs-0.5.x-brightgreen.svg?style=plastic
 [0.3.x-docs-image]: http://img.shields.io/badge/docs-0.3.x-brightgreen.svg?style=plastic
 [not-available-docs-image]: http://img.shields.io/badge/docs-n/a-yellow.svg?style=plastic
-[readme-docs-image]: http://img.shields.io/badge/docs-README-green.svg?style=plastic
+[readme-docs-image]: http://img.shields.io/badge/docs-README-brightgreen.svg?style=plastic
 
 [1.2.x-debians-image]: http://img.shields.io/badge/debians-1.2.x-orange.svg?style=plastic
 [0.6.x-debians-image]: http://img.shields.io/badge/debians-0.6.x-orange.svg?style=plastic
