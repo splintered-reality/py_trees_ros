@@ -119,7 +119,7 @@ For older versions of the documentation, refer to the links in the matrix below.
 
 [py-trees-ros-viewer-build-status-dashing]: http://build.ros2.org/job/Dbin_uB64__py_trees_ros_viewer__ubuntu_bionic_amd64__binary/
 [py-trees-ros-viewer-build-status-dashing-image]: http://build.ros2.org/job/Dbin_uB64__py_trees_ros_viewer__ubuntu_bionic_amd64__binary/badge/icon?style=plastic
-[py-trees-ros-viewer-docs-0.1.x]: https://github.com/splintered-reality/py_trees_js/blob/release/0.1.x/README.md
+[py-trees-ros-viewer-docs-0.1.x]: https://github.com/splintered-reality/py_trees_ros_viewer/blob/release/0.1.x/README.md
 [py-trees-ros-viewer-sources-0.1.x]: https://github.com/splintered-reality/py_trees_ros_viewer/tree/release/0.1.x
 [py-trees-ros-viewer-ros-index]: https://index.ros.org/p/py_trees_ros_viewer/github-splintered-reality-py_trees_ros_viewer
 
