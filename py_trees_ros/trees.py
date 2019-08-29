@@ -165,7 +165,7 @@ class BehaviourTree(py_trees.trees.BehaviourTree):
         # set a handler to publish future modifications whenever the tree is modified
         # (e.g. pruned). The tree_update_handler method is in the base class, set this
         # to the callback function here.
-        self.tree_update_handler = self._publish_serialised_tree
+        self.tree_update_handler = self._on_tree_update_handler
 
     def tick_tock(
             self,
@@ -238,6 +238,17 @@ class BehaviourTree(py_trees.trees.BehaviourTree):
             self.tick_tock_count += 1
         else:
             self.timer.cancel()
+
+    def _on_tree_update_handler(self):
+        """
+        Whenever there has been a modification to the tree (insertion/pruning), publish
+        the snapshot.
+        """
+        # only worth notifying once we've actually commenced
+        if self.statistics is not None:
+            rclpy_start_time = rclpy.clock.Clock().now()
+            self.statistics.stamp = rclpy_start_time.to_msg()
+            self._publish_serialised_tree()
 
     def _statistics_pre_tick_handler(self, tree: py_trees.trees.BehaviourTree):
         """
