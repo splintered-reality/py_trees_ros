@@ -4,6 +4,7 @@ Changelog
 
 Forthcoming
 -----------
+* [backend] ensure tree modifications are published with an updated timestamp
 
 1.1.2 (2019-08-10)
 ------------------
