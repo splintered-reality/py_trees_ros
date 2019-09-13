@@ -64,7 +64,11 @@ class BlackboardView(object):
         self.dict = {}
         self.cached_dict = {}
         self.node = node
-        self.publisher = self.node.create_publisher(std_msgs.String, topic_name)
+        self.publisher = self.node.create_publisher(
+            msg_type=std_msgs.String,
+            topic=topic_name,
+            qos_profile=utilities.qos_profile_latched_topic()
+        )
 
     def shutdown(self):
         """
@@ -216,7 +220,7 @@ class Exchange(object):
         self.publisher = self.node.create_publisher(
             msg_type=std_msgs.String,
             topic='~/exchange/blackboard',
-            qos_profile=rclpy.qos.qos_profile_system_default
+            qos_profile=utilities.qos_profile_latched_topic()
         )
         for name in ["get_blackboard_variables",
                      "open_blackboard_watcher",
