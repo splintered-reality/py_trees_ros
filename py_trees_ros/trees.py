@@ -31,6 +31,7 @@ import py_trees
 import py_trees.console as console
 import py_trees_ros_interfaces.msg as py_trees_msgs  # noqa
 # import rosbag
+import rcl_interfaces.msg as rcl_interfaces_msgs
 import rclpy
 import statistics
 import subprocess
@@ -410,7 +411,25 @@ class Watcher(object):
         """
         default_node_name = "watcher_" + str(os.getpid())
         try:
-            self.node = rclpy.create_node(default_node_name)
+            self.node = rclpy.create_node(
+                default_node_name,
+                parameter_overrides=[
+                    rclpy.parameter.Parameter('foo', rclpy.parameter.Parameter.Type.STRING, "bar"),
+                ],
+                # allow_undeclared_parameters=True,
+                automatically_declare_parameters_from_overrides=True
+            )
+#             self.node.declare_parameter(
+#                 name='foo',
+#                 value="initial_foo",
+#                 # descriptor=rcl_interfaces_msgs.ParameterDescriptor()
+#             )
+#             self.node.set_parameters([
+#                 rclpy.parameter.Parameter(
+#                     'foo',
+#                     rclpy.parameter.Parameter.Type.STRING,
+#                     'fud')
+#             ])
             time.sleep(0.1)  # ach, the magic foo before discovery works
         except rclpy.exceptions.NotInitializedException:
             print(console.red + "ERROR: rlcpy not yet initialised [{}]".format(default_node_name) + console.reset)
