@@ -48,6 +48,7 @@
   <!-- core dependencies -->
   <depend>py_trees</depend>
   <depend>py_trees_ros_interfaces</depend>
+  <depend>rcl_interfaces</depend>
   <depend>rclpy</depend>
   <depend>ros2topic</depend>
   <depend>std_msgs</depend>
