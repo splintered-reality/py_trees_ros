@@ -5,6 +5,7 @@ Changelog
 Forthcoming
 -----------
 * [backend] ensure tree modifications are published with an updated timestamp, `#100 <https://github.com/splintered-reality/py_trees_ros/pull/100>`_
+* [trees] ros parameterisation of the setup timeout, `#101 <https://github.com/splintered-reality/py_trees_ros/pull/101>`_
 
 1.1.2 (2019-08-10)
 ------------------
