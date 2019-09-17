@@ -31,6 +31,7 @@ import py_trees
 import py_trees.console as console
 import py_trees_ros_interfaces.msg as py_trees_msgs  # noqa
 # import rosbag
+import rcl_interfaces.msg as rcl_interfaces_msgs
 import rclpy
 import statistics
 import subprocess
@@ -128,13 +129,44 @@ class BehaviourTree(py_trees.trees.BehaviourTree):
         Args:
             timeout: time (s) to wait (use common.Duration.INFINITE to block indefinitely)
 
+        ROS Params:
+            timeout: time (s) to wait (use common.Duration.INFINITE (math.inf) to block indefinitely)
+
+        .. note: The timeout parameter takes precedence. If not set, the timeout arg will provide the initial value.
+
         Raises:
             rclpy.exceptions.NotInitializedException: rclpy not yet initialised
             Exception: be ready to catch if any of the behaviours raise an exception
         """
+        # node creation - can raise rclpy.exceptions.NotInitializedException
         default_node_name = "tree"
-        # rclpy.create_node can raise rclpy.exceptions.NotInitializedException
-        self.node = rclpy.create_node(default_node_name)
+        self.node = rclpy.create_node(node_name=default_node_name)
+        # timeout parameter:
+        #   if not initialised from, e.g. launch, then
+        #   use the arg provided timeout
+        self.node.declare_parameter(
+            name='setup_timeout_sec',
+            value=timeout if not py_trees.common.Duration.INFINITE else py_trees.common.Duration.INFINITE.value,
+            descriptor=rcl_interfaces_msgs.ParameterDescriptor(
+                name="setup_timeout_sec",
+                type=rcl_interfaces_msgs.ParameterType.PARAMETER_DOUBLE,  # noqa
+                description="timeout for ROS tree setup (node, pubs, subs, ...)",
+                additional_constraints="",
+                read_only=True,
+                floating_point_range=[rcl_interfaces_msgs.FloatingPointRange(
+                    from_value=0.0,
+                    to_value=py_trees.common.Duration.INFINITE.value)]
+            )
+        )
+        # Get the resulting timeout
+        setup_timeout_sec = self.node.get_parameter("setup_timeout_sec").value
+        # Ugly workaround to accomodate use of the enum (TODO: rewind this)
+        #   Need to pass the enum for now (instead of just a float) in case
+        #   there are behaviours out in the wild that apply logic around the
+        #   use of the enum
+        if setup_timeout_sec == py_trees.common.Duration.INFINITE.value:
+            setup_timeout_sec = py_trees.common.Duration.INFINITE
+
         self._setup_publishers()
         self.blackboard_exchange = blackboard.Exchange()
         self.blackboard_exchange.setup(self.node)
@@ -143,7 +175,7 @@ class BehaviourTree(py_trees.trees.BehaviourTree):
 
         # share the tree's node with it's behaviours
         try:
-            super().setup(timeout, node=self.node)
+            super().setup(setup_timeout_sec, node=self.node)
         except RuntimeError as e:
             if str(e) == "tree setup timed out":
                 raise exceptions.TimedOutError("tree setup timed out")
@@ -205,16 +237,19 @@ class BehaviourTree(py_trees.trees.BehaviourTree):
         """
         Cleanly shut down rclpy timers and nodes.
         """
-        if self.timer is not None:
-            self.timer.cancel()
-            self.node.destroy_timer(self.timer)
-        # call shutdown on each node first, in case it has
-        # some esoteric shutdown steps that needs the node
+        # stop ticking if we're ticking
+        if self.node is not None:
+            if self.timer is not None:
+                self.timer.cancel()
+                self.node.destroy_timer(self.timer)
+        # call shutdown on each behaviour first, in case it has
+        # some esoteric shutdown steps
         super().shutdown()
-        # shutdown the node - this *should* automagically clean
-        # up any non-estoeric shutdown of ros communications
-        # inside behaviours
-        self.node.destroy_node()
+        if self.node is not None:
+            # shutdown the node - this *should* automagically clean
+            # up any non-estoeric shutdown of ros communications
+            # inside behaviours
+            self.node.destroy_node()
 
     def _tick_tock_timer_callback(
             self,
@@ -410,7 +445,7 @@ class Watcher(object):
         """
         default_node_name = "watcher_" + str(os.getpid())
         try:
-            self.node = rclpy.create_node(default_node_name)
+            self.node = rclpy.create_node(node_name=default_node_name)
             time.sleep(0.1)  # ach, the magic foo before discovery works
         except rclpy.exceptions.NotInitializedException:
             print(console.red + "ERROR: rlcpy not yet initialised [{}]".format(default_node_name) + console.reset)
