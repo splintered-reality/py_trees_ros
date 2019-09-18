@@ -67,7 +67,7 @@ class BlackboardView(object):
         self.publisher = self.node.create_publisher(
             msg_type=std_msgs.String,
             topic=topic_name,
-            qos_profile=utilities.qos_profile_latched_topic()
+            qos_profile=utilities.qos_profile_latched()
         )
 
     def shutdown(self):
@@ -220,7 +220,7 @@ class Exchange(object):
         self.publisher = self.node.create_publisher(
             msg_type=std_msgs.String,
             topic='~/exchange/blackboard',
-            qos_profile=utilities.qos_profile_latched_topic()
+            qos_profile=utilities.qos_profile_latched()
         )
         for name in ["get_blackboard_variables",
                      "open_blackboard_watcher",

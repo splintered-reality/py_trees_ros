@@ -167,7 +167,7 @@ def main(command_line_args=sys.argv[1:]):
                 msg_type=std_msgs.String,
                 topic=watcher_topic_name,
                 callback=blackboard_watcher.echo_blackboard_contents,
-                qos_profile=rclpy.qos.qos_profile_system_default
+                qos_profile=py_trees_ros.utilities.qos_profile_unlatched()
             )
             # stream
             try:

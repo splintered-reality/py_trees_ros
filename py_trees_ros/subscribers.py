@@ -27,10 +27,12 @@ permitted to be used or written to the blackboard.
 
 import copy
 import operator
+import threading
+import typing
+
 import py_trees
 import rclpy.qos
 import std_msgs.msg as std_msgs
-import threading
 
 from . import utilities
 
@@ -73,20 +75,20 @@ class Handler(py_trees.behaviour.Behaviour):
     some data (e.g. CameraInfo).
 
     Args:
-        name (:obj:`str`): name of the behaviour
-        topic_name (:obj:`str`): name of the topic to connect to
-        topic_type (:obj:`any`): class of the message type (e.g. :obj:`std_msgs.msg.String`)
-        qos_profile (:obj:`bool`): qos profile for the subscriber
-        clearing_policy (:class:`~py_trees.common.ClearingPolicy`): when to clear the data
+        topic_name: name of the topic to connect to
+        topic_type: class of the message type (e.g. :obj:`std_msgs.msg.String`)
+        qos_profile: qos profile for the subscriber
+        name: name of the behaviour
+        clearing_policy: when to clear the data
     """
     def __init__(self,
-                 name="Subscriber Handler",
-                 topic_name="/foo",
-                 topic_type=None,
-                 qos_profile=rclpy.qos.qos_profile_system_default,
-                 clearing_policy=py_trees.common.ClearingPolicy.ON_INITIALISE
+                 topic_name: str,
+                 topic_type: typing.Any,
+                 qos_profile: rclpy.qos.QoSProfile,
+                 name: str=py_trees.common.Name.AUTO_GENERATED,
+                 clearing_policy: py_trees.common.ClearingPolicy=py_trees.common.ClearingPolicy.ON_INITIALISE
                  ):
-        super(Handler, self).__init__(name)
+        super(Handler, self).__init__(name=name)
         self.topic_name = topic_name
         self.topic_type = topic_type
         self.msg = None
@@ -160,16 +162,16 @@ class CheckData(Handler):
     - fail_if_bad_comparison=True
 
     Args:
-        name (:obj:`str`): name of the behaviour
-        topic_name (:obj:`str`): name of the topic to connect to
-        topic_type (:obj:`any`): class of the message type (e.g. :obj:`std_msgs.msg.String`)
-        qos_profile (:obj:`bool`): qos profile for the subscriber
-        variable_name (:obj:`str`): name of the variable to check
-        expected_value (:obj:`any`): expected value of the variable
-        fail_if_no_data (:obj:`bool`): :attr:`~py_trees.common.Status.FAILURE` instead of :attr:`~py_trees.common.Status.RUNNING` if there is no data yet
-        fail_if_bad_comparison (:obj:`bool`): :attr:`~py_trees.common.Status.FAILURE` instead of :attr:`~py_trees.common.Status.RUNNING` if comparison failed
-        comparison_operator (:obj:`func`): one from the python `operator module`_
-        clearing_policy (:class:`~py_trees.common.ClearingPolicy`): when to clear the data
+        topic_name: name of the topic to connect to
+        topic_type: class of the message type (e.g. :obj:`std_msgs.msg.String`)
+        qos_profile: qos profile for the subscriber
+        variable_name: name of the variable to check
+        expected_value: expected value of the variable
+        comparison_operator: one from the python `operator module`_
+        fail_if_no_data: :attr:`~py_trees.common.Status.FAILURE` instead of :attr:`~py_trees.common.Status.RUNNING` if there is no data yet
+        fail_if_bad_comparison: :attr:`~py_trees.common.Status.FAILURE` instead of :attr:`~py_trees.common.Status.RUNNING` if comparison failed
+        name: name of the behaviour
+        clearing_policy: when to clear the data
 
     .. tip::
 
@@ -180,19 +182,19 @@ class CheckData(Handler):
 
     """
     def __init__(self,
-                 name="Check Data",
-                 topic_name="/foo",
-                 topic_type=None,
-                 qos_profile=utilities.qos_profile_latched_topic(),
-                 variable_name="bar",
-                 expected_value=None,
+                 topic_name: str,
+                 topic_type: typing.Any,
+                 qos_profile: rclpy.qos.QoSProfile,
+                 variable_name: str,
+                 expected_value: typing.Any,
+                 comparison_operator=operator.eq,
                  fail_if_no_data=False,
                  fail_if_bad_comparison=False,
-                 comparison_operator=operator.eq,
+                 name=py_trees.common.Name.AUTO_GENERATED,
                  clearing_policy=py_trees.common.ClearingPolicy.ON_INITIALISE
                  ):
         super(CheckData, self).__init__(
-            name,
+            name=name,
             topic_name=topic_name,
             topic_type=topic_type,
             qos_profile=qos_profile,
@@ -276,21 +278,21 @@ class WaitForData(Handler):
     which we do with to reset (and subsequently look for the next event). e.g. button events.
 
     Args:
-        name (:obj:`str`): name of the behaviour
-        topic_name (:obj:`str`): name of the topic to connect to
-        topic_type (:obj:`any`): class of the message type (e.g. :obj:`std_msgs.msg.String`)
-        qos_profile (:obj:`bool`): qos profile for the subscriber
-        clearing_policy (:class:`~py_trees.common.ClearingPolicy`): when to clear the data
+        topic_name: name of the topic to connect to
+        topic_type: class of the message type (e.g. :obj:`std_msgs.msg.String`)
+        qos_profile: qos profile for the subscriber
+        name: name of the behaviour
+        clearing_policy: when to clear the data
     """
     def __init__(self,
-                 name="Wait For Data",
-                 topic_name="chatter",
-                 topic_type=None,
-                 qos_profile=utilities.qos_profile_latched_topic(),
+                 topic_name: str,
+                 topic_type: typing.Any,
+                 qos_profile: rclpy.qos.QoSProfile,
+                 name=py_trees.common.Name.AUTO_GENERATED,
                  clearing_policy=py_trees.common.ClearingPolicy.ON_INITIALISE
                  ):
         super().__init__(
-            name,
+            name=name,
             topic_name=topic_name,
             topic_type=topic_type,
             qos_profile=qos_profile,
@@ -324,13 +326,13 @@ class ToBlackboard(Handler):
     designated, in which case they will write to the specified keys.
 
     Args:
-        name (:obj:`str`): name of the behaviour
-        topic_name (:obj:`str`): name of the topic to connect to
-        topic_type (:obj:`any`): class of the message type (e.g. :obj:`std_msgs.msg.String`)
-        qos_profile (:obj:`bool`): qos profile for the subscriber
-        blackboard_variables (:obj:`dict`): blackboard variable string or dict {names (keys) - message subfields (values)}, use a value of None to indicate the entire message
-        initialise_variables (:obj:`bool`): initialise the blackboard variables to some defaults
-        clearing_policy (:class:`~py_trees.common.ClearingPolicy`): when to clear the data
+        topic_name: name of the topic to connect to
+        topic_type: class of the message type (e.g. :obj:`std_msgs.msg.String`)
+        qos_profile: qos profile for the subscriber
+        blackboard_variables: blackboard variable string or dict {names (keys) - message subfields (values)}, use a value of None to indicate the entire message
+        initialise_variables: initialise the blackboard variables to some defaults
+        name: name of the behaviour
+        clearing_policy: when to clear the data
 
     Examples:
 
@@ -359,16 +361,16 @@ class ToBlackboard(Handler):
            blackboard_variables={"pose_with_covariance_stamped": None, "pose": "pose.pose"}
     """
     def __init__(self,
-                 name="ToBlackboard",
-                 topic_name="chatter",
-                 topic_type=None,
-                 qos_profile=utilities.qos_profile_latched_topic(),
-                 blackboard_variables={"chatter": None},
-                 initialise_variables={},
+                 topic_name: str,
+                 topic_type: typing.Any,
+                 qos_profile: rclpy.qos.QoSProfile,
+                 blackboard_variables: typing.Dict[str, typing.Any]={},  # e.g. {"chatter": None}
+                 initialise_variables: typing.Dict[str, typing.Any]={},
+                 name=py_trees.common.Name.AUTO_GENERATED,
                  clearing_policy=py_trees.common.ClearingPolicy.ON_INITIALISE
                  ):
         super().__init__(
-            name,
+            name=name,
             topic_name=topic_name,
             topic_type=topic_type,
             qos_profile=qos_profile,
@@ -439,16 +441,16 @@ class EventToBlackboard(Handler):
         tree can utilise the variables.
 
     Args:
-        name (:obj:`str`): name of the behaviour
-        topic_name (:obj:`str`): name of the topic to connect to
-        qos_profile (:obj:`bool`): qos profile for the subscriber
-        variable_name (:obj:`str`): name to write the boolean result on the blackboard
+        topic_name: name of the topic to connect to
+        qos_profile: qos profile for the subscriber
+        variable_name: name to write the boolean result on the blackboard
+        name: name of the behaviour
     """
     def __init__(self,
-                 name="Event to Blackboard",
-                 topic_name="/event",
-                 qos_profile=utilities.qos_profile_latched_topic(),
-                 variable_name="event"
+                 topic_name: str,
+                 qos_profile: rclpy.qos.QoSProfile,
+                 variable_name: str,
+                 name=py_trees.common.Name.AUTO_GENERATED,
                  ):
         super().__init__(
             name=name,

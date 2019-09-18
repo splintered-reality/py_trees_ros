@@ -130,7 +130,7 @@ def create_subscription(node, latched, topic_name, message_type, callback):
             raise RuntimeError('Could not determine the type for the passed topic')
 
     msg_module = ros2topic.api.import_message_type(topic_name, message_type)
-    qos_profile = py_trees_ros.utilities.qos_profile_latched_topic() if latched else rclpy.qos.qos_profile_default
+    qos_profile = py_trees_ros.utilities.qos_profile_latched() if latched else py_trees_ros.utilities.qos_profile_unlatched()
     return node.create_subscription(
         msg_module,
         topic_name,
