@@ -38,7 +38,6 @@ import subprocess
 import tempfile
 import time
 import unique_identifier_msgs.msg as unique_identifier_msgs
-import uuid
 
 from . import blackboard
 from . import conversions
@@ -77,14 +76,11 @@ class BehaviourTree(py_trees.trees.BehaviourTree):
                  root,
                  unicode_tree_debug=False):
         super(BehaviourTree, self).__init__(root)
-        self.snapshot_visitor = py_trees.visitors.SnapshotVisitor()
         if unicode_tree_debug:
-            self.add_post_tick_handler(
-                lambda tree: self._unicode_tree_post_tick_handler(self.snapshot_visitor, tree)
-            )
-        self.winds_of_change_visitor = py_trees.visitors.WindsOfChangeVisitor()
+            self.snapshot_visitor = py_trees.visitors.DisplaySnapshotVisitor()
+        else:
+            self.snapshot_visitor = py_trees.visitors.SnapshotVisitor()
         self.visitors.append(self.snapshot_visitor)
-        self.visitors.append(self.winds_of_change_visitor)
 
         self.statistics = None
         self.tick_start_time = None
@@ -204,8 +200,7 @@ class BehaviourTree(py_trees.trees.BehaviourTree):
             period_ms,
             number_of_iterations=py_trees.trees.CONTINUOUS_TICK_TOCK,
             pre_tick_handler=None,
-            post_tick_handler=None
-         ):
+            post_tick_handler=None):
         """
         Tick continuously at the period specified.
 
@@ -256,8 +251,7 @@ class BehaviourTree(py_trees.trees.BehaviourTree):
             period_ms,
             number_of_iterations,
             pre_tick_handler,
-            post_tick_handler
-         ):
+            post_tick_handler):
         """
         Tick tock callback passed to the timer to be periodically triggered.
 
@@ -356,7 +350,7 @@ class BehaviourTree(py_trees.trees.BehaviourTree):
             return
 
         # if there's been a change, serialise, publish and log
-        if self.winds_of_change_visitor.changed:
+        if self.snapshot_visitor.changed:
             self._publish_serialised_tree()
             # with self.lock:
             #     if not self._bag_closed:
@@ -377,16 +371,6 @@ class BehaviourTree(py_trees.trees.BehaviourTree):
             msg.is_active = True if behaviour.id in self.snapshot_visitor.visited else False
             tree_message.behaviours.append(msg)
         self.publishers.snapshots.publish(tree_message)
-
-    def _unicode_tree_post_tick_handler(self, snapshot_visitor, tree):
-        print(
-            "\n" +
-            py_trees.display.unicode_tree(
-                tree.root,
-                visited=snapshot_visitor.visited,
-                previously_visited=tree.snapshot_visitor.previously_visited
-            )
-        )
 
     def _cleanup(self):
         with self.lock:

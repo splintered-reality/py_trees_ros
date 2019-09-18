@@ -16,3 +16,4 @@ py_trees*.tar.gz
 py_trees_ros/resources/*.py
 html
 
+scripts
