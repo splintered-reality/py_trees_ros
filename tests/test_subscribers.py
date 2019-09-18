@@ -71,7 +71,7 @@ class TestActionServers(unittest.TestCase):
 
         cls.timeout = 3.0
         cls.number_of_iterations = 100
-        cls.qos_profile = rclpy.qos.qos_profile_sensor_data
+        cls.qos_profile = py_trees_ros.utilities.qos_profile_unlatched()
 
     @classmethod
     def tearDownClass(cls):

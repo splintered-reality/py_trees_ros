@@ -156,7 +156,7 @@ def get_py_trees_home():
     return home
 
 
-def qos_profile_latched_topic():
+def qos_profile_latched():
     """
     Convenience retrieval for a latched topic (publisher / subscriber)
     """
@@ -164,6 +164,18 @@ def qos_profile_latched_topic():
         history=rclpy.qos.QoSHistoryPolicy.RMW_QOS_POLICY_HISTORY_KEEP_LAST,
         depth=1,
         durability=rclpy.qos.QoSDurabilityPolicy.RMW_QOS_POLICY_DURABILITY_TRANSIENT_LOCAL,
+        reliability=rclpy.qos.QoSReliabilityPolicy.RMW_QOS_POLICY_RELIABILITY_RELIABLE
+    )
+
+
+def qos_profile_unlatched():
+    """
+    Default profile for an unlatched topic (in py_trees_ros).
+    """
+    return rclpy.qos.QoSProfile(
+        history=rclpy.qos.QoSHistoryPolicy.RMW_QOS_POLICY_HISTORY_KEEP_LAST,
+        depth=1,
+        durability=rclpy.qos.QoSDurabilityPolicy.RMW_QOS_POLICY_DURABILITY_VOLATILE,
         reliability=rclpy.qos.QoSReliabilityPolicy.RMW_QOS_POLICY_RELIABILITY_RELIABLE
     )
 
@@ -232,13 +244,13 @@ class Publishers(object):
                 self.__dict__[name] = node.create_publisher(
                     msg_type=publisher_type,
                     topic=topic_name,
-                    qos_profile=qos_profile_latched_topic()
+                    qos_profile=qos_profile_latched()
                 )
             else:
                 self.__dict__[name] = node.create_publisher(
                     msg_type=publisher_type,
                     topic=topic_name,
-                    qos_profile=rclpy.qos.qos_profile_system_default
+                    qos_profile=qos_profile_unlatched()
                 )
             resolved_name = resolve_name(node, topic_name)
             message_type = publisher_type.__class__.__module__.split('.')[0] + "/" + publisher_type.__class__.__name__
@@ -292,14 +304,14 @@ class Subscribers(object):
                     msg_type=subscriber_type,
                     topic=topic_name,
                     callback=callback,
-                    qos_profile=qos_profile_latched_topic()
+                    qos_profile=qos_profile_latched()
                 )
             else:
                 self.__dict__[name] = node.create_subscription(
                     msg_type=subscriber_type,
                     topic=topic_name,
                     callback=callback,
-                    qos_profile=rclpy.qos.qos_profile_system_default
+                    qos_profile=qos_profile_unlatched()
                 )
 
             resolved_name = resolve_name(node, topic_name)
