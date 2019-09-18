@@ -88,7 +88,7 @@ class Handler(py_trees.behaviour.Behaviour):
                  name: str=py_trees.common.Name.AUTO_GENERATED,
                  clearing_policy: py_trees.common.ClearingPolicy=py_trees.common.ClearingPolicy.ON_INITIALISE
                  ):
-        super(Handler, self).__init__(name)
+        super(Handler, self).__init__(name=name)
         self.topic_name = topic_name
         self.topic_type = topic_type
         self.msg = None
@@ -194,7 +194,7 @@ class CheckData(Handler):
                  clearing_policy=py_trees.common.ClearingPolicy.ON_INITIALISE
                  ):
         super(CheckData, self).__init__(
-            name,
+            name=name,
             topic_name=topic_name,
             topic_type=topic_type,
             qos_profile=qos_profile,
@@ -292,7 +292,7 @@ class WaitForData(Handler):
                  clearing_policy=py_trees.common.ClearingPolicy.ON_INITIALISE
                  ):
         super().__init__(
-            name,
+            name=name,
             topic_name=topic_name,
             topic_type=topic_type,
             qos_profile=qos_profile,
@@ -370,7 +370,7 @@ class ToBlackboard(Handler):
                  clearing_policy=py_trees.common.ClearingPolicy.ON_INITIALISE
                  ):
         super().__init__(
-            name,
+            name=name,
             topic_name=topic_name,
             topic_type=topic_type,
             qos_profile=qos_profile,
