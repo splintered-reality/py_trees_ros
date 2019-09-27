@@ -26,12 +26,11 @@ import operator
 import pickle
 import py_trees
 import py_trees.console as console
-import py_trees_ros_interfaces.srv as py_trees_srvs
+import py_trees_ros_interfaces.srv as py_trees_srvs  # noqa
 import rclpy.expand_topic_name
 import rclpy.node
 import std_msgs.msg as std_msgs
-
-from typing import Any
+import typing
 
 from . import exceptions
 from . import utilities
@@ -50,17 +49,16 @@ class BlackboardView(object):
     Args:
         node: an rclpy node for communications handling
         topic_name: name of the topic for the publisher
-        attrs (:obj:`???`):
+        variable_names: requested variables to view
     """
     def __init__(
             self,
             node: rclpy.node.Node,
             topic_name: str,
-            attrs
+            variable_names: typing.Set[str]
          ):
-        self.blackboard = py_trees.blackboard.Blackboard()
         self.topic_name = topic_name
-        self.attrs = attrs
+        self.variable_names = variable_names
         self.dict = {}
         self.cached_dict = {}
         self.node = node
@@ -77,19 +75,26 @@ class BlackboardView(object):
         self.node.destroy_publisher(self.publisher)
 
     def _update_sub_blackboard(self):
-        if not self.attrs:
-            self.dict = copy.copy(self.blackboard.__dict__)
+        if not self.variable_names:
+            self.dict = copy.copy(py_trees.blackboard.Blackboard.storage)
         else:
-            for attr in self.attrs:
-                if '/' in attr:
-                    check_attr = operator.attrgetter(".".join(attr.split('/')))
-                else:
-                    check_attr = operator.attrgetter(attr)
+            for variable_name in self.variable_names:
+                # convenience, just in case they used slashes instead of .'s
+                if '/' in variable_name:
+                    variable_name = ".".join(variable_name.split('/'))
                 try:
-                    value = check_attr(self.blackboard)
-                    self.dict[attr] = value
-                except AttributeError:
-                    pass
+                    name_components = variable_name.split('.')
+                    key = name_components[0]
+                    key_attributes = '.'.join(name_components[1:])
+                    value = py_trees.blackboard.Blackboard.storage[key]
+                    if key_attributes:
+                        try:
+                            value = operator.attrgetter(key_attributes)(value)
+                        except AttributeError:
+                            pass  # silently just ignore the request
+                    self.dict[variable_name] = value
+                except KeyError:
+                    pass  # silently just ignore the request
 
     def is_changed(self):
         """
@@ -106,7 +111,6 @@ class BlackboardView(object):
         current_pickle = pickle.dumps(self.dict, -1)
         blackboard_changed = current_pickle != self.cached_dict
         self.cached_dict = current_pickle
-
         return blackboard_changed
 
     def __str__(self):
@@ -246,9 +250,9 @@ class Exchange(object):
                                     variables.append(k + "/" + attr)
                                     inner(value, k + "/" + attr)
 
-        for key in sorted(self.blackboard.__dict__):
+        for key in sorted(py_trees.blackboard.Blackboard.storage):
             variables.append(key)
-            inner(self.blackboard.__dict__[key], key)
+            inner(py_trees.blackboard.Blackboard.storage[key], key)
 
         return variables
 
@@ -299,6 +303,7 @@ class Exchange(object):
                         # print("     DJS: # printing on: %s" % view.topic_name)
                         msg = std_msgs.String()
                         msg.data = "{0}".format(view)
+                        # print("    DJS: Msg: {}".format(msg))
                         view.publisher.publish(msg)
 
     def _close_blackboard_watcher_service(self, request, response):
@@ -323,7 +328,11 @@ class Exchange(object):
             node_name=self.node.get_name(),
             node_namespace=self.node.get_namespace())
         Exchange._counter += 1
-        view = BlackboardView(self.node, response.topic, request.variables)
+        view = BlackboardView(
+            node=self.node,
+            topic_name=response.topic,
+            variable_names=set(request.variables)
+        )
         self.views.append(view)
         return response
 
