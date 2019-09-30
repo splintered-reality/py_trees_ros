@@ -55,11 +55,13 @@ class BlackboardView(object):
             node: rclpy.node.Node,
             topic_name: str,
             variable_names: typing.Set[str],
-            filter_on_visited_path: bool
+            filter_on_visited_path: bool,
+            with_activity_stream: bool
     ):
         self.topic_name = topic_name
         self.variable_names = variable_names
         self.sub_blackboard = py_trees.blackboard.SubBlackboard()
+        self.sub_activity_stream = py_trees.blackboard.ActivityStream()
         self.node = node
         self.publisher = self.node.create_publisher(
             msg_type=std_msgs.String,
@@ -67,6 +69,9 @@ class BlackboardView(object):
             qos_profile=utilities.qos_profile_latched()
         )
         self.filter_on_visited_path = filter_on_visited_path
+        self.with_activity_stream = with_activity_stream
+        self.tracked_variable_names = set()
+        self.tracked_keys = set()
 
     def shutdown(self):
         """
@@ -86,19 +91,29 @@ class BlackboardView(object):
         Returns:
             :class:`bool`
         """
+        self.tracked_keys = set()
+        self.tracked_variable_names = set()
         if self.filter_on_visited_path:
             visited_variable_names = py_trees.blackboard.Blackboard.keys_filtered_by_clients(
                 client_ids=visited_clients
             )
-            tracking = set()
-            for name in self.variable_names:
-                key = name.split('.')[0]
-                if key in visited_variable_names:
-                    tracking.add(name)
-        else:
-            tracking = self.variable_names
-        self.sub_blackboard.update(tracking)
+        for name in self.variable_names:
+            key = name.split('.')[0]
+            if self.filter_on_visited_path:
+                if not visited_variable_names or key in visited_variable_names:
+                    self.tracked_variable_names.add(name)
+                    self.tracked_keys.add(key)
+        # update the sub blackboard
+        self.sub_blackboard.update(self.tracked_variable_names)
+        # update the sub activity stream
+        if self.with_activity_stream:
+            self.sub_activity_stream.clear()
+            for activity_item in py_trees.blackboard.Blackboard.activity_stream.data:
+                if activity_item.key in self.tracked_keys:
+                    self.sub_activity_stream.push(activity_item)
+        # flag if / if not changes occurred
         return self.sub_blackboard.is_changed
+
 
 ##############################################################################
 # Exchange
@@ -230,8 +245,18 @@ class Exchange(object):
                 if self.node.count_subscribers(view.topic_name) > 0:
                     if view.is_changed(visited_clients):
                         msg = std_msgs.String()
-                        msg.data = "{0}".format(view.sub_blackboard)
+                        if view.with_activity_stream:
+                            msg.data = console.green + "Blackboard Data\n" + console.reset
+                            msg.data += "{}\n".format(view.sub_blackboard)
+                            msg.data += py_trees.display.unicode_blackboard_activity_stream(
+                                activity_stream=view.sub_activity_stream
+                            )
+                        else:
+                            msg.data = "{}".format(view.sub_blackboard)
                         view.publisher.publish(msg)
+        # always clear
+        if py_trees.blackboard.Blackboard.activity_stream is not None:
+            py_trees.blackboard.Blackboard.activity_stream.clear()
 
     def _close_blackboard_watcher_service(self, request, response):
         response.result = False
@@ -243,6 +268,10 @@ class Exchange(object):
                 break
         self.views[:] = [view for view in self.views if view.topic_name != request.topic_name]
         # print("DJS: close result: %s" % response.result)
+        if any([view.with_activity_stream for view in self.views]):
+            py_trees.blackboard.Blackboard.enable_activity_stream()
+        else:
+            py_trees.blackboard.Blackboard.disable_activity_stream()
         return response
 
     def _get_blackboard_variables_service(self, unused_request, response):
@@ -259,9 +288,14 @@ class Exchange(object):
             node=self.node,
             topic_name=response.topic,
             variable_names=set(request.variables),
-            filter_on_visited_path=request.filter_on_visited_path
+            filter_on_visited_path=request.filter_on_visited_path,
+            with_activity_stream=request.with_activity_stream
         )
         self.views.append(view)
+        if any([view.with_activity_stream for view in self.views]):
+            py_trees.blackboard.Blackboard.enable_activity_stream()
+        else:
+            py_trees.blackboard.Blackboard.disable_activity_stream()
         return response
 
 ##############################################################################
