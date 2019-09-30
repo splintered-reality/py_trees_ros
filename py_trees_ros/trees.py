@@ -167,7 +167,6 @@ class BehaviourTree(py_trees.trees.BehaviourTree):
         self.blackboard_exchange = blackboard.Exchange()
         self.blackboard_exchange.setup(self.node)
         self.post_tick_handlers.append(self._on_change_post_tick_handler)
-        self.post_tick_handlers.append(self.blackboard_exchange.publish_blackboard)
 
         # share the tree's node with it's behaviours
         try:
@@ -335,8 +334,8 @@ class BehaviourTree(py_trees.trees.BehaviourTree):
 
     def _on_change_post_tick_handler(self, tree: py_trees.trees.BehaviourTree):
         """
-        Post-tick handler that checks for changes in the tree as a result
-        of it's last tick and publishes an update on a ROS topic.
+        Post-tick handler that checks for changes in the tree/blackboard as a result
+        of it's last tick and publish updates on ROS topics.
 
         Args:
             tree (:class:`~py_trees.trees.BehaviourTree`): the behaviour tree that has just been ticked
@@ -356,6 +355,9 @@ class BehaviourTree(py_trees.trees.BehaviourTree):
             #     if not self._bag_closed:
             #         # self.bag.write(self.publishers.log_tree.name, self.logging_visitor.tree)
             #         pass
+
+        # over to the exchange to determine if blackboard updates should be published
+        self.blackboard_exchange.publish_blackboard(visited_clients=self.snapshot_visitor.visited.keys())
 
     def _publish_serialised_tree(self):
         """"

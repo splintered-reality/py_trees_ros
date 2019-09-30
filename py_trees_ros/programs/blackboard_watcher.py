@@ -79,9 +79,11 @@ def command_line_argument_parser(formatted_for_sphinx=True):
                                      epilog=epilog(formatted_for_sphinx),
                                      formatter_class=argparse.RawDescriptionHelpFormatter,
                                      )
-    parser.add_argument('-l', '--list-variables', action='store_true', default=None, help='list the blackboard variables')
+    parser.add_argument('-l', '--list', action='store_true', default=None, help='list the blackboard variable names')
+    parser.add_argument('-a', '--activity', action='store_true', help='include the logged activity stream for recent changes')
+    parser.add_argument('-v', '--visited', action='store_true', help="filter selected keys from those associated with behaviours on the most recent tick's visited path")
     parser.add_argument('-n', '--namespace', nargs='?', default=None, help='namespace of blackboard services (if there should be more than one blackboard)')
-    parser.add_argument('variables', nargs=argparse.REMAINDER, default=list(), help='space separated list of blackboard variables to watch')
+    parser.add_argument('variables', nargs=argparse.REMAINDER, default=list(), help='space separated list of blackboard variable names (may be nested) to watch')
     return parser
 
 
@@ -141,7 +143,7 @@ def main(command_line_args=sys.argv[1:]):
     ####################
     result = 0
     try:
-        if args.list_variables:
+        if args.list:
             request, client = blackboard_watcher.create_service_client('list')
             future = client.call_async(request)
             rclpy.spin_until_future_complete(blackboard_watcher.node, future)
@@ -154,6 +156,8 @@ def main(command_line_args=sys.argv[1:]):
             # request connection
             request, client = blackboard_watcher.create_service_client('open')
             request.variables = [variable.strip(',[]') for variable in args.variables]
+            request.filter_on_visited_path = args.visited
+            request.with_activity_stream = args.activity
             future = client.call_async(request)
             rclpy.spin_until_future_complete(blackboard_watcher.node, future)
             response = future.result()
