@@ -91,16 +91,29 @@ class BlackboardView(object):
         Returns:
             :class:`bool`
         """
-        self.tracked_keys = set()
-        self.tracked_variable_names = set()
         if self.filter_on_visited_path:
-            visited_variable_names = py_trees.blackboard.Blackboard.keys_filtered_by_clients(
+            visited_keys = py_trees.blackboard.Blackboard.keys_filtered_by_clients(
                 client_ids=visited_clients
             )
-        for name in self.variable_names:
-            key = name.split('.')[0]
+        view_variable_names = self.variable_names
+        view_keys = [name.split('.')[0] for name in view_variable_names]
+
+        self.tracked_variable_names = set()
+        self.tracked_keys = set()
+        if not self.variable_names:
             if self.filter_on_visited_path:
-                if not visited_variable_names or key in visited_variable_names:
+                self.tracked_variable_names = visited_keys
+                self.tracked_keys = visited_keys
+            else:
+                self.tracked_variable_names = None
+                self.tracked_keys = py_trees.blackboard.Blackboard.keys()
+        else:
+            for key, name in zip(view_keys, view_variable_names):
+                if self.filter_on_visited_path:
+                    if key in visited_keys:
+                        self.tracked_variable_names.add(name)
+                        self.tracked_keys.add(key)
+                else:
                     self.tracked_variable_names.add(name)
                     self.tracked_keys.add(key)
         # update the sub blackboard
@@ -161,6 +174,8 @@ class Exchange(object):
         self.node = None
         self.views = []
         self.services = {}
+        # might want to revisit this if it proves to be suboptimal
+        py_trees.blackboard.Blackboard.enable_activity_stream()
 
     def setup(self, node: rclpy.node.Node):
         """
@@ -222,28 +237,23 @@ class Exchange(object):
 
         return variables
 
-    def publish_blackboard(self, visited_clients=None):
+    def post_tick_handler(self, visited_clients: typing.List[uuid.UUID]=None):
         """
-        Lazy string publishing of the blackboard (the contents of
-        the blackboard can be of many and varied types, so string form is the only
-        way to transmit this across a ros message) on the **~blackboard** topic.
+        Update blackboard watcher views, publish changes and
+        clear the activity stream. Publishing is lazy, depending
+        on blackboard watcher connections.
 
         Typically you would call this from a tree custodian (e.g.
         :class:`py_trees_ros.trees.BehaviourTree`) after each and every tick.
 
-        .. note:: Lazy: it will only do the relevant string processing if there are subscribers present.
-
         Args:
-            unused_tree (:obj:`any`): if used as a post_tick_handler, needs the argument, but nonetheless, gets unused
+            visited_clients: behaviour/blackboard client unique identifiers
         """
-        # publish watchers
+        # update watcher views and publish
         if len(self.views) > 0:
             for view in self.views:
-                # print("   DJS: view publisher topic: %s" % (view.publisher.topic))
-                # print("   DJS: # view publishers = %s" % self.node.count_publishers(view.topic_name))
-                # print("   DJS: # view subscribers = %s" % self.node.count_subscribers(view.topic_name))
                 if self.node.count_subscribers(view.topic_name) > 0:
-                    if view.is_changed(visited_clients):
+                    if view.is_changed(visited_clients):  # update in here
                         msg = std_msgs.String()
                         if view.with_activity_stream:
                             msg.data = console.green + "Blackboard Data\n" + console.reset
@@ -254,7 +264,8 @@ class Exchange(object):
                         else:
                             msg.data = "{}".format(view.sub_blackboard)
                         view.publisher.publish(msg)
-        # always clear
+
+        # clear the activity stream
         if py_trees.blackboard.Blackboard.activity_stream is not None:
             py_trees.blackboard.Blackboard.activity_stream.clear()
 

@@ -90,7 +90,12 @@ def command_line_argument_parser(formatted_for_sphinx=True):
                                      epilog=epilog(formatted_for_sphinx),
                                      formatter_class=argparse.RawDescriptionHelpFormatter,
                                      )
+    # common arguments
     parser.add_argument('-n', '--namespace', nargs='?', default=None, help='namespace of pytree communications (if there should be more than one tree active)')
+    parser.add_argument('-a', '--stream-blackboard-activity', action='store_true', help="show logged activity stream (streaming mode only)")
+    parser.add_argument('-b', '--stream-blackboard-variables', action='store_true', help="show visited path variables (streaming mode only)")
+    parser.add_argument('-s', '--stream-statistics', action='store_true', help="show tick timing statistics (streaming mode only)")
+    # TODO : break these out into different subcommands
     group = parser.add_mutually_exclusive_group()
     group.add_argument(
         '--stream',
@@ -99,13 +104,13 @@ def command_line_argument_parser(formatted_for_sphinx=True):
         const=py_trees_ros.trees.WatcherMode.STREAM,
         help='stream the tree state as unicode art on your console')
     group.add_argument(
-        '-s', '--snapshot',
+        '--snapshot',
         dest='viewing_mode',
         action='store_const',
         const=py_trees_ros.trees.WatcherMode.SNAPSHOT,
         help='print a single snapshot as unicode art on your console')
     group.add_argument(
-        '-d', '--dot-graph',
+        '--dot-graph',
         dest='viewing_mode',
         action='store_const',
         const=py_trees_ros.trees.WatcherMode.DOT_GRAPH,
@@ -167,7 +172,10 @@ def main():
     ####################
     tree_watcher = py_trees_ros.trees.Watcher(
         namespace_hint=args.namespace,
-        mode=args.viewing_mode
+        mode=args.viewing_mode,
+        display_statistics=args.stream_statistics,
+        display_blackboard_variables=args.stream_blackboard_variables,
+        display_blackboard_activity=args.stream_blackboard_activity,
     )
     rclpy.init(args=None)
     try:
