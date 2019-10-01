@@ -384,7 +384,7 @@ class BehaviourTree(py_trees.trees.BehaviourTree):
             tree_message.blackboard_on_visited_path.append(
                 diagnostic_msgs.KeyValue(
                     key=key,
-                    value=str(py_trees.blackboard.Blackboard.get_value_without_client_access_checks(key))
+                    value=str(py_trees.blackboard.Blackboard.get(key))
                 )
             )
         if py_trees.blackboard.Blackboard.activity_stream is not None:
