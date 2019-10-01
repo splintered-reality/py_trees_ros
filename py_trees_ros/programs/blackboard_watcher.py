@@ -37,12 +37,19 @@ import sys
 
 def description(formatted_for_sphinx):
     short = "Open up a window onto the blackboard!\n"
-    examples = ["", "--list-variables", "access_point odom/pose/pose/position"]
+    long = ("\nIntrospect on the entire blackboard or a part thereof and receive a stream of\n"
+            "updates whenever values change. Reach into individual keys or the nested attributes\n"
+            "of keys. Use --visited to watch only the relevant sections of the board traversed\n"
+            "by behaviours on the last tick. Use --activity to get a detailed breakdown\n"
+            "of blackboard access (read/write/set/unset).\n"
+            )
+    examples = ["", "--visited --activity", "--list-variables", "access_point odom/pose/pose/position"]
     script_name = "py-trees-blackboard-watcher"
 
     if formatted_for_sphinx:
         # for sphinx documentation (doesn't like raw text)
         s = short
+        s += long
         s += "\n"
         s += "**Examples:**\n\n"
         s += ".. code-block:: bash\n"
@@ -56,7 +63,8 @@ def description(formatted_for_sphinx):
         s += console.bold_white + "Blackboard Watcher".center(79) + "\n" + console.reset
         s += banner_line
         s += "\n"
-        s += "Open up a window onto the blackboard!\n"
+        s += short
+        s += long
         s += "\n"
         s += console.bold + "Examples" + console.reset + "\n\n"
         s += '\n'.join(["    $ " + console.cyan + script_name + console.yellow + " {0}".format(example_args) + console.reset for example_args in examples])
