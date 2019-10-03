@@ -21,17 +21,14 @@ command line utility.
 # Imports
 ##############################################################################
 
-import copy
-import operator
-import pickle
 import py_trees
 import py_trees.console as console
-import py_trees_ros_interfaces.srv as py_trees_srvs
+import py_trees_ros_interfaces.srv as py_trees_srvs  # noqa
 import rclpy.expand_topic_name
 import rclpy.node
 import std_msgs.msg as std_msgs
-
-from typing import Any
+import typing
+import uuid
 
 from . import exceptions
 from . import utilities
@@ -50,25 +47,31 @@ class BlackboardView(object):
     Args:
         node: an rclpy node for communications handling
         topic_name: name of the topic for the publisher
-        attrs (:obj:`???`):
+        variable_names: requested variables to view
+        filter_on_visited_path: constrain dynamically to the visited region of the blackboard
     """
     def __init__(
             self,
             node: rclpy.node.Node,
             topic_name: str,
-            attrs
-         ):
-        self.blackboard = py_trees.blackboard.Blackboard()
+            variable_names: typing.Set[str],
+            filter_on_visited_path: bool,
+            with_activity_stream: bool
+    ):
         self.topic_name = topic_name
-        self.attrs = attrs
-        self.dict = {}
-        self.cached_dict = {}
+        self.variable_names = variable_names
+        self.sub_blackboard = py_trees.blackboard.SubBlackboard()
+        self.sub_activity_stream = py_trees.blackboard.ActivityStream()
         self.node = node
         self.publisher = self.node.create_publisher(
             msg_type=std_msgs.String,
             topic=topic_name,
             qos_profile=utilities.qos_profile_latched()
         )
+        self.filter_on_visited_path = filter_on_visited_path
+        self.with_activity_stream = with_activity_stream
+        self.tracked_variable_names = set()
+        self.tracked_keys = set()
 
     def shutdown(self):
         """
@@ -76,25 +79,11 @@ class BlackboardView(object):
         """
         self.node.destroy_publisher(self.publisher)
 
-    def _update_sub_blackboard(self):
-        if not self.attrs:
-            self.dict = copy.copy(self.blackboard.__dict__)
-        else:
-            for attr in self.attrs:
-                if '/' in attr:
-                    check_attr = operator.attrgetter(".".join(attr.split('/')))
-                else:
-                    check_attr = operator.attrgetter(attr)
-                try:
-                    value = check_attr(self.blackboard)
-                    self.dict[attr] = value
-                except AttributeError:
-                    pass
-
-    def is_changed(self):
+    def is_changed(self, visited_clients: typing.Set[uuid.UUID]) -> bool:
         """
-        Checks the current blackboard against a cached version. This
-        then caches the current blackboard.
+        Dynamically adjusts the tracking parameters for the sub-blackboard
+        against the clients that were visited (if desired) and proceeds
+        to determine if there was a change since the last check.
 
         .. warning:: Since this caches the current blackboard, it can't be used
             multiple times in succession.
@@ -102,40 +91,42 @@ class BlackboardView(object):
         Returns:
             :class:`bool`
         """
-        self._update_sub_blackboard()
-        current_pickle = pickle.dumps(self.dict, -1)
-        blackboard_changed = current_pickle != self.cached_dict
-        self.cached_dict = current_pickle
+        if self.filter_on_visited_path:
+            visited_keys = py_trees.blackboard.Blackboard.keys_filtered_by_clients(
+                client_ids=visited_clients
+            )
+        view_variable_names = self.variable_names
+        view_keys = [name.split('.')[0] for name in view_variable_names]
 
-        return blackboard_changed
-
-    def __str__(self):
-        """
-        A formatted string representation of the view, taking care to trim the
-        blackboard contents according to the view that was requested.
-
-        Returns:
-            :class:`str`
-        """
-        s = ""
-        max_length = 0
-        for k in self.dict.keys():
-            max_length = len(k) if len(k) > max_length else max_length
-        keys = sorted(self.dict)
-        for key in keys:
-            value = self.dict[key]
-            if value is None:
-                value_string = "-"
-                s += console.cyan + "  " + '{0: <{1}}'.format(key, max_length + 1) + console.reset + ": " + console.yellow + "%s" % (value_string) + console.reset + "\n"
+        self.tracked_variable_names = set()
+        self.tracked_keys = set()
+        if not self.variable_names:
+            if self.filter_on_visited_path:
+                self.tracked_variable_names = visited_keys
+                self.tracked_keys = visited_keys
             else:
-                lines = ("%s" % value).split('\n')
-                if len(lines) > 1:
-                    s += console.cyan + "  " + '{0: <{1}}'.format(key, max_length + 1) + console.reset + ":\n"
-                    for line in lines:
-                        s += console.yellow + "    %s" % line + console.reset + "\n"
+                self.tracked_variable_names = None
+                self.tracked_keys = py_trees.blackboard.Blackboard.keys()
+        else:
+            for key, name in zip(view_keys, view_variable_names):
+                if self.filter_on_visited_path:
+                    if key in visited_keys:
+                        self.tracked_variable_names.add(name)
+                        self.tracked_keys.add(key)
                 else:
-                    s += console.cyan + "  " + '{0: <{1}}'.format(key, max_length + 1) + console.reset + ": " + console.yellow + "%s" % (value) + console.reset + "\n"
-        return s.rstrip()  # get rid of the trailing newline...print will take care of adding a new line
+                    self.tracked_variable_names.add(name)
+                    self.tracked_keys.add(key)
+        # update the sub blackboard
+        self.sub_blackboard.update(self.tracked_variable_names)
+        # update the sub activity stream
+        if self.with_activity_stream:
+            self.sub_activity_stream.clear()
+            for activity_item in py_trees.blackboard.Blackboard.activity_stream.data:
+                if activity_item.key in self.tracked_keys:
+                    self.sub_activity_stream.push(activity_item)
+        # flag if / if not changes occurred
+        return self.sub_blackboard.is_changed
+
 
 ##############################################################################
 # Exchange
@@ -148,9 +139,9 @@ class Exchange(object):
     that enable users to introspect or watch relevant parts of the blackboard.
 
     ROS Publishers:
-        * **~/blackboard** (:class:`std_msgs.msg.String`)
+        * **~/_watcher_<N>** (:class:`std_msgs.msg.String`)
 
-          * streams (string form) the contents of the entire blackboard as it updates
+          * streams the (sub)blackboard over a blackboard watcher connection
 
     ROS Services:
         * **~/get_blackboard_variables** (:class:`py_trees_msgs.srv.GetBlackboardVariables`)
@@ -181,11 +172,10 @@ class Exchange(object):
 
     def __init__(self):
         self.node = None
-        self.blackboard = py_trees.blackboard.Blackboard()
-        self.cached_blackboard_dict = {}
         self.views = []
-        self.publisher = None
         self.services = {}
+        # might want to revisit this if it proves to be suboptimal
+        py_trees.blackboard.Blackboard.enable_activity_stream()
 
     def setup(self, node: rclpy.node.Node):
         """
@@ -217,11 +207,6 @@ class Exchange(object):
         .. seealso:: This class is used as illustrated above in :class:`~py_trees_ros.trees.BehaviourTree`.
         """
         self.node = node
-        self.publisher = self.node.create_publisher(
-            msg_type=std_msgs.String,
-            topic='~/exchange/blackboard',
-            qos_profile=utilities.qos_profile_latched()
-        )
         for name in ["get_blackboard_variables",
                      "open_blackboard_watcher",
                      "close_blackboard_watcher"]:
@@ -246,60 +231,43 @@ class Exchange(object):
                                     variables.append(k + "/" + attr)
                                     inner(value, k + "/" + attr)
 
-        for key in sorted(self.blackboard.__dict__):
+        for key in sorted(py_trees.blackboard.Blackboard.storage):
             variables.append(key)
-            inner(self.blackboard.__dict__[key], key)
+            inner(py_trees.blackboard.Blackboard.storage[key], key)
 
         return variables
 
-    def _is_changed(self):
-        current_pickle = pickle.dumps(self.blackboard.__dict__, -1)
-        blackboard_changed = current_pickle != self.cached_blackboard_dict
-        self.cached_blackboard_dict = current_pickle
-        return blackboard_changed
-
-    def publish_blackboard(self, unused_tree=None):
+    def post_tick_handler(self, visited_clients: typing.List[uuid.UUID]=None):
         """
-        Lazy string publishing of the blackboard (the contents of
-        the blackboard can be of many and varied types, so string form is the only
-        way to transmit this across a ros message) on the **~blackboard** topic.
+        Update blackboard watcher views, publish changes and
+        clear the activity stream. Publishing is lazy, depending
+        on blackboard watcher connections.
 
         Typically you would call this from a tree custodian (e.g.
         :class:`py_trees_ros.trees.BehaviourTree`) after each and every tick.
 
-        .. note:: Lazy: it will only do the relevant string processing if there are subscribers present.
-
         Args:
-            unused_tree (:obj:`any`): if used as a post_tick_handler, needs the argument, but nonetheless, gets unused
+            visited_clients: behaviour/blackboard client unique identifiers
         """
-        if self.publisher is None:
-            self.node.get_logger().error("Blackboard Exchange: no publishers [hint: call setup() on the exchange]")
-            return
-
-        # publish blackboard
-        #   the blackboard watcher doesn't actually use the lazy publisher, but
-        #   if latching and string formatting in ROS gets up to speed, it will be a
-        #   more useful thing to have around - easy to detect and rostopic echo the contents
-        if self.node.count_subscribers(self.publisher.topic) > 0:
-            if self._is_changed():
-                msg = std_msgs.String()
-                msg.data = "{0}".format(self.blackboard)
-                self.publisher.publish(msg)
-
-        # publish watchers
-        # print("DJS: publish_blackboard()")
-        # print("   DJS: # views = %s" % len(self.views))
+        # update watcher views and publish
         if len(self.views) > 0:
             for view in self.views:
-                # print("   DJS: view publisher topic: %s" % (view.publisher.topic))
-                # print("   DJS: # view publishers = %s" % self.node.count_publishers(view.topic_name))
-                # print("   DJS: # view subscribers = %s" % self.node.count_subscribers(view.topic_name))
                 if self.node.count_subscribers(view.topic_name) > 0:
-                    if view.is_changed():
-                        # print("     DJS: # printing on: %s" % view.topic_name)
+                    if view.is_changed(visited_clients):  # update in here
                         msg = std_msgs.String()
-                        msg.data = "{0}".format(view)
+                        if view.with_activity_stream:
+                            msg.data = console.green + "Blackboard Data\n" + console.reset
+                            msg.data += "{}\n".format(view.sub_blackboard)
+                            msg.data += py_trees.display.unicode_blackboard_activity_stream(
+                                activity_stream=view.sub_activity_stream
+                            )
+                        else:
+                            msg.data = "{}".format(view.sub_blackboard)
                         view.publisher.publish(msg)
+
+        # clear the activity stream
+        if py_trees.blackboard.Blackboard.activity_stream is not None:
+            py_trees.blackboard.Blackboard.activity_stream.clear()
 
     def _close_blackboard_watcher_service(self, request, response):
         response.result = False
@@ -311,6 +279,10 @@ class Exchange(object):
                 break
         self.views[:] = [view for view in self.views if view.topic_name != request.topic_name]
         # print("DJS: close result: %s" % response.result)
+        if any([view.with_activity_stream for view in self.views]):
+            py_trees.blackboard.Blackboard.enable_activity_stream()
+        else:
+            py_trees.blackboard.Blackboard.disable_activity_stream()
         return response
 
     def _get_blackboard_variables_service(self, unused_request, response):
@@ -323,8 +295,18 @@ class Exchange(object):
             node_name=self.node.get_name(),
             node_namespace=self.node.get_namespace())
         Exchange._counter += 1
-        view = BlackboardView(self.node, response.topic, request.variables)
+        view = BlackboardView(
+            node=self.node,
+            topic_name=response.topic,
+            variable_names=set(request.variables),
+            filter_on_visited_path=request.filter_on_visited_path,
+            with_activity_stream=request.with_activity_stream
+        )
         self.views.append(view)
+        if any([view.with_activity_stream for view in self.views]):
+            py_trees.blackboard.Blackboard.enable_activity_stream()
+        else:
+            py_trees.blackboard.Blackboard.disable_activity_stream()
         return response
 
 ##############################################################################
@@ -338,16 +320,12 @@ class BlackboardWatcher(object):
     useful mechanism from which to pull all or part of the blackboard contents.
     This is useful for live introspection, or logging of the blackboard contents.
 
+    Args:
+        namespace_hint: (optionally) used to locate the blackboard if there exists more than one
+
     .. seealso:: :ref:`py-trees-blackboard-watcher`
     """
-    def __init__(
-            self,
-            namespace_hint: str=None
-         ):
-        """
-        Args:
-            namespace_hint: (optionally) used to locate the blackboard if there exists more than one
-        """
+    def __init__(self, namespace_hint: str=None):
         self.namespace_hint = namespace_hint
         self.service_names = {
             'list': None,
@@ -409,7 +387,7 @@ class BlackboardWatcher(object):
             srv_type=self.service_types[key],
             srv_name=self.service_names[key],
             qos_profile=rclpy.qos.qos_profile_services_default
-            )
+        )
         # hardcoding timeouts will get us into trouble
         if not client.wait_for_service(timeout_sec=3.0):
             raise exceptions.TimedOutError(

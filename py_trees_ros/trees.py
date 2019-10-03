@@ -27,16 +27,19 @@ import enum
 import functools
 import os
 import math
-import py_trees
-import py_trees.console as console
-import py_trees_ros_interfaces.msg as py_trees_msgs  # noqa
-# import rosbag
-import rcl_interfaces.msg as rcl_interfaces_msgs
-import rclpy
 import statistics
 import subprocess
 import tempfile
 import time
+
+import py_trees
+import py_trees.console as console
+# import rosbag
+import rclpy
+
+import diagnostic_msgs.msg as diagnostic_msgs  # noqa
+import py_trees_ros_interfaces.msg as py_trees_msgs
+import rcl_interfaces.msg as rcl_interfaces_msgs
 import unique_identifier_msgs.msg as unique_identifier_msgs
 
 from . import blackboard
@@ -167,7 +170,6 @@ class BehaviourTree(py_trees.trees.BehaviourTree):
         self.blackboard_exchange = blackboard.Exchange()
         self.blackboard_exchange.setup(self.node)
         self.post_tick_handlers.append(self._on_change_post_tick_handler)
-        self.post_tick_handlers.append(self.blackboard_exchange.publish_blackboard)
 
         # share the tree's node with it's behaviours
         try:
@@ -335,8 +337,8 @@ class BehaviourTree(py_trees.trees.BehaviourTree):
 
     def _on_change_post_tick_handler(self, tree: py_trees.trees.BehaviourTree):
         """
-        Post-tick handler that checks for changes in the tree as a result
-        of it's last tick and publishes an update on a ROS topic.
+        Post-tick handler that checks for changes in the tree/blackboard as a result
+        of it's last tick and publish updates on ROS topics.
 
         Args:
             tree (:class:`~py_trees.trees.BehaviourTree`): the behaviour tree that has just been ticked
@@ -349,7 +351,7 @@ class BehaviourTree(py_trees.trees.BehaviourTree):
             self.node.get_logger().error("the root behaviour failed to return a tip [cause: tree is in an INVALID state]")
             return
 
-        # if there's been a change, serialise, publish and log
+        # if tree state changed, publish
         if self.snapshot_visitor.changed:
             self._publish_serialised_tree()
             # with self.lock:
@@ -357,19 +359,39 @@ class BehaviourTree(py_trees.trees.BehaviourTree):
             #         # self.bag.write(self.publishers.log_tree.name, self.logging_visitor.tree)
             #         pass
 
+        # check for blackboard watchers, update and publish if necessary, clear activity stream
+        self.blackboard_exchange.post_tick_handler(visited_clients=self.snapshot_visitor.visited.keys())
+
     def _publish_serialised_tree(self):
         """"
         Args:
             tree (:class:`~py_trees.trees_ros.BehaviourTree`): the behaviour tree that has just been ticked
         """
-        # could just use 'self' here...
+        # Don't fuss over lazy publishing, tree changes should not occur with high
+        # frequency and more importantly, it needs to be latched with the latest
+        # snapshot in the case of it not changing for quite some time to come...
         tree_message = py_trees_msgs.BehaviourTree()
-        if self.statistics is not None:
-            tree_message.statistics = self.statistics
+        # tree
         for behaviour in self.root.iterate():
             msg = conversions.behaviour_to_msg(behaviour)
             msg.is_active = True if behaviour.id in self.snapshot_visitor.visited else False
             tree_message.behaviours.append(msg)
+        # blackboard
+        visited_keys = py_trees.blackboard.Blackboard.keys_filtered_by_clients(
+            client_ids=self.snapshot_visitor.visited.keys()
+        )
+        for key in visited_keys:
+            tree_message.blackboard_on_visited_path.append(
+                diagnostic_msgs.KeyValue(
+                    key=key,
+                    value=str(py_trees.blackboard.Blackboard.get(key))
+                )
+            )
+        if py_trees.blackboard.Blackboard.activity_stream is not None:
+            tree_message.blackboard_activity_stream = py_trees.display.unicode_blackboard_activity_stream()
+        # other
+        if self.statistics is not None:
+            tree_message.statistics = self.statistics
         self.publishers.snapshots.publish(tree_message)
 
     def _cleanup(self):
@@ -401,16 +423,21 @@ class Watcher(object):
     quick introspection of it's current state.
 
     Args:
-        namespace_hint (:obj:`str`): (optionally) used to locate the blackboard
-                                     if there exists more than one
-        mode (:class:`~py_trees_ros.trees.WatcherMode`): viewing mode for the watcher
+        namespace_hint: used to locate the blackboard if there exists more than one
+        mode: viewing mode for the watcher
+        display_blackboard_variables: display key-value pairs (on the visited path)
+        display_blackboard_activity: display logged activity for the last tick
+        display_statistics: display timing statistics
 
     .. seealso:: :mod:`py_trees_ros.programs.tree_watcher`
     """
     def __init__(
             self,
             namespace_hint: str,
-            mode: WatcherMode=WatcherMode.STREAM):
+            mode: WatcherMode=WatcherMode.STREAM,
+            display_blackboard_variables: bool=False,
+            display_blackboard_activity: bool=False,
+            display_statistics: bool=False):
         self.namespace_hint = namespace_hint
         self.subscribers = None
         self.viewing_mode = mode
@@ -418,6 +445,9 @@ class Watcher(object):
         self.done = False
         self.xdot_process = None
         self.rendered = None
+        self.display_blackboard_variables = display_blackboard_variables
+        self.display_blackboard_activity = display_blackboard_activity
+        self.display_statistics = display_statistics
 
     def setup(self):
         """
@@ -519,44 +549,83 @@ class Watcher(object):
         ####################
         if self.viewing_mode == WatcherMode.STREAM:
             console.banner("Tick {}".format(msg.statistics.count))
-            print(py_trees.display.unicode_tree(
-                root=root,
-                visited=self.snapshot_visitor.visited,
-                previously_visited=self.snapshot_visitor.previously_visited
+            print(
+                py_trees.display.unicode_tree(
+                    root=root,
+                    visited=self.snapshot_visitor.visited,
+                    previously_visited=self.snapshot_visitor.previously_visited
                 )
             )
-            print(console.green + "-"*80 + "\n" + console.reset)
-            print("Timestamp: {}".format(
-                conversions.rclpy_time_to_float(
-                    rclpy.time.Time.from_msg(
-                        msg.statistics.stamp
+            print(console.green + "-" * 80 + console.reset)
+            ####################
+            # Stream Variables
+            ####################
+            if self.display_blackboard_variables:
+                print("")
+                print(console.green + "Blackboard Data" + console.reset)
+                # could probably re-use the unicode_blackboard by passing a dict to it
+                # like we've done for the activity stream
+                indent = " " * 4
+                max_length = 0
+                for variable in msg.blackboard_on_visited_path:
+                    max_length = len(variable.key) if len(variable.key) > max_length else max_length
+                for variable in msg.blackboard_on_visited_path:
+                    print(
+                        console.cyan + indent +
+                        '{0: <{1}}'.format(variable.key, max_length + 1) + console.reset + ": " +
+                        console.yellow + '{0}'.format(variable.value) + console.reset
+                    )
+            ####################
+            # Stream Activity
+            ####################
+            if self.display_blackboard_activity:
+                print("")
+                if msg.blackboard_activity_stream:
+                    print(msg.blackboard_activity_stream)
+            ####################
+            # Stream Statistics
+            ####################
+            if self.display_statistics:
+                print("")
+                print(console.green + "Statistics" + console.reset)
+                print(
+                    console.cyan + "    Timestamp: " + console.yellow +
+                    "{}".format(
+                        conversions.rclpy_time_to_float(
+                            rclpy.time.Time.from_msg(
+                                msg.statistics.stamp
+                            )
                         )
                     )
                 )
-            )
-            print("Duration : {:.3f}/{:.3f}/{:.3f} (ms) [time/avg/stddev]".format(
-                msg.statistics.tick_duration*1000,
-                msg.statistics.tick_duration_average*1000,
-                math.sqrt(msg.statistics.tick_duration_variance)*1000
+                print(
+                    console.cyan + "    Duration : " + console.yellow +
+                    "{:.3f}/{:.3f}/{:.3f} (ms) [time/avg/stddev]".format(
+                        msg.statistics.tick_duration * 1000,
+                        msg.statistics.tick_duration_average * 1000,
+                        math.sqrt(msg.statistics.tick_duration_variance) * 1000
+                    )
                 )
-            )
-            print("Interval : {:.3f}/{:.3f}/{:.3f} (s) [time/avg/stddev]".format(
-                msg.statistics.tick_interval,
-                msg.statistics.tick_interval_average,
-                math.sqrt(msg.statistics.tick_interval_variance)
+                print(
+                    console.cyan + "    Interval : " + console.yellow +
+                    "{:.3f}/{:.3f}/{:.3f} (s) [time/avg/stddev]".format(
+                        msg.statistics.tick_interval,
+                        msg.statistics.tick_interval_average,
+                        math.sqrt(msg.statistics.tick_interval_variance)
+                    )
                 )
-            )
 
         ####################
         # Printing
         ####################
         elif self.viewing_mode == WatcherMode.SNAPSHOT:
             print("")
-            print(py_trees.display.unicode_tree(
-                root=root,
-                show_status=True,
-                visited=self.snapshot_visitor.visited,
-                previously_visited=self.snapshot_visitor.previously_visited
+            print(
+                py_trees.display.unicode_tree(
+                    root=root,
+                    show_status=True,
+                    visited=self.snapshot_visitor.visited,
+                    previously_visited=self.snapshot_visitor.previously_visited
                 )
             )
             self.done = True

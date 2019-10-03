@@ -59,7 +59,7 @@ class ToBlackboard(subscribers.ToBlackboard):
                          blackboard_variables={"battery": None},
                          clearing_policy=py_trees.common.ClearingPolicy.NEVER
                          )
-        self.blackboard = py_trees.blackboard.Blackboard()
+        self.blackboard.register_key(key="battery_low_warning", write=True)
         self.blackboard.battery = sensor_msgs.BatteryState()
         self.blackboard.battery.percentage = 0.0
         self.blackboard.battery.power_supply_status = sensor_msgs.BatteryState.POWER_SUPPLY_STATUS_UNKNOWN  # noqa

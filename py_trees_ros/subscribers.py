@@ -34,8 +34,6 @@ import py_trees
 import rclpy.qos
 import std_msgs.msg as std_msgs
 
-from . import utilities
-
 ##############################################################################
 # Behaviours
 ##############################################################################
@@ -377,7 +375,6 @@ class ToBlackboard(Handler):
             clearing_policy=clearing_policy
         )
         self.logger = py_trees.logging.Logger("%s" % self.name)
-        self.blackboard = py_trees.blackboard.Blackboard()
         if isinstance(blackboard_variables, str):
             self.blackboard_variable_mapping = {blackboard_variables: None}
             if not isinstance(initialise_variables, dict):
@@ -391,6 +388,9 @@ class ToBlackboard(Handler):
         else:
             self.blackboard_variable_mapping = blackboard_variables
             self.blackboard_initial_variable_mapping = initialise_variables
+        # register the variables
+        for name in self.blackboard_variable_mapping:
+            self.blackboard.register_key(key=name, write=True)
         # initialise the variables
         for name, value in self.blackboard_initial_variable_mapping.items():
             if not self.blackboard.set(name, value):
@@ -460,7 +460,7 @@ class EventToBlackboard(Handler):
             clearing_policy=py_trees.common.ClearingPolicy.ON_SUCCESS
         )
         self.variable_name = variable_name
-        self.blackboard = py_trees.blackboard.Blackboard()
+        self.blackboard.register_key(key=self.variable_name, write=True)
 
     def update(self):
         """

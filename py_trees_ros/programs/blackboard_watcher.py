@@ -37,12 +37,19 @@ import sys
 
 def description(formatted_for_sphinx):
     short = "Open up a window onto the blackboard!\n"
-    examples = ["", "--list-variables", "access_point odom/pose/pose/position"]
+    long = ("\nIntrospect on the entire blackboard or a part thereof and receive a stream of\n"
+            "updates whenever values change. Reach into individual keys or the nested attributes\n"
+            "of keys. Use --visited to watch only the relevant sections of the board traversed\n"
+            "by behaviours on the last tick. Use --activity to get a detailed breakdown\n"
+            "of blackboard access (read/write/set/unset).\n"
+            )
+    examples = ["", "--visited --activity", "--list-variables", "access_point odom/pose/pose/position"]
     script_name = "py-trees-blackboard-watcher"
 
     if formatted_for_sphinx:
         # for sphinx documentation (doesn't like raw text)
         s = short
+        s += long
         s += "\n"
         s += "**Examples:**\n\n"
         s += ".. code-block:: bash\n"
@@ -56,7 +63,8 @@ def description(formatted_for_sphinx):
         s += console.bold_white + "Blackboard Watcher".center(79) + "\n" + console.reset
         s += banner_line
         s += "\n"
-        s += "Open up a window onto the blackboard!\n"
+        s += short
+        s += long
         s += "\n"
         s += console.bold + "Examples" + console.reset + "\n\n"
         s += '\n'.join(["    $ " + console.cyan + script_name + console.yellow + " {0}".format(example_args) + console.reset for example_args in examples])
@@ -79,9 +87,11 @@ def command_line_argument_parser(formatted_for_sphinx=True):
                                      epilog=epilog(formatted_for_sphinx),
                                      formatter_class=argparse.RawDescriptionHelpFormatter,
                                      )
-    parser.add_argument('-l', '--list-variables', action='store_true', default=None, help='list the blackboard variables')
+    parser.add_argument('-l', '--list', action='store_true', default=None, help='list the blackboard variable names')
+    parser.add_argument('-a', '--activity', action='store_true', help='include the logged activity stream for recent changes')
+    parser.add_argument('-v', '--visited', action='store_true', help="filter selected keys from those associated with behaviours on the most recent tick's visited path")
     parser.add_argument('-n', '--namespace', nargs='?', default=None, help='namespace of blackboard services (if there should be more than one blackboard)')
-    parser.add_argument('variables', nargs=argparse.REMAINDER, default=list(), help='space separated list of blackboard variables to watch')
+    parser.add_argument('variables', nargs=argparse.REMAINDER, default=list(), help='space separated list of blackboard variable names (may be nested) to watch')
     return parser
 
 
@@ -141,7 +151,7 @@ def main(command_line_args=sys.argv[1:]):
     ####################
     result = 0
     try:
-        if args.list_variables:
+        if args.list:
             request, client = blackboard_watcher.create_service_client('list')
             future = client.call_async(request)
             rclpy.spin_until_future_complete(blackboard_watcher.node, future)
@@ -154,6 +164,8 @@ def main(command_line_args=sys.argv[1:]):
             # request connection
             request, client = blackboard_watcher.create_service_client('open')
             request.variables = [variable.strip(',[]') for variable in args.variables]
+            request.filter_on_visited_path = args.visited
+            request.with_activity_stream = args.activity
             future = client.call_async(request)
             rclpy.spin_until_future_complete(blackboard_watcher.node, future)
             response = future.result()

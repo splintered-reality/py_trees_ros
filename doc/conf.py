@@ -163,8 +163,10 @@ todo_include_todos = True
 
 MOCK_MODULES = [
     'action_msgs', 'action_msgs.msg',
+    'diagnostic_msgs', 'diagnostic_msgs.msg',
     'py_trees_ros_interfaces', 'py_trees_ros_interfaces.action',
     'py_trees_ros_interfaces.msg', 'py_trees_ros_interfaces.srv',
+    'rcl_interfaces', 'rcl_interfaces.msg',
     'rclpy', 'rclpy.action', 'rclpy.callback_groups', 'rclpy.executors',
     'rclpy.expand_topic_name', 'rclpy.node', 'rclpy.parameter',
     'rclpy.qos', 'rclpy.time',
