@@ -4,6 +4,11 @@ Changelog
 
 Forthcoming
 -----------
+* ...
+
+1.2.0 (2019-10-02)
+------------------
+* [blackboards] sweeping changes to accomodate the new blackboards with tracking, `#109 <https://github.com/splintered-reality/py_trees_ros/pull/109>`_
 * [backend] ensure tree modifications are published with an updated timestamp, `#100 <https://github.com/splintered-reality/py_trees_ros/pull/100>`_
 * [behaviours] subscriber related behaviours now *require* qos_profile args, `#104 <https://github.com/splintered-reality/py_trees_ros/pull/104>`_
 * [trees] ros parameterisation of the setup timeout, `#101 <https://github.com/splintered-reality/py_trees_ros/pull/101>`_
