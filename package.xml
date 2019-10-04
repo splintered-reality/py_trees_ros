@@ -11,7 +11,7 @@
 
   <license>BSD</license>
 
-  <url type="website">http://ros.org/wiki/py_trees</url>
+  <url type="website">https://py-trees-ros.readthedocs.io/en/release-1.2.x/</url>
   <url type="repository">https://github.com/stonier/py_trees_ros</url>
   <url type="bugtracker">https://github.com/stonier/py_trees_ros/issues</url>
 
