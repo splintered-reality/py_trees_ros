@@ -4,7 +4,7 @@ Changelog
 
 Forthcoming
 -----------
-* ...
+* [trees] bugfix KeyError on publication of missing keys, `#118 <https://github.com/splintered-reality/py_trees_ros/pull/118>`_
 
 1.2.0 (2019-10-02)
 ------------------
