@@ -6,6 +6,11 @@ Forthcoming
 -----------
 * ...
 
+1.2.1 (2019-10-08)
+------------------
+* [trees] bugfix KeyError on publication of missing keys, `#118 <https://github.com/splintered-reality/py_trees_ros/pull/118>`_
+* [utilities] a ros myargv stipper, a'la ROS1 style, until something is available upstream
+
 1.2.0 (2019-10-02)
 ------------------
 * [blackboards] sweeping changes to accomodate the new blackboards with tracking, `#109 <https://github.com/splintered-reality/py_trees_ros/pull/109>`_

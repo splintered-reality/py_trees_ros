@@ -381,12 +381,17 @@ class BehaviourTree(py_trees.trees.BehaviourTree):
             client_ids=self.snapshot_visitor.visited.keys()
         )
         for key in visited_keys:
+            try:
+                value = str(py_trees.blackboard.Blackboard.get(key))
+            except KeyError:
+                value = "-"
             tree_message.blackboard_on_visited_path.append(
                 diagnostic_msgs.KeyValue(
                     key=key,
-                    value=str(py_trees.blackboard.Blackboard.get(key))
+                    value=value
                 )
             )
+
         if py_trees.blackboard.Blackboard.activity_stream is not None:
             tree_message.blackboard_activity_stream = py_trees.display.unicode_blackboard_activity_stream()
         # other
