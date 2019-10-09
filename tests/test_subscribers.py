@@ -15,7 +15,6 @@ import py_trees_ros
 import rclpy
 import rclpy.executors
 import std_msgs.msg as std_msgs
-import unittest
 
 ##############################################################################
 # Helpers
@@ -32,6 +31,28 @@ def assert_details(text, expected, result):
           console.cyan + "{}".format(expected) +
           console.yellow + " [{}]".format(result) +
           console.reset)
+
+
+def setup_module(module):
+    console.banner("ROS Init")
+    rclpy.init()
+
+
+def teardown_module(module):
+    console.banner("ROS Shutdown")
+    rclpy.shutdown()
+
+
+def timeout():
+    return 0.3
+
+
+def number_of_iterations():
+    return 100
+
+
+def qos_profile():
+    return py_trees_ros.utilities.qos_profile_unlatched()
 
 
 class EmptyPublisher(object):
@@ -62,67 +83,35 @@ class EmptyPublisher(object):
 ##############################################################################
 
 
-class TestActionServers(unittest.TestCase):
+def test_wait_for_data():
+    console.banner("Wait for Data")
 
-    @classmethod
-    def setUpClass(cls):
-        console.banner("ROS Init")
-        rclpy.init()
+    publisher = EmptyPublisher(node_name="wait_for_data", qos_profile=qos_profile())
+    root = py_trees_ros.subscribers.WaitForData(
+        topic_name="/wait_for_data/empty",
+        topic_type=std_msgs.Empty,
+        qos_profile=qos_profile()
+    )
+    tree = py_trees_ros.trees.BehaviourTree(root=root, unicode_tree_debug=False)
+    tree.setup()
 
-        cls.timeout = 3.0
-        cls.number_of_iterations = 100
-        cls.qos_profile = py_trees_ros.utilities.qos_profile_unlatched()
+    executor = rclpy.executors.MultiThreadedExecutor(num_threads=4)
+    executor.add_node(publisher.node)
+    executor.add_node(tree.node)
 
-    @classmethod
-    def tearDownClass(cls):
-        console.banner("ROS Shutdown")
-        rclpy.shutdown()
+    assert_banner()
 
-    def setUp(self):
-        pass
+    tree.tick_tock(
+        period_ms=100,
+        number_of_iterations=number_of_iterations()
+    )
 
-    ########################################
-    # Wait for Data
-    ########################################
+    while tree.count < number_of_iterations() and root.status != py_trees.common.Status.SUCCESS:
+        executor.spin_once(timeout_sec=0.05)
 
-    def test_wait_for_data(self):
-        console.banner("Wait for Data")
+    assert_details("root.status", "SUCCESS", root.status)
+    assert(root.status == py_trees.common.Status.SUCCESS)
 
-        publisher = EmptyPublisher(node_name="wait_for_data", qos_profile=self.qos_profile)
-        root = py_trees_ros.subscribers.WaitForData(
-            topic_name="/wait_for_data/empty",
-            topic_type=std_msgs.Empty,
-            qos_profile=self.qos_profile
-        )
-        tree = py_trees_ros.trees.BehaviourTree(root=root, unicode_tree_debug=False)
-        tree.setup()
-
-        executor = rclpy.executors.MultiThreadedExecutor(num_threads=4)
-        executor.add_node(publisher.node)
-        executor.add_node(tree.node)
-
-        assert_banner()
-
-        tree.tick_tock(
-            period_ms=100,
-            number_of_iterations=self.number_of_iterations
-        )
-
-        while tree.count < self.number_of_iterations and root.status != py_trees.common.Status.SUCCESS:
-            executor.spin_once(timeout_sec=0.05)
-
-        assert_details("root.status", "SUCCESS", root.status)
-        self.assertEqual(root.status, py_trees.common.Status.SUCCESS)
-
-        tree.shutdown()
-        publisher.shutdown()
-        executor.shutdown()
-
-
-##############################################################################
-# Main
-##############################################################################
-
-
-if __name__ == '__main__':
-    unittest.main()
+    tree.shutdown()
+    publisher.shutdown()
+    executor.shutdown()

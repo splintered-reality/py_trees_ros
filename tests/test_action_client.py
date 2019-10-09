@@ -16,7 +16,6 @@ import py_trees_ros_interfaces.action as py_trees_actions
 import rclpy
 import rclpy.action
 import rclpy.executors
-import unittest
 
 ##############################################################################
 # Helpers
@@ -87,201 +86,196 @@ class DockFailedServer(py_trees_ros.mock.dock.Dock):
         goal_handle.abort()
         return result
 
+
+def setup_module(module):
+    console.banner("ROS Init")
+    rclpy.init()
+
+
+def teardown_module(module):
+    console.banner("ROS Shutdown")
+    rclpy.shutdown()
+
+
+def timeout():
+    return 3.0
+
+
+def number_of_iterations():
+    return 100
+
 ##############################################################################
 # Tests
 ##############################################################################
 
 
-class TestActionServers(unittest.TestCase):
+########################################
+# Success
+########################################
 
-    @classmethod
-    def setUpClass(cls):
-        console.banner("ROS Init")
-        rclpy.init()
+def test_success():
+    console.banner("Client Success")
 
-        cls.timeout = 3.0
-        cls.number_of_iterations = 100
+    server = py_trees_ros.mock.dock.Dock(duration=1.5)
 
-    @classmethod
-    def tearDownClass(cls):
-        console.banner("ROS Shutdown")
-        rclpy.shutdown()
+    root = create_action_client()
+    tree = py_trees_ros.trees.BehaviourTree(
+        root=root,
+        unicode_tree_debug=False
+    )
+    tree.setup()
 
-    def setUp(self):
-        pass
+    executor = rclpy.executors.MultiThreadedExecutor(num_threads=4)
+    executor.add_node(server.node)
+    executor.add_node(tree.node)
 
-    ########################################
-    # Success
-    ########################################
+    assert_banner()
 
-    def test_success(self):
-        console.banner("Client Success")
+    assert_details("root.status", "INVALID", root.status)
+    assert(root.status == py_trees.common.Status.INVALID)
 
-        server = py_trees_ros.mock.dock.Dock(duration=1.5)
+    tree.tick()
 
-        root = create_action_client()
-        tree = py_trees_ros.trees.BehaviourTree(
-            root=root,
-            unicode_tree_debug=False
-        )
-        tree.setup()
+    assert_details("root.status", "RUNNING", root.status)
+    assert(root.status == py_trees.common.Status.RUNNING)
 
-        executor = rclpy.executors.MultiThreadedExecutor(num_threads=4)
-        executor.add_node(server.node)
-        executor.add_node(tree.node)
+    tree.tick_tock(
+        period_ms=100,
+        number_of_iterations=number_of_iterations()
+    )
 
-        assert_banner()
+    while tree.count < number_of_iterations() and root.status == py_trees.common.Status.RUNNING:
+        executor.spin_once(timeout_sec=0.05)
 
-        assert_details("root.status", "INVALID", root.status)
-        self.assertEqual(root.status, py_trees.common.Status.INVALID)
+    assert_details("root.status", "SUCCESS", root.status)
+    assert(root.status == py_trees.common.Status.SUCCESS)
 
-        tree.tick()
+    tree.shutdown()
+    server.shutdown()
+    executor.shutdown()
 
-        assert_details("root.status", "RUNNING", root.status)
-        self.assertEqual(root.status, py_trees.common.Status.RUNNING)
+########################################
+# Priority Interrupt
+########################################
 
-        tree.tick_tock(
-            period_ms=100,
-            number_of_iterations=self.number_of_iterations
-        )
 
-        while tree.count < self.number_of_iterations and root.status == py_trees.common.Status.RUNNING:
-            executor.spin_once(timeout_sec=0.05)
+def test_priority_interrupt():
+    console.banner("Priority Interrupt")
 
-        assert_details("root.status", "SUCCESS", root.status)
-        self.assertEqual(root.status, py_trees.common.Status.SUCCESS)
+    server = py_trees_ros.mock.dock.Dock(duration=1.5)
 
-        tree.shutdown()
-        server.shutdown()
-        executor.shutdown()
+    action_client = create_action_client()
+    success_eventually = py_trees.behaviours.Count(
+        name="Success Eventually",
+        fail_until=4,
+        success_until=1000
+    )
+    root = py_trees.composites.Selector()
+    root.add_children([success_eventually, action_client])
+    tree = py_trees_ros.trees.BehaviourTree(root=root, unicode_tree_debug=False)
+    tree.setup()
 
-    ########################################
-    # Priority Interrupt
-    ########################################
+    executor = rclpy.executors.MultiThreadedExecutor(num_threads=4)
+    executor.add_node(server.node)
+    executor.add_node(tree.node)
 
-    def test_priority_interrupt(self):
-        console.banner("Priority Interrupt")
+    assert_banner()
 
-        server = py_trees_ros.mock.dock.Dock(duration=1.5)
+    tree.tick()
+    print_unicode_tree(tree)
 
-        action_client = create_action_client()
-        success_eventually = py_trees.behaviours.Count(
-            name="Success Eventually",
-            fail_until=4,
-            success_until=1000
-        )
-        root = py_trees.composites.Selector()
-        root.add_children([success_eventually, action_client])
-        tree = py_trees_ros.trees.BehaviourTree(root=root, unicode_tree_debug=False)
-        tree.setup()
+    assert_details("action_client.status", "RUNNING", root.status)
+    assert(action_client.status == py_trees.common.Status.RUNNING)
 
-        executor = rclpy.executors.MultiThreadedExecutor(num_threads=4)
-        executor.add_node(server.node)
-        executor.add_node(tree.node)
+    tree.tick_tock(
+        period_ms=100,
+        number_of_iterations=number_of_iterations()
+    )
 
-        assert_banner()
+    while tree.count < number_of_iterations() and "cancelled" not in action_client.feedback_message:
+        executor.spin_once(timeout_sec=0.1)
+    print_unicode_tree(tree)
+    assert_details("action_client.status", "INVALID", action_client.status)
+    assert(action_client.status == py_trees.common.Status.INVALID)
 
-        tree.tick()
-        print_unicode_tree(tree)
-
-        assert_details("action_client.status", "RUNNING", root.status)
-        self.assertEqual(action_client.status, py_trees.common.Status.RUNNING)
-
-        tree.tick_tock(
-            period_ms=100,
-            number_of_iterations=self.number_of_iterations
-        )
-
-        while tree.count < self.number_of_iterations and "cancelled" not in action_client.feedback_message:
+    # hack to make sure action client is in a state that lets it
+    # shut down without segfaulting
+    if action_client.get_result_future is not None:
+        while not action_client.get_result_future.done():
             executor.spin_once(timeout_sec=0.1)
-        print_unicode_tree(tree)
-        assert_details("action_client.status", "INVALID", action_client.status)
-        self.assertEqual(action_client.status, py_trees.common.Status.INVALID)
 
-        # hack to make sure action client is in a state that lets it
-        # shut down without segfaulting
-        if action_client.get_result_future is not None:
-            while not action_client.get_result_future.done():
-                executor.spin_once(timeout_sec=0.1)
+    tree.shutdown()
+    server.shutdown()
+    executor.shutdown()
 
-        tree.shutdown()
-        server.shutdown()
-        executor.shutdown()
-
-    ########################################
-    # Rejection
-    ########################################
-
-    def test_rejection(self):
-        console.banner("Client Rejection")
-
-        server = RejectGoalServer(
-            node_name="reject",
-            action_name="dock",
-            action_type=py_trees_actions.Dock,
-        )
-
-        root = create_action_client()
-        tree = py_trees_ros.trees.BehaviourTree(root=root)
-
-        # ROS Setup
-        tree.setup()
-        executor = rclpy.executors.MultiThreadedExecutor(num_threads=4)
-        executor.add_node(server.node)
-        executor.add_node(tree.node)
-        tree.tick()
-        tree.tick_tock(period_ms=100, number_of_iterations=self.number_of_iterations)
-
-        # ROS Spin
-        while tree.count < self.number_of_iterations and root.status == py_trees.common.Status.RUNNING:
-            executor.spin_once(timeout_sec=0.05)
-
-        print("")
-        assert_banner()
-        assert_details("root.status", "FAILURE", root.status)
-        self.assertEqual(root.status, py_trees.common.Status.FAILURE)
-
-        tree.shutdown()
-        server.shutdown()
-        executor.shutdown()
-
-    ########################################
-    # Aborted
-    ########################################
-
-    def test_aborted(self):
-        console.banner("Server Aborted")
-
-        server = DockFailedServer()
-
-        root = create_action_client()
-        tree = py_trees_ros.trees.BehaviourTree(root=root)
-
-        # ROS Setup
-        tree.setup()
-        executor = rclpy.executors.MultiThreadedExecutor(num_threads=4)
-        executor.add_node(server.node)
-        executor.add_node(tree.node)
-        tree.tick()
-        tree.tick_tock(period_ms=100, number_of_iterations=self.number_of_iterations)
-
-        # ROS Spin
-        while tree.count < self.number_of_iterations and root.status == py_trees.common.Status.RUNNING:
-            executor.spin_once(timeout_sec=0.05)
-
-        print("")
-        assert_banner()
-        assert_details("root.status", "FAILURE", root.status)
-        self.assertEqual(root.status, py_trees.common.Status.FAILURE)
-
-        tree.shutdown()
-        server.shutdown()
-        executor.shutdown()
-
-##############################################################################
-# Main
-##############################################################################
+########################################
+# Rejection
+########################################
 
 
-if __name__ == '__main__':
-    unittest.main()
+def test_rejection():
+    console.banner("Client Rejection")
+
+    server = RejectGoalServer(
+        node_name="reject",
+        action_name="dock",
+        action_type=py_trees_actions.Dock,
+    )
+
+    root = create_action_client()
+    tree = py_trees_ros.trees.BehaviourTree(root=root)
+
+    # ROS Setup
+    tree.setup()
+    executor = rclpy.executors.MultiThreadedExecutor(num_threads=4)
+    executor.add_node(server.node)
+    executor.add_node(tree.node)
+    tree.tick()
+    tree.tick_tock(period_ms=100, number_of_iterations=number_of_iterations())
+
+    # ROS Spin
+    while tree.count < number_of_iterations() and root.status == py_trees.common.Status.RUNNING:
+        executor.spin_once(timeout_sec=0.05)
+
+    print("")
+    assert_banner()
+    assert_details("root.status", "FAILURE", root.status)
+    assert(root.status == py_trees.common.Status.FAILURE)
+
+    tree.shutdown()
+    server.shutdown()
+    executor.shutdown()
+
+########################################
+# Aborted
+########################################
+
+
+def test_aborted():
+    console.banner("Server Aborted")
+
+    server = DockFailedServer()
+
+    root = create_action_client()
+    tree = py_trees_ros.trees.BehaviourTree(root=root)
+
+    # ROS Setup
+    tree.setup()
+    executor = rclpy.executors.MultiThreadedExecutor(num_threads=4)
+    executor.add_node(server.node)
+    executor.add_node(tree.node)
+    tree.tick()
+    tree.tick_tock(period_ms=100, number_of_iterations=number_of_iterations())
+
+    # ROS Spin
+    while tree.count < number_of_iterations() and root.status == py_trees.common.Status.RUNNING:
+        executor.spin_once(timeout_sec=0.05)
+
+    print("")
+    assert_banner()
+    assert_details("root.status", "FAILURE", root.status)
+    assert(root.status == py_trees.common.Status.FAILURE)
+
+    tree.shutdown()
+    server.shutdown()
+    executor.shutdown()
