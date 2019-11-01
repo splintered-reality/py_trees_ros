@@ -17,7 +17,6 @@ import rclpy.executors
 import tf2_ros
 
 import geometry_msgs.msg as geometry_msgs
-import std_msgs.msg as std_msgs
 
 ##############################################################################
 # Helpers
@@ -44,10 +43,6 @@ def setup_module(module):
 def teardown_module(module):
     console.banner("ROS Shutdown")
     rclpy.shutdown()
-
-
-def timeout():
-    return 0.3
 
 
 def number_of_iterations():
@@ -98,6 +93,52 @@ class Broadcaster(object):
         self.timer.cancel()
         self.node.destroy_timer(self.timer)
         self.node.destroy_node()
+
+
+class create_behaviours(object):
+
+    def __init__(self, static):
+        self.static = static
+
+    def __enter__(self):
+        transform = geometry_msgs.Transform()
+        transform.translation.x = 3.0
+        transform.translation.y = 0.0
+        transform.translation.z = 0.0
+        transform.rotation.x = 0.0
+        transform.rotation.y = 0.0
+        transform.rotation.z = 0.0
+        transform.rotation.w = 1.0
+        py_trees.blackboard.Blackboard.set("transform", transform)
+        self.from_blackboard = py_trees_ros.transforms.FromBlackboard(
+            variable_name="transform",
+            target_frame=target_frame(),
+            source_frame=source_frame(),
+            qos_profile=qos_profile(),
+            static=self.static,
+            name="From Blackboard"
+        )
+        self.to_blackboard = py_trees_ros.transforms.ToBlackboard(
+            variable_name="noggin_to_noodle",
+            target_frame=target_frame(),
+            source_frame=source_frame(),
+            qos_profile=qos_profile(),
+            name="To Blackboard"
+        )
+        self.broadcaster_node = rclpy.create_node("broadcaster")
+        self.listener_node = rclpy.create_node("listener")
+        self.from_blackboard.setup(node=self.broadcaster_node)
+        self.to_blackboard.setup(node=self.listener_node)
+        self.executor = rclpy.executors.MultiThreadedExecutor(num_threads=4)
+        self.executor.add_node(self.broadcaster_node)
+        self.executor.add_node(self.listener_node)
+        return (self.from_blackboard, self.to_blackboard, self.executor)
+
+    def __exit__(self, unused_type, unused_value, unused_traceback):
+        self.broadcaster_node.destroy_node()
+        self.listener_node.destroy_node()
+        self.executor.shutdown()
+
 
 ##############################################################################
 # Tests
@@ -165,51 +206,6 @@ def test_to_blackboard_blocking():
     executor.shutdown()
 
 
-class create_behaviours(object):
-
-    def __init__(self, static):
-        self.static = static
-
-    def __enter__(self):
-        transform = geometry_msgs.Transform()
-        transform.translation.x = 3.0
-        transform.translation.y = 0.0
-        transform.translation.z = 0.0
-        transform.rotation.x = 0.0
-        transform.rotation.y = 0.0
-        transform.rotation.z = 0.0
-        transform.rotation.w = 1.0
-        py_trees.blackboard.Blackboard.set("transform", transform)
-        self.from_blackboard = py_trees_ros.transforms.FromBlackboard(
-            variable_name="transform",
-            target_frame=target_frame(),
-            source_frame=source_frame(),
-            qos_profile=qos_profile(),
-            static=self.static,
-            name="From Blackboard"
-        )
-        self.to_blackboard = py_trees_ros.transforms.ToBlackboard(
-            variable_name="noggin_to_noodle",
-            target_frame=target_frame(),
-            source_frame=source_frame(),
-            qos_profile=qos_profile(),
-            name="To Blackboard"
-        )
-        self.broadcaster_node = rclpy.create_node("broadcaster")
-        self.listener_node = rclpy.create_node("listener")
-        self.from_blackboard.setup(node=self.broadcaster_node)
-        self.to_blackboard.setup(node=self.listener_node)
-        self.executor = rclpy.executors.MultiThreadedExecutor(num_threads=4)
-        self.executor.add_node(self.broadcaster_node)
-        self.executor.add_node(self.listener_node)
-        return (self.from_blackboard, self.to_blackboard, self.executor)
-
-    def __exit__(self, unused_type, unused_value, unused_traceback):
-        self.broadcaster_node.destroy_node()
-        self.listener_node.destroy_node()
-        self.executor.shutdown()
-
-
 def test_from_blackboard():
     console.banner("From Blackboard")
 
@@ -230,21 +226,3 @@ def test_from_blackboard():
 
     assert_details("to_blackboard.status", "SUCCESS", to_blackboard.status)
     assert(to_blackboard.status == py_trees.common.Status.SUCCESS)
-
-##############################################################################
-# Experiments
-##############################################################################
-
-
-if __name__ == "__main__":
-    console.banner("ROS Init")
-    rclpy.init()
-    broadcaster = Broadcaster()
-    executor = rclpy.executors.MultiThreadedExecutor(num_threads=4)
-    executor.add_node(broadcaster.node)
-    try:
-        executor.spin()
-    except KeyboardInterrupt:
-        pass
-    broadcaster.shutdown()
-    executor.shutdown()
