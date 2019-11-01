@@ -57,6 +57,15 @@ py_trees_ros.subscribers
     :show-inheritance:
     :synopsis: put a lid on the asynchronicity
 
+py_trees_ros.transforms
+-----------------------
+
+.. automodule:: py_trees_ros.transforms
+    :members:
+    :show-inheritance:
+    :synopsis: lookup and send transforms to and from the blackboard
+
+
 py_trees_ros.trees
 ------------------
 
