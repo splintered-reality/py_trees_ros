@@ -374,6 +374,7 @@ class ToBlackboard(Handler):
             qos_profile=qos_profile,
             clearing_policy=clearing_policy
         )
+        self.blackboard = self.attach_blackboard_client(name=self.name)
         self.logger = py_trees.logging.Logger("%s" % self.name)
         if isinstance(blackboard_variables, str):
             self.blackboard_variable_mapping = {blackboard_variables: None}
@@ -390,7 +391,10 @@ class ToBlackboard(Handler):
             self.blackboard_initial_variable_mapping = initialise_variables
         # register the variables
         for name in self.blackboard_variable_mapping:
-            self.blackboard.register_key(key=name, write=True)
+            self.blackboard.register_key(
+                key=name,
+                access=py_trees.common.Access.WRITE
+            )
         # initialise the variables
         for name, value in self.blackboard_initial_variable_mapping.items():
             if not self.blackboard.set(name, value):
@@ -460,7 +464,11 @@ class EventToBlackboard(Handler):
             clearing_policy=py_trees.common.ClearingPolicy.ON_SUCCESS
         )
         self.variable_name = variable_name
-        self.blackboard.register_key(key=self.variable_name, write=True)
+        self.blackboard = self.attach_blackboard_client(name=self.name)
+        self.blackboard.register_key(
+            key=self.variable_name,
+            access=py_trees.common.Access.WRITE
+        )
 
     def update(self):
         """
