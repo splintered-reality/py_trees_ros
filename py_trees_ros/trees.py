@@ -360,7 +360,9 @@ class BehaviourTree(py_trees.trees.BehaviourTree):
             #         pass
 
         # check for blackboard watchers, update and publish if necessary, clear activity stream
-        self.blackboard_exchange.post_tick_handler(visited_clients=self.snapshot_visitor.visited.keys())
+        self.blackboard_exchange.post_tick_handler(
+            visited_client_ids=self.snapshot_visitor.visited_blackboard_client_ids  # .keys()
+        )
 
     def _publish_serialised_tree(self):
         """"
