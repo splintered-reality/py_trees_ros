@@ -380,7 +380,7 @@ class BehaviourTree(py_trees.trees.BehaviourTree):
             tree_message.behaviours.append(msg)
         # blackboard
         visited_keys = py_trees.blackboard.Blackboard.keys_filtered_by_clients(
-            client_ids=self.snapshot_visitor.visited.keys()
+            client_ids=self.snapshot_visitor.visited_blackboard_client_ids
         )
         for key in visited_keys:
             try:
