@@ -12,6 +12,8 @@ Behaviours
    py_trees_ros.subscribers.EventToBlackboard
    py_trees_ros.subscribers.ToBlackboard
    py_trees_ros.subscribers.WaitForData
+   py_trees_ros.transforms.FromBlackboard
+   py_trees_ros.transforms.ToBlackboard
 
 Blackboards
 -----------

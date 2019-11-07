@@ -36,8 +36,12 @@
   <depend>std_msgs</depend>
   <depend>unique_identifier_msgs</depend>
 
-  <!-- behaviour dependencies -->
+  <!-- behaviour dependencies (subscribers, transforms, ...) -->
+  <depend>geometry_msgs</depend>
   <depend>sensor_msgs</depend>
+  <depend>tf2_ros</depend>  <!-- monitor this, might migrate to a python only package -->
+
+  <!-- testing dependencies -->
 
   <export>
     <build_type>ament_python</build_type>
