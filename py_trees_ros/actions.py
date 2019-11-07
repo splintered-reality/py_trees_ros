@@ -179,6 +179,7 @@ class ActionClient(py_trees.behaviour.Behaviour):
         """
         Clean up the action client when shutting down.
         """
+        print("Action Client Shutdown")
         self.action_client.destroy()
 
     ########################################

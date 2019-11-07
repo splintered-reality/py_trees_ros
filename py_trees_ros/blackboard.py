@@ -308,7 +308,7 @@ class Exchange(object):
 
         return variables
 
-    def post_tick_handler(self, visited_clients: typing.List[uuid.UUID]=None):
+    def post_tick_handler(self, visited_client_ids: typing.List[uuid.UUID]=None):
         """
         Update blackboard watcher views, publish changes and
         clear the activity stream. Publishing is lazy, depending
@@ -318,13 +318,13 @@ class Exchange(object):
         :class:`py_trees_ros.trees.BehaviourTree`) after each and every tick.
 
         Args:
-            visited_clients: behaviour/blackboard client unique identifiers
+            visited_client_ids: blackboard client unique identifiers
         """
         # update watcher views and publish
         if len(self.views) > 0:
             for view in self.views:
                 if self.node.count_subscribers(view.topic_name) > 0:
-                    if view.is_changed(visited_clients):  # update in here
+                    if view.is_changed(visited_client_ids):  # update in here
                         msg = std_msgs.String()
                         if view.with_activity_stream:
                             msg.data = console.green + "Blackboard Data\n" + console.reset
