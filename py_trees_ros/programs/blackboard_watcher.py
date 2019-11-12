@@ -99,9 +99,9 @@ def pretty_print_variables(variables):
     s = "\n"
     s += console.bold + console.cyan + "Blackboard Variables:" + console.reset + console.yellow + "\n"
     for variable in variables:
-        variable = variable.split('/')
+        variable = variable.split('.')
         if len(variable) > 1:
-            sep = "/"
+            sep = "."
         else:
             sep = ""
         s += "    " * len(variable) + sep + variable[-1] + "\n"
