@@ -299,8 +299,8 @@ class Exchange(object):
                             value = getattr(v, attr)
                             if not callable(value):
                                 if not attr.isupper():
-                                    variables.append(k + "/" + attr)
-                                    inner(value, k + "/" + attr)
+                                    variables.append(k + "." + attr)
+                                    inner(value, k + "." + attr)
 
         for key in sorted(py_trees.blackboard.Blackboard.storage):
             variables.append(key)
