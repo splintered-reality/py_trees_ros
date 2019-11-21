@@ -4,9 +4,14 @@ Changelog
 
 Forthcoming
 -----------
-* [tests] moved from unittest to pytest
-* [transforms] From and To behaviours added, `#121 <https://github.com/splintered-reality/py_trees_ros/pull/121>`_
 * ...
+
+1.3.0 (2019-11-20)
+------------------
+* [blackboards] updated pretty printing to differentiate namespace vs attribute access, `#123 <https://github.com/splintered-reality/py_trees_ros/pull/123>`_
+* [blackboards] api updates for namespaced clients, `#122 <https://github.com/splintered-reality/py_trees_ros/pull/122>`_,
+* [tests] migrated tests from unittest to pytest
+* [transforms] From and To behaviours added, `#121 <https://github.com/splintered-reality/py_trees_ros/pull/121>`_
 
 1.2.1 (2019-10-08)
 ------------------
