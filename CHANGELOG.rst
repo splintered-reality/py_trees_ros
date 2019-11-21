@@ -6,6 +6,10 @@ Forthcoming
 -----------
 * ...
 
+1.3.1 (2019-11-20)
+------------------
+* [transforms] add missing mocks and update to latest blackboard api, `#125 <https://github.com/splintered-reality/py_trees_ros/pull/125>`_
+
 1.3.0 (2019-11-20)
 ------------------
 * [blackboards] updated pretty printing to differentiate namespace vs attribute access, `#123 <https://github.com/splintered-reality/py_trees_ros/pull/123>`_
