@@ -59,6 +59,7 @@ class FromBlackboard(py_trees.behaviour.Behaviour):
         name: str=py_trees.common.Name.AUTO_GENERATED,
     ):
         super().__init__(name=name)
+        self.blackboard = self.attach_blackboard_client(name)
         self.variable_name = variable_name
         self.target_frame = target_frame
         self.source_frame = source_frame
@@ -66,7 +67,10 @@ class FromBlackboard(py_trees.behaviour.Behaviour):
         self.qos_profile = qos_profile
         self.static_qos_profile = static_qos_profile
 
-        self.blackboard.register_key(key=self.variable_name, read=True)
+        self.blackboard.register_key(
+            key=self.variable_name,
+            access=py_trees.common.Access.READ
+        )
 
     def setup(self, **kwargs):
         """
@@ -176,7 +180,11 @@ class ToBlackboard(py_trees.behaviour.Behaviour):
     ):
         super().__init__(name=name)
         self.variable_name = variable_name
-        self.blackboard.register_key(self.variable_name, write=True)
+        self.blackboard = self.attach_blackboard_client(name)
+        self.blackboard.register_key(
+            key=self.variable_name,
+            access=py_trees.common.Access.WRITE
+        )
         self.target_frame = target_frame
         self.source_frame = source_frame
         self.qos_profile = qos_profile
