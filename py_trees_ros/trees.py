@@ -175,8 +175,8 @@ class BehaviourTree(py_trees.trees.BehaviourTree):
         try:
             super().setup(setup_timeout_sec, node=self.node)
         except RuntimeError as e:
-            if str(e) == "tree setup timed out":
-                raise exceptions.TimedOutError("tree setup timed out")
+            if str(e) == "tree setup interrupted or timed out":
+                raise exceptions.TimedOutError(str(e))
             else:
                 raise
 
