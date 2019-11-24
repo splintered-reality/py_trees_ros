@@ -190,7 +190,7 @@ class BehaviourTree(py_trees.trees.BehaviourTree):
         )
 
         # publish current state
-        self._publish_serialised_tree()
+        self._publish_serialised_tree(changed=True)
 
         # set a handler to publish future modifications whenever the tree is modified
         # (e.g. pruned). The tree_update_handler method is in the base class, set this
@@ -279,7 +279,7 @@ class BehaviourTree(py_trees.trees.BehaviourTree):
         if self.statistics is not None:
             rclpy_start_time = rclpy.clock.Clock().now()
             self.statistics.stamp = rclpy_start_time.to_msg()
-            self._publish_serialised_tree()
+            self._publish_serialised_tree(changed=True)
 
     def _statistics_pre_tick_handler(self, tree: py_trees.trees.BehaviourTree):
         """
@@ -353,7 +353,7 @@ class BehaviourTree(py_trees.trees.BehaviourTree):
 
         # if tree state changed, publish
         if self.snapshot_visitor.changed:
-            self._publish_serialised_tree()
+            self._publish_serialised_tree(changed=self.snapshot_visitor.changed)
             # with self.lock:
             #     if not self._bag_closed:
             #         # self.bag.write(self.publishers.log_tree.name, self.logging_visitor.tree)
@@ -364,15 +364,16 @@ class BehaviourTree(py_trees.trees.BehaviourTree):
             visited_client_ids=self.snapshot_visitor.visited_blackboard_client_ids  # .keys()
         )
 
-    def _publish_serialised_tree(self):
+    def _publish_serialised_tree(self, changed: bool=False):
         """"
         Args:
-            tree (:class:`~py_trees.trees_ros.BehaviourTree`): the behaviour tree that has just been ticked
+            changed: whether the tree status / graph changed or not
         """
         # Don't fuss over lazy publishing, tree changes should not occur with high
         # frequency and more importantly, it needs to be latched with the latest
         # snapshot in the case of it not changing for quite some time to come...
         tree_message = py_trees_msgs.BehaviourTree()
+        tree_message.changed = changed
         # tree
         for behaviour in self.root.iterate():
             msg = conversions.behaviour_to_msg(behaviour)

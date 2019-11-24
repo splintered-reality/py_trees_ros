@@ -240,7 +240,26 @@ def behaviour_to_msg(behaviour: py_trees.behaviour.Behaviour) -> py_trees_ros_in
     msg.blackbox_level = blackbox_enum_to_msg_constant(behaviour.blackbox_level)
     msg.status = status_enum_to_msg_constant(behaviour.status)
     msg.message = behaviour.feedback_message
-
+    msg.blackboard_access = []
+    for blackboard in behaviour.blackboards:
+        for key in blackboard.read:
+            access_info = py_trees_ros_interfaces.msg.KeyValue(
+                key=key,
+                value=py_trees_ros_interfaces.msg.Behaviour.BLACKBOARD_ACCESS_READ  # noqa
+            )
+            msg.blackboard_access.append(access_info)
+        for key in blackboard.write:
+            access_info = py_trees_ros_interfaces.msg.KeyValue(
+                key=key,
+                value=py_trees_ros_interfaces.msg.Behaviour.BLACKBOARD_ACCESS_WRITE  # noqa
+            )
+            msg.blackboard_access.append(access_info)
+        for key in blackboard.exclusive:
+            access_info = py_trees_ros_interfaces.msg.KeyValue(
+                key=key,
+                value=py_trees_ros_interfaces.msg.Behaviour.BLACKBOARD_ACCESS_EXCLUSIVE_WRITE  # noqa
+            )
+            msg.blackboard_access.append(access_info)
     return msg
 
 
