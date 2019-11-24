@@ -145,7 +145,7 @@ class BehaviourTree(py_trees.trees.BehaviourTree):
         #   use the arg provided timeout
         self.node.declare_parameter(
             name='setup_timeout_sec',
-            value=timeout if not py_trees.common.Duration.INFINITE else py_trees.common.Duration.INFINITE.value,
+            value=timeout if timeout != py_trees.common.Duration.INFINITE else py_trees.common.Duration.INFINITE.value,
             descriptor=rcl_interfaces_msgs.ParameterDescriptor(
                 name="setup_timeout_sec",
                 type=rcl_interfaces_msgs.ParameterType.PARAMETER_DOUBLE,  # noqa

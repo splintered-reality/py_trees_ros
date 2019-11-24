@@ -4,7 +4,8 @@ Changelog
 
 Forthcoming
 -----------
-* [trees] snapshot publishing changed, key access info, `#124 <https://github.com/splintered-reality/py_trees_ros/pull/124>`_,
+* [trees] bugfix non-infinite timeout arg getting ignored, `#125 <https://github.com/splintered-reality/py_trees_ros/pull/125>`_,
+* [trees] snapshot now publishing a) tree changed, b) key access info, `#124 <https://github.com/splintered-reality/py_trees_ros/pull/124>`_,
 
 2.0.0 (2019-11-20)
 ------------------
