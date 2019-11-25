@@ -46,6 +46,7 @@ from . import blackboard
 from . import conversions
 from . import exceptions
 from . import utilities
+from . import visitors
 
 ##############################################################################
 # ROS Trees
@@ -120,13 +121,18 @@ class BehaviourTree(py_trees.trees.BehaviourTree):
         # _cleanup must come last as it assumes the existence of the bag
         # TODO: rospy.on_shutdown(self._cleanup)
 
-    def setup(self, timeout: float=py_trees.common.Duration.INFINITE):
+    def setup(
+            self,
+            timeout: float=py_trees.common.Duration.INFINITE,
+            visitor: py_trees.visitors.VisitorBase=None
+    ):
         """
         Setup the publishers, exechange and add ros-relevant pre/post tick handlers to the tree.
         Ultimately relays this call down to all the behaviours in the tree.
 
         Args:
             timeout: time (s) to wait (use common.Duration.INFINITE to block indefinitely)
+            visitor: runnable entities on each node after it's setup
 
         ROS Params:
             timeout: time (s) to wait (use common.Duration.INFINITE (math.inf) to block indefinitely)
@@ -140,12 +146,14 @@ class BehaviourTree(py_trees.trees.BehaviourTree):
         # node creation - can raise rclpy.exceptions.NotInitializedException
         default_node_name = "tree"
         self.node = rclpy.create_node(node_name=default_node_name)
+        if visitor is None:
+            visitor = visitors.SetupLogger(node=self.node)
         # timeout parameter:
         #   if not initialised from, e.g. launch, then
         #   use the arg provided timeout
         self.node.declare_parameter(
             name='setup_timeout_sec',
-            value=timeout if not py_trees.common.Duration.INFINITE else py_trees.common.Duration.INFINITE.value,
+            value=timeout if timeout != py_trees.common.Duration.INFINITE else py_trees.common.Duration.INFINITE.value,
             descriptor=rcl_interfaces_msgs.ParameterDescriptor(
                 name="setup_timeout_sec",
                 type=rcl_interfaces_msgs.ParameterType.PARAMETER_DOUBLE,  # noqa
@@ -173,7 +181,11 @@ class BehaviourTree(py_trees.trees.BehaviourTree):
 
         # share the tree's node with it's behaviours
         try:
-            super().setup(setup_timeout_sec, node=self.node)
+            super().setup(
+                timeout=setup_timeout_sec,
+                visitor=visitor,
+                node=self.node
+            )
         except RuntimeError as e:
             if str(e) == "tree setup interrupted or timed out":
                 raise exceptions.TimedOutError(str(e))
