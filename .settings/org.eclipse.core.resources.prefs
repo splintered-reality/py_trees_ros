@@ -15,6 +15,7 @@ encoding//py_trees_ros/subscribers.py=utf-8
 encoding//py_trees_ros/transforms.py=utf-8
 encoding//py_trees_ros/trees.py=utf-8
 encoding//py_trees_ros/utilities.py=utf-8
+encoding//py_trees_ros/visitors.py=utf-8
 encoding//tests/test_action_client.py=utf-8
 encoding//tests/test_subscribers.py=utf-8
 encoding//tests/test_transforms.py=utf-8
