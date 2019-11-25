@@ -212,31 +212,6 @@ def create_anonymous_node_name(node_name="node") -> str:
     return node_name + "_" + str(time.monotonic()).replace('.', '')
 
 
-REMAP_PATTERN = re.compile('^([\~\/A-Za-z]|_|__)[\w\/]*' + ":=" + '.*')
-
-
-def myargv(argv: typing.List[str]=None):
-    """
-    Need something like this upstreamed in rclpy. The original ROS1 versions
-    thereof can be found at:
-    - https://github.com/ros/ros_comm/blob/melodic-devel/clients/rospy/src/rospy/client.py#L77
-    - https://github.com/ros/ros_comm/blob/melodic-devel/tools/rosgraph/src/rosgraph/names.py#L246
-
-    Args:
-        argv:
-    """
-    if argv is None:
-        argv = sys.argv
-
-    def is_legal_remap(arg):
-        if arg is None:
-            return False
-        m = REMAP_PATTERN.match(arg)
-        return m is not None and m.group(0) == arg
-
-    return [a for a in argv if not is_legal_remap(a)]
-
-
 ##############################################################################
 # Convenience Classes
 ##############################################################################
