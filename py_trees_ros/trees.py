@@ -67,13 +67,13 @@ class BehaviourTree(py_trees.trees.BehaviourTree):
           * if :data:`math.inf` it will only publish on tree status / graph changes
 
     ROS Publishers:
-        * **~/snapshots** (:class:`py_trees_interfaces.msg.BehaviourTree`): serialised snapshots of the tree for viewing/logging
-        * **~/exchange/open_blackboard_watcher (:class:`py_trees_ros_interfaces.srv.OpenBlackboardWatcher`): 
+        * **~/snapshots** (:class:`py_trees_interfaces.msg.BehaviourTree`)
+        * **~/blackboard/close_watcher** (:class:`py_trees_ros_interfaces.srv.CloselackboardWatcher`)
+        * **~/blackboard/get_variables** (:class:`py_trees_ros_interfaces.srv.GetBlackboardVariables`)
+        * **~/blackboard/open_watcher** (:class:`py_trees_ros_interfaces.srv.OpenBlackboardWatcher`)
 
-    .. seealso:: :class:`~py_trees_ros.blackboard.Exchange` for details on 
-
-       It also exposes publishers and services from the blackboard exchange
-       in it's private namespace. Refer to :class:`~py_trees_ros.blackboard.Exchange` for details.
+    Topics and services are not intended for direct use, but facilitate the operation of the
+    utilities :ref:`py-trees-tree-watcher` and :ref:`py-trees-blackboard-watcher`.
 
     Args:
         root: root node of the tree
