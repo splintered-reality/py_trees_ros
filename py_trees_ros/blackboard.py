@@ -215,13 +215,13 @@ class Exchange(object):
           * streams the (sub)blackboard over a blackboard watcher connection
 
     ROS Services:
-        * **~/get_blackboard_variables** (:class:`py_trees_msgs.srv.GetBlackboardVariables`)
+        * **~/get_variables** (:class:`py_trees_msgs.srv.GetBlackboardVariables`)
 
           * list all the blackboard variable names (not values)
-        * **~/open_blackboard_watcher** (:class:`py_trees_msgs.srv.OpenBlackboardWatcher`)
+        * **~/open_watcher** (:class:`py_trees_msgs.srv.OpenBlackboardWatcher`)
 
           * request a publisher to stream a part of the blackboard contents
-        * **~/close_blackboard_watcher** (:class:`py_trees_msgs.srv.CloseBlackboardWatcher`)
+        * **~/close_watcher** (:class:`py_trees_msgs.srv.CloseBlackboardWatcher`)
 
           * close a previously opened watcher
 
@@ -235,7 +235,7 @@ class Exchange(object):
 
     .. seealso::
 
-        :class:`~py_trees_ros.trees.BehaviourTree` (in which it is used) and
+        :class:`py_trees_ros.trees.BehaviourTree` (in which it is used) and
         :ref:`py-trees-blackboard-watcher` (working with the watchers).
     """
     _counter = 0
@@ -278,14 +278,15 @@ class Exchange(object):
         .. seealso:: This class is used as illustrated above in :class:`~py_trees_ros.trees.BehaviourTree`.
         """
         self.node = node
-        for name in ["get_blackboard_variables",
-                     "open_blackboard_watcher",
-                     "close_blackboard_watcher"]:
-            camel_case_name = ''.join(x.capitalize() for x in name.split('_'))
-            self.services[name] = self.node.create_service(
-                srv_type=getattr(py_trees_srvs, camel_case_name),
-                srv_name='~/exchange/' + name,
-                callback=getattr(self, "_{}_service".format(name)),
+        for service_name, service_type in [
+            ("get_variables", py_trees_srvs.GetBlackboardVariables),
+            ("open_watcher", py_trees_srvs.OpenBlackboardWatcher),
+            ("close_watcher", py_trees_srvs.CloseBlackboardWatcher)
+        ]:
+            self.services[service_name] = self.node.create_service(
+                srv_type=service_type,
+                srv_name='~/blackboard/' + service_name,
+                callback=getattr(self, "_{}_service".format(service_name)),
                 qos_profile=rclpy.qos.qos_profile_services_default
             )
 
@@ -340,7 +341,7 @@ class Exchange(object):
         if py_trees.blackboard.Blackboard.activity_stream is not None:
             py_trees.blackboard.Blackboard.activity_stream.clear()
 
-    def _close_blackboard_watcher_service(self, request, response):
+    def _close_watcher_service(self, request, response):
         response.result = False
         for view in self.views:
             # print("   DJS: close watcher? [%s][%s]" % (view.topic_name, request.topic_name))
@@ -356,13 +357,13 @@ class Exchange(object):
             py_trees.blackboard.Blackboard.disable_activity_stream()
         return response
 
-    def _get_blackboard_variables_service(self, unused_request, response):
+    def _get_variables_service(self, unused_request, response):
         response.variables = self._get_nested_keys()
         return response
 
-    def _open_blackboard_watcher_service(self, request, response):
+    def _open_watcher_service(self, request, response):
         response.topic = rclpy.expand_topic_name.expand_topic_name(
-            topic_name="~/exchange/_watcher_" + str(Exchange._counter),
+            topic_name="~/blackboard/_watcher_" + str(Exchange._counter),
             node_name=self.node.get_name(),
             node_namespace=self.node.get_namespace())
         Exchange._counter += 1
