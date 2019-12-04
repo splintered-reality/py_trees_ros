@@ -4,9 +4,13 @@ Changelog
 
 Forthcoming
 -----------
+
+2.0.1 (2019-12-03)
+------------------
+* [trees] periodically publish snapshots, `#131 <https://github.com/splintered-reality/py_trees_ros/pull/131>`_,
 * [trees] permit setup visitors, provide a default with timings, `#129 <https://github.com/splintered-reality/py_trees_ros/pull/129>`_,
 * [trees] bugfix non-infinite timeout arg getting ignored, `#129 <https://github.com/splintered-reality/py_trees_ros/pull/129>`_,
-* [trees] snapshot now publishing a) tree changed, b) key access info, `#128 <https://github.com/splintered-reality/py_trees_ros/pull/128>`_,
+* [trees] snapshot now publishing tree changed flag and key access info, `#128 <https://github.com/splintered-reality/py_trees_ros/pull/128>`_,
 * [utilities] deprecate myargv for rclpy.utilities.remove_ros_args, `#130 <https://github.com/splintered-reality/py_trees_ros/pull/130>`_,
 
 2.0.0 (2019-11-20)
