@@ -218,10 +218,10 @@ class Exchange(object):
         * **~/get_variables** (:class:`py_trees_msgs.srv.GetBlackboardVariables`)
 
           * list all the blackboard variable names (not values)
-        * **~/open_watcher** (:class:`py_trees_msgs.srv.OpenBlackboardWatcher`)
+        * **~/open** (:class:`py_trees_msgs.srv.OpenBlackboardStream`)
 
           * request a publisher to stream a part of the blackboard contents
-        * **~/close_watcher** (:class:`py_trees_msgs.srv.CloseBlackboardWatcher`)
+        * **~/close** (:class:`py_trees_msgs.srv.CloseBlackboardStream`)
 
           * close a previously opened watcher
 
@@ -280,12 +280,12 @@ class Exchange(object):
         self.node = node
         for service_name, service_type in [
             ("get_variables", py_trees_srvs.GetBlackboardVariables),
-            ("open_watcher", py_trees_srvs.OpenBlackboardWatcher),
-            ("close_watcher", py_trees_srvs.CloseBlackboardWatcher)
+            ("open", py_trees_srvs.OpenBlackboardStream),
+            ("close", py_trees_srvs.CloseBlackboardStream)
         ]:
             self.services[service_name] = self.node.create_service(
                 srv_type=service_type,
-                srv_name='~/blackboard/' + service_name,
+                srv_name='~/blackboard_stream/' + service_name,
                 callback=getattr(self, "_{}_service".format(service_name)),
                 qos_profile=rclpy.qos.qos_profile_services_default
             )
@@ -341,16 +341,14 @@ class Exchange(object):
         if py_trees.blackboard.Blackboard.activity_stream is not None:
             py_trees.blackboard.Blackboard.activity_stream.clear()
 
-    def _close_watcher_service(self, request, response):
+    def _close_service(self, request, response):
         response.result = False
         for view in self.views:
-            # print("   DJS: close watcher? [%s][%s]" % (view.topic_name, request.topic_name))
             if view.topic_name == request.topic_name:
                 view.shutdown()  # that node.destroy_publisher call makes havoc
                 response.result = True
                 break
         self.views[:] = [view for view in self.views if view.topic_name != request.topic_name]
-        # print("DJS: close result: %s" % response.result)
         if any([view.with_activity_stream for view in self.views]):
             py_trees.blackboard.Blackboard.enable_activity_stream()
         else:
@@ -361,7 +359,7 @@ class Exchange(object):
         response.variables = self._get_nested_keys()
         return response
 
-    def _open_watcher_service(self, request, response):
+    def _open_service(self, request, response):
         response.topic = rclpy.expand_topic_name.expand_topic_name(
             topic_name="~/blackboard/_watcher_" + str(Exchange._counter),
             node_name=self.node.get_name(),
@@ -406,13 +404,13 @@ class BlackboardWatcher(object):
         }
         self.service_type_strings = {
             'list': 'py_trees_ros_interfaces/srv/GetBlackboardVariables',
-            'open': 'py_trees_ros_interfaces/srv/OpenBlackboardWatcher',
-            'close': 'py_trees_ros_interfaces/srv/CloseBlackboardWatcher'
+            'open': 'py_trees_ros_interfaces/srv/OpenBlackboardStream',
+            'close': 'py_trees_ros_interfaces/srv/CloseBlackboardStream'
         }
         self.service_types = {
             'list': py_trees_srvs.GetBlackboardVariables,
-            'open': py_trees_srvs.OpenBlackboardWatcher,
-            'close': py_trees_srvs.CloseBlackboardWatcher
+            'open': py_trees_srvs.OpenBlackboardStream,
+            'close': py_trees_srvs.CloseBlackboardStream
         }
 
     def setup(self, timeout_sec: float):

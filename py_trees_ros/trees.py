@@ -31,6 +31,7 @@ import statistics
 import subprocess
 import tempfile
 import time
+import typing
 
 import py_trees
 import py_trees.console as console
@@ -38,7 +39,7 @@ import py_trees.console as console
 import rclpy
 
 import diagnostic_msgs.msg as diagnostic_msgs  # noqa
-import py_trees_ros_interfaces.msg as py_trees_msgs
+import py_trees_ros_interfaces.msg as py_trees_msgs  # noqa
 import rcl_interfaces.msg as rcl_interfaces_msgs
 import unique_identifier_msgs.msg as unique_identifier_msgs
 
@@ -68,9 +69,14 @@ class BehaviourTree(py_trees.trees.BehaviourTree):
 
     ROS Publishers:
         * **~/snapshots** (:class:`py_trees_interfaces.msg.BehaviourTree`)
-        * **~/blackboard/close_watcher** (:class:`py_trees_ros_interfaces.srv.CloselackboardWatcher`)
-        * **~/blackboard/get_variables** (:class:`py_trees_ros_interfaces.srv.GetBlackboardVariables`)
-        * **~/blackboard/open_watcher** (:class:`py_trees_ros_interfaces.srv.OpenBlackboardWatcher`)
+
+    ROS Services:
+        * **~/blackboard_stream/close** (:class:`py_trees_ros_interfaces.srv.CloselackboardWatcher`)
+        * **~/blackboard_stream/get_variables** (:class:`py_trees_ros_interfaces.srv.GetBlackboardVariables`)
+        * **~/blackboard_stream/open** (:class:`py_trees_ros_interfaces.srv.OpenBlackboardWatcher`)
+        * **~/snapshot_stream/close** (:class:`py_trees_ros_interfaces.srv.CloseSnapshotsStream`)
+        * **~/snapshot_stream/open** (:class:`py_trees_ros_interfaces.srv.OpenSnapshotsStream`)
+        * **~/snapshot_stream/reconfigure** (:class:`py_trees_ros_interfaces.srv.ReconfigureSnapshotsStream`)
 
     Topics and services are not intended for direct use, but facilitate the operation of the
     utilities :ref:`py-trees-tree-watcher` and :ref:`py-trees-blackboard-watcher`.
@@ -158,6 +164,11 @@ class BehaviourTree(py_trees.trees.BehaviourTree):
         self.node = rclpy.create_node(node_name=default_node_name)
         if visitor is None:
             visitor = visitors.SetupLogger(node=self.node)
+
+        self.node.set_parameters_callback(
+            self._handle_dynamic_parameter_requests
+        )
+
         ########################################
         # Parameters - snapshot_period
         ########################################
@@ -184,13 +195,24 @@ class BehaviourTree(py_trees.trees.BehaviourTree):
         ########################################
         self.node.declare_parameter(
             name='snapshot_blackboard_data',
-            value=True,
+            value=False,
             descriptor=rcl_interfaces_msgs.ParameterDescriptor(
                 name="snapshot_blackboard_data",
                 type=rcl_interfaces_msgs.ParameterType.PARAMETER_BOOL,  # noqa
                 description="append blackboard data (tracking status, visited variables) with tree snapshots",
-                additional_constraints="",
-                read_only=True
+            )
+        )
+
+        ########################################
+        # Parameters - snapshot_blackboard_activity
+        ########################################
+        self.node.declare_parameter(
+            name='snapshot_blackboard_activity',
+            value=False,
+            descriptor=rcl_interfaces_msgs.ParameterDescriptor(
+                name="snapshot_blackboard_activity",
+                type=rcl_interfaces_msgs.ParameterType.PARAMETER_BOOL,  # noqa
+                description="append the blackboard activity stream to the snapshot",
             )
         )
 
@@ -260,6 +282,21 @@ class BehaviourTree(py_trees.trees.BehaviourTree):
         # to the callback function here.
         self.tree_update_handler = self._on_tree_update_handler
 
+    def _handle_dynamic_parameter_requests(
+            self,
+            parameters: typing.List[rclpy.parameter.Parameter]
+    ) -> rcl_interfaces_msgs.SetParametersResult:
+        """
+        Handle all incoming dynamic parameter requests
+        """
+        for parameter in parameters:
+            print("{}".format(parameter.name))
+        result = rcl_interfaces_msgs.SetParametersResult()
+        if parameter.name == "snapshot_blackboard_data":
+            pass
+        result.successful = True
+        return result
+
     def tick_tock(
             self,
             period_ms,
@@ -280,12 +317,10 @@ class BehaviourTree(py_trees.trees.BehaviourTree):
             pre_tick_handler (:obj:`func`): function to execute before ticking
             post_tick_handler (:obj:`func`): function to execute after ticking
         """
-        period_s = period_ms / 1000.0
         self.timer = self.node.create_timer(
-            period_s,
+            period_ms / 1000.0,  # unit 'seconds'
             functools.partial(
                 self._tick_tock_timer_callback,
-                period_ms=period_ms,
                 number_of_iterations=number_of_iterations,
                 pre_tick_handler=pre_tick_handler,
                 post_tick_handler=post_tick_handler
@@ -313,7 +348,6 @@ class BehaviourTree(py_trees.trees.BehaviourTree):
 
     def _tick_tock_timer_callback(
             self,
-            period_ms,
             number_of_iterations,
             pre_tick_handler,
             post_tick_handler):
@@ -321,7 +355,6 @@ class BehaviourTree(py_trees.trees.BehaviourTree):
         Tick tock callback passed to the timer to be periodically triggered.
 
         Args:
-            period_ms (:obj:`float`): sleep this much between ticks (milliseconds)
             number_of_iterations (:obj:`int`): number of iterations to tick-tock
             pre_tick_handler (:obj:`func`): function to execute before ticking
             post_tick_handler (:obj:`func`): function to execute after ticking
@@ -430,16 +463,35 @@ class BehaviourTree(py_trees.trees.BehaviourTree):
         Args:
             changed: whether the tree status / graph changed or not
         """
-        # Don't fuss over lazy publishing, tree changes should not occur with high
-        # frequency and more importantly, it needs to be latched with the latest
-        # snapshot in the case of it not changing for quite some time to come...
+        # Don't fuss too much over lazy publishing since it is important to
+        # have the last tree state change 'latched' since new snapshots
+        # may not arrive for some time... However, if there
+        # are no subscribers, minimise what does get published
+        if self.publishers.snapshots.get_subscription_count() == 0:
+            self.node.set_parameters([  # need a guard?
+                rclpy.parameter.Parameter(
+                    'snapshot_blackboard_data',
+                    rclpy.parameter.Parameter.Type.BOOL,
+                    False
+                ),
+                rclpy.parameter.Parameter(
+                    'snapshot_blackboard_activity',
+                    rclpy.parameter.Parameter.Type.BOOL,
+                    False
+                )
+            ])
+            if not changed:
+                return
+
         tree_message = py_trees_msgs.BehaviourTree()
         tree_message.changed = changed
+
         # tree
         for behaviour in self.root.iterate():
             msg = conversions.behaviour_to_msg(behaviour)
             msg.is_active = True if behaviour.id in self.snapshot_visitor.visited else False
             tree_message.behaviours.append(msg)
+
         # blackboard
         if self.node.get_parameter("snapshot_blackboard_data").value:
             visited_keys = py_trees.blackboard.Blackboard.keys_filtered_by_clients(
@@ -464,6 +516,7 @@ class BehaviourTree(py_trees.trees.BehaviourTree):
         # other
         if self.statistics is not None:
             tree_message.statistics = self.statistics
+        print("DJS: Tree Message\n{}".format(tree_message.blackboard_on_visited_path))
         self.publishers.snapshots.publish(tree_message)
 
     def _cleanup(self):
