@@ -159,7 +159,7 @@ class BehaviourTree(py_trees.trees.BehaviourTree):
         if visitor is None:
             visitor = visitors.SetupLogger(node=self.node)
         ########################################
-        # Parameters - snapshot_preiod
+        # Parameters - snapshot_period
         ########################################
         self.node.declare_parameter(
             name='snapshot_period',
@@ -178,6 +178,21 @@ class BehaviourTree(py_trees.trees.BehaviourTree):
         # Get the resulting timeout
         self.snapshot_period = self.node.get_parameter("snapshot_period").value
         self.last_snapshot_timestamp = time.monotonic()
+
+        ########################################
+        # Parameters - snapshot_blackboard_data
+        ########################################
+        self.node.declare_parameter(
+            name='snapshot_blackboard_data',
+            value=True,
+            descriptor=rcl_interfaces_msgs.ParameterDescriptor(
+                name="snapshot_blackboard_data",
+                type=rcl_interfaces_msgs.ParameterType.PARAMETER_BOOL,  # noqa
+                description="append blackboard data (tracking status, visited variables) with tree snapshots",
+                additional_constraints="",
+                read_only=True
+            )
+        )
 
         ########################################
         # Parameters - setup_timeout
@@ -426,20 +441,21 @@ class BehaviourTree(py_trees.trees.BehaviourTree):
             msg.is_active = True if behaviour.id in self.snapshot_visitor.visited else False
             tree_message.behaviours.append(msg)
         # blackboard
-        visited_keys = py_trees.blackboard.Blackboard.keys_filtered_by_clients(
-            client_ids=self.snapshot_visitor.visited_blackboard_client_ids
-        )
-        for key in visited_keys:
-            try:
-                value = str(py_trees.blackboard.Blackboard.get(key))
-            except KeyError:
-                value = "-"
-            tree_message.blackboard_on_visited_path.append(
-                diagnostic_msgs.KeyValue(
-                    key=key,
-                    value=value
-                )
+        if self.node.get_parameter("snapshot_blackboard_data").value:
+            visited_keys = py_trees.blackboard.Blackboard.keys_filtered_by_clients(
+                client_ids=self.snapshot_visitor.visited_blackboard_client_ids
             )
+            for key in visited_keys:
+                try:
+                    value = str(py_trees.blackboard.Blackboard.get(key))
+                except KeyError:
+                    value = "-"
+                tree_message.blackboard_on_visited_path.append(
+                    diagnostic_msgs.KeyValue(
+                        key=key,
+                        value=value
+                    )
+                )
 
         if py_trees.blackboard.Blackboard.activity_stream is not None:
             tree_message.blackboard_activity_stream = py_trees.display.unicode_blackboard_activity_stream(
