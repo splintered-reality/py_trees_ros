@@ -346,9 +346,11 @@ class Exchange(object):
             py_trees.blackboard.Blackboard.enable_activity_stream()
 
     def register_activity_stream_client(self):
+        print("Registering: {}->{}".format(self.activity_stream_clients, self.activity_stream_clients + 1))
         self.activity_stream_clients += 1
 
     def unregister_activity_stream_client(self):
+        print("Unregistering: {}->{}".format(self.activity_stream_clients, self.activity_stream_clients - 1))
         self.activity_stream_clients -= 1
 
     def _close_service(self, request, response):
