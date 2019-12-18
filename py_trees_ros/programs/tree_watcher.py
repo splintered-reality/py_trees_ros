@@ -97,11 +97,17 @@ def command_line_argument_parser(formatted_for_sphinx=True):
     # TODO : break these out into different subcommands
     group = parser.add_mutually_exclusive_group()
     group.add_argument(
-        '--stream',
+        '--custom-stream',
         dest='viewing_mode',
         action='store_const',
-        const=py_trees_ros.trees.WatcherMode.STREAM,
-        help='stream the tree state as unicode art on your console')
+        const=py_trees_ros.trees.WatcherMode.CUSTOM_STREAM,
+        help='render ascii snapshots from a stream configured by this client (via args: -a -s -b)')
+    group.add_argument(
+        '--default-stream',
+        dest='viewing_mode',
+        action='store_const',
+        const=py_trees_ros.trees.WatcherMode.DEFAULT_STREAM,
+        help='render ascii snapshots from the default stream (~/snapshots)')
     group.add_argument(
         '--dot-graph',
         dest='viewing_mode',
@@ -157,7 +163,11 @@ def main():
     parser = command_line_argument_parser(formatted_for_sphinx=False)
     args = parser.parse_args(command_line_args)
     if not args.viewing_mode:
-        args.viewing_mode = py_trees_ros.trees.WatcherMode.STREAM
+        args.viewing_mode = py_trees_ros.trees.WatcherMode.CUSTOM_STREAM
+
+    if args.viewing_mode == py_trees_ros.trees.WatcherMode.CUSTOM_STREAM:
+        print(console.red + "\nERROR: '--custom-stream' not yet supported\n" + console.reset)
+        sys.exit(1)
 
     ####################
     # Setup

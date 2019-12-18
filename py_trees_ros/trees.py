@@ -33,14 +33,13 @@ import tempfile
 import time
 import typing
 
+import diagnostic_msgs.msg as diagnostic_msgs  # noqa
 import py_trees
 import py_trees.console as console
-# import rosbag
-import rclpy
-
-import diagnostic_msgs.msg as diagnostic_msgs  # noqa
 import py_trees_ros_interfaces.msg as py_trees_msgs  # noqa
+import py_trees_ros_interfaces.srv as py_trees_srvs  # noqa
 import rcl_interfaces.msg as rcl_interfaces_msgs
+import rclpy
 import unique_identifier_msgs.msg as unique_identifier_msgs
 
 from . import blackboard
@@ -144,6 +143,28 @@ class BehaviourTree(py_trees.trees.BehaviourTree):
         if visitor is None:
             visitor = visitors.SetupLogger(node=self.node)
 
+        ########################################
+        # ROS Comms
+        ########################################
+        latched = True
+        self.publishers = utilities.Publishers(
+            self.node,
+            [
+                ("snapshots", "~/snapshots", py_trees_msgs.BehaviourTree, latched),
+            ]
+        )
+        self.snapshot_stream_services = utilities.Services(
+            node=self.node,
+            service_details=[
+                ("close", "~/snapshot_stream/close", py_trees_srvs.CloseSnapshotStream, self._close_snapshot_stream),
+                ("open", "~/snapshot_stream/open", py_trees_srvs.OpenSnapshotStream, self._open_snapshot_stream),
+                ("reconfigure", "~/snapshot_stream/reconfigure", py_trees_srvs.ReconfigureSnapshotStream, self._reconfigure_snapshot_stream),
+            ],
+            introspection_topic_name="snapshot_stream/services"
+        )
+        self.blackboard_exchange = blackboard.Exchange()
+        self.blackboard_exchange.setup(self.node)
+
         ################################################################################
         # Parameters - configuring the default stream '~/snapshots`
         ################################################################################
@@ -158,7 +179,7 @@ class BehaviourTree(py_trees.trees.BehaviourTree):
                 type=rcl_interfaces_msgs.ParameterType.PARAMETER_BOOL,  # noqa
                 description="enable/disable the default snapshot stream in ~/snapshots",
                 additional_constraints="",
-                read_only=True,
+                read_only=False,
             )
         )
         ########################################
@@ -181,6 +202,10 @@ class BehaviourTree(py_trees.trees.BehaviourTree):
         # Get the resulting timeout
         self.last_default_snapshot_timestamp = time.monotonic()
 
+        self.node.set_parameters_callback(
+            callback=self._set_parameters_callback
+        )
+
         ########################################
         # default_snapshot_blackboard_data
         ########################################
@@ -192,7 +217,7 @@ class BehaviourTree(py_trees.trees.BehaviourTree):
                 type=rcl_interfaces_msgs.ParameterType.PARAMETER_BOOL,  # noqa
                 description="append blackboard data (tracking status, visited variables) to the default snapshot stream",
                 additional_constraints="",
-                read_only=True,
+                read_only=False,
             )
         )
 
@@ -201,24 +226,13 @@ class BehaviourTree(py_trees.trees.BehaviourTree):
         ########################################
         self.node.declare_parameter(
             name='default_snapshot_blackboard_activity',
-            value=False,
+            value=True,
             descriptor=rcl_interfaces_msgs.ParameterDescriptor(
                 name="default_snapshot_blackboard_activity",
                 type=rcl_interfaces_msgs.ParameterType.PARAMETER_BOOL,  # noqa
                 description="append the blackboard activity stream to the default snapshot stream",
-            )
-        )
-
-        ########################################
-        # default_snapshot_statistics
-        ########################################
-        self.node.declare_parameter(
-            name='default_snapshot_statistics',
-            value=True,
-            descriptor=rcl_interfaces_msgs.ParameterDescriptor(
-                name="default_snapshot_statistics",
-                type=rcl_interfaces_msgs.ParameterType.PARAMETER_BOOL,  # noqa
-                description="append statistics to the default snapshot stream",
+                additional_constraints="",
+                read_only=False,
             )
         )
 
@@ -252,14 +266,6 @@ class BehaviourTree(py_trees.trees.BehaviourTree):
             setup_timeout = py_trees.common.Duration.INFINITE
 
         ########################################
-        # ROS Comms
-        ########################################
-        self._setup_publishers()
-        self.blackboard_exchange = blackboard.Exchange()
-        self.blackboard_exchange.setup(self.node)
-        self.post_tick_handlers.append(self._snapshots_post_tick_handler)
-
-        ########################################
         # Behaviours
         ########################################
         try:
@@ -274,29 +280,37 @@ class BehaviourTree(py_trees.trees.BehaviourTree):
             else:
                 raise
 
-    def _setup_publishers(self):
-        latched = True
-        self.publishers = utilities.Publishers(
-            self.node,
-            [
-                ("snapshots", "~/snapshots", py_trees_msgs.BehaviourTree, latched),
-            ]
-        )
-
-        # publish current state
+        ########################################
+        # Publish Current State
+        ########################################
         if self.node.get_parameter("default_snapshot_stream").value:
             self._publish_serialised_tree(
                 publisher=self.publishers.snapshots,
                 changed=True,
                 with_blackboard_data=self.node.get_parameter("default_snapshot_blackboard_data"),
                 with_blackboard_activity=self.node.get_parameter("default_snapshot_blackboard_activity"),
-                with_statistics=self.node.get_parameter("default_snapshot_statistics"),
             )
 
+        ########################################
+        # Setup Handlers
+        ########################################
         # set a handler to publish future modifications whenever the tree is modified
         # (e.g. pruned). The tree_update_handler method is in the base class, set this
         # to the callback function here.
         self.tree_update_handler = self._on_tree_update_handler
+        self.post_tick_handlers.append(self._snapshots_post_tick_handler)
+
+    def _set_parameters_callback(
+        self,
+        parameters: typing.List[rclpy.parameter.Parameter]
+    ) -> rcl_interfaces_msgs.SetParametersResult:
+        for parameter in parameters:
+            if parameter.name == "default_snapshot_blackboard_activity":
+                if parameter.value:
+                    self.blackboard_exchange.register_activity_stream_client()
+                else:
+                    self.blackboard_exchange.unregister_activity_stream_client()
+        return rcl_interfaces_msgs.SetParametersResult(successful=True)
 
     def tick_tock(
             self,
@@ -382,7 +396,6 @@ class BehaviourTree(py_trees.trees.BehaviourTree):
                     changed=True,
                     with_blackboard_data=self.node.get_parameter("default_snapshot_blackboard_data"),
                     with_blackboard_activity=self.node.get_parameter("default_snapshot_blackboard_activity"),
-                    with_statistics=self.node.get_parameter("default_snapshot_statistics"),
                 )
 
     def _statistics_pre_tick_handler(self, tree: py_trees.trees.BehaviourTree):
@@ -466,9 +479,8 @@ class BehaviourTree(py_trees.trees.BehaviourTree):
                 self._publish_serialised_tree(
                     publisher=self.publishers.snapshots,
                     changed=self.snapshot_visitor.changed,
-                    with_blackboard_data=self.node.get_parameter("default_snapshot_blackboard_data"),
-                    with_blackboard_activity=self.node.get_parameter("default_snapshot_blackboard_activity"),
-                    with_statistics=self.node.get_parameter("default_snapshot_statistics"),
+                    with_blackboard_data=self.node.get_parameter("default_snapshot_blackboard_data").value,
+                    with_blackboard_activity=self.node.get_parameter("default_snapshot_blackboard_activity").value,
                 )
                 self.last_default_snapshot_timestamp = current_timestamp
 
@@ -482,8 +494,7 @@ class BehaviourTree(py_trees.trees.BehaviourTree):
             publisher: rclpy.publisher.Publisher,
             changed: bool,
             with_blackboard_data: bool,
-            with_blackboard_activity: bool,
-            with_statistics: bool):
+            with_blackboard_activity: bool):
         """"
         Args:
             changed: whether the tree status / graph changed or not
@@ -514,16 +525,36 @@ class BehaviourTree(py_trees.trees.BehaviourTree):
                     )
                 )
 
-        # TODO: make use of with_activity_stream here
-        unused_foo = with_blackboard_activity
-        if py_trees.blackboard.Blackboard.activity_stream is not None:
+        # activity stream
+        if with_blackboard_activity and py_trees.blackboard.Blackboard.activity_stream is not None:
             tree_message.blackboard_activity_stream = py_trees.display.unicode_blackboard_activity_stream(
                 show_title=False
             )
         # other
-        if with_statistics and self.statistics is not None:
+        if self.statistics is not None:
             tree_message.statistics = self.statistics
         publisher.publish(tree_message)
+
+    def _close_snapshot_stream(
+        self,
+        request: py_trees_srvs.CloseSnapshotStream.Request,  # noqa
+        response: py_trees_srvs.CloseSnapshotStream.Response  # noqa
+    ):
+        return response
+
+    def _open_snapshot_stream(
+        self,
+        request: py_trees_srvs.OpenSnapshotStream.Request,  # noqa
+        response: py_trees_srvs.OpenSnapshotStream.Response  # noqa
+    ):
+        return response
+
+    def _reconfigure_snapshot_stream(
+        self,
+        request: py_trees_srvs.ReconfigureSnapshotStream.Request,  # noqa
+        response: py_trees_srvs.ReconfigureSnapshotStream.Response  # noqa
+    ):
+        return response
 
     def _cleanup(self):
         with self.lock:
@@ -539,8 +570,10 @@ class BehaviourTree(py_trees.trees.BehaviourTree):
 class WatcherMode(enum.Enum):
     """An enumerator specifying the view mode for the watcher"""
 
-    STREAM = "STREAM"
-    """Print an ascii art view of the behaviour tree's current state after the last tick"""
+    DEFAULT_STREAM = "DEFAULT_STREAM"
+    """Render ascii/unicode snapshots from the default stream (~/snapshots)"""
+    CUSTOM_STREAM = "CUSTOM_STREAM"
+    """Render ascii/unicode snapshots from a stream configured only for this client"""
     DOT_GRAPH = "DOT_GRAPH"
     """Render with the dot graph representation of the static tree (using an application or text to console)."""
 
@@ -563,7 +596,7 @@ class Watcher(object):
     def __init__(
             self,
             namespace_hint: str,
-            mode: WatcherMode=WatcherMode.STREAM,
+            mode: WatcherMode=WatcherMode.CUSTOM_STREAM,
             display_blackboard_variables: bool=False,
             display_blackboard_activity: bool=False,
             display_statistics: bool=False):
@@ -676,7 +709,7 @@ class Watcher(object):
         ####################
         # Streaming
         ####################
-        if self.viewing_mode == WatcherMode.STREAM:
+        if self.viewing_mode == WatcherMode.DEFAULT_STREAM:
             if msg.changed:
                 colour = console.green
             else:
@@ -705,18 +738,24 @@ class Watcher(object):
             if self.display_blackboard_variables:
                 print("")
                 print(colour + "Blackboard Data" + console.reset)
-                # could probably re-use the unicode_blackboard by passing a dict to it
-                # like we've done for the activity stream
                 indent = " " * 4
-                max_length = 0
-                for variable in msg.blackboard_on_visited_path:
-                    max_length = len(variable.key) if len(variable.key) > max_length else max_length
-                for variable in msg.blackboard_on_visited_path:
+                if not msg.blackboard_on_visited_path:
                     print(
-                        console.cyan + indent +
-                        '{0: <{1}}'.format(variable.key, max_length + 1) + console.reset + ": " +
-                        console.yellow + '{0}'.format(variable.value) + console.reset
+                        console.cyan + indent + "-" + console.reset + " : " +
+                        console.yellow + "-" + console.reset
                     )
+                else:
+                    # could probably re-use the unicode_blackboard by passing a dict to it
+                    # like we've done for the activity stream
+                    max_length = 0
+                    for variable in msg.blackboard_on_visited_path:
+                        max_length = len(variable.key) if len(variable.key) > max_length else max_length
+                    for variable in msg.blackboard_on_visited_path:
+                        print(
+                            console.cyan + indent +
+                            '{0: <{1}}'.format(variable.key, max_length + 1) + console.reset + ": " +
+                            console.yellow + '{0}'.format(variable.value) + console.reset
+                        )
             ####################
             # Stream Activity
             ####################
@@ -725,6 +764,9 @@ class Watcher(object):
                 print(colour + "Blackboard Activity Stream" + console.reset)
                 if msg.blackboard_activity_stream:
                     print(msg.blackboard_activity_stream)
+                else:
+                    indent = " " * 4
+                    print(indent + "n/a")
             ####################
             # Stream Statistics
             ####################

@@ -245,8 +245,7 @@ class Exchange(object):
         self.node = None
         self.views = []
         self.services = {}
-        # might want to revisit this if it proves to be suboptimal
-        py_trees.blackboard.Blackboard.enable_activity_stream()
+        self.activity_stream_clients = 0
 
     def setup(self, node: rclpy.node.Node):
         """
@@ -337,9 +336,20 @@ class Exchange(object):
                             msg.data = "{}".format(view.sub_blackboard)
                         view.publisher.publish(msg)
 
-        # clear the activity stream
+        # manage the activity stream
         if py_trees.blackboard.Blackboard.activity_stream is not None:
-            py_trees.blackboard.Blackboard.activity_stream.clear()
+            if self.activity_stream_clients == 0:
+                py_trees.blackboard.Blackboard.disable_activity_stream()
+            else:
+                py_trees.blackboard.Blackboard.activity_stream.clear()
+        elif self.activity_stream_clients > 0:
+            py_trees.blackboard.Blackboard.enable_activity_stream()
+
+    def register_activity_stream_client(self):
+        self.activity_stream_clients += 1
+
+    def unregister_activity_stream_client(self):
+        self.activity_stream_clients -= 1
 
     def _close_service(self, request, response):
         response.result = False
@@ -349,10 +359,7 @@ class Exchange(object):
                 response.result = True
                 break
         self.views[:] = [view for view in self.views if view.topic_name != request.topic_name]
-        if any([view.with_activity_stream for view in self.views]):
-            py_trees.blackboard.Blackboard.enable_activity_stream()
-        else:
-            py_trees.blackboard.Blackboard.disable_activity_stream()
+        self.unregister_activity_stream_client()
         return response
 
     def _get_variables_service(self, unused_request, response):
@@ -365,6 +372,8 @@ class Exchange(object):
             node_name=self.node.get_name(),
             node_namespace=self.node.get_namespace())
         Exchange._counter += 1
+        if request.with_activity_stream:
+            self.register_activity_stream_client()
         view = BlackboardView(
             node=self.node,
             topic_name=response.topic,
