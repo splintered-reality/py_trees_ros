@@ -284,7 +284,7 @@ class Exchange(object):
         ]:
             self.services[service_name] = self.node.create_service(
                 srv_type=service_type,
-                srv_name='~/blackboard_stream/' + service_name,
+                srv_name='~/blackboard_streams/' + service_name,
                 callback=getattr(self, "_{}_service".format(service_name)),
                 qos_profile=rclpy.qos.qos_profile_services_default
             )
@@ -368,7 +368,7 @@ class Exchange(object):
 
     def _open_service(self, request, response):
         response.topic = rclpy.expand_topic_name.expand_topic_name(
-            topic_name="~/blackboard/_watcher_" + str(Exchange._counter),
+            topic_name="~/blackboard_streams/_watcher_" + str(Exchange._counter),
             node_name=self.node.get_name(),
             node_namespace=self.node.get_namespace())
         Exchange._counter += 1

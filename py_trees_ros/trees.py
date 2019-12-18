@@ -49,8 +49,18 @@ from . import utilities
 from . import visitors
 
 ##############################################################################
-# ROS Trees
+# Tree Management
 ##############################################################################
+
+
+class SnapshotStream(object):
+    """
+    SnapshotStream instances are responsible for creating / destroying
+    a snapshot stream as well as the configurable curation of snapshots
+    that are published on it.
+    """
+    def __init__(self, topic_name=None):
+        pass
 
 
 class BehaviourTree(py_trees.trees.BehaviourTree):
@@ -71,12 +81,12 @@ class BehaviourTree(py_trees.trees.BehaviourTree):
         * **~/snapshots** (:class:`py_trees_interfaces.msg.BehaviourTree`)
 
     ROS Services:
-        * **~/blackboard_stream/close** (:class:`py_trees_ros_interfaces.srv.CloselackboardWatcher`)
-        * **~/blackboard_stream/get_variables** (:class:`py_trees_ros_interfaces.srv.GetBlackboardVariables`)
-        * **~/blackboard_stream/open** (:class:`py_trees_ros_interfaces.srv.OpenBlackboardWatcher`)
-        * **~/snapshot_stream/close** (:class:`py_trees_ros_interfaces.srv.CloseSnapshotsStream`)
-        * **~/snapshot_stream/open** (:class:`py_trees_ros_interfaces.srv.OpenSnapshotsStream`)
-        * **~/snapshot_stream/reconfigure** (:class:`py_trees_ros_interfaces.srv.ReconfigureSnapshotsStream`)
+        * **~/blackboard_streams/close** (:class:`py_trees_ros_interfaces.srv.CloselackboardWatcher`)
+        * **~/blackboard_streams/get_variables** (:class:`py_trees_ros_interfaces.srv.GetBlackboardVariables`)
+        * **~/blackboard_streams/open** (:class:`py_trees_ros_interfaces.srv.OpenBlackboardWatcher`)
+        * **~/snapshot_streams/close** (:class:`py_trees_ros_interfaces.srv.CloseSnapshotsStream`)
+        * **~/snapshot_streams/open** (:class:`py_trees_ros_interfaces.srv.OpenSnapshotsStream`)
+        * **~/snapshot_streams/reconfigure** (:class:`py_trees_ros_interfaces.srv.ReconfigureSnapshotsStream`)
 
     Topics and services are not intended for direct use, but facilitate the operation of the
     utilities :ref:`py-trees-tree-watcher` and :ref:`py-trees-blackboard-watcher`.
@@ -156,11 +166,11 @@ class BehaviourTree(py_trees.trees.BehaviourTree):
         self.snapshot_stream_services = utilities.Services(
             node=self.node,
             service_details=[
-                ("close", "~/snapshot_stream/close", py_trees_srvs.CloseSnapshotStream, self._close_snapshot_stream),
-                ("open", "~/snapshot_stream/open", py_trees_srvs.OpenSnapshotStream, self._open_snapshot_stream),
-                ("reconfigure", "~/snapshot_stream/reconfigure", py_trees_srvs.ReconfigureSnapshotStream, self._reconfigure_snapshot_stream),
+                ("close", "~/snapshot_streams/close", py_trees_srvs.CloseSnapshotStream, self._close_snapshot_stream),
+                ("open", "~/snapshot_streams/open", py_trees_srvs.OpenSnapshotStream, self._open_snapshot_stream),
+                ("reconfigure", "~/snapshot_streams/reconfigure", py_trees_srvs.ReconfigureSnapshotStream, self._reconfigure_snapshot_stream),
             ],
-            introspection_topic_name="snapshot_stream/services"
+            introspection_topic_name="snapshot_streams/services"
         )
         self.blackboard_exchange = blackboard.Exchange()
         self.blackboard_exchange.setup(self.node)
