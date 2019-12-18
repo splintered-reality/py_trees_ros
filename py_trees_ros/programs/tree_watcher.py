@@ -15,9 +15,8 @@
    :prog: py-trees-tree-watcher
 
 Command line utility to interact with a running
-:class:`~py_trees_ros.trees.BehaviourTree` instance. Print the tree structure
-or a live snapshot of the tree state as unicode art on your console,
-view tick statistics as a stream or display the tree as a dot graph.
+:class:`~py_trees_ros.trees.BehaviourTree` instance. Stream snapshots
+of the tree as unicode art on your console, or display the tree as a dot graph.
 
 .. image:: images/tree-watcher.gif
 
@@ -40,12 +39,12 @@ import sys
 
 def description(formatted_for_sphinx):
     short = "Open up a window onto the behaviour tree!\n"
-    long = ("\nPrint a single snapshot, or stream the tree state as unicode art on your console\n"
-            "or render the tree as a dot graph (does not include behaviour's status flags).\n"
+    long = ("\nStream the tree state as unicode art on your console\n"
+            "or render the tree as a dot graph.\n"
             "Use the namespace argument to select from trees when there are multiple available.\n"
             )
     examples = [
-        "", "--stream", "--snapshot", "--dot-graph", "--namespace=foo --stream"
+        "", "--stream", "--dot-graph", "--namespace=foo --stream"
     ]
     script_name = "py-trees-tree-watcher"
 
@@ -103,12 +102,6 @@ def command_line_argument_parser(formatted_for_sphinx=True):
         action='store_const',
         const=py_trees_ros.trees.WatcherMode.STREAM,
         help='stream the tree state as unicode art on your console')
-    group.add_argument(
-        '--snapshot',
-        dest='viewing_mode',
-        action='store_const',
-        const=py_trees_ros.trees.WatcherMode.SNAPSHOT,
-        help='print a single snapshot as unicode art on your console')
     group.add_argument(
         '--dot-graph',
         dest='viewing_mode',

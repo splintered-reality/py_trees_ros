@@ -541,8 +541,6 @@ class WatcherMode(enum.Enum):
 
     STREAM = "STREAM"
     """Print an ascii art view of the behaviour tree's current state after the last tick"""
-    SNAPSHOT = "SNAPSHOT"
-    """Print an ascii art representation of the static tree (sans visited path/status/feedback messages)."""
     DOT_GRAPH = "DOT_GRAPH"
     """Render with the dot graph representation of the static tree (using an application or text to console)."""
 
@@ -761,20 +759,6 @@ class Watcher(object):
                 )
                 print(console.reset)
 
-        ####################
-        # Printing
-        ####################
-        elif self.viewing_mode == WatcherMode.SNAPSHOT:
-            print("")
-            print(
-                py_trees.display.unicode_tree(
-                    root=root,
-                    show_status=True,
-                    visited=self.snapshot_visitor.visited,
-                    previously_visited=self.snapshot_visitor.previously_visited
-                )
-            )
-            self.done = True
         ####################
         # Dot Graph
         ####################
