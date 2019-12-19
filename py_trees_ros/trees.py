@@ -7,7 +7,7 @@
 ##############################################################################
 # Documentation
 ##############################################################################
-from numpy import asfarray
+
 """
 The :class:`py_trees_ros.trees.BehaviourTree` class
 extends the core :class:`py_trees.trees.BehaviourTree` class
