@@ -18,8 +18,6 @@ Assorted utility functions.
 
 import os
 import pathlib
-import re
-import sys
 
 import py_trees_ros_interfaces.msg as py_trees_msgs  # noqa
 import py_trees_ros_interfaces.srv as py_trees_srvs  # noqa

@@ -7,6 +7,7 @@
 ##############################################################################
 # Documentation
 ##############################################################################
+from numpy import asfarray
 """
 The :class:`py_trees_ros.trees.BehaviourTree` class
 extends the core :class:`py_trees.trees.BehaviourTree` class
@@ -85,7 +86,6 @@ class SnapshotStream(object):
     def __init__(
         self,
         node: rclpy.node.Node,
-        name: str=None,
         topic_name: str=None,
         parameters: 'SnapshotStream.Parameters'=None,
     ):
@@ -97,20 +97,41 @@ class SnapshotStream(object):
             name: human friendly key for this snapshot stream object
             topic_name: snapshot stream name, uniquely generated if None
         """
-        self.topic_name = topic_name
-        if self.topic_name is None:
-            self.topic_name = "~/snapshot_streams/_snapshots_" + str(SnapshotStream._counter)
-            SnapshotStream._counter += 1
-        self.name = name if name is not None else self.topic_name.split('/')[-1]
         self.node = node
+        self.topic_name = SnapshotStream.expand_topic_name(self.node, topic_name)
         self.publisher = self.node.create_publisher(
             msg_type=py_trees_msgs.BehaviourTree,
-            topic=topic_name,
+            topic=self.topic_name,
             qos_profile=utilities.qos_profile_latched()
         )
         self.parameters = parameters if parameters is not None else SnapshotStream.Parameters()
         self.last_snapshot_timestamp = None
         self.statistics = None
+
+    @staticmethod
+    def expand_topic_name(node, topic_name):
+        if topic_name is None or not topic_name:
+            expanded_topic_name = rclpy.expand_topic_name.expand_topic_name(
+                topic_name="~/snapshot_streams/_snapshots_" + str(SnapshotStream._counter),
+                node_name=node.get_name(),
+                node_namespace=node.get_namespace()
+            )
+            SnapshotStream._counter += 1
+            return expanded_topic_name
+        elif topic_name.startswith("~"):
+            return rclpy.expand_topic_name.expand_topic_name(
+                topic_name=topic_name,
+                node_name=node.get_name(),
+                node_namespace=node.get_namespace()
+            )
+        elif not topic_name.startswith("/"):
+            return rclpy.expand_topic_name.expand_topic_name(
+                topic_name="~/snapshot_streams/" + topic_name,
+                node_name=node.get_name(),
+                node_namespace=node.get_namespace()
+            )
+        else:
+            return topic_name
 
     def publish(
             self,
@@ -271,6 +292,10 @@ class BehaviourTree(py_trees.trees.BehaviourTree):
         self.node = rclpy.create_node(node_name=default_node_name)
         if visitor is None:
             visitor = visitors.SetupLogger(node=self.node)
+        self.default_snapshot_stream_topic_name = SnapshotStream.expand_topic_name(
+            node=self.node,
+            topic_name="~/snapshots"
+        )
 
         ########################################
         # ROS Comms
@@ -293,6 +318,22 @@ class BehaviourTree(py_trees.trees.BehaviourTree):
         self.node.set_parameters_callback(
             callback=self._set_parameters_callback
         )
+
+        ########################################
+        # default_snapshot_stream
+        ########################################
+        self.node.declare_parameter(
+            name='default_snapshot_stream',
+            value=False,
+            descriptor=rcl_interfaces_msgs.ParameterDescriptor(
+                name="default_snapshot_stream",
+                type=rcl_interfaces_msgs.ParameterType.PARAMETER_BOOL,  # noqa
+                description="enable/disable the default snapshot stream in ~/snapshots",
+                additional_constraints="",
+                read_only=False,
+            )
+        )
+
         ########################################
         # default_snapshot_period
         ########################################
@@ -331,28 +372,11 @@ class BehaviourTree(py_trees.trees.BehaviourTree):
         ########################################
         self.node.declare_parameter(
             name='default_snapshot_blackboard_activity',
-            value=True,
+            value=False,
             descriptor=rcl_interfaces_msgs.ParameterDescriptor(
                 name="default_snapshot_blackboard_activity",
                 type=rcl_interfaces_msgs.ParameterType.PARAMETER_BOOL,  # noqa
                 description="append the blackboard activity stream to the default snapshot stream",
-                additional_constraints="",
-                read_only=False,
-            )
-        )
-
-        ########################################
-        # default_snapshot_stream
-        ########################################
-        # make sure this is declared after other default snapshot parameters so that it can
-        # utilise them in the set_parameter_callback
-        self.node.declare_parameter(
-            name='default_snapshot_stream',
-            value=True,
-            descriptor=rcl_interfaces_msgs.ParameterDescriptor(
-                name="default_snapshot_stream",
-                type=rcl_interfaces_msgs.ParameterType.PARAMETER_BOOL,  # noqa
-                description="enable/disable the default snapshot stream in ~/snapshots",
                 additional_constraints="",
                 read_only=False,
             )
@@ -423,38 +447,41 @@ class BehaviourTree(py_trees.trees.BehaviourTree):
         """
         for parameter in parameters:
             if parameter.name == "default_snapshot_stream":
-                if "default" in self.snapshot_streams:
-                    self.snapshot_streams["default"].shutdown()
-                    if self.snapshot_streams["default"].parameters.blackboard_activity:
+                if self.default_snapshot_stream_topic_name in self.snapshot_streams:
+                    self.snapshot_streams[self.default_snapshot_stream_topic_name].shutdown()
+                    if self.snapshot_streams[self.default_snapshot_stream_topic_name].parameters.blackboard_activity:
                         self.blackboard_exchange.unregister_activity_stream_client()
-                    del self.snapshot_streams["default"]
+                    del self.snapshot_streams[self.default_snapshot_stream_topic_name]
                 if parameter.value:
-                    self.snapshot_streams["default"] = SnapshotStream(
-                        node=self.node,
-                        name="default",
-                        topic_name="~/snapshots",
-                        parameters=SnapshotStream.Parameters(
+                    try:
+                        parameters = SnapshotStream.Parameters(
                             snapshot_period=self.node.get_parameter("default_snapshot_period").value,
                             blackboard_data=self.node.get_parameter("default_snapshot_blackboard_data").value,
                             blackboard_activity=self.node.get_parameter("default_snapshot_blackboard_activity").value
                         )
+                    except rclpy.exceptions.ParameterNotDeclaredException:
+                        parameters = SnapshotStream.Parameters()
+                    self.snapshot_streams[self.default_snapshot_stream_topic_name] = SnapshotStream(
+                        node=self.node,
+                        topic_name=self.default_snapshot_stream_topic_name,
+                        parameters=parameters
                     )
-                    if self.snapshot_streams["default"].parameters.blackboard_activity:
+                    if self.snapshot_streams[self.default_snapshot_stream_topic_name].parameters.blackboard_activity:
                         self.blackboard_exchange.register_activity_stream_client()
             elif parameter.name == "default_snapshot_blackboard_data":
-                if "default" in self.snapshot_streams:
-                    self.snapshot_streams["default"].parameters.blackboard_data = parameter.value
+                if self.default_snapshot_stream_topic_name in self.snapshot_streams:
+                    self.snapshot_streams[self.default_snapshot_stream_topic_name].parameters.blackboard_data = parameter.value
             elif parameter.name == "default_snapshot_blackboard_activity":
-                if "default" in self.snapshot_streams:
-                    if self.snapshot_streams["default"].parameters.blackboard_activity != parameter.value:
+                if self.default_snapshot_stream_topic_name in self.snapshot_streams:
+                    if self.snapshot_streams[self.default_snapshot_stream_topic_name].parameters.blackboard_activity != parameter.value:
                         if parameter.value:
                             self.blackboard_exchange.register_activity_stream_client()
                         else:
                             self.blackboard_exchange.unregister_activity_stream_client()
-                    self.snapshot_streams["default"].parameters.blackboard_activity = parameter.value
+                    self.snapshot_streams[self.default_snapshot_stream_topic_name].parameters.blackboard_activity = parameter.value
             elif parameter.name == "default_snapshot_period":
-                if "default" in self.snapshot_streams:
-                    self.snapshot_streams["default"].parameters.snapshot_period = parameter.value
+                if self.default_snapshot_stream_topic_name in self.snapshot_streams:
+                    self.snapshot_streams[self.default_snapshot_stream_topic_name].parameters.snapshot_period = parameter.value
         return rcl_interfaces_msgs.SetParametersResult(successful=True)
 
     def tick_tock(
@@ -532,11 +559,11 @@ class BehaviourTree(py_trees.trees.BehaviourTree):
         the snapshot.
         """
         # only worth notifying once we've actually commenced
-        if "default" in self.snapshot_streams:
-            if self.statistics is not None:
-                rclpy_start_time = rclpy.clock.Clock().now()
-                self.statistics.stamp = rclpy_start_time.to_msg()
-                self.snapshot_streams["default"].publish(
+        if self.statistics is not None:
+            rclpy_start_time = rclpy.clock.Clock().now()
+            self.statistics.stamp = rclpy_start_time.to_msg()
+            for unused_topic_name, snapshot_stream in self.snapshot_streams.items():
+                snapshot_stream.publish(
                     root=self.root,
                     changed=True,
                     statistics=self.statistics,
@@ -615,8 +642,8 @@ class BehaviourTree(py_trees.trees.BehaviourTree):
             return
 
         # publish the default snapshot stream (useful for logging)
-        if "default" in self.snapshot_streams:
-            self.snapshot_streams["default"].publish(
+        for unused_topic_name, snapshot_stream in self.snapshot_streams.items():
+            snapshot_stream.publish(
                 root=self.root,
                 changed=self.snapshot_visitor.changed,
                 statistics=self.statistics,
@@ -633,21 +660,46 @@ class BehaviourTree(py_trees.trees.BehaviourTree):
         self,
         request: py_trees_srvs.CloseSnapshotStream.Request,  # noqa
         response: py_trees_srvs.CloseSnapshotStream.Response  # noqa
-    ):
+    ) -> py_trees_srvs.CloseSnapshotStream.Response:
+        response.result = True
+        try:
+            self.snapshot_streams[request.topic_name].shutdown()
+            del self.snapshot_streams[request.topic_name]
+        except KeyError:
+            response.result = False
         return response
 
     def _open_snapshot_stream(
         self,
         request: py_trees_srvs.OpenSnapshotStream.Request,  # noqa
         response: py_trees_srvs.OpenSnapshotStream.Response  # noqa
-    ):
+    ) -> py_trees_srvs.OpenSnapshotStream.Response:
+        snapshot_stream = SnapshotStream(
+            node=self.node,
+            topic_name=request.topic_name,
+            parameters=SnapshotStream.Parameters(
+                blackboard_data=request.parameters.blackboard_data,
+                blackboard_activity=request.parameters.blackboard_activity,
+                snapshot_period=request.parameters.snapshot_period
+            )
+        )
+        self.snapshot_streams[snapshot_stream.topic_name] = snapshot_stream
+        response.topic_name = snapshot_stream.topic_name
         return response
 
     def _reconfigure_snapshot_stream(
         self,
         request: py_trees_srvs.ReconfigureSnapshotStream.Request,  # noqa
         response: py_trees_srvs.ReconfigureSnapshotStream.Response  # noqa
-    ):
+    ) -> py_trees_srvs.ReconfigureSnapshotStream.Response:
+        response.result = True
+        try:
+            snapshot_stream = self.snapshot_streams[request.topic_name]
+        except KeyError:
+            response.result = False
+        snapshot_stream.parameters.blackboard_data = request.parameters.blackboard_data
+        snapshot_stream.parameters.blackboard_activity = request.parameters.blackboard_activity
+        snapshot_stream.parameters.snapshot_period = request.parameters.snapshot_period
         return response
 
     def _cleanup(self):
@@ -664,10 +716,8 @@ class BehaviourTree(py_trees.trees.BehaviourTree):
 class WatcherMode(enum.Enum):
     """An enumerator specifying the view mode for the watcher"""
 
-    DEFAULT_STREAM = "DEFAULT_STREAM"
-    """Render ascii/unicode snapshots from the default stream (~/snapshots)"""
-    CUSTOM_STREAM = "CUSTOM_STREAM"
-    """Render ascii/unicode snapshots from a stream configured only for this client"""
+    SNAPSHOTS = "SNAPSHOTS"
+    """Render ascii/unicode snapshots from a snapshot stream"""
     DOT_GRAPH = "DOT_GRAPH"
     """Render with the dot graph representation of the static tree (using an application or text to console)."""
 
@@ -679,67 +729,143 @@ class Watcher(object):
     quick introspection of it's current state.
 
     Args:
-        namespace_hint: used to locate the blackboard if there exists more than one
-        mode: viewing mode for the watcher
-        display_blackboard_variables: display key-value pairs (on the visited path)
-        display_blackboard_activity: display logged activity for the last tick
-        display_statistics: display timing statistics
+        topic_name: location of the snapshot stream (optional)
+        namespace_hint: refine search for snapshot stream services if there is more than one tree (optional)
+        parameters: snapshot stream configuration controlling both on-the-fly stream creation and display
+        statistics: display statistics
 
     .. seealso:: :mod:`py_trees_ros.programs.tree_watcher`
     """
     def __init__(
-            self,
-            namespace_hint: str,
-            mode: WatcherMode=WatcherMode.CUSTOM_STREAM,
-            display_blackboard_variables: bool=False,
-            display_blackboard_activity: bool=False,
-            display_statistics: bool=False):
+        self,
+        topic_name: str=None,
+        namespace_hint: str=None,
+        parameters: SnapshotStream.Parameters=None,
+        statistics: bool=False,
+        mode: WatcherMode=WatcherMode.SNAPSHOTS
+    ):
+        self.topic_name = topic_name
         self.namespace_hint = namespace_hint
-        self.subscribers = None
-        self.viewing_mode = mode
+
+        self.mode = mode
+        self.parameters = parameters if parameters is not None else SnapshotStream.Parameters()
+        self.statistics = statistics
+
+        self.subscriber = None
         self.snapshot_visitor = py_trees.visitors.SnapshotVisitor()
         self.done = False
         self.xdot_process = None
         self.rendered = None
-        self.display_blackboard_variables = display_blackboard_variables
-        self.display_blackboard_activity = display_blackboard_activity
-        self.display_statistics = display_statistics
 
-    def setup(self):
+        self.services = {
+            'open': None,
+            'close': None
+        }
+
+        self.service_names = {
+            'open': None,
+            'close': None
+        }
+        self.service_type_strings = {
+            'open': 'py_trees_ros_interfaces/srv/OpenSnapshotStream',
+            'close': 'py_trees_ros_interfaces/srv/CloseSnapshotStream'
+        }
+        self.service_types = {
+            'open': py_trees_srvs.OpenSnapshotStream,
+            'close': py_trees_srvs.CloseSnapshotStream
+        }
+
+    def setup(self, timeout_sec: float):
         """
+        Creates the node and checks that all of the server-side services are available
+        for calling on to open a connection.
+
         Args:
-            timeout (:obj:`float`): time to wait (0.0 is blocking forever)
+            timeout_sec: time (s) to wait (use common.Duration.INFINITE to block indefinitely)
+
         Raises:
-            :class:`~py_trees_ros.exceptions.NotFoundError`: if no services were found
+            :class:`~py_trees_ros.exceptions.NotFoundError`: if services/topics were not found
             :class:`~py_trees_ros.exceptions.MultipleFoundError`: if multiple services were found
+            :class:`~py_trees_ros.exceptions.TimedOutError`: if service clients time out waiting for the server
         """
-        default_node_name = "watcher_" + str(os.getpid())
-        try:
-            self.node = rclpy.create_node(node_name=default_node_name)
-            time.sleep(0.1)  # ach, the magic foo before discovery works
-        except rclpy.exceptions.NotInitializedException:
-            print(console.red + "ERROR: rlcpy not yet initialised [{}]".format(default_node_name) + console.reset)
-            return False
-        # taking advantage of there being only one publisher per message
-        # type in the namespace to do auto-discovery of names
-        topic_type_string = 'py_trees_ros_interfaces/msg/BehaviourTree'
-        topic_names = utilities.find_topics(
-            self.node,
-            topic_type_string,
-            self.namespace_hint
+        self.node = rclpy.create_node(
+            node_name=utilities.create_anonymous_node_name(node_name='tree_watcher'),
+            start_parameter_services=False
         )
-        if not topic_names:
-            raise exceptions.NotFoundError("topic not found [type: {}]".format(topic_type_string))
-        elif len(topic_names) > 1:
-            raise exceptions.MultipleFoundError("multiple topics found, use a namespace hint [type: {}]".format(topic_type_string))
-        else:
-            topic_name = topic_names[0]
-        self.subscribers = utilities.Subscribers(
-            node=self.node,
-            subscriber_details=[
-                ("snapshots", topic_name, py_trees_msgs.BehaviourTree, True, self.callback_snapshot),
-            ]
+        # open a snapshot stream
+        if self.topic_name is None:
+            # discover actual service names
+            for service_name in self.service_names.keys():
+                # can raise NotFoundError and MultipleFoundError
+                self.service_names[service_name] = utilities.find_service(
+                    node=self.node,
+                    service_type=self.service_type_strings[service_name],
+                    namespace=self.namespace_hint,
+                    timeout=timeout_sec
+                )
+            # create service clients
+            self.services["open"] = self.create_service_client(key="open")
+            self.services["close"] = self.create_service_client(key="close")
+            # request a stream
+            request = self.service_types["open"].Request()
+            request.parameters.blackboard_data = self.parameters.blackboard_data
+            request.parameters.blackboard_activity = self.parameters.blackboard_activity
+            request.parameters.snapshot_period = self.parameters.snapshot_period
+            future = self.services["open"].call_async(request)
+            rclpy.spin_until_future_complete(self.node, future)
+            response = future.result()
+            self.topic_name = response.topic_name
+        # connect to a snapshot stream
+        start_time = time.monotonic()
+        while True:
+            elapsed_time = time.monotonic() - start_time
+            if elapsed_time > timeout_sec:
+                raise exceptions.TimedOutError("timed out waiting for a snapshot stream publisher [{}]".format(self.topic_name))
+            if self.node.count_publishers(self.topic_name) > 0:
+                break
+            time.sleep(0.1)
+        self.subscriber = self.node.create_subscription(
+            msg_type=py_trees_msgs.BehaviourTree,
+            topic=self.topic_name,
+            callback=self.callback_snapshot,
+            qos_profile=utilities.qos_profile_latched()
         )
+
+    def shutdown(self):
+        if self.services["close"] is not None:
+            request = self.service_types["close"].Request()
+            request.topic_name = self.topic_name
+            future = self.services["close"].call_async(request)
+            rclpy.spin_until_future_complete(self.node, future)
+            unused_response = future.result()
+        self.node.destroy_node()
+
+    def create_service_client(self, key: str):
+        """
+        Convenience api for opening a service client and waiting for the service to appear.
+
+        Args:
+            key: one of 'open', 'close'.
+
+        Raises:
+            :class:`~py_trees_ros.exceptions.NotReadyError`: if setup() wasn't called to identify the relevant services to connect to.
+            :class:`~py_trees_ros.exceptions.TimedOutError`: if it times out waiting for the server
+        """
+        if self.service_names[key] is None:
+            raise exceptions.NotReadyError(
+                "no known '{}' service known [did you call setup()?]".format(self.service_types[key])
+            )
+        client = self.node.create_client(
+            srv_type=self.service_types[key],
+            srv_name=self.service_names[key],
+            qos_profile=rclpy.qos.qos_profile_services_default
+        )
+        # hardcoding timeouts will get us into trouble
+        if not client.wait_for_service(timeout_sec=3.0):
+            raise exceptions.TimedOutError(
+                "timed out waiting for {}".format(self.service_names['close'])
+            )
+        return client
 
     def callback_snapshot(self, msg):
         """
@@ -803,7 +929,7 @@ class Watcher(object):
         ####################
         # Streaming
         ####################
-        if self.viewing_mode == WatcherMode.DEFAULT_STREAM:
+        if self.mode == WatcherMode.SNAPSHOTS:
             if msg.changed:
                 colour = console.green
             else:
@@ -829,7 +955,7 @@ class Watcher(object):
             ####################
             # Stream Variables
             ####################
-            if self.display_blackboard_variables:
+            if self.parameters.blackboard_data:
                 print("")
                 print(colour + "Blackboard Data" + console.reset)
                 indent = " " * 4
@@ -853,7 +979,7 @@ class Watcher(object):
             ####################
             # Stream Activity
             ####################
-            if self.display_blackboard_activity:
+            if self.parameters.blackboard_activity:
                 print("")
                 print(colour + "Blackboard Activity Stream" + console.reset)
                 if msg.blackboard_activity_stream:
@@ -867,7 +993,7 @@ class Watcher(object):
             ####################
             # Stream Statistics
             ####################
-            if self.display_statistics:
+            if self.statistics:
                 print("")
                 print(colour + "Statistics" + console.reset)
                 print(
@@ -901,7 +1027,7 @@ class Watcher(object):
         ####################
         # Dot Graph
         ####################
-        elif self.viewing_mode == WatcherMode.DOT_GRAPH and not self.rendered:
+        elif self.mode == WatcherMode.DOT_GRAPH and not self.rendered:
             self.rendered = True
             directory_name = tempfile.mkdtemp()
             py_trees.display.render_dot_tree(
