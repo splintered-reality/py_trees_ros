@@ -32,6 +32,7 @@ import subprocess
 import tempfile
 import time
 import typing
+import uuid
 
 import diagnostic_msgs.msg as diagnostic_msgs  # noqa
 import py_trees
@@ -108,6 +109,71 @@ class SnapshotStream(object):
             qos_profile=utilities.qos_profile_latched()
         )
         self.parameters = parameters if parameters is not None else SnapshotStream.Parameters()
+        self.last_snapshot_timestamp = None
+        self.statistics = None
+
+    def publish(
+            self,
+            root: py_trees.behaviour.Behaviour,
+            changed: bool,
+            statistics: py_trees_msgs.Statistics,
+            visited_behaviour_ids: typing.Set[uuid.UUID],
+            visited_blackboard_client_ids: typing.Set[uuid.UUID]
+    ):
+        """"
+        Publish a snapshot, including only what has been parameterised.
+
+        Args:
+            changed: whether the tree status / graph changed or not
+            root: the tree
+            visited_behaviour_ids: behaviours on the visited path
+            visited_blackboard_client_ids: blackboard clients belonging to behaviours on the visited path
+        """
+        if self.last_snapshot_timestamp is None:
+            changed = True
+            self.last_snapshot_timestamp = time.monotonic()
+        current_timestamp = time.monotonic()
+        elapsed_time = current_timestamp - self.last_snapshot_timestamp
+        if (not changed and elapsed_time < self.parameters.snapshot_period):
+            return
+
+        tree_message = py_trees_msgs.BehaviourTree()
+        tree_message.changed = changed
+
+        # tree
+        for behaviour in root.iterate():
+            msg = conversions.behaviour_to_msg(behaviour)
+            msg.is_active = True if behaviour.id in visited_behaviour_ids else False
+            tree_message.behaviours.append(msg)
+
+        # blackboard
+        if self.parameters.blackboard_data:
+            visited_keys = py_trees.blackboard.Blackboard.keys_filtered_by_clients(
+                client_ids=visited_blackboard_client_ids
+            )
+            for key in visited_keys:
+                try:
+                    value = str(py_trees.blackboard.Blackboard.get(key))
+                except KeyError:
+                    value = "-"
+                tree_message.blackboard_on_visited_path.append(
+                    diagnostic_msgs.KeyValue(
+                        key=key,
+                        value=value
+                    )
+                )
+
+        # activity stream
+        #   TODO: checking the stream is not None is redundant, perhaps use it as an exception check?
+        if self.parameters.blackboard_activity and py_trees.blackboard.Blackboard.activity_stream is not None:
+            tree_message.blackboard_activity_stream = py_trees.display.unicode_blackboard_activity_stream(
+                show_title=False
+            )
+        # other
+        if statistics is not None:
+            tree_message.statistics = statistics
+        self.publisher.publish(tree_message)
+        self.last_snapshot_timestamp = current_timestamp
 
     def shutdown(self):
         """
@@ -244,8 +310,6 @@ class BehaviourTree(py_trees.trees.BehaviourTree):
                     to_value=py_trees.common.Duration.INFINITE.value)]
             )
         )
-        # Get the resulting timeout
-        self.last_default_snapshot_timestamp = time.monotonic()
 
         ########################################
         # default_snapshot_blackboard_data
@@ -349,7 +413,6 @@ class BehaviourTree(py_trees.trees.BehaviourTree):
         parameters: typing.List[rclpy.parameter.Parameter]
     ) -> rcl_interfaces_msgs.SetParametersResult:
         for parameter in parameters:
-            print("Parameter: {}".format(parameter.name))
             if parameter.name == "default_snapshot_stream":
                 if self.default_snapshot_stream is not None:
                     self.default_snapshot_stream.shutdown()
@@ -369,20 +432,11 @@ class BehaviourTree(py_trees.trees.BehaviourTree):
                     )
                     if self.default_snapshot_stream.parameters.blackboard_activity:
                         self.blackboard_exchange.register_activity_stream_client()
-                    # initialise with current state
-                    self._publish_serialised_tree(
-                        publisher=self.default_snapshot_stream.publisher,
-                        changed=True,
-                        with_blackboard_data=self.default_snapshot_stream.parameters.blackboard_data,
-                        with_blackboard_activity=self.default_snapshot_stream.parameters.blackboard_activity,
-                    )
             elif parameter.name == "default_snapshot_blackboard_data":
                 if self.default_snapshot_stream is not None:
                     self.default_snapshot_stream.parameters.blackboard_data = parameter.value
             elif parameter.name == "default_snapshot_blackboard_activity":
                 if self.default_snapshot_stream is not None:
-                    print("default_snapshot_stream.blackboard_activity: {}".format(self.default_snapshot_stream.parameters.blackboard_activity))
-                    print("new parmaeter value: {}".format(parameter.value))
                     if self.default_snapshot_stream.parameters.blackboard_activity != parameter.value:
                         if parameter.value:
                             self.blackboard_exchange.register_activity_stream_client()
@@ -473,11 +527,12 @@ class BehaviourTree(py_trees.trees.BehaviourTree):
             if self.statistics is not None:
                 rclpy_start_time = rclpy.clock.Clock().now()
                 self.statistics.stamp = rclpy_start_time.to_msg()
-                self._publish_serialised_tree(
-                    publisher=self.default_snapshot_stream.publisher,
+                self.default_snapshot_stream.publish(
+                    root=self.root,
                     changed=True,
-                    with_blackboard_data=self.default_snapshot_stream.parameters.blackboard_data,
-                    with_blackboard_activity=self.default_snapshot_stream.parameters.blackboard_activity,
+                    statistics=self.statistics,
+                    visited_behaviour_ids=self.snapshot_visitor.visited.keys(),
+                    visited_blackboard_client_ids=self.snapshot_visitor.visited_blackboard_client_ids
                 )
 
     def _statistics_pre_tick_handler(self, tree: py_trees.trees.BehaviourTree):
@@ -552,70 +607,18 @@ class BehaviourTree(py_trees.trees.BehaviourTree):
 
         # publish the default snapshot stream (useful for logging)
         if self.default_snapshot_stream is not None:
-            current_timestamp = time.monotonic()
-            elapsed_time = current_timestamp - self.last_default_snapshot_timestamp
-            if (
-                self.snapshot_visitor.changed or
-                elapsed_time > self.default_snapshot_stream.parameters.snapshot_period
-            ):
-                self._publish_serialised_tree(
-                    publisher=self.default_snapshot_stream.publisher,
-                    changed=self.snapshot_visitor.changed,
-                    with_blackboard_data=self.default_snapshot_stream.parameters.blackboard_data,
-                    with_blackboard_activity=self.default_snapshot_stream.parameters.blackboard_activity,
-                )
-                self.last_default_snapshot_timestamp = current_timestamp
+            self.default_snapshot_stream.publish(
+                root=self.root,
+                changed=self.snapshot_visitor.changed,
+                statistics=self.statistics,
+                visited_behaviour_ids=self.snapshot_visitor.visited.keys(),
+                visited_blackboard_client_ids=self.snapshot_visitor.visited_blackboard_client_ids
+            )
 
         # every tick publish on watchers, clear activity stream (note: not expensive as watchers by default aren't connected)
         self.blackboard_exchange.post_tick_handler(
             visited_client_ids=self.snapshot_visitor.visited_blackboard_client_ids  # .keys()
         )
-
-    def _publish_serialised_tree(
-            self,
-            publisher: rclpy.publisher.Publisher,
-            changed: bool,
-            with_blackboard_data: bool,
-            with_blackboard_activity: bool):
-        """"
-        Args:
-            changed: whether the tree status / graph changed or not
-        """
-        tree_message = py_trees_msgs.BehaviourTree()
-        tree_message.changed = changed
-
-        # tree
-        for behaviour in self.root.iterate():
-            msg = conversions.behaviour_to_msg(behaviour)
-            msg.is_active = True if behaviour.id in self.snapshot_visitor.visited else False
-            tree_message.behaviours.append(msg)
-
-        # blackboard
-        if with_blackboard_data:
-            visited_keys = py_trees.blackboard.Blackboard.keys_filtered_by_clients(
-                client_ids=self.snapshot_visitor.visited_blackboard_client_ids
-            )
-            for key in visited_keys:
-                try:
-                    value = str(py_trees.blackboard.Blackboard.get(key))
-                except KeyError:
-                    value = "-"
-                tree_message.blackboard_on_visited_path.append(
-                    diagnostic_msgs.KeyValue(
-                        key=key,
-                        value=value
-                    )
-                )
-
-        # activity stream
-        if with_blackboard_activity and py_trees.blackboard.Blackboard.activity_stream is not None:
-            tree_message.blackboard_activity_stream = py_trees.display.unicode_blackboard_activity_stream(
-                show_title=False
-            )
-        # other
-        if self.statistics is not None:
-            tree_message.statistics = self.statistics
-        publisher.publish(tree_message)
 
     def _close_snapshot_stream(
         self,
