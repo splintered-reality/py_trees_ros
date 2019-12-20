@@ -695,11 +695,11 @@ class BehaviourTree(py_trees.trees.BehaviourTree):
         response.result = True
         try:
             snapshot_stream = self.snapshot_streams[request.topic_name]
+            snapshot_stream.parameters.blackboard_data = request.parameters.blackboard_data
+            snapshot_stream.parameters.blackboard_activity = request.parameters.blackboard_activity
+            snapshot_stream.parameters.snapshot_period = request.parameters.snapshot_period
         except KeyError:
             response.result = False
-        snapshot_stream.parameters.blackboard_data = request.parameters.blackboard_data
-        snapshot_stream.parameters.blackboard_activity = request.parameters.blackboard_activity
-        snapshot_stream.parameters.snapshot_period = request.parameters.snapshot_period
         return response
 
     def _cleanup(self):
