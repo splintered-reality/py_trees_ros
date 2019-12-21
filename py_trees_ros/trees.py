@@ -664,6 +664,8 @@ class BehaviourTree(py_trees.trees.BehaviourTree):
         response.result = True
         try:
             self.snapshot_streams[request.topic_name].shutdown()
+            if self.snapshot_streams[request.topic_name].parameters.blackboard_activity:
+                self.blackboard_exchange.unregister_activity_stream_client()
             del self.snapshot_streams[request.topic_name]
         except KeyError:
             response.result = False
@@ -683,6 +685,8 @@ class BehaviourTree(py_trees.trees.BehaviourTree):
                 snapshot_period=request.parameters.snapshot_period
             )
         )
+        if snapshot_stream.parameters.blackboard_activity:
+            self.blackboard_exchange.register_activity_stream_client()
         self.snapshot_streams[snapshot_stream.topic_name] = snapshot_stream
         response.topic_name = snapshot_stream.topic_name
         return response
