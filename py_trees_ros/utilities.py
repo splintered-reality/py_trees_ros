@@ -18,8 +18,6 @@ Assorted utility functions.
 
 import os
 import pathlib
-import re
-import sys
 
 import py_trees_ros_interfaces.msg as py_trees_msgs  # noqa
 import py_trees_ros_interfaces.srv as py_trees_srvs  # noqa
@@ -222,7 +220,7 @@ class Publishers(object):
     Utility class that groups the publishers together in one convenient structure.
 
     Args:
-        publisher_details (obj:`tuple`): list of (str, str, bool, int) tuples representing
+        publisher_details (obj:`tuple`): list of (str, str, msgType, bool, int) tuples representing
                                   (unique_name, topic_name, publisher_type, latched)
                                   specifications for creating publishers
 
@@ -278,10 +276,10 @@ class Publishers(object):
 
 class Subscribers(object):
     """
-    Utility class that groups the publishers together in one convenient structure.
+    Utility class that groups subscribers together in one convenient structure.
 
     Args:
-        subscriber_details (obj:`tuple`): list of (str, str, bool, func) tuples representing
+        subscriber_details (obj:`tuple`): list of (str, str, msgType, bool, func) tuples representing
                                   (unique_name, topic_name, subscriber_type, latched, callback)
                                   specifications for creating subscribers
 
@@ -329,6 +327,58 @@ class Subscribers(object):
 
         self.introspection_service = node.create_service(
             py_trees_srvs.IntrospectSubscribers,
+            "~/introspection/" + introspection_topic_name,
+            self.introspection_callback
+        )
+
+    def introspection_callback(self, unused_request, response):
+        response.subscriber_details = self.subscriber_details_msg
+        return response
+
+
+class Services(object):
+    """
+    Utility class that groups services together in one convenient structure.
+
+    Args:
+        service_details (obj:`tuple`): list of (str, str, srvType, func) tuples representing
+                                  (unique_name, topic_name, service_type, callback)
+                                  specifications for creating services
+
+    Examples:
+        Convert the incoming list of specifications into proper variables of this class.
+
+        .. code-block:: python
+
+           services = py_trees.utilities.Services(
+               [
+                   ('open_foo', '~/get_foo', foo_interfaces.srv.OpenFoo, open_foo_callback),
+                   ('open_foo', '/foo/open', foo_interfaces.srv.OpenFoo, self.open_foo_callback),
+                   ('get_foo_bar', '/foo/bar', foo_interfaces.srv.GetBar, self.foo.get_bar_callback),
+               ]
+           )
+    """
+    def __init__(self, node, service_details, introspection_topic_name="services"):
+        # TODO: check for the correct setting of subscriber_details
+        self.service_details_msg = []
+        for (name, service_name, service_type, callback) in service_details:
+            self.__dict__[name] = node.create_service(
+                srv_type=service_type,
+                srv_name=service_name,
+                callback=callback,
+                qos_profile=rclpy.qos.qos_profile_services_default
+            )
+            resolved_name = resolve_name(node, service_name)
+            service_type = service_type.__class__.__module__.split('.')[0] + "/" + service_type.__class__.__name__
+            self.service_details_msg.append(
+                py_trees_msgs.ServiceDetails(
+                    service_name=resolved_name,
+                    service_type=service_type,
+                )
+            )
+
+        self.introspection_service = node.create_service(
+            py_trees_srvs.IntrospectServices,
             "~/introspection/" + introspection_topic_name,
             self.introspection_callback
         )
