@@ -20,14 +20,34 @@ py_trees objects and ros messages.
 import py_trees
 import py_trees_ros_interfaces.msg  # noqa
 import rclpy
+import typing
 import unique_identifier_msgs.msg
 import uuid
 
-from typing import Any
 
 ##############################################################################
 # <etjpds
 ##############################################################################
+
+
+def activity_stream_to_msgs() -> typing.List[py_trees_ros_interfaces.msg.ActivityItem]:
+    """
+    Convert the blackboard activity stream to a message.
+
+    Returns:
+        A list of activity item messages.
+    """
+    activity_stream = py_trees.blackboard.Blackboard.activity_stream
+    activity_stream_msgs = []
+    for item in activity_stream.data:
+        msg = py_trees_ros_interfaces.msg.ActivityItem()
+        msg.key = item.key
+        msg.client_name = item.client_name
+        msg.activity_type = item.activity_type
+        msg.previous_value = str(item.previous_value)
+        msg.current_value = str(item.current_value)
+        activity_stream_msgs.append(msg)
+    return activity_stream_msgs
 
 
 def behaviour_type_to_msg_constant(behaviour: py_trees.behaviour.Behaviour):
@@ -58,7 +78,7 @@ def behaviour_type_to_msg_constant(behaviour: py_trees.behaviour.Behaviour):
         return py_trees_ros_interfaces.msg.Behaviour.UNKNOWN_TYPE
 
 
-def msg_constant_to_behaviour_type(value: int) -> Any:
+def msg_constant_to_behaviour_type(value: int) -> typing.Any:
     """
     Convert one of the behaviour type constants in a
     :class:`py_trees_ros_interfaces.msg.Behaviour` message to

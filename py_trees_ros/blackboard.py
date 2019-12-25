@@ -330,7 +330,7 @@ class Exchange(object):
                             msg.data = console.green + "Blackboard Data\n" + console.reset
                             msg.data += "{}\n".format(view.sub_blackboard)
                             msg.data += py_trees.display.unicode_blackboard_activity_stream(
-                                activity_stream=view.sub_activity_stream
+                                activity_stream=view.sub_activity_stream.data
                             )
                         else:
                             msg.data = "{}".format(view.sub_blackboard)

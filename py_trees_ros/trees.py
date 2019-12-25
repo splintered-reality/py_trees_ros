@@ -187,9 +187,7 @@ class SnapshotStream(object):
         # activity stream
         #   TODO: checking the stream is not None is redundant, perhaps use it as an exception check?
         if self.parameters.blackboard_activity and py_trees.blackboard.Blackboard.activity_stream is not None:
-            tree_message.blackboard_activity_stream = py_trees.display.unicode_blackboard_activity_stream(
-                show_title=False
-            )
+            tree_message.blackboard_activity = conversions.activity_stream_to_msgs()
         # other
         if statistics is not None:
             tree_message.statistics = statistics
@@ -986,8 +984,12 @@ class Watcher(object):
             if self.parameters.blackboard_activity:
                 print("")
                 print(colour + "Blackboard Activity Stream" + console.reset)
-                if msg.blackboard_activity_stream:
-                    print(msg.blackboard_activity_stream)
+                if msg.blackboard_activity:
+                    print(py_trees.display.unicode_blackboard_activity_stream(
+                        msg.blackboard_activity,
+                        indent=0,
+                        show_title=False
+                    ))
                 else:
                     indent = " " * 4
                     print(
