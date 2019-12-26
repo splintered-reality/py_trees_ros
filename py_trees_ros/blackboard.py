@@ -355,11 +355,12 @@ class Exchange(object):
         response.result = False
         for view in self.views:
             if view.topic_name == request.topic_name:
+                if view.with_activity_stream:
+                    self.unregister_activity_stream_client()
                 view.shutdown()  # that node.destroy_publisher call makes havoc
                 response.result = True
                 break
         self.views[:] = [view for view in self.views if view.topic_name != request.topic_name]
-        self.unregister_activity_stream_client()
         return response
 
     def _get_variables_service(self, unused_request, response):
@@ -382,10 +383,6 @@ class Exchange(object):
             with_activity_stream=request.with_activity_stream
         )
         self.views.append(view)
-        if any([view.with_activity_stream for view in self.views]):
-            py_trees.blackboard.Blackboard.enable_activity_stream()
-        else:
-            py_trees.blackboard.Blackboard.disable_activity_stream()
         return response
 
 ##############################################################################
