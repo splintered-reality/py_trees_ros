@@ -4,6 +4,11 @@ Changelog
 
 Forthcoming
 -----------
+* ...
+
+2.0.2 (2019-12-26)
+------------------
+* [trees] on-demand snapshot stream services, similar to blackboard streams, `#135 <https://github.com/splintered-reality/py_trees_ros/pull/135>`_, `#136 <https://github.com/splintered-reality/py_trees_ros/pull/136>`_,
 
 2.0.1 (2019-12-03)
 ------------------
