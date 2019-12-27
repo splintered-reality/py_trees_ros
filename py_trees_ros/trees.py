@@ -11,11 +11,9 @@
 """
 The :class:`py_trees_ros.trees.BehaviourTree` class
 extends the core :class:`py_trees.trees.BehaviourTree` class
-with a ROS publisher that publishes the initial and updated snapshots of
-the tree whenever the tree changes.
-
-'Change' is defined by deletion or insertion of behaviours into the tree
-or the status of any behaviour in the tree changing from tick to tick.
+with both blackboard and (tree) snapshot streaming services.
+Interact with these services via the :ref:`py-trees-blackboard-watcher` and
+:ref:`py-trees-tree-watcher` command line utilities.
 """
 
 ##############################################################################
@@ -94,8 +92,8 @@ class SnapshotStream(object):
 
         Args:
             node: node to hook ros communications on
-            name: human friendly key for this snapshot stream object
             topic_name: snapshot stream name, uniquely generated if None
+            parameters: configuration of the snapshot stream
         """
         self.node = node
         self.topic_name = SnapshotStream.expand_topic_name(self.node, topic_name)
@@ -109,7 +107,20 @@ class SnapshotStream(object):
         self.statistics = None
 
     @staticmethod
-    def expand_topic_name(node, topic_name):
+    def expand_topic_name(node: rclpy.node.Node, topic_name: str) -> str:
+        """
+        Custom name expansion depending on the topic name provided. This is part of the
+        stream configuration on request which either provides no hint (automatic name
+        generation), a simple hint (relative name expanded under the snapshot streams
+        namespace) or a complete hint (absolute name that does not need expansion).
+
+        Args:
+            node: node used to reference the absolute namespace if the hint is not absolute
+            topic_name: hint for the topic name
+
+        Returns:
+            the expanded topic name
+        """
         if topic_name is None or not topic_name:
             expanded_topic_name = rclpy.expand_topic_name.expand_topic_name(
                 topic_name="~/snapshot_streams/_snapshots_" + str(SnapshotStream._counter),
@@ -145,8 +156,9 @@ class SnapshotStream(object):
         Publish a snapshot, including only what has been parameterised.
 
         Args:
-            changed: whether the tree status / graph changed or not
             root: the tree
+            changed: whether the tree status / graph changed or not
+            statistics: add tree statistics to the snapshot data
             visited_behaviour_ids: behaviours on the visited path
             visited_blackboard_client_ids: blackboard clients belonging to behaviours on the visited path
         """
@@ -204,7 +216,7 @@ class SnapshotStream(object):
 class BehaviourTree(py_trees.trees.BehaviourTree):
     """
     Extend the :class:`py_trees.trees.BehaviourTree` class with
-    a few bells and whistles for ROS:
+    a few bells and whistles for ROS.
 
     ROS Parameters:
         * **default_snapshot_stream**: enable/disable the default snapshots stream in ~/snapshots` (default: False)
@@ -216,7 +228,7 @@ class BehaviourTree(py_trees.trees.BehaviourTree):
           * if :data:`math.inf`, it will block indefinitely
 
     ROS Publishers:
-        * **~/snapshots** (:class:`py_trees_interfaces.msg.BehaviourTree`)
+        * **~/snapshots** (:class:`py_trees_interfaces.msg.BehaviourTree`): the default snapshot stream, if enabled
 
     ROS Services:
         * **~/blackboard_streams/close** (:class:`py_trees_ros_interfaces.srv.CloselackboardWatcher`)
@@ -1038,7 +1050,8 @@ class Watcher(object):
             directory_name = tempfile.mkdtemp()
             py_trees.display.render_dot_tree(
                 root=root,
-                target_directory=directory_name
+                target_directory=directory_name,
+                with_blackboard_variables=self.parameters.blackboard_data
             )
             xdot_program = py_trees.utilities.which('xdot')
 
