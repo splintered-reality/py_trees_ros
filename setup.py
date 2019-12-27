@@ -13,6 +13,8 @@ setup(
     ),
     data_files=[
         ('share/' + package_name, ['package.xml']),
+        ('share/ament_index/resource_index/packages', [
+            'resources/py_trees_ros']),
     ],
     package_data={},
     install_requires=[],
