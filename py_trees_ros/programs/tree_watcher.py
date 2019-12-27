@@ -14,9 +14,11 @@
    :func: command_line_argument_parser
    :prog: py-trees-tree-watcher
 
-Command line utility to interact with a running
-:class:`~py_trees_ros.trees.BehaviourTree` instance. Stream snapshots
-of the tree as unicode art on your console, or display the tree as a dot graph.
+Command line utility that introspects on a running
+:class:`~py_trees_ros.trees.BehaviourTree` instance over it's snapshot
+stream interfaces. Use to visualise the tree as a dot graph or
+track tree changes, timing statistics and blackboard variables visited
+by the tree on each tick.
 
 .. image:: images/tree-watcher.gif
 
@@ -40,13 +42,20 @@ import sys
 
 def description(formatted_for_sphinx):
     short = "Open up a window onto the behaviour tree!\n"
-    long = ("\nStream the tree state as unicode art on your console\n"
-            "or render the tree as a dot graph.\n"
-            "Use the namespace argument to select from trees when there are multiple available.\n"
+    long = ("\nRender a oneshot snapshot of the tree as a dot graph, or\n"
+            "stream it and it's state continuously as unicode art on your console.\n"
+            "This utility automatically discovers the running tree and opens\n"
+            "interfaces to that, but if there is more than one tree executing\n"
+            "use the namespace argument to differentiate between trees.\n"
             )
-    examples = [
-        "", "--stream", "--dot-graph", "--namespace=foo --stream"
-    ]
+    examples = {
+        "--dot-graph": "render the tree as a dot graph (does not include runtime information)",
+        "/tree/snapshots": "connect to an existing snapshot stream (e.g. the default, if it is enabled)",
+        "": "open and connect to a snapshot stream, visualise the tree graph and it's changes only",
+        "-b": "open a snapshot stream and include visited blackboard variables",
+        "-a": "open a snapshot stream and include blackboard access details (activity)",
+        "-s": "open a snapshot stream and include timing statistics",
+    }
     script_name = "py-trees-tree-watcher"
 
     if formatted_for_sphinx:
@@ -57,7 +66,9 @@ def description(formatted_for_sphinx):
         s += "**Examples:**\n\n"
         s += ".. code-block:: bash\n"
         s += "    \n"
-        s += '\n'.join(["    $ {0} {1}".format(script_name, example_args) for example_args in examples])
+        for command, comment in examples.items():
+            s += "    # {}\n".format(comment)
+            s += "    $ " + script_name + " {}\n".format(command)
         s += "\n"
     else:
         banner_line = console.green + "*" * 79 + "\n" + console.reset
@@ -70,7 +81,9 @@ def description(formatted_for_sphinx):
         s += long
         s += "\n"
         s += console.bold + "Examples" + console.reset + "\n\n"
-        s += '\n'.join(["    $ " + console.cyan + script_name + console.yellow + " {0}".format(example_args) + console.reset for example_args in examples])
+        for command, comment in examples.items():
+            s += "    # {}\n".format(comment)
+            s += "    $ " + console.cyan + script_name + console.yellow + " {}\n".format(command) + console.reset
         s += "\n\n"
         s += banner_line
     return s
