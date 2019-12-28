@@ -11,6 +11,9 @@ py_trees*.tar.gz
 *~
 \#*
 .#*
+.cache
+.eggs
+*.md.html
 
 # Generated files (when debugging)
 py_trees_ros/resources/*.py
