@@ -4,7 +4,7 @@ Changelog
 
 Forthcoming
 -----------
-* ...
+* [trees] bugfix to toggle activity client on reconfigure, `#139 <https://github.com/splintered-reality/py_trees_ros/pull/139>`_,
 
 2.0.3 (2019-12-26)
 ------------------

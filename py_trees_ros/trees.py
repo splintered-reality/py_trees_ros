@@ -21,7 +21,6 @@ Interact with these services via the :ref:`py-trees-blackboard-watcher` and
 ##############################################################################
 
 import collections
-# import datetime
 import enum
 import functools
 import os
@@ -710,6 +709,11 @@ class BehaviourTree(py_trees.trees.BehaviourTree):
         try:
             snapshot_stream = self.snapshot_streams[request.topic_name]
             snapshot_stream.parameters.blackboard_data = request.parameters.blackboard_data
+            if (snapshot_stream.parameters.blackboard_activity != request.parameters.blackboard_activity):
+                if request.parameters.blackboard_activity:
+                    self.blackboard_exchange.register_activity_stream_client()
+                else:
+                    self.blackboard_exchange.unregister_activity_stream_client()
             snapshot_stream.parameters.blackboard_activity = request.parameters.blackboard_activity
             snapshot_stream.parameters.snapshot_period = request.parameters.snapshot_period
         except KeyError:
