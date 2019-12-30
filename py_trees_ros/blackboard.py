@@ -190,7 +190,7 @@ class BlackboardView(object):
         # update the sub blackboard
         self.sub_blackboard.update(self.tracked_variable_names)
         # update the sub activity stream
-        if self.with_activity_stream:
+        if self.with_activity_stream and py_trees.blackboard.Blackboard.activity_stream is not None:
             self.sub_activity_stream.clear()
             for activity_item in py_trees.blackboard.Blackboard.activity_stream.data:
                 if activity_item.key in self.tracked_keys:
