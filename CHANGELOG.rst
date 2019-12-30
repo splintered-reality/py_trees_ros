@@ -4,6 +4,10 @@ Changelog
 
 Forthcoming
 -----------
+* ...
+
+2.0.4 (2019-12-30)
+------------------
 * [blackboard] bugfix protection against activity stream not activitated for views, `#140 <https://github.com/splintered-reality/py_trees_ros/pull/140>`_,
 * [trees] bugfix toggle for activity client on reconfigure, `#139 <https://github.com/splintered-reality/py_trees_ros/pull/139>`_,
 
