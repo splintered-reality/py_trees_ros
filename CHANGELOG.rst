@@ -8,24 +8,24 @@ Forthcoming
 
 2.0.4 (2019-12-30)
 ------------------
-* [blackboard] bugfix protection against activity stream not activitated for views, `#140 <https://github.com/splintered-reality/py_trees_ros/pull/140>`_,
-* [trees] bugfix toggle for activity client on reconfigure, `#139 <https://github.com/splintered-reality/py_trees_ros/pull/139>`_,
+* [blackboard] bugfix protection against activity stream not activitated for views, `#140 <https://github.com/splintered-reality/py_trees_ros/pull/140>`_
+* [trees] bugfix toggle for activity client on reconfigure, `#139 <https://github.com/splintered-reality/py_trees_ros/pull/139>`_
 
 2.0.3 (2019-12-26)
 ------------------
-* [infra] add a marker file to assist with ros2cli discovery `#138 <https://github.com/splintered-reality/py_trees_ros/pull/138>`_,
+* [infra] add a marker file to assist with ros2cli discovery `#138 <https://github.com/splintered-reality/py_trees_ros/pull/138>`_
 
 2.0.2 (2019-12-26)
 ------------------
-* [trees] on-demand snapshot stream services, similar to blackboard streams, `#135 <https://github.com/splintered-reality/py_trees_ros/pull/135>`_, `#136 <https://github.com/splintered-reality/py_trees_ros/pull/136>`_,
+* [trees] on-demand snapshot stream services, similar to blackboard streams, `#135 <https://github.com/splintered-reality/py_trees_ros/pull/135>`_, `#136 <https://github.com/splintered-reality/py_trees_ros/pull/136>`_
 
 2.0.1 (2019-12-03)
 ------------------
 * [trees] periodically publish snapshots, `#131 <https://github.com/splintered-reality/py_trees_ros/pull/131>`_,
-* [trees] permit setup visitors, provide a default with timings, `#129 <https://github.com/splintered-reality/py_trees_ros/pull/129>`_,
-* [trees] bugfix non-infinite timeout arg getting ignored, `#129 <https://github.com/splintered-reality/py_trees_ros/pull/129>`_,
-* [trees] snapshot now publishing tree changed flag and key access info, `#128 <https://github.com/splintered-reality/py_trees_ros/pull/128>`_,
-* [utilities] deprecate myargv for rclpy.utilities.remove_ros_args, `#130 <https://github.com/splintered-reality/py_trees_ros/pull/130>`_,
+* [trees] permit setup visitors, provide a default with timings, `#129 <https://github.com/splintered-reality/py_trees_ros/pull/129>`_
+* [trees] bugfix non-infinite timeout arg getting ignored, `#129 <https://github.com/splintered-reality/py_trees_ros/pull/129>`_
+* [trees] snapshot now publishing tree changed flag and key access info, `#128 <https://github.com/splintered-reality/py_trees_ros/pull/128>`_
+* [utilities] deprecate myargv for rclpy.utilities.remove_ros_args, `#130 <https://github.com/splintered-reality/py_trees_ros/pull/130>`_
 
 2.0.0 (2019-11-20)
 ------------------
