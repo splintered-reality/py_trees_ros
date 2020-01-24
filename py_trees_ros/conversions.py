@@ -109,6 +109,23 @@ def msg_constant_to_behaviour_type(value: int) -> typing.Any:
         raise TypeError("invalid type specified in message [{}]".format(value))
 
 
+def additional_detail_to_str(behaviour: py_trees.behaviour.Behaviour) -> str:
+    """
+    Provide, e.g. policy information about the behaviour (i.e. black magic
+    details under the hood). Useed for debugging, so only strings needed.
+
+    Args:
+        behaviour: investigate the policies for this behaviour
+
+    Returns:
+        an informative additional detail string
+    """
+    if isinstance(behaviour, py_trees.composites.Parallel):
+        return type(behaviour.policy).__name__
+    else:
+        return ""
+
+
 def status_enum_to_msg_constant(status: py_trees.common.Status):
     """
     Convert a status to a message constant.
@@ -259,6 +276,7 @@ def behaviour_to_msg(behaviour: py_trees.behaviour.Behaviour) -> py_trees_ros_in
     msg.type = behaviour_type_to_msg_constant(behaviour)
     msg.blackbox_level = blackbox_enum_to_msg_constant(behaviour.blackbox_level)
     msg.status = status_enum_to_msg_constant(behaviour.status)
+    msg.additional_detail = additional_detail_to_str(behaviour)
     msg.message = behaviour.feedback_message
     msg.blackboard_access = []
     for blackboard in behaviour.blackboards:
