@@ -7,7 +7,7 @@ package_name = 'py_trees_ros'
 
 setup(
     name=package_name,
-    version='2.0.4',  # also package.xml, doc/conf.py, py_trees_ros/version.py
+    version='2.0.5',  # also package.xml, doc/conf.py, py_trees_ros/version.py
     packages=find_packages(
         exclude=['doc*', 'tests*', 'graveyard*', 'scripts*']
     ),

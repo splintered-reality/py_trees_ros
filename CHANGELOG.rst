@@ -4,6 +4,10 @@ Changelog
 
 Forthcoming
 -----------
+* ...
+
+2.0.5 (2020-01-24)
+------------------
 * [serialisation] include parallel policy details
 
 2.0.4 (2019-12-30)
