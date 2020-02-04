@@ -9,16 +9,7 @@
 ##############################################################################
 
 """
-ROS subscribers are asynchronous communication handles whilst py_trees
-are by their nature synchronous. They tick, pause, then tick again and
-provide an assumption that only one behaviour or function is running at
-any single moment. Firing off a subscriber callback in the middle of that
-synchronicity to write to a blackboard would break this assumption.
-
-To get around that, subscriber behaviours run the ros callbacks in a
-background thread and constrain locking and a local cache inside the behaviour.
-Only in the update function is a cached variable unlocked and then
-permitted to be used or written to the blackboard.
+Convenience behaviours for publishing ROS messages.
 """
 
 ##############################################################################
@@ -37,6 +28,35 @@ import rclpy.qos
 
 class FromBlackboard(py_trees.behaviour.Behaviour):
     """
+    This behaviour looks up the blackboard for content to publish ...
+    and publishes it.
+
+    This is a non-blocking behaviour - if there is no data yet on
+    the blackboard it will tick with :data:`~py_trees.common.Status.FAILURE`,
+    otherwise :data:`~py_trees.common.Status.SUCCESS`.
+
+    To convert it to a blocking behaviour, simply use with the
+    :class:`py_trees.behaviours.WaitForBlackboardVariable`. e.g.
+
+    .. code-block:: python
+
+        sequence = py_trees.composites.Sequence(name="Sequence")
+        wait_for_data = py_trees.behaviours.WaitForBlackboardVariable(
+            name="WaitForData",
+            variable_name="/my_message"
+        )
+        publisher = py_trees_ros.publishers.FromBlackboard(
+            topic_name="/foo",
+            topic_type=std_msgs.msg.Empty
+            qos_profile=my_qos_profile,
+            blackboard_variable="/my_message"
+        )
+        sequence.add_children([wait_for_data, publisher])
+
+    The various set/unset blackboard variable behaviours can also be useful for
+    setting and unsetting the message to be published (typically elsewhere
+    in the tree).
+
     Args:
         topic_name: name of the topic to connect to
         topic_type: class of the message type (e.g. :obj:`std_msgs.msg.String`)

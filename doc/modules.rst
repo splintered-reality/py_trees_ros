@@ -49,6 +49,14 @@ py_trees_ros.exceptions
     :show-inheritance:
     :synopsis: custom exceptions for py_trees_ros
 
+py_trees_ros.publishers
+-----------------------
+
+.. automodule:: py_trees_ros.publishers
+    :members:
+    :show-inheritance:
+    :synopsis: publish data to the ROS network
+
 py_trees_ros.subscribers
 ------------------------
 
