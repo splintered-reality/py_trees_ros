@@ -11,6 +11,7 @@ encoding//py_trees_ros/programs/blackboard_watcher.py=utf-8
 encoding//py_trees_ros/programs/echo.py=utf-8
 encoding//py_trees_ros/programs/multi_talker.py=utf-8
 encoding//py_trees_ros/programs/tree_watcher.py=utf-8
+encoding//py_trees_ros/publishers.py=utf-8
 encoding//py_trees_ros/subscribers.py=utf-8
 encoding//py_trees_ros/transforms.py=utf-8
 encoding//py_trees_ros/trees.py=utf-8
