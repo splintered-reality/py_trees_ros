@@ -8,6 +8,7 @@ Behaviours
 
    py_trees_ros.actions.ActionClient
    py_trees_ros.battery.ToBlackboard
+   py_trees_ros.publishers.FromBlackboard
    py_trees_ros.subscribers.CheckData
    py_trees_ros.subscribers.EventToBlackboard
    py_trees_ros.subscribers.ToBlackboard
