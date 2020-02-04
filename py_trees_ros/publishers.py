@@ -42,14 +42,14 @@ class FromBlackboard(py_trees.behaviour.Behaviour):
         topic_type: class of the message type (e.g. :obj:`std_msgs.msg.String`)
         qos_profile: qos profile for the subscriber
         name: name of the behaviour
-        clearing_policy: when to clear the data
+        blackboared_variable: name of the variable on the blackboard (can be nested)
     """
     def __init__(self,
-                 name: str=py_trees.common.Name.AUTO_GENERATED,
                  topic_name: str,
                  topic_type: typing.Any,
                  qos_profile: rclpy.qos.QoSProfile,
-                 blackboard_variable: str
+                 blackboard_variable: str,
+                 name: str=py_trees.common.Name.AUTO_GENERATED,
                  ):
         super().__init__(name=name)
         self.topic_name = topic_name
@@ -67,7 +67,7 @@ class FromBlackboard(py_trees.behaviour.Behaviour):
 
     def setup(self, **kwargs):
         """
-        Initialises the subscriber.
+        Initialises the publisher.
 
         Args:
             **kwargs (:obj:`dict`): distribute arguments to this
