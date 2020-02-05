@@ -12,7 +12,7 @@
 import py_trees
 import py_trees.console as console
 import py_trees_ros
-import py_trees_ros_interfaces.action as py_trees_actions
+import py_trees_ros_interfaces.action as py_trees_actions  # noqa
 import rclpy
 import rclpy.action
 import rclpy.executors
@@ -34,14 +34,23 @@ def assert_details(text, expected, result):
           console.reset)
 
 
-def create_action_client():
-    behaviour = py_trees_ros.actions.ActionClient(
-        name="dock",
-        action_type=py_trees_actions.Dock,
-        action_name="dock",
-        action_goal=py_trees_actions.Dock.Goal(dock=True),  # noqa
-        generate_feedback_message=lambda msg: "{:.2f}%%".format(msg.feedback.percentage_completed)
-    )
+def create_action_client(from_blackboard=False):
+    if from_blackboard:
+        behaviour = py_trees_ros.action_clients.FromBlackboard(
+            name="dock",
+            action_type=py_trees_actions.Dock,
+            action_name="dock",
+            key="goal",
+            generate_feedback_message=lambda msg: "{:.2f}%%".format(msg.feedback.percentage_completed)
+        )
+    else:
+        behaviour = py_trees_ros.action_clients.FromConstant(
+            name="dock",
+            action_type=py_trees_actions.Dock,
+            action_name="dock",
+            action_goal=py_trees_actions.Dock.Goal(dock=True),  # noqa
+            generate_feedback_message=lambda msg: "{:.2f}%%".format(msg.feedback.percentage_completed)
+        )
     return behaviour
 
 
@@ -279,3 +288,47 @@ def test_aborted():
     tree.shutdown()
     server.shutdown()
     executor.shutdown()
+
+########################################
+# Aborted
+########################################
+
+
+def test_from_blackboard():
+    console.banner("From Blackboard")
+
+    server = py_trees_ros.mock.dock.Dock(duration=1.5)
+
+    root = create_action_client(from_blackboard=True)
+    tree = py_trees_ros.trees.BehaviourTree(root=root)
+
+    # ROS Setup
+    tree.setup()
+    executor = rclpy.executors.MultiThreadedExecutor(num_threads=4)
+    executor.add_node(server.node)
+    executor.add_node(tree.node)
+
+    print("")
+    assert_banner()
+
+    tree.tick()
+
+    # Nothing on blackboard yet
+    assert_details("No goal on blackboard - root.status", "FAILURE", root.status)
+    assert(root.status == py_trees.common.Status.FAILURE)
+
+    py_trees.blackboard.Blackboard.set(
+        variable_name="/goal",
+        value=py_trees_actions.Dock.Goal(dock=True)
+    )
+
+    tree.tick()
+
+    # Nothing on blackboard yet
+    assert_details("Goal exists - root.status", "RUNNING", root.status)
+    assert(root.status == py_trees.common.Status.RUNNING)
+
+    tree.shutdown()
+    server.shutdown()
+    executor.shutdown()
+

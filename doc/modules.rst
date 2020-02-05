@@ -9,13 +9,13 @@ py_trees_ros
 .. automodule:: py_trees_ros
    :synopsis: is your robot misbehaving?
 
-py_trees_ros.actions
---------------------
+py_trees_ros.action_clients
+---------------------------
 
-.. automodule:: py_trees_ros.actions
+.. automodule:: py_trees_ros.action_clients
     :members:
     :show-inheritance:
-    :synopsis: behaviours that work with action servers/clients
+    :synopsis: behaviours that work with action clients
 
 py_trees_ros.battery
 --------------------
