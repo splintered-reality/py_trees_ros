@@ -62,7 +62,7 @@ class FromBlackboard(py_trees.behaviour.Behaviour):
         topic_type: class of the message type (e.g. :obj:`std_msgs.msg.String`)
         qos_profile: qos profile for the subscriber
         name: name of the behaviour
-        blackboared_variable: name of the variable on the blackboard (can be nested)
+        blackboard_variable: name of the variable on the blackboard (can be nested)
     """
     def __init__(self,
                  topic_name: str,
@@ -117,7 +117,7 @@ class FromBlackboard(py_trees.behaviour.Behaviour):
         Returns:
             :data:`~py_trees.common.Status.FAILURE` (variable does not exist on the blackboard) or :data:`~py_trees.common.Status.SUCCESS` (published)
         """
-        self.logger.debug("%s.initialise()" % self.__class__.__name__)
+        self.logger.debug("%s.update()" % self.__class__.__name__)
         try:
             if isinstance(self.blackboard.get(self.blackboard_variable), self.topic_type):
                 self.publisher.publish(self.blackboard.get(self.blackboard_variable))
