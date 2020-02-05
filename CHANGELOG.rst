@@ -4,6 +4,8 @@ Changelog
 
 Forthcoming
 -----------
+* [behaviours] action client goals from blackboard behaviour, `#148 <https://github.com/splintered-reality/py_trees_ros/pull/148>`_
+* [behaviours] publish from blackboard behaviour, `#146 <https://github.com/splintered-reality/py_trees_ros/pull/146>`_
 * ...
 
 2.0.5 (2020-01-24)

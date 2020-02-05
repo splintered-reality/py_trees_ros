@@ -32,7 +32,8 @@ from . import exceptions
 
 class FromBlackboard(py_trees.behaviour.Behaviour):
     """
-    An action client interface that draws goals from the blackboard.
+    An action client interface that draws goals from the blackboard. The
+    lifecycle of this behaviour works as follows:
 
     * :meth:`initialise`: check blackboard for a goal and send
     * :meth:`update`: if a goal was sent, monitor progress
@@ -40,8 +41,8 @@ class FromBlackboard(py_trees.behaviour.Behaviour):
 
     As a consequence, the status of this behaviour can be interpreted as follows:
 
-    * :data:`~py_trees.common.Status.FAILURE`: either no goal was found to send,
-      it was rejected or it failed while executing on the server
+    * :data:`~py_trees.common.Status.FAILURE`: no goal was found to send,
+      it was rejected or it failed while executing
     * :data:`~py_trees.common.Status.RUNNING`: a goal was sent and is still
       executing on the server
     * :data:`~py_trees.common.Status.SUCCESS`: sent goal has completed with success
@@ -97,7 +98,8 @@ class FromBlackboard(py_trees.behaviour.Behaviour):
         self.blackboard.register_key(
             key="goal",
             access=py_trees.common.Access.READ,
-            remap_to=key
+            # make sure to namespace it if not already
+            remap_to=py_trees.blackboard.Blackboard.absolute_name("/", key)
         )
         self.generate_feedback_message = generate_feedback_message
 
@@ -139,7 +141,7 @@ class FromBlackboard(py_trees.behaviour.Behaviour):
             action_name=self.action_name
         )
         self.node.get_logger().info(
-            "waiting for server ... [{}][{}]".format(
+            "waiting for action server ... [{}][{}]".format(
                 self.action_name, self.qualified_name
             )
         )
@@ -198,9 +200,9 @@ class FromBlackboard(py_trees.behaviour.Behaviour):
             self.node.get_logger().warn("got result, but future not yet done [{}]".format(self.qualified_name))
             return py_trees.common.Status.RUNNING
         else:
-            self.node.get_logger().info("goal result [{}]".format(self.qualified_name))
-            self.node.get_logger().info("  status: {}".format(self.result_status_string))
-            self.node.get_logger().info("  message: {}".format(self.result_message))
+            self.node.get_logger().debug("goal result [{}]".format(self.qualified_name))
+            self.node.get_logger().debug("  status: {}".format(self.result_status_string))
+            self.node.get_logger().debug("  message: {}".format(self.result_message))
             if self.result_status == action_msgs.GoalStatus.STATUS_SUCCEEDED:  # noqa
                 self.feedback_message = "successfully completed"
                 return py_trees.common.Status.SUCCESS
@@ -231,7 +233,6 @@ class FromBlackboard(py_trees.behaviour.Behaviour):
         """
         Clean up the action client when shutting down.
         """
-        print("Action Client Shutdown")
         self.action_client.destroy()
 
     ########################################
@@ -248,7 +249,7 @@ class FromBlackboard(py_trees.behaviour.Behaviour):
         """
         if self.generate_feedback_message is not None:
             self.feedback_message = "feedback: {}".format(self.generate_feedback_message(msg))
-            self.node.get_logger().info(
+            self.node.get_logger().debug(
                 '{} [{}]'.format(
                     self.feedback_message,
                     self.qualified_name
@@ -261,7 +262,7 @@ class FromBlackboard(py_trees.behaviour.Behaviour):
         chain of callbacks that will lead to a result.
         """
         self.feedback_message = "sending goal ..."
-        self.node.get_logger().info("{} [{}]".format(
+        self.node.get_logger().debug("{} [{}]".format(
             self.feedback_message,
             self.qualified_name
         ))
@@ -283,16 +284,16 @@ class FromBlackboard(py_trees.behaviour.Behaviour):
         """
         if future.result() is None:
             self.feedback_message = "goal request failed :[ [{}]\n{!r}".format(self.qualified_name, future.exception())
-            self.node.get_logger().info('... {}'.format(self.feedback_message))
+            self.node.get_logger().debug('... {}'.format(self.feedback_message))
             return
         self.goal_handle = future.result()
         if not self.goal_handle.accepted:
             self.feedback_message = "goal rejected :( [{}]".format(self.qualified_name)
-            self.node.get_logger().info('... {}'.format(self.feedback_message))
+            self.node.get_logger().debug('... {}'.format(self.feedback_message))
             return
         else:
             self.feedback_message = "goal accepted :) [{}]".format(self.qualified_name)
-            self.node.get_logger().info("... {}".format(self.feedback_message))
+            self.node.get_logger().debug("... {}".format(self.feedback_message))
             self.node.get_logger().debug("  {!s}".format(future.result()))
 
         self.get_result_future = self.goal_handle.get_result_async()
@@ -306,7 +307,7 @@ class FromBlackboard(py_trees.behaviour.Behaviour):
         interrupt).
         """
         self.feedback_message = "cancelling goal ... [{}]".format(self.qualified_name)
-        self.node.get_logger().info(self.feedback_message)
+        self.node.get_logger().debug(self.feedback_message)
 
         if self.goal_handle is not None:
             future = self.goal_handle.cancel_goal_async()
@@ -325,7 +326,7 @@ class FromBlackboard(py_trees.behaviour.Behaviour):
             self.feedback_message = "goal successfully cancelled [{}]".format(self.qualified_name)
         else:
             self.feedback_message = "goal failed to cancel [{}]".format(self.qualified_name)
-        self.node.get_logger().info('... {}'.format(self.feedback_message))
+        self.node.get_logger().debug('... {}'.format(self.feedback_message))
 
     def get_result_callback(self, future: rclpy.task.Future):
         """
@@ -363,13 +364,7 @@ class FromConstant(FromBlackboard):
                  generate_feedback_message: typing.Callable[[typing.Any], str]=None,
                  ):
         unique_id = uuid.uuid4()
-        key = "goal_" + str(unique_id)
-        self.blackboard = self.attach_blackboard_client(name=self.name)
-        self.blackboard.register_key(
-            key=key,
-            access=py_trees.common.Access.WRITE,
-        )
-        self.blackboard.set(name=key, value=action_goal)
+        key = "/goal_" + str(unique_id)
         super().__init__(
             action_type=action_type,
             action_name=action_name,
@@ -377,3 +372,9 @@ class FromConstant(FromBlackboard):
             name=name,
             generate_feedback_message=generate_feedback_message
         )
+        # parent already instantiated a blackboard client
+        self.blackboard.register_key(
+            key=key,
+            access=py_trees.common.Access.WRITE,
+        )
+        self.blackboard.set(name=key, value=action_goal)

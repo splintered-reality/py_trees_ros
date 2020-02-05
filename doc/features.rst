@@ -6,7 +6,8 @@ Behaviours
 
 .. autosummary::
 
-   py_trees_ros.actions.ActionClient
+   py_trees_ros.action_clients.FromBlackboard
+   py_trees_ros.action_clients.FromConstant
    py_trees_ros.battery.ToBlackboard
    py_trees_ros.publishers.FromBlackboard
    py_trees_ros.subscribers.CheckData
