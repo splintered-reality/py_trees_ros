@@ -138,7 +138,7 @@ def main(command_line_args=sys.argv[1:]):
     # Setup
     ####################
     try:
-        blackboard_watcher.setup(timeout_sec=1.0)
+        blackboard_watcher.setup(timeout_sec=2.0)
     # setup discovery fails
     except py_trees_ros.exceptions.NotFoundError as e:
         print(console.red + "\nERROR: {}\n".format(str(e)) + console.reset)
