@@ -69,7 +69,7 @@ class FromBlackboard(py_trees.behaviour.Behaviour):
 
     .. code-block:: python
 
-        action_client = py_trees_ros.aciton_clients.FromBlackboard(
+        action_client = py_trees_ros.action_clients.FromBlackboard(
             action_type=py_trees_actions.Dock,
             action_name="dock",
             name="ActionClient",
