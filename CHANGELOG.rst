@@ -4,7 +4,7 @@ Changelog
 
 Forthcoming
 -----------
-* ...
+* [trees] avoid irregular snapshot streams by avoiding timing jitter, `#151 <https://github.com/splintered-reality/py_trees_ros/pull/151>`_
 
 2.0.7 (2020-02-10)
 ------------------

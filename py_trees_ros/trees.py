@@ -166,7 +166,8 @@ class SnapshotStream(object):
             self.last_snapshot_timestamp = time.monotonic()
         current_timestamp = time.monotonic()
         elapsed_time = current_timestamp - self.last_snapshot_timestamp
-        if (not changed and elapsed_time < self.parameters.snapshot_period):
+        if_its_close_enough = 0.98  # https://github.com/splintered-reality/py_trees_ros/issues/144
+        if (not changed and elapsed_time < if_its_close_enough * self.parameters.snapshot_period):
             return
 
         tree_message = py_trees_msgs.BehaviourTree()
