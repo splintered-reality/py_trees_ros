@@ -16,6 +16,7 @@ import py_trees_ros_interfaces.action as py_trees_actions  # noqa
 import rclpy
 import rclpy.action
 import rclpy.executors
+import time
 
 ##############################################################################
 # Helpers
@@ -34,14 +35,15 @@ def assert_details(text, expected, result):
           console.reset)
 
 
-def create_action_client(from_blackboard=False):
+def create_action_client(from_blackboard=False, wait_for_server_timeout_sec=2.0):
     if from_blackboard:
         behaviour = py_trees_ros.action_clients.FromBlackboard(
             name="dock",
             action_type=py_trees_actions.Dock,
             action_name="dock",
             key="goal",
-            generate_feedback_message=lambda msg: "{:.2f}%%".format(msg.feedback.percentage_completed)
+            generate_feedback_message=lambda msg: "{:.2f}%%".format(msg.feedback.percentage_completed),
+            wait_for_server_timeout_sec=wait_for_server_timeout_sec
         )
     else:
         behaviour = py_trees_ros.action_clients.FromConstant(
@@ -49,7 +51,8 @@ def create_action_client(from_blackboard=False):
             action_type=py_trees_actions.Dock,
             action_name="dock",
             action_goal=py_trees_actions.Dock.Goal(dock=True),  # noqa
-            generate_feedback_message=lambda msg: "{:.2f}%%".format(msg.feedback.percentage_completed)
+            generate_feedback_message=lambda msg: "{:.2f}%%".format(msg.feedback.percentage_completed),
+            wait_for_server_timeout_sec=wait_for_server_timeout_sec
         )
     return behaviour
 
@@ -290,7 +293,7 @@ def test_aborted():
     executor.shutdown()
 
 ########################################
-# Aborted
+# From Blackboard
 ########################################
 
 
@@ -332,3 +335,24 @@ def test_from_blackboard():
     server.shutdown()
     executor.shutdown()
 
+########################################
+# Timeouts
+########################################
+
+
+def test_timeouts():
+    console.banner("Timeouts")
+
+    timeout = 0.1
+    root = create_action_client(from_blackboard=True, wait_for_server_timeout_sec=timeout)
+    tree = py_trees_ros.trees.BehaviourTree(root=root)
+
+    start_time = time.monotonic()
+    try:
+        tree.setup()
+    except py_trees_ros.exceptions.TimedOutError:
+        duration = time.monotonic() - start_time
+    assert_details("Tree Setup Timeout", "delta+{}".format(timeout), duration)
+    assert(duration < 10*timeout)
+
+    tree.shutdown()
