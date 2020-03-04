@@ -7,6 +7,7 @@
 ##############################################################################
 # Documentation
 ##############################################################################
+from asyncio.tasks import wait_for
 
 """
 Behaviours for ROS actions.
@@ -83,6 +84,7 @@ class FromBlackboard(py_trees.behaviour.Behaviour):
         name: name of the behaviour (default: lowercase class name)
         generate_feedback_message: formatter for feedback messages, takes action_type.Feedback
             messages and returns strings (default: None)
+        wait_for_server_timeout_sec: how long to wait in setup for a server connection
     """
     def __init__(self,
                  action_type: typing.Any,
@@ -90,10 +92,12 @@ class FromBlackboard(py_trees.behaviour.Behaviour):
                  key: str,
                  name: str=py_trees.common.Name.AUTO_GENERATED,
                  generate_feedback_message: typing.Callable[[typing.Any], str]=None,
+                 wait_for_server_timeout_sec: float=2.0
                  ):
         super().__init__(name)
         self.action_type = action_type
         self.action_name = action_name
+        self.wait_for_server_timeout_sec = wait_for_server_timeout_sec
         self.blackboard = self.attach_blackboard_client(name=self.name)
         self.blackboard.register_key(
             key="goal",
@@ -145,7 +149,7 @@ class FromBlackboard(py_trees.behaviour.Behaviour):
                 self.action_name, self.qualified_name
             )
         )
-        result = self.action_client.wait_for_server(timeout_sec=2.0)
+        result = self.action_client.wait_for_server(timeout_sec=self.wait_for_server_timeout_sec)
         if not result:
             self.feedback_message = "timed out waiting for the server [{}]".format(self.action_name)
             self.node.get_logger().error("{}[{}]".format(self.feedback_message, self.qualified_name))
@@ -355,6 +359,8 @@ class FromConstant(FromBlackboard):
         name: name of the behaviour (default: lowercase class name)
         generate_feedback_message: formatter for feedback messages, takes action_type.Feedback
             messages and returns strings (default: None)
+        wait_for_server_timeout_sec: how long to wait in setup for a server connection
+                 wait_for_server_timeout_sec: float=2.0
     """
     def __init__(self,
                  action_type: typing.Any,
@@ -362,6 +368,7 @@ class FromConstant(FromBlackboard):
                  action_goal: typing.Any,
                  name: str=py_trees.common.Name.AUTO_GENERATED,
                  generate_feedback_message: typing.Callable[[typing.Any], str]=None,
+                 wait_for_server_timeout_sec: float=2.0
                  ):
         unique_id = uuid.uuid4()
         key = "/goal_" + str(unique_id)
@@ -370,7 +377,8 @@ class FromConstant(FromBlackboard):
             action_name=action_name,
             key=key,
             name=name,
-            generate_feedback_message=generate_feedback_message
+            generate_feedback_message=generate_feedback_message,
+            wait_for_server_timeout_sec=wait_for_server_timeout_sec
         )
         # parent already instantiated a blackboard client
         self.blackboard.register_key(
