@@ -4,6 +4,10 @@ Changelog
 
 Forthcoming
 -----------
+* ...
+
+2.0.8 (2020-03-04)
+------------------
 * [behaviours] wait_for_server_timeout_sec in action clients, `#152 <https://github.com/splintered-reality/py_trees_ros/pull/152>`_
 * [trees] avoid irregular snapshot streams by avoiding timing jitter, `#151 <https://github.com/splintered-reality/py_trees_ros/pull/151>`_
 
