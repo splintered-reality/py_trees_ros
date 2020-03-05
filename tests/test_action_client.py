@@ -322,7 +322,7 @@ def test_from_blackboard():
 
     py_trees.blackboard.Blackboard.set(
         variable_name="/goal",
-        value=py_trees_actions.Dock.Goal(dock=True)
+        value=py_trees_actions.Dock.Goal(dock=True)  # noqa
     )
 
     tree.tick()
