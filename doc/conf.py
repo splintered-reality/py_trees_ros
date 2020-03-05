@@ -39,7 +39,7 @@ sys.path.insert(0, project_dir)
 
 # General information about the project.
 project = u'py_trees_ros'
-copyright = u'2019, Daniel Stonier'
+copyright = u'2020, Daniel Stonier'
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
@@ -48,7 +48,7 @@ copyright = u'2019, Daniel Stonier'
 # The short X.Y version.
 version = "2.0"
 # The full version, including alpha/beta/rc tags.
-release = "2.0.8"
+release = "2.0.9"
 
 ##############################################################################
 # Regular Sphinx Configuration
