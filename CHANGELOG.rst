@@ -6,6 +6,10 @@ Forthcoming
 -----------
 * ...
 
+2.0.9 (2020-03-05)
+------------------
+* [behaviours] default to periodic checks with warnings for action client timeouts, `#153 <https://github.com/splintered-reality/py_trees_ros/pull/153>`_
+
 2.0.8 (2020-03-04)
 ------------------
 * [behaviours] wait_for_server_timeout_sec in action clients, `#152 <https://github.com/splintered-reality/py_trees_ros/pull/152>`_
