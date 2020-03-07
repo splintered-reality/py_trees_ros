@@ -55,6 +55,9 @@ class GenericServer(object):
         action_name (:obj:`str`): name of the action server (e.g. dock)
         action_type (:obj:`any`): type of the action server (e.g. py_trees_ros_interfaces.Dock
         custom_execute_callback (:obj:`func`): callback to be executed inside the execute loop, no args
+        generate_cancelled_result (action_type.Result): custom result method
+        generate_preempted_result (action_type.Result): custom result method
+        generate_success_result (action_type.Result): custom result method
         goal_recieved_callback(:obj:`func`): callback to be executed immediately upon receiving a goal
         duration (:obj:`float`): forcibly override the dyn reconf time for a goal to complete (seconds)
 
@@ -70,6 +73,9 @@ class GenericServer(object):
                  action_name,
                  action_type,  # e.g. py_trees_ros_interfaces.action.Dock
                  generate_feedback_message=None,
+                 generate_cancelled_result=None,
+                 generate_preempted_result=None,
+                 generate_success_result=None,
                  goal_received_callback=lambda request: None,
                  duration=None):
         self.node = rclpy.create_node(
@@ -108,6 +114,18 @@ class GenericServer(object):
             self.generate_feedback_message = lambda: self.action_type.Feedback()
         else:
             self.generate_feedback_message = generate_feedback_message
+        if generate_cancelled_result is None:
+            self.generate_cancelled_result = lambda: self.action_type.Result(message="goal cancelled")
+        else:
+            self.generate_cancelled_result = generate_cancelled_result
+        if generate_preempted_result is None:
+            self.generate_preempted_result = lambda: self.action_type.Result(message="goal pre-empted")
+        else:
+            self.generate_preempted_result = generate_preempted_result
+        if generate_success_result is None:
+            self.generate_success_result = lambda: self.action_type.Result(message="goal executed with success")
+        else:
+            self.generate_success_result = generate_success_result
         self.goal_received_callback = goal_received_callback
         self.goal_handle = None
 
@@ -172,25 +190,25 @@ class GenericServer(object):
             with self.goal_lock:
                 if goal_handle.is_active:
                     if goal_handle.is_cancel_requested:
-                        result = self.action_type.Result()
-                        result.message = "goal cancelled at {percentage:.2f}%%".format(
+                        result = self.generate_cancelled_result()
+                        message = "goal cancelled at {percentage:.2f}%%".format(
                             percentage=self.percent_completed)
-                        self.node.get_logger().info(result.message)
+                        self.node.get_logger().info(message)
                         goal_handle.canceled()
                         return result
                     elif goal_handle.goal_id != self.goal_handle.goal_id:
-                        result = self.action_type.Result()
-                        result.message = "goal pre-empted at {percentage:.2f}%%".format(
+                        result = self.generate_preempted_result()
+                        message = "goal pre-empted at {percentage:.2f}%%".format(
                             percentage=self.percent_completed)
-                        self.node.get_logger().info(result.message)
+                        self.node.get_logger().info(message)
                         goal_handle.abort()
                         return result
                     elif self.percent_completed >= 100.0:
                         self.percent_completed = 100.0
                         self.node.get_logger().info("sending feedback 100%%")
-                        result = self.action_type.Result()
-                        result.message = "goal executed with success"
-                        self.node.get_logger().info(result.message)
+                        result = self.generate_success_result()
+                        message = "goal executed with success"
+                        self.node.get_logger().info(message)
                         goal_handle.succeed()
                         return result
                     else:
