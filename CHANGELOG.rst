@@ -6,6 +6,10 @@ Forthcoming
 -----------
 * ...
 
+2.0.10 (2020-03-06)
+-------------------
+* [mock] server bugfixed to accommodate custom result handlers, `#154 <https://github.com/splintered-reality/py_trees_ros/pull/154>`_
+
 2.0.9 (2020-03-05)
 ------------------
 * [behaviours] default to periodic checks with warnings for action client timeouts, `#153 <https://github.com/splintered-reality/py_trees_ros/pull/153>`_
