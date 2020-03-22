@@ -9,6 +9,7 @@
 # Imports
 ##############################################################################
 
+# Some foo
 import py_trees
 import py_trees.console as console
 import py_trees_ros
