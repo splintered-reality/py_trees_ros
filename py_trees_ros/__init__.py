@@ -22,7 +22,18 @@ from . import mock
 from . import programs
 from . import subscribers
 from . import trees
-from . import tutorials
+
+# Don't crucify the runtime for users if they don't have qt around
+# This is a partial workaround, the qt dependencies in package.xml will still
+# cause a headache. 
+#
+#     https://github.com/splintered-reality/py_trees_ros/issues/150
+try:
+    import python_qt_binding
+    from . import tutorials
+except ImportError:
+    pass
+
 from . import utilities
 from . import visitors
 
