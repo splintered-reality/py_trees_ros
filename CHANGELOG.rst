@@ -2,6 +2,10 @@
 Changelog
 =========
 
+Forthcoming
+-----------
+* [blackboards] log a one-shot warning instead of exceptions when pickle fails, `#157 <https://github.com/splintered-reality/py_trees_ros/pull/157>`_
+
 0.5.18 (2019-03-23)
 -------------------
 * [infra] merge kinetic and melodic release branches

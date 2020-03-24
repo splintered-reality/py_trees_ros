@@ -32,12 +32,23 @@ import rospy
 import py_trees.console as console
 import std_msgs.msg as std_msgs
 
-from cPickle import dumps
+import cPickle
 
 ##############################################################################
 # ROS Blackboard
 ##############################################################################
 
+def pickle_warning_message():
+    """
+    Warning message for when the blackboard has unpicklable objects.
+    
+    Return:
+       str: the warning message
+    """
+    msg = "You have objects on the blackboard that can't be pickled. "
+    msg += "Any blackboard watchers will always receive updates, "
+    msg += "regardless of whether the data changed or not."
+    return msg
 
 class _View(object):
     """
@@ -71,9 +82,14 @@ class _View(object):
 
     def _is_changed(self):
         self._update_sub_blackboard()
-        current_pickle = dumps(self.dict, -1)
-        blackboard_changed = current_pickle != self.cached_dict
-        self.cached_dict = current_pickle
+        try:
+            current_pickle = cPickle.dumps(self.dict, -1)
+            blackboard_changed = current_pickle != self.cached_dict
+            self.cached_dict = current_pickle
+        except (TypeError, cPickle.PicklingError):
+            rospy.logwarn_once(pickle_warning_message())
+            blackboard_changed = True
+            self.cached_dict = {}
 
         return blackboard_changed
 
@@ -220,9 +236,15 @@ class Exchange(object):
         return False
 
     def _is_changed(self):
-        current_pickle = dumps(self.blackboard.__dict__, -1)
-        blackboard_changed = current_pickle != self.cached_blackboard_dict
-        self.cached_blackboard_dict = current_pickle
+        try:
+            current_pickle = cPickle.dumps(self.blackboard.__dict__, -1)
+            blackboard_changed = current_pickle != self.cached_blackboard_dict
+            self.cached_blackboard_dict = current_pickle
+        except (TypeError, cPickle.PicklingError):
+            rospy.logwarn_once(pickle_warning_message())
+            blackboard_changed = True
+            self.cached_blackboard_dict = {}
+            
         return blackboard_changed
 
     def publish_blackboard(self, unused_tree=None):
