@@ -32,7 +32,7 @@ import rospy
 import py_trees.console as console
 import std_msgs.msg as std_msgs
 
-from cPickle import dumps
+import cPickle
 
 ##############################################################################
 # ROS Blackboard
@@ -56,6 +56,9 @@ class _View(object):
         self.dict = {}
         self.cached_dict = {}
         self.publisher = rospy.Publisher(topic_name, std_msgs.String, latch=True, queue_size=2)
+        self.pickle_warning_message = "You have objects on the blackboard that can't be pickled.\n"
+        self.pickle_warning_message += "Any blackboard watchers will always receive updates,\n"
+        self.pickle_warning_message += "regardless of whether the data changed or not."
 
     def _update_sub_blackboard(self):
         for attr in self.attrs:
@@ -71,9 +74,14 @@ class _View(object):
 
     def _is_changed(self):
         self._update_sub_blackboard()
-        current_pickle = dumps(self.dict, -1)
-        blackboard_changed = current_pickle != self.cached_dict
-        self.cached_dict = current_pickle
+        try:
+            current_pickle = cPickle.dumps(self.dict, -1)
+            blackboard_changed = current_pickle != self.cached_dict
+            self.cached_dict = current_pickle
+        except (TypeError, cPickle.PicklingError):
+            rospy.logwarn_once(self.pickle_warning_message)
+            blackboard_changed = True
+            self.cached_dict = {}
 
         return blackboard_changed
 
