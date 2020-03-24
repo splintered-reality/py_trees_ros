@@ -4,6 +4,10 @@ Changelog
 
 Forthcoming
 -----------
+* ...
+
+0.5.20 (2020-03-23)
+-------------------
 * [infra] don't fail for the runtime if qt is not found
 
 0.5.19 (2020-03-23)
