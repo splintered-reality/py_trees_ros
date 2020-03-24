@@ -38,6 +38,17 @@ import cPickle
 # ROS Blackboard
 ##############################################################################
 
+def pickle_warning_message():
+    """
+    Warning message for when the blackboard has unpicklable objects.
+    
+    Return:
+       str: the warning message
+    """
+    msg = "You have objects on the blackboard that can't be pickled. "
+    msg += "Any blackboard watchers will always receive updates, "
+    msg += "regardless of whether the data changed or not."
+    return msg
 
 class _View(object):
     """
@@ -56,9 +67,6 @@ class _View(object):
         self.dict = {}
         self.cached_dict = {}
         self.publisher = rospy.Publisher(topic_name, std_msgs.String, latch=True, queue_size=2)
-        self.pickle_warning_message = "You have objects on the blackboard that can't be pickled.\n"
-        self.pickle_warning_message += "Any blackboard watchers will always receive updates,\n"
-        self.pickle_warning_message += "regardless of whether the data changed or not."
 
     def _update_sub_blackboard(self):
         for attr in self.attrs:
@@ -79,7 +87,7 @@ class _View(object):
             blackboard_changed = current_pickle != self.cached_dict
             self.cached_dict = current_pickle
         except (TypeError, cPickle.PicklingError):
-            rospy.logwarn_once(self.pickle_warning_message)
+            rospy.logwarn_once(pickle_warning_message())
             blackboard_changed = True
             self.cached_dict = {}
 
@@ -228,9 +236,15 @@ class Exchange(object):
         return False
 
     def _is_changed(self):
-        current_pickle = dumps(self.blackboard.__dict__, -1)
-        blackboard_changed = current_pickle != self.cached_blackboard_dict
-        self.cached_blackboard_dict = current_pickle
+        try:
+            current_pickle = cPickle.dumps(self.blackboard.__dict__, -1)
+            blackboard_changed = current_pickle != self.cached_blackboard_dict
+            self.cached_blackboard_dict = current_pickle
+        except (TypeError, cPickle.PicklingError):
+            rospy.logwarn_once(pickle_warning_message())
+            blackboard_changed = True
+            self.cached_blackboard_dict = {}
+            
         return blackboard_changed
 
     def publish_blackboard(self, unused_tree=None):

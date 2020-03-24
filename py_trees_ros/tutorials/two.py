@@ -95,7 +95,6 @@ import py_trees_ros
 import py_trees.console as console
 import rospy
 import sys
-import threading
 
 ##############################################################################
 # Behaviours
@@ -127,9 +126,6 @@ def create_root():
     topics2bb.add_child(battery2bb)
     priorities.add_children([battery_check, idle])
     battery_check.add_children([is_battery_ok, flash_led_strip])
-    print("Setting Foo")
-    blackboard = py_trees.blackboard.Blackboard()
-    blackboard.set("foo", threading.Lock())
     return root
 
 
