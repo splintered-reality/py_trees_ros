@@ -4,7 +4,7 @@ Changelog
 
 Forthcoming
 -----------
-* ...
+* [blackboards] log a one-shot warning instead of exceptions when pickle fails, `#156 <https://github.com/splintered-reality/py_trees_ros/pull/156>`_
 
 2.0.10 (2020-03-06)
 -------------------
