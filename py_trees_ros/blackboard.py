@@ -43,13 +43,19 @@ from . import utilities
 class SubBlackboard(object):
     """
     Dynamically track the entire blackboard or part thereof and
-    flag when there have been changes. Not really happy with this class
-    (pickle problems) nor it's name (misleading).
+    flag when there have been changes. This is a nice to have that only
+    works if the blackboard contains fundamental variables (i.e. objects
+    that can be pickled).
+
+    Args:
+        node: the node handle for ros logging of warnings if needed
     """
-    def __init__(self):
+    def __init__(self, node: rclpy.node.Node):
         self.is_changed = False
         self.variable_names = set()
         self.pickled_storage = None
+        self.node = node
+        self.warned = False
 
     def update(self, variable_names: typing.Set[str]):
         """
@@ -60,14 +66,21 @@ class SubBlackboard(object):
         Args:
             variable_names: constrain the scope to track for changes
         """
-        # TODO: can we pickle without doing a copy?
-        # TODO: can we use __repr__ as a means of not being prone to pickle
-        #       i.e. put the work back on the user
-        # TODO: catch exceptions thrown by bad pickles
-        # TODO: use a better structure in the blackboard (e.g. JSON) so
-        #       that this isn't brittle w.r.t. pickle failures
+        def handle_pickling_error():
+            if not self.warned:
+                self.node.get_logger().warning("You have objects on the blackboard that can't be pickled.")
+                self.node.get_logger().warning("Any blackboard watchers will always receive updates,")
+                self.node.get_logger().warning("regardless of whether the data changed or not")
+                self.warned = True
+            self.pickled_storage = None
+            self.is_changed = True
+
         if variable_names is None:
-            storage = copy.deepcopy(py_trees.blackboard.Blackboard.storage)
+            try:
+                storage = copy.deepcopy(py_trees.blackboard.Blackboard.storage)
+            except (TypeError, pickle.PicklingError):
+                handle_pickling_error()
+                return
             self.variable_names = py_trees.blackboard.Blackboard.keys()
         else:
             storage = {}
@@ -77,10 +90,17 @@ class SubBlackboard(object):
                         py_trees.blackboard.Blackboard.get(variable_name)
                     )
                 except KeyError:
-                    pass  # silently just ignore the request
+                    pass  # not an error, just not on the blackboard yet
+                except (TypeError, pickle.PicklingError):
+                    handle_pickling_error()
+                    return
             self.variable_names = variable_names
-        pickled_storage = pickle.dumps(storage, -1)
-        self.is_changed = pickled_storage != self.pickled_storage
+        try:
+            pickled_storage = pickle.dumps(storage, -1)
+            self.is_changed = pickled_storage != self.pickled_storage
+        except (TypeError, pickle.PicklingError):
+            handle_pickling_error()
+            return
         self.pickled_storage = pickled_storage
 
     def __str__(self):
@@ -131,7 +151,7 @@ class BlackboardView(object):
     ):
         self.topic_name = topic_name
         self.variable_names = variable_names
-        self.sub_blackboard = SubBlackboard()
+        self.sub_blackboard = SubBlackboard(node=node)
         self.sub_activity_stream = py_trees.blackboard.ActivityStream()
         self.node = node
         self.publisher = self.node.create_publisher(
