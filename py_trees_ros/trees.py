@@ -76,16 +76,18 @@ class BehaviourTree(py_trees.trees.BehaviourTree):
 
     Args:
         root (:class:`~py_trees.behaviour.Behaviour`): root node of the tree
+        root (:obj:`bool`): whether the tree should record a rosbag itself or not
 
     Raises:
         AssertionError: if incoming root variable is not the correct type
     """
-    def __init__(self, root):
+    def __init__(self, root, record_rosbag=True):
         """
         Initialise the tree with a root.
 
         :param root: root node of the tree.
         :type root: instance or descendant of :py:class:`Behaviour <py_trees.behaviours.Behaviour>`
+        :param record_rosbag (:obj:`bool`): whether the tree should record a rosbag itself or not.
         :raises AssertionError: if incoming root variable is not the correct type.
         """
         super(BehaviourTree, self).__init__(root)
@@ -94,21 +96,22 @@ class BehaviourTree(py_trees.trees.BehaviourTree):
         self.visitors.append(self.snapshot_visitor)
         self.visitors.append(self.logging_visitor)
         self._bag_closed = False
-
-        now = datetime.datetime.now()
-        topdir = rospkg.get_ros_home() + '/behaviour_trees'
-        subdir = topdir + '/' + now.strftime('%Y-%m-%d')
-        if not os.path.exists(topdir):
-            os.makedirs(topdir)
-
-        if not os.path.exists(subdir):
-            os.makedirs(subdir)
-
-        # opens in ros home directory for the user
-        self.bag = rosbag.Bag(subdir + '/behaviour_tree_' + now.strftime("%H-%M-%S") + '.bag', 'w')
-
+        self.record_rosbag = record_rosbag
         self.last_tree = py_trees_msgs.BehaviourTree()
-        self.lock = threading.Lock()
+
+        if self.record_rosbag:
+            now = datetime.datetime.now()
+            topdir = rospkg.get_ros_home() + '/behaviour_trees'
+            subdir = topdir + '/' + now.strftime('%Y-%m-%d')
+            if not os.path.exists(topdir):
+                os.makedirs(topdir)
+
+            if not os.path.exists(subdir):
+                os.makedirs(subdir)
+            # opens in ros home directory for the user
+            self.bag = rosbag.Bag(subdir + '/behaviour_tree_' + now.strftime("%H-%M-%S") + '.bag', 'w')
+
+            self.lock = threading.Lock()
 
         # delay the publishers so we can instantiate this class without connecting to ros (private names need init_node)
         self.publishers = None
@@ -190,13 +193,16 @@ class BehaviourTree(py_trees.trees.BehaviourTree):
                 return
             self.publishers.tip.publish(conversions.behaviour_to_msg(self.root.tip()))
             self.publishers.log_tree.publish(self.logging_visitor.tree)
-            with self.lock:
-                if not self._bag_closed:
-                    self.bag.write(self.publishers.log_tree.name, self.logging_visitor.tree)
+            if self.record_rosbag:
+                with self.lock:
+                    if not self._bag_closed:
+                        self.bag.write(self.publishers.log_tree.name, self.logging_visitor.tree)
             self.last_tree = self.logging_visitor.tree
 
     def _cleanup(self):
-        with self.lock:
-            self.bag.close()
-            self.interrupt_tick_tocking = True
-            self._bag_closed = True
+        if self.record_rosbag:
+            with self.lock:
+                self.bag.close()
+                self._bag_closed = True
+
+        self.interrupt_tick_tocking = True
