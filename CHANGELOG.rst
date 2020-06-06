@@ -6,6 +6,10 @@ Forthcoming
 -----------
 * ...
 
+0.5.21 (2020-06-06)
+-------------------
+* [trees] option for bagging, , `#159 <https://github.com/splintered-reality/py_trees_ros/pull/159>`_
+
 0.5.20 (2020-03-23)
 -------------------
 * [infra] don't fail for the runtime if qt is not found
