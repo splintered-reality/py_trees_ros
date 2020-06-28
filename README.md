@@ -5,6 +5,8 @@ with ROS.
 
 ## Documentation
 
+Quickstart with [![docs][py-trees-ros-tutorials-docs-eloquent-image]][py-trees-ros-tutorials-docs-2.0.x], using [![docs][py-trees-docs-eloquent-image]][py-trees-docs-2.0.x] as a reference and basic primer on behaviour trees.
+
 * Basics & Core Module API: [![docs][py-trees-docs-eloquent-image]][py-trees-docs-2.0.x] [![docs][py-trees-docs-dashing-image]][py-trees-docs-1.3.x]
 * ROS2 Module API: [![docs][py-trees-ros-docs-eloquent-image]][py-trees-ros-docs-2.0.x] [![docs][py-trees-ros-docs-dashing-image]][py-trees-ros-docs-1.2.x]
 * ROS2 Tutorials: [![docs][py-trees-ros-tutorials-docs-eloquent-image]][py-trees-ros-tutorials-docs-2.0.x] [![docs][py-trees-ros-tutorials-docs-dashing-image]][py-trees-ros-tutorials-docs-1.0.x]
