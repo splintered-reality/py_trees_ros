@@ -9,7 +9,7 @@ Get started with the [PyTree ROS2 tutorials](https://py-trees-ros-tutorials.read
 
 Distro-specific links:
 
-* Basics & Core Module API: [![docs][py-trees-docs-eloquent-image]][py-trees-docs-2.0.x] [![docs][py-trees-docs-dashing-image]][py-trees-docs-1.3.x]
+* Basics & Core Module API: [![docs][py-trees-docs-foxy-image]][py-trees-docs-2.1.x] [![docs][py-trees-docs-eloquent-image]][py-trees-docs-2.0.x] [![docs][py-trees-docs-dashing-image]][py-trees-docs-1.3.x]
 * ROS2 Module API: [![docs][py-trees-ros-docs-eloquent-image]][py-trees-ros-docs-2.0.x] [![docs][py-trees-ros-docs-dashing-image]][py-trees-ros-docs-1.2.x]
 * ROS2 Tutorials: [![docs][py-trees-ros-tutorials-docs-eloquent-image]][py-trees-ros-tutorials-docs-2.0.x] [![docs][py-trees-ros-tutorials-docs-dashing-image]][py-trees-ros-tutorials-docs-1.0.x]
 
@@ -66,8 +66,8 @@ For older versions of the documentation, refer to the links in the matrix below.
 [melodic-build-farm]: http://repositories.ros.org/status_page/ros_melodic_default.html?q=py_trees
 [kinetic-build-farm]: http://repositories.ros.org/status_page/ros_kinetic_default.html?q=py_trees
 
-[py-trees-build-status-foxy]: http://build.ros2.org/job/Fbin_uB64__py_trees__ubuntu_focal_amd64__binary/
-[py-trees-build-status-foxy-image]: http://build.ros2.org/job/Fbin_uB64__py_trees__ubuntu_focal_amd64__binary/badge/icon?style=plastic
+[py-trees-build-status-foxy]: http://build.ros2.org/job/Fbin_uF64__py_trees__ubuntu_focal_amd64__binary/
+[py-trees-build-status-foxy-image]: http://build.ros2.org/job/Fbin_uF64__py_trees__ubuntu_focal_amd64__binary/badge/icon?style=plastic
 [py-trees-build-status-eloquent]: http://build.ros2.org/job/Ebin_uB64__py_trees__ubuntu_bionic_amd64__binary/
 [py-trees-build-status-eloquent-image]: http://build.ros2.org/job/Ebin_uB64__py_trees__ubuntu_bionic_amd64__binary/badge/icon?style=plastic
 [py-trees-build-status-dashing]: http://build.ros2.org/job/Dbin_uB64__py_trees__ubuntu_bionic_amd64__binary/
@@ -83,6 +83,7 @@ For older versions of the documentation, refer to the links in the matrix below.
 [py-trees-docs-0.6.x]: http://py-trees.readthedocs.io/en/release-0.6.x/
 [py-trees-docs-0.5.x]: http://docs.ros.org/kinetic/api/py_trees/html/
 [py-trees-docs-kinetic]: http://docs.ros.org/kinetic/api/py_trees/html/
+[py-trees-docs-foxy-image]: http://img.shields.io/badge/py_trees-foxy-brightgreen.svg?style=plastic
 [py-trees-docs-eloquent-image]: http://img.shields.io/badge/py_trees-eloquent-brightgreen.svg?style=plastic
 [py-trees-docs-dashing-image]: http://img.shields.io/badge/py_trees-dashing-brightgreen.svg?style=plastic
 [py-trees-docs-kinetic-image]: https://img.shields.io/jenkins/s/http/build.ros.org/job/Kdoc__py_trees__ubuntu_xenial_amd64.svg?label=docs&style=plastic
