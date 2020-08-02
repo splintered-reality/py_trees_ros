@@ -325,7 +325,7 @@ class BehaviourTree(py_trees.trees.BehaviourTree):
         ################################################################################
         # Parameters
         ################################################################################
-        self.node.set_parameters_callback(
+        self.node.add_on_set_parameters_callback(
             callback=self._set_parameters_callback
         )
 

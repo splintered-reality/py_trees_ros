@@ -190,7 +190,7 @@ def main():
     ####################
     rclpy.init(args=None)
     try:
-        tree_watcher.setup(timeout_sec=2.0)
+        tree_watcher.setup(timeout_sec=5.0)
     # setup discovery fails
     except py_trees_ros.exceptions.NotFoundError as e:
         print(console.red + "\nERROR: {}\n".format(str(e)) + console.reset)
@@ -210,6 +210,8 @@ def main():
     ####################
     # Execute
     ####################
+    executor = rclpy.executors.SingleThreadedExecutor()
+    executor.add_node(node=tree_watcher.node)
     try:
         while True:
             if not rclpy.ok():
@@ -221,7 +223,7 @@ def main():
                 elif tree_watcher.xdot_process.poll() is not None:
                     # xdot running, wait for it to terminate
                     break
-            rclpy.spin_once(tree_watcher.node, timeout_sec=0.1)
+            executor.spin_once(timeout_sec=0.1)
     except KeyboardInterrupt:
         pass
     finally:
