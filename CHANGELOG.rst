@@ -6,6 +6,11 @@ Forthcoming
 -----------
 * ...
 
+2.1.0 (2020-08-02)
+------------------
+* [infra] update for api changes in py_trees 2.1.0 (Chooser no longer supported)
+* [infra] update for api changes in ros2 foxy (not breaking changes)
+
 2.0.11 (2020-03-23)
 -------------------
 * [blackboards] log a one-shot warning instead of exceptions when pickle fails, `#156 <https://github.com/splintered-reality/py_trees_ros/pull/156>`_
