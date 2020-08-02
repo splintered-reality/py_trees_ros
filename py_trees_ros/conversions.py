@@ -64,8 +64,6 @@ def behaviour_type_to_msg_constant(behaviour: py_trees.behaviour.Behaviour):
     # TODO: throw an exception if parent is not Behaviour?
     if isinstance(behaviour, py_trees.composites.Sequence):
         return py_trees_ros_interfaces.msg.Behaviour.SEQUENCE
-    elif isinstance(behaviour, py_trees.composites.Chooser):
-        return py_trees_ros_interfaces.msg.Behaviour.CHOOSER
     elif isinstance(behaviour, py_trees.composites.Selector):
         return py_trees_ros_interfaces.msg.Behaviour.SELECTOR
     elif isinstance(behaviour, py_trees.composites.Parallel):
@@ -95,8 +93,6 @@ def msg_constant_to_behaviour_type(value: int) -> typing.Any:
     """
     if value == py_trees_ros_interfaces.msg.Behaviour.SEQUENCE:
         return py_trees.composites.Sequence
-    elif value == py_trees_ros_interfaces.msg.Behaviour.CHOOSER:
-        return py_trees.composites.Chooser
     elif value == py_trees_ros_interfaces.msg.Behaviour.SELECTOR:
         return py_trees.composites.Selector
     elif value == py_trees_ros_interfaces.msg.Behaviour.PARALLEL:
