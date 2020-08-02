@@ -930,8 +930,6 @@ class Watcher(object):
                             # somewhat ugly not having a consistent api here
                             if isinstance(behaviour, py_trees.composites.Selector):
                                 behaviour.current_child = child
-                            elif isinstance(behaviour, py_trees.composites.Chooser):
-                                behaviour.current_child = child
                             elif isinstance(behaviour, py_trees.composites.Sequence):
                                 behaviour.current_index = index
                             # else Parallel, nothing to do since it infers
