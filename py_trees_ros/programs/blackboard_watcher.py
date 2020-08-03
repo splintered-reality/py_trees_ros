@@ -98,13 +98,13 @@ def pretty_print_variables(variables):
             sep = ""
         s += "    " * len(variable) + sep + variable[-1] + "\n"
     s += console.reset
-    print "%s" % s
+    print("%s" % s)
 
 
 def echo_sub_blackboard(sub_blackboard):
     # TODO: have the blackboard publish yaml/json/pickled data
-    # and do the pretty printing here 
-    print "%s" % sub_blackboard.data
+    # and do the pretty printing here
+    print("%s" % sub_blackboard.data)
 
 
 def watch_blackboard(namespace):
@@ -115,6 +115,7 @@ def watch_blackboard(namespace):
     rospy.Subscriber(namespace + "/blackboard", std_msgs.String, echo_sub_blackboard)
     while not rospy.is_shutdown():
         rospy.spin()
+
 
 def watch_sub_blackboard(received_topic, namespace):
     """
@@ -137,10 +138,10 @@ def watch_sub_blackboard(received_topic, namespace):
                 close_blackboard_watcher = rospy.ServiceProxy(close_blackboard_watcher_service_name, py_trees_srvs.CloseBlackboardWatcher)
                 unused_result = close_blackboard_watcher(received_topic)  # received_topic.split('/')[-1]
                 # could check if result returned success
-            except rospy.ServiceException, e:
+            except rospy.ServiceException as e:
                     print(console.red + "ERROR: service call failed [%s]" % str(e) + console.reset)
                     sys.exit(1)
-        except rospy.exceptions.ROSException, e:
+        except rospy.exceptions.ROSException as e:
             print(console.red + "ERROR: unknown ros exception [%s]" % str(e) + console.reset)
             sys.exit(1)
 
@@ -160,10 +161,10 @@ def handle_args(args):
                 list_variables = rospy.ServiceProxy(list_variables_service_name, py_trees_srvs.GetBlackboardVariables)
                 recieved_variables = list_variables()
                 pretty_print_variables(recieved_variables.variables)
-            except rospy.ServiceException, e:
+            except rospy.ServiceException as e:
                 print(console.red + "ERROR: service call failed [%s]" % str(e) + console.reset)
                 sys.exit(1)
-        except rospy.exceptions.ROSException, e:
+        except rospy.exceptions.ROSException as e:
             print(console.red + "ERROR: unknown ros exception [%s]" % str(e) + console.reset)
             sys.exit(1)
     else:
@@ -180,7 +181,7 @@ def handle_args(args):
                 try:
                     open_watcher = rospy.ServiceProxy(open_blackboard_watcher_service, py_trees_srvs.OpenBlackboardWatcher)
                     response = open_watcher(variables)
-                except rospy.ServiceException, e:
+                except rospy.ServiceException as e:
                     print(console.red + "ERROR: service call failed [%s]" % str(e) + console.reset)
                     sys.exit(1)
 
@@ -189,7 +190,7 @@ def handle_args(args):
 
                 else:
                     print(console.red + "\nERROR: subscribing to topic failed\n" + console.reset)
-            except rospy.exceptions.ROSException, e:
+            except rospy.exceptions.ROSException as e:
                 print(console.red + "ERROR: unknown ros exception [%s]" % str(e) + console.reset)
                 sys.exit(1)
 

@@ -26,13 +26,14 @@ means of interacting with the watching services.
 ##############################################################################
 
 import operator
+import pickle
+
 import py_trees
 import py_trees_msgs.srv as py_trees_srvs
 import rospy
 import py_trees.console as console
 import std_msgs.msg as std_msgs
 
-import cPickle
 
 ##############################################################################
 # ROS Blackboard
@@ -83,10 +84,10 @@ class _View(object):
     def _is_changed(self):
         self._update_sub_blackboard()
         try:
-            current_pickle = cPickle.dumps(self.dict, -1)
+            current_pickle = pickle.dumps(self.dict, -1)
             blackboard_changed = current_pickle != self.cached_dict
             self.cached_dict = current_pickle
-        except (TypeError, cPickle.PicklingError):
+        except (TypeError, pickle.PicklingError):
             rospy.logwarn_once(pickle_warning_message())
             blackboard_changed = True
             self.cached_dict = {}
@@ -237,14 +238,14 @@ class Exchange(object):
 
     def _is_changed(self):
         try:
-            current_pickle = cPickle.dumps(self.blackboard.__dict__, -1)
+            current_pickle = pickle.dumps(self.blackboard.__dict__, -1)
             blackboard_changed = current_pickle != self.cached_blackboard_dict
             self.cached_blackboard_dict = current_pickle
-        except (TypeError, cPickle.PicklingError):
+        except (TypeError, pickle.PicklingError):
             rospy.logwarn_once(pickle_warning_message())
             blackboard_changed = True
             self.cached_blackboard_dict = {}
-            
+
         return blackboard_changed
 
     def publish_blackboard(self, unused_tree=None):
