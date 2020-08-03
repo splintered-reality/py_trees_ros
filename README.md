@@ -12,7 +12,8 @@ the [PyTree ROS Tutorials](https://py-trees-ros-tutorials.readthedocs.io/en/deve
 Use both the [PyTree](https://py-trees.readthedocs.io/en/devel/) and [PyTree ROS](https://py-trees-ros.readthedocs.io/en/devel/) documentation
 as an api reference for non-ROS and ROS specific trees, idioms and behaviours respectively.
 
-For older versions, refer to the documentation links in the matrix below (tutorials for ROS1 can be found buried in the `py_trees_ros` documentation).
+For older versions, refer to the documentation links in the matrix below (note: tutorials for ROS1 were not broken out into their own package, instead they
+can be found buried in the `py_trees_ros` documentation).
 
 ## PyTrees-ROS Ecosystem
 
