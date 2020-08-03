@@ -1,11 +1,12 @@
 # Py Trees for ROS
 
-Behaviours, trees and utilities that extend py_trees for use
-with ROS.
+Behaviours, trees and utilities that extend py_trees for use with ROS.
 
-## Documentation
+![Trees](doc/images/trees.png?raw=true "Behaviour Trees")
 
-Refer to the [PyTree Docs](https://py-trees.readthedocs.io/en/devel/) for a basic primer (non-ROS) on behaviour trees, then move on to the 
+## Getting Started
+
+Dive into the [PyTree Docs](https://py-trees.readthedocs.io/en/devel/) for a basic primer (non-ROS) on behaviour trees, then move on to the 
 the [PyTree ROS Tutorials](https://py-trees-ros-tutorials.readthedocs.io/en/devel/) which incrementally build a scenario for a robot.
 
 Use both the [PyTree](https://py-trees.readthedocs.io/en/devel/) and [PyTree ROS](https://py-trees-ros.readthedocs.io/en/devel/) documentation
