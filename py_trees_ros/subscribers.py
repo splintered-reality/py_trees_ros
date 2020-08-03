@@ -350,7 +350,7 @@ class ToBlackboard(Handler):
         )
         self.logger = py_trees.logging.Logger("%s" % self.name)
         self.blackboard = py_trees.blackboard.Blackboard()
-        if isinstance(blackboard_variables, basestring):
+        if isinstance(blackboard_variables, str):
             self.blackboard_variable_mapping = {blackboard_variables: None}
             if not isinstance(initialise_variables, dict):
                 self.blackboard_initial_variable_mapping = {blackboard_variables: initialise_variables}
@@ -364,7 +364,7 @@ class ToBlackboard(Handler):
             self.blackboard_variable_mapping = blackboard_variables
             self.blackboard_initial_variable_mapping = initialise_variables
         # initialise the variables
-        for name, value in self.blackboard_initial_variable_mapping.iteritems():
+        for name, value in self.blackboard_initial_variable_mapping.items():
             if not self.blackboard.set(name, value):
                 # do we actually want to log an error?
                 self.logger.error("tried to initialise an already initialised blackboard variable '{0}', check that you do not have a conflict with another behaviour [{1}]".format(name, self.name))
@@ -393,7 +393,7 @@ class ToBlackboard(Handler):
                 self.feedback_message = "no message received yet"
                 return py_trees.common.Status.RUNNING
             else:
-                for k, v in self.blackboard_variable_mapping.iteritems():
+                for k, v in self.blackboard_variable_mapping.items():
                     if v is None:
                         self.blackboard.set(k, self.msg, overwrite=True)
                     else:

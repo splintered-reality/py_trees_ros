@@ -125,7 +125,7 @@ class ScanContext(py_trees.behaviour.Behaviour):
         """
         self.logger.debug("%s.initialise()" % self.__class__.__name__)
 
-        for name, client in self._dynamic_reconfigure_clients.iteritems():
+        for name, client in self._dynamic_reconfigure_clients.items():
             self._dynamic_reconfigure_configurations[name] = client.get_configuration()
         try:
             self.safety_sensors_enable = self._dynamic_reconfigure_configurations["safety_sensors"]["enable"]

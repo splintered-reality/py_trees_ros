@@ -96,13 +96,13 @@ def pretty_print_variables(variables):
             sep = ""
         s += "    " * len(variable) + sep + variable[-1] + "\n"
     s += console.reset
-    print "%s" % s
+    print("%s" % s)
 
 
 def echo_tree(msg, abort_after_one_message):
     # TODO: have the tree publish yaml/json/pickled data
     # and do the pretty printing here
-    print "%s" % msg.data
+    print("%s" % msg.data)
     if abort_after_one_message:
         rospy.signal_shutdown("")
 
