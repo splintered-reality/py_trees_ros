@@ -6,6 +6,10 @@ Forthcoming
 -----------
 * ...
 
+0.6.1 (2020-08-03)
+------------------
+* [infra] python-setuptools -> python3-setuptools dependency fix
+
 0.6.0 (2020-08-03)
 ------------------
 * [infra] python3/noetic fixes, `#167 <https://github.com/splintered-reality/py_trees_ros/pull/167>`_
