@@ -65,12 +65,12 @@ class LEDStrip(object):
         """
         # top and bottom of print repeats the pattern as many times as possible
         # in the space specified
-        top_bottom = LEDStrip._pattern * (width / len(LEDStrip._pattern))
+        top_bottom = LEDStrip._pattern * int(width / len(LEDStrip._pattern))
         # space for two halves of the pattern on either side of the pattern name
         mid_pattern_space = (width - len(label) - self._pattern_name_spacing * 2) / 2
 
         # pattern for the mid line
-        mid = LEDStrip._pattern * (mid_pattern_space / len(LEDStrip._pattern))
+        mid = LEDStrip._pattern * int(mid_pattern_space / len(LEDStrip._pattern))
 
         # total length of the middle line with pattern, spacing and name
         mid_len = len(mid) * 2 + self._pattern_name_spacing * 2 + len(label)
