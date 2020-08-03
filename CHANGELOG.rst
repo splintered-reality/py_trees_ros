@@ -6,6 +6,10 @@ Forthcoming
 -----------
 * ...
 
+0.6.0 (2020-08-03)
+------------------
+* [infra] python3/noetic fixes, `#167 <https://github.com/splintered-reality/py_trees_ros/pull/167>`_
+
 0.5.21 (2020-06-06)
 -------------------
 * [trees] option for bagging, , `#159 <https://github.com/splintered-reality/py_trees_ros/pull/159>`_
