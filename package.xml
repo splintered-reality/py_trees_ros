@@ -29,12 +29,12 @@
   <doc_depend>geometry_msgs</doc_depend>
   <doc_depend>move_base_msgs</doc_depend>
   <doc_depend>nav_msgs</doc_depend>
-  <doc_depend>python-sphinx-argparse</doc_depend>
-  <doc_depend>python-sphinx-rtd-theme</doc_depend>
-  <doc_depend>python-catkin-pkg</doc_depend>
-  <doc_depend>python-rospkg</doc_depend>
-  <doc_depend>python-termcolor</doc_depend>
   <doc_depend>python_qt_binding</doc_depend>
+  <doc_depend>python3-sphinx-argparse</doc_depend>
+  <doc_depend>python3-sphinx-rtd-theme</doc_depend>
+  <doc_depend>python3-catkin-pkg</doc_depend>
+  <doc_depend>python3-rospkg</doc_depend>
+  <doc_depend>python3-termcolor</doc_depend>
   <doc_depend>py_trees</doc_depend>
   <doc_depend>py_trees_msgs</doc_depend>
   <doc_depend>rosbag</doc_depend>
@@ -48,7 +48,7 @@
   <exec_depend>dynamic_reconfigure</exec_depend>
   <exec_depend>geometry_msgs</exec_depend>
   <exec_depend>move_base_msgs</exec_depend>
-  <exec_depend>python-termcolor</exec_depend>
+  <exec_depend>python3-termcolor</exec_depend>
   <exec_depend>nav_msgs</exec_depend>
   <exec_depend>sensor_msgs</exec_depend>
 
@@ -57,7 +57,7 @@
   <exec_depend>actionlib_msgs</exec_depend>
   <exec_depend>py_trees</exec_depend>
   <exec_depend>py_trees_msgs</exec_depend>
-  <exec_depend>python-rospkg</exec_depend>
+  <exec_depend>python3-rospkg</exec_depend>
   <exec_depend>rosbag</exec_depend>
   <exec_depend>rospy</exec_depend>
   <exec_depend>std_msgs</exec_depend>
