@@ -110,6 +110,11 @@ def additional_detail_to_str(behaviour: py_trees.behaviour.Behaviour) -> str:
     Provide, e.g. policy information about the behaviour (i.e. black magic
     details under the hood). Useed for debugging, so only strings needed.
 
+    .. todo::
+
+       Unlock unicode support across the wire, currently only ascii
+       arrives ungarbled.
+
     Args:
         behaviour: investigate the policies for this behaviour
 
@@ -117,9 +122,25 @@ def additional_detail_to_str(behaviour: py_trees.behaviour.Behaviour) -> str:
         an informative additional detail string
     """
     if isinstance(behaviour, py_trees.composites.Parallel):
-        return type(behaviour.policy).__name__
-    else:
-        return ""
+        policy = ""
+        try:
+            # with a hack that helps keep this string very minimal (removes 'Success')
+            policy = behaviour.policy.__class__.__name__.replace("Success", "")
+        except AttributeError:
+            pass
+        try:
+            indices = [str(behaviour.children.index(child)) for child in behaviour.policy.children]
+            policy += "({})".format(', '.join(sorted(indices)))
+        except AttributeError:
+            pass
+        return policy
+    elif isinstance(behaviour, py_trees.composites.Selector):
+        if behaviour.memory:
+            return "WithMemory"
+    elif isinstance(behaviour, py_trees.composites.Sequence):
+        if behaviour.memory:
+            return "WithMemory"
+    return ""
 
 
 def status_enum_to_msg_constant(status: py_trees.common.Status):
