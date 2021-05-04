@@ -4,7 +4,7 @@ Changelog
 
 Forthcoming
 -----------
-* ...
+* [trees] public with/without memory information
 
 2.1.0 (2020-08-02)
 ------------------
