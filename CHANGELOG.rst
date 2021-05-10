@@ -4,7 +4,11 @@ Changelog
 
 Forthcoming
 -----------
-* [trees] public with/without memory information
+* ...
+
+2.1.1 (2021-05-09)
+------------------
+* [trees] publish with/without memory information (supports new selector/sequence modes)
 
 2.1.0 (2020-08-02)
 ------------------
