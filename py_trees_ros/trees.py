@@ -275,14 +275,18 @@ class BehaviourTree(py_trees.trees.BehaviourTree):
 
     def setup(
             self,
+            node: rclpy.node.Node=None,
+            node_name: str="tree",
             timeout: float=py_trees.common.Duration.INFINITE,
             visitor: py_trees.visitors.VisitorBase=None
     ):
         """
-        Setup the publishers, exechange and add ros-relevant pre/post tick handlers to the tree.
+        Setup the publishers, exchange and add ROS relevant pre/post tick handlers to the tree.
         Ultimately relays this call down to all the behaviours in the tree.
 
         Args:
+            node: Optional ROS Node object. If None (default), creates its own node.
+            node_name: Name of ROS node created. Only takes effect if `node` is None.
             timeout: time (s) to wait (use common.Duration.INFINITE to block indefinitely)
             visitor: runnable entities on each node after it's setup
 
@@ -291,15 +295,23 @@ class BehaviourTree(py_trees.trees.BehaviourTree):
            This method declares parameters for the snapshot_period and setup_timeout.
            These parameters take precedence over the period and timeout args provided here.
            If parameters are not configured at runtime, then the period and timeout args
-           provided here will inialise the declared parameters.
+           provided here will initialise the declared parameters.
 
         Raises:
             rclpy.exceptions.NotInitializedException: rclpy not yet initialised
+            TypeError: node argument is not a valid rclpy.node.Node object
             Exception: be ready to catch if any of the behaviours raise an exception
         """
-        # node creation - can raise rclpy.exceptions.NotInitializedException
-        default_node_name = "tree"
-        self.node = rclpy.create_node(node_name=default_node_name)
+        if node:
+            # Use existing node if one is passed in, and is of the correct type.
+            if isinstance(node, rclpy.node.Node):
+                self.node = node
+            else:
+                raise TypeError("Must pass in a rclpy.node.Node object.")
+        else:
+            # Node creation - can raise rclpy.exceptions.NotInitializedException
+            self.node = rclpy.create_node(node_name=node_name)
+
         if visitor is None:
             visitor = visitors.SetupLogger(node=self.node)
         self.default_snapshot_stream_topic_name = SnapshotStream.expand_topic_name(
