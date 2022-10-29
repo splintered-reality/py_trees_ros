@@ -27,6 +27,7 @@ import os
 import math
 import statistics
 import subprocess
+import sys
 import tempfile
 import time
 import typing
@@ -370,7 +371,7 @@ class BehaviourTree(py_trees.trees.BehaviourTree):
                 read_only=False,
                 floating_point_range=[rcl_interfaces_msgs.FloatingPointRange(
                     from_value=0.0,
-                    to_value=py_trees.common.Duration.INFINITE.value)]
+                    to_value=sys.float_info.max)]
             )
         )
 
@@ -418,7 +419,7 @@ class BehaviourTree(py_trees.trees.BehaviourTree):
                 read_only=True,
                 floating_point_range=[rcl_interfaces_msgs.FloatingPointRange(
                     from_value=0.0,
-                    to_value=py_trees.common.Duration.INFINITE.value)]
+                    to_value=sys.float_info.max)]
             )
         )
         # Get the resulting timeout
