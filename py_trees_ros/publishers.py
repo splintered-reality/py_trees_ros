@@ -40,7 +40,7 @@ class FromBlackboard(py_trees.behaviour.Behaviour):
 
     .. code-block:: python
 
-        sequence = py_trees.composites.Sequence(name="Sequence")
+        sequence = py_trees.composites.Sequence(name="Sequence", memory=True)
         wait_for_data = py_trees.behaviours.WaitForBlackboardVariable(
             name="WaitForData",
             variable_name="/my_message"

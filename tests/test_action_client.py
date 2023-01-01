@@ -182,7 +182,7 @@ def test_priority_interrupt():
         fail_until=4,
         success_until=1000
     )
-    root = py_trees.composites.Selector()
+    root = py_trees.composites.Selector(name="Selector", memory=False)
     root.add_children([success_eventually, action_client])
     tree = py_trees_ros.trees.BehaviourTree(root=root, unicode_tree_debug=False)
     tree.setup()
