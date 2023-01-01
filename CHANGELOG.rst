@@ -4,6 +4,7 @@ Changelog
 
 Forthcoming
 -----------
+* [trees] optional node and node name args to setup, `#188 <https://github.com/splintered-reality/py_trees_ros/pull/188>`_
 * [trees] switch deprecating qos policy for shorter versions, `#187 <https://github.com/splintered-reality/py_trees_ros/pull/187>`_
 
 2.1.1 (2021-05-09)
