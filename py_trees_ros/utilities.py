@@ -161,10 +161,10 @@ def qos_profile_latched():
     Convenience retrieval for a latched topic (publisher / subscriber)
     """
     return rclpy.qos.QoSProfile(
-        history=rclpy.qos.QoSHistoryPolicy.RMW_QOS_POLICY_HISTORY_KEEP_LAST,
+        history=rclpy.qos.QoSHistoryPolicy.KEEP_LAST,
         depth=1,
-        durability=rclpy.qos.QoSDurabilityPolicy.RMW_QOS_POLICY_DURABILITY_TRANSIENT_LOCAL,
-        reliability=rclpy.qos.QoSReliabilityPolicy.RMW_QOS_POLICY_RELIABILITY_RELIABLE
+        durability=rclpy.qos.QoSDurabilityPolicy.TRANSIENT_LOCAL,
+        reliability=rclpy.qos.QoSReliabilityPolicy.RELIABLE
     )
 
 
@@ -173,10 +173,10 @@ def qos_profile_unlatched():
     Default profile for an unlatched topic (in py_trees_ros).
     """
     return rclpy.qos.QoSProfile(
-        history=rclpy.qos.QoSHistoryPolicy.RMW_QOS_POLICY_HISTORY_KEEP_LAST,
+        history=rclpy.qos.QoSHistoryPolicy.KEEP_LAST,
         depth=1,
-        durability=rclpy.qos.QoSDurabilityPolicy.RMW_QOS_POLICY_DURABILITY_VOLATILE,
-        reliability=rclpy.qos.QoSReliabilityPolicy.RMW_QOS_POLICY_RELIABILITY_RELIABLE
+        durability=rclpy.qos.QoSDurabilityPolicy.VOLATILE,
+        reliability=rclpy.qos.QoSReliabilityPolicy.RELIABLE
     )
 
 

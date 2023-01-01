@@ -21,24 +21,24 @@ ARG NAME=ros-${ROS_DISTRO}
 # NB: Installing debs here for now to expedite testing of the
 # devcontainer configuration (esp. for qt, X11).
 #
-RUN apt-get update && apt-get install -y --no-install-recommends \
+RUN apt-get update && apt-get install -y --no-install-recommends
     # Dot
-    python3-pydot \
+    # python3-pydot \
     # Qt
-    libqt5webkit5 \
-    pyqt5-dev-tools \
-    python3-pyqt5 \
+    # libqt5webkit5 \
+    # pyqt5-dev-tools \
+    # python3-pyqt5 \
     # Other
-    qttools5-dev-tools \
-    libpyside2-dev \
-    libshiboken2-dev \
-    pyqt5-dev \
-    python3-pyqt5.qtsvg \
-    python3-pyside2.qtsvg \
-    python3-sip-dev \
-    shiboken2 \
-    python3-pyqt5.qtwebengine \
-    python3-mypy
+    # qttools5-dev-tools \
+    # libpyside2-dev \
+    # libshiboken2-dev \
+    # pyqt5-dev \
+    # python3-pyqt5.qtsvg \
+    # python3-pyside2.qtsvg \
+    # python3-sip-dev \
+    # shiboken2 \
+    # python3-pyqt5.qtwebengine \
+    # python3-mypy
 
 ################################################################################
 # Login Shells for Debugging & Development
