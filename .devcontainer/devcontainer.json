@@ -1,0 +1,32 @@
+// https://github.com/ierturk/qt-qml-ai-collection/blob/master/.devcontainer/devcontainer.json
+{
+    "name": "py_trees_ros",
+
+    "build": {
+        "dockerfile": "./Dockerfile",
+        "args": {
+            "NAME": "py_trees_ros",
+            "ROS_DISTRO": "foxy"
+        },
+        "context": ".."
+    },
+	"extensions": [
+		"ms-python.python"
+	],    
+    "remoteUser": "zen",
+    "workspaceMount": "source=${localWorkspaceFolder}/../..,target=/workspace,type=bind",
+    "workspaceFolder": "/workspace",
+    // Qt Configuration - assumes the host has an Xorg server, you may need a different
+    // configuration for e.g. Wayland
+    "containerEnv": {
+        "DISPLAY": "${localEnv:DISPLAY}",
+        "QT_DEBUG_PLUGINS": "1"
+    },
+    "mounts": [
+		{
+            "source": "/tmp/.X11-unix",
+            "target": "/tmp/.X11-unix",
+            "type": "bind"
+        }
+	]
+}
