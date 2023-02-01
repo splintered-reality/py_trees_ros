@@ -10,8 +10,8 @@ command line utilities.
 If you are looking for tutorial-like documentation to get started with
 behaviour trees, refer to:
 
-* :ref:`py_trees <py_trees:introduction-section>`: behaviour tree basics
-* :ref:`py_trees_ros_tutorials <py_trees_ros_tutorials:about-section>`: using py_trees in ROS
+* :ref:`py_trees <py_trees:background-section>`: behaviour tree basics
+* :ref:`py_trees_ros_tutorials <py_trees_ros_tutorials:tutorials-section>`: using py_trees in ROS
 
 .. _py_trees: https://github.com/splintered-reality/py_trees
 .. _py_trees_ros: https://github.com/splintered-reality/py_trees_ros

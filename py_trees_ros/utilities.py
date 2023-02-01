@@ -43,7 +43,7 @@ def find_service(node: rclpy.node.Node,
     namespace.
 
     Args:
-        node (:class:`~rclpy.node.Node`): nodes have the discovery methods
+        node (:class:`rclpy.node.Node`): nodes have the discovery methods
         service_type (:obj:`str`): primary lookup hint
         namespace (:obj:`str`): secondary lookup hint
         timeout: immediately post node creation, can take time to discover the graph (sec)

@@ -275,10 +275,10 @@ class BehaviourTree(py_trees.trees.BehaviourTree):
 
     def setup(
             self,
-            node: rclpy.node.Node=None,
+            node: typing.Optional[rclpy.node.Node]=None,
             node_name: str="tree",
             timeout: float=py_trees.common.Duration.INFINITE,
-            visitor: py_trees.visitors.VisitorBase=None
+            visitor: typing.Optional[py_trees.visitors.VisitorBase]=None
     ):
         """
         Setup the publishers, exchange and add ROS relevant pre/post tick handlers to the tree.

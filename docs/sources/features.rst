@@ -39,6 +39,7 @@ py-trees-blackboard-watcher
 
 .. automodule:: py_trees_ros.programs.blackboard_watcher
     :synopsis: call Exchange services to open up a watcher to a blackboard
+    :noindex:
 
 .. _py-trees-tree-watcher:
 
@@ -47,4 +48,5 @@ py-trees-tree-watcher
 
 .. automodule:: py_trees_ros.programs.tree_watcher
     :synopsis: visualise the tree as dot graph, ascii tree, or ascii snapshot
+    :noindex:
 
