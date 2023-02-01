@@ -3,7 +3,9 @@
 # Script for setting up the development environment.
 #source /usr/share/virtualenvwrapper/virtualenvwrapper.sh
 
-NAME=py_trees_ros
+PROJECT=py_trees_ros
+SRC_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
+VENV_DIR=${SRC_DIR}/.venv
 
 ##############################################################################
 # Colours
@@ -68,35 +70,61 @@ install_package ()
 
 ##############################################################################
 
-install_package virtualenvwrapper || return
+#############################
+# Checks
+#############################
 
-# To use the installed python3
-VERSION="--python=/usr/bin/python3"
-# To use a specific version
-# VERSION="--python=python3.6"
-
-if [ "${VIRTUAL_ENV}" == "" ]; then
-  workon ${NAME}
-  result=$?
-  if [ $result -eq 1 ]; then
-    mkvirtualenv ${VERSION} ${NAME}
-  fi
-  if [ $result -eq 127 ]; then
-    pretty_error "Failed to find virtualenvwrapper aliases: 1) re-log or 2) source virtualenvwrapper.sh in your shell's .rc"
-    return 1
-  fi
+[[ "${BASH_SOURCE[0]}" != "${0}" ]] && SOURCED=1
+if [ -z "$SOURCED" ]; then
+  pretty_error "This script needs to be sourced, i.e. source './setup.bash', not './setup.bash'"
+  exit 1
 fi
 
-# Get all dependencies for doc generation
-# pip install -e .[docs]
-pip install -r requirements.txt
+#############################
+# System Dependencies
+#############################
 
-# NB: this automagically nabs install_requires
-python ../setup.py develop
+pretty_header "System Dependencies"
+install_package python3-venv || return
+
+#############################
+# Virtual Env
+#############################
+
+pretty_header "Virtual Environment"
+
+if [ -x ${VENV_DIR}/bin/pip3 ]; then
+    pretty_print "  $(padded_message "virtual_environment" "found [${VENV_DIR}]")"
+else
+    python3 -m venv ${VENV_DIR}
+    pretty_warning "  $(padded_message "virtual_environment" "created [${VENV_DIR}]")"
+fi
+
+source ${VENV_DIR}/bin/activate
+
+#############################
+# Pypi Dependencies
+#############################
+
+pretty_header "PyPi Dependencies"
+
+# upgrade pip3
+python3 -m pip install -U pip
+
+# build environment depedencies
+pip3 install wheel
+pip3 install "setuptools==45.2"
+
+# Get all dependencies for testing, doc generation
+
+# Install doc dependencies
+pip3 install -r requirements.txt
+
+# Install the project
+python3 ../setup.py develop
 
 echo ""
 echo "Leave the virtual environment with 'deactivate'"
 echo ""
 echo "I'm grooty, you should be too."
 echo ""
-

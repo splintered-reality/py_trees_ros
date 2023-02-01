@@ -1,8 +1,7 @@
 #!/usr/bin/env python3
-# -*- coding: utf-8 -*-
 #
 # License: BSD
-#   https://raw.githubusercontent.com/splintered-reality/py_trees/devel/LICENSE
+#   https://raw.githubusercontent.com/splintered-reality/py_trees_ros/devel/LICENSE
 #
 ##############################################################################
 # Documentation

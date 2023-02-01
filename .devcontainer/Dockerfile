@@ -22,6 +22,8 @@ ARG NAME=ros-${ROS_DISTRO}
 # devcontainer configuration (esp. for qt, X11).
 #
 RUN apt-get update && apt-get install -y --no-install-recommends
+    # Docs
+    python3-venv
     # Dot
     # python3-pydot \
     # Qt
