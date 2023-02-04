@@ -355,6 +355,11 @@ class Exchange(object):
                         else:
                             msg.data = "{}".format(view.sub_blackboard)
                         view.publisher.publish(msg)
+                else:
+                    # Workaround for https://github.com/splintered-reality/py_trees_ros/issues/185
+                    # Might not be the best approach for wifi connections that can't be aware
+                    # they've been ruthlessly pruned.
+                    self._close_view(view)
 
         # manage the activity stream
         if py_trees.blackboard.Blackboard.activity_stream is not None:
@@ -371,16 +376,19 @@ class Exchange(object):
     def unregister_activity_stream_client(self):
         self.activity_stream_clients -= 1
 
+    def _close_view(self, view: BlackboardView):
+        if view.with_activity_stream:
+            self.unregister_activity_stream_client()
+        view.shutdown()  # that node.destroy_publisher call makes havoc
+        self.views[:] = [v for v in self.views if v.topic_name != view.topic_name]
+
     def _close_service(self, request, response):
         response.result = False
         for view in self.views:
             if view.topic_name == request.topic_name:
-                if view.with_activity_stream:
-                    self.unregister_activity_stream_client()
-                view.shutdown()  # that node.destroy_publisher call makes havoc
+                self._close_view(view)
                 response.result = True
                 break
-        self.views[:] = [view for view in self.views if view.topic_name != request.topic_name]
         return response
 
     def _get_variables_service(self, unused_request, response):

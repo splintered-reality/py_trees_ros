@@ -24,11 +24,14 @@ Example interaction with the services of an :class:`py_trees_ros.blackboard.Exch
 ##############################################################################
 
 import argparse
-import py_trees.console as console
-import py_trees_ros
+import functools
+import sys
+
 import rclpy
 import std_msgs.msg as std_msgs
-import sys
+
+import py_trees.console as console
+import py_trees_ros
 
 ##############################################################################
 # Classes
@@ -190,25 +193,34 @@ def main(command_line_args=sys.argv[1:]):
             # stream
             try:
                 rclpy.spin(blackboard_watcher.node)
-            except KeyboardInterrupt:
+            except (KeyboardInterrupt, rclpy.executors.ExternalShutdownException):
                 pass
-            # close connection
-            request, client = blackboard_watcher.create_service_client('close')
-            request.topic_name = watcher_topic_name
-            future = client.call_async(request)
-            rclpy.spin_until_future_complete(blackboard_watcher.node, future)
-            if future.result() is None:
-                raise py_trees_ros.exceptions.ServiceError(
-                    "service call to close connection failed [{}]".format(future.exception())
-                )
+            finally:
+                # no pre-shutdown hooks from fumble
+                #   https://github.com/ros2/rclpy/issues/1077
+                # instead, letting the blackboard clean up it's own blackboard views
+                # when the subscriber count goes to zero
+                #   https://github.com/splintered-reality/py_trees_ros/issues/185
+                pass
+                # close connection
+                # request, client = blackboard_watcher.create_service_client('close')
+                # request.topic_name = watcher_topic_name
+                # future = client.call_async(request)
+                # rclpy.spin_until_future_complete(blackboard_watcher.node, future)
+                # if future.result() is None:
+                #     raise py_trees_ros.exceptions.ServiceError(
+                #         "service call to close connection failed [{}]".format(future.exception())
+                #     )
+
     # connection problems
     except (py_trees_ros.exceptions.NotReadyError,
             py_trees_ros.exceptions.ServiceError,
             py_trees_ros.exceptions.TimedOutError) as e:
         print(console.red + "\nERROR: {}".format(str(e)) + console.reset)
         result = 1
-    if subscription is not None:
-        blackboard_watcher.node.destroy_subscription(subscription)
-    blackboard_watcher.shutdown()
-    rclpy.shutdown()
-    sys.exit(result)
+    finally:
+        if subscription is not None:
+            blackboard_watcher.node.destroy_subscription(subscription)
+        blackboard_watcher.shutdown()
+        rclpy.try_shutdown()
+        sys.exit(result)
