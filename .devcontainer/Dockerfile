@@ -21,7 +21,7 @@ ARG NAME=ros-${ROS_DISTRO}
 # NB: Installing debs here for now to expedite testing of the
 # devcontainer configuration (esp. for qt, X11).
 #
-RUN apt-get update && apt-get install -y --no-install-recommends
+RUN apt-get update && apt-get install -y --no-install-recommends \
     # Docs
     python3-venv
     # Dot
