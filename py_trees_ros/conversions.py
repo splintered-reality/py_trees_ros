@@ -333,13 +333,21 @@ def msg_to_behaviour(msg: py_trees_ros_interfaces.msg.Behaviour) -> py_trees.beh
     """
     BehaviourType = msg_constant_to_behaviour_type(msg.type)
     if BehaviourType == py_trees.decorators.Decorator:
-        behaviour = BehaviourType(
+        behaviour = py_trees.decorators.PassThrough(
             name=msg.name,
             # to be replaced with the proper entity in a second pass
             child=py_trees.behaviours.Dummy()
         )
+    elif BehaviourType == py_trees.composites.Sequence:
+        memory = True if msg.additional_detail == "WithMemory" else False
+        behaviour = BehaviourType(name=msg.name, memory=memory)
+    elif BehaviourType == py_trees.composites.Selector:
+        memory = True if msg.additional_detail == "WithMemory" else False
+        behaviour = BehaviourType(name=msg.name, memory=memory)
+    elif BehaviourType == py_trees.composites.Parallel:
+        behaviour = BehaviourType(name=msg.name, policy=py_trees.common.ParallelPolicy.SuccessOnAll())
     else:
-        behaviour = BehaviourType(name=msg.name)
+        behaviour = py_trees.behaviours.Dummy(name=msg.name)
     behaviour.id = msg_to_uuid4(msg.own_id)
     # parent, children and tip have to be filled in via a second pass on the
     # list of behaviours since they directly reference other objects
