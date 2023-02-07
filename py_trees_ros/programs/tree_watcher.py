@@ -223,11 +223,11 @@ def main():
                     # xdot running, wait for it to terminate
                     break
             executor.spin_once(timeout_sec=0.1)
-    except KeyboardInterrupt:
+    except (KeyboardInterrupt, rclpy.executors.ExternalShutdownException):
         pass
     finally:
         if tree_watcher.xdot_process is not None:
             if tree_watcher.xdot_process.poll() is not None:
                 tree_watcher.xdot_process.terminate()
         tree_watcher.shutdown()
-        rclpy.shutdown()
+        rclpy.try_shutdown()
