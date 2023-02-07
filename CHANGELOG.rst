@@ -4,6 +4,10 @@ Changelog
 
 Forthcoming
 -----------
+
+* [watchers] handle explicit args and memory details,  `#196 <https://github.com/splintered-reality/py_trees_ros/pull/196>`_
+* [watchers] bugfix blackboard watcher shutdownon humble, `#194 <https://github.com/splintered-reality/py_trees_ros/pull/194>`_
+* [code] refactor for explicit arguments, `#191 <https://github.com/splintered-reality/py_trees_ros/pull/191>`_
 * [trees] optional node and node name args to setup, `#188 <https://github.com/splintered-reality/py_trees_ros/pull/188>`_
 * [trees] switch deprecating qos policy for shorter versions, `#187 <https://github.com/splintered-reality/py_trees_ros/pull/187>`_
 
