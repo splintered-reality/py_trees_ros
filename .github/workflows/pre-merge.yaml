@@ -1,0 +1,32 @@
+name: pre-merge
+
+env:
+  REGISTRY: ghcr.io
+  IMAGE_NAME: ${{ github.repository }}
+  ROS_DISTRO: rolling
+
+on:
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  pre-merge:
+    runs-on: ubuntu-22.04
+    container:
+      image: ghcr.io/${{ github.repository }}-ci:${ROS_DISTRO}
+      credentials:
+        username: ${{ github.actor }}
+        password: ${{ secrets.GITHUB_TOKEN }}
+
+    steps:
+    - uses: actions/checkout@v3
+    - name: Install Dependencies
+      run: poetry install --no-interaction --no-root
+      if: steps.cache-deps.outputs.cache-hit != 'true'
+
+    - name: Tox - Tests
+      run: poetry run tox --workdir ${{ env.VENV_DIR }} -e ${{ matrix.python-py-version }}
+    - name: Tox - Formatters, Linters
+      run: poetry run tox --workdir ${{ env.VENV_DIR }} -e check
+    - name: Tox - MyPy
+      run: poetry run tox --workdir ${{ env.VENV_DIR }} -e my${{ matrix.python-py-version }}
