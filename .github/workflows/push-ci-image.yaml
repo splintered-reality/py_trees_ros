@@ -1,9 +1,14 @@
-name: push-ros2-image
+name: push-ci-image
 
 env:
   REGISTRY: ghcr.io
   IMAGE_NAME: ${{ github.repository }}-ci
-  ROS_DISTRO: rolling
+
+inputs:
+  ros_distro:
+    description: "humble, rolling, ..."
+    required: false
+    default: "rolling"
 
 on:
   push:
@@ -37,16 +42,16 @@ jobs:
       run: |
         echo "USER: ${{ github.actor }}"
         echo "REPOSITORY: ${{ github.repository }}"
-        echo "ROS_DISTRO: ${{} env.ROS_DISTRO }}"
+        echo "ROS_DISTRO: ${{ github.event.inputs.ros_distro }}"
         echo "TAGS: ${{ steps.meta.outputs.tags }}"
         echo "LABELS: ${{ steps.meta.outputs.labels }}"
-    - name: Image - py_trees-${{ env.ROS_DISTRO }}
+    - name: Image - ${{ github.event.inputs.ros_distro }}
       uses: docker/build-push-action@v3
       with:
         file: ./.devcontainer/Dockerfile
         push: true
         build-args: |
-          ROS_DISTRO=${{ env.ROS_DISTRO }}
+          ROS_DISTRO=${{ github.event.inputs.ros_distro }}
         tags: |
-          ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ env.ROS_DISTRO }}
+          ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ github.event.inputs.ros_distro }}
         labels: ${{ steps.meta.outputs.labels }}
