@@ -93,6 +93,7 @@ def create_all_the_things():
         qos_profile=qos_profile()
     )
     root = py_trees_ros.publishers.FromBlackboard(
+        name="From Blackboard",
         topic_name=topic_name(),
         topic_type=std_msgs.Empty,
         qos_profile=qos_profile(),

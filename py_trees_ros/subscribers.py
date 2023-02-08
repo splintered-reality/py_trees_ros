@@ -73,17 +73,17 @@ class Handler(py_trees.behaviour.Behaviour):
     some data (e.g. CameraInfo).
 
     Args:
+        name: name of the behaviour
         topic_name: name of the topic to connect to
         topic_type: class of the message type (e.g. :obj:`std_msgs.msg.String`)
         qos_profile: qos profile for the subscriber
-        name: name of the behaviour
         clearing_policy: when to clear the data
     """
     def __init__(self,
+                 name: str,
                  topic_name: str,
                  topic_type: typing.Any,
                  qos_profile: rclpy.qos.QoSProfile,
-                 name: str=py_trees.common.Name.AUTO_GENERATED,
                  clearing_policy: py_trees.common.ClearingPolicy=py_trees.common.ClearingPolicy.ON_INITIALISE
                  ):
         super(Handler, self).__init__(name=name)
@@ -283,10 +283,10 @@ class WaitForData(Handler):
         clearing_policy: when to clear the data
     """
     def __init__(self,
+                 name: str,
                  topic_name: str,
                  topic_type: typing.Any,
                  qos_profile: rclpy.qos.QoSProfile,
-                 name=py_trees.common.Name.AUTO_GENERATED,
                  clearing_policy=py_trees.common.ClearingPolicy.ON_INITIALISE
                  ):
         super().__init__(
@@ -359,12 +359,12 @@ class ToBlackboard(Handler):
            blackboard_variables={"pose_with_covariance_stamped": None, "pose": "pose.pose"}
     """
     def __init__(self,
+                 name: str,
                  topic_name: str,
                  topic_type: typing.Any,
                  qos_profile: rclpy.qos.QoSProfile,
                  blackboard_variables: typing.Dict[str, typing.Any]={},  # e.g. {"chatter": None}
                  initialise_variables: typing.Dict[str, typing.Any]={},
-                 name=py_trees.common.Name.AUTO_GENERATED,
                  clearing_policy=py_trees.common.ClearingPolicy.ON_INITIALISE
                  ):
         super().__init__(
@@ -445,16 +445,16 @@ class EventToBlackboard(Handler):
         tree can utilise the variables.
 
     Args:
+        name: name of the behaviour
         topic_name: name of the topic to connect to
         qos_profile: qos profile for the subscriber
         variable_name: name to write the boolean result on the blackboard
-        name: name of the behaviour
     """
     def __init__(self,
+                 name: str,
                  topic_name: str,
                  qos_profile: rclpy.qos.QoSProfile,
                  variable_name: str,
-                 name=py_trees.common.Name.AUTO_GENERATED,
                  ):
         super().__init__(
             name=name,

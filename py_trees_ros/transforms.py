@@ -235,7 +235,7 @@ class ToBlackboard(py_trees.behaviour.Behaviour):
         """
         class get_latest(object):
             def __init__(self):
-                self.nanoseconds = 0.0
+                self.nanoseconds = 0
 
         if self.buffer.can_transform(
             target_frame=self.target_frame,

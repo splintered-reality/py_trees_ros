@@ -177,10 +177,15 @@ def test_priority_interrupt():
     server = py_trees_ros.mock.dock.Dock(duration=1.5)
 
     action_client = create_action_client()
-    success_eventually = py_trees.behaviours.Count(
+    success_eventually = py_trees.behaviours.StatusQueue(
         name="Success Eventually",
-        fail_until=4,
-        success_until=1000
+        queue=[
+            py_trees.common.Status.FAILURE,
+            py_trees.common.Status.FAILURE,
+            py_trees.common.Status.FAILURE,
+            py_trees.common.Status.FAILURE
+        ],
+        eventually=py_trees.common.Status.SUCCESS,
     )
     root = py_trees.composites.Selector(name="Selector", memory=False)
     root.add_children([success_eventually, action_client])

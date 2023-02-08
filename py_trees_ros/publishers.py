@@ -58,18 +58,18 @@ class FromBlackboard(py_trees.behaviour.Behaviour):
     in the tree).
 
     Args:
+        name: name of the behaviour
         topic_name: name of the topic to connect to
         topic_type: class of the message type (e.g. :obj:`std_msgs.msg.String`)
         qos_profile: qos profile for the subscriber
-        name: name of the behaviour
         blackboard_variable: name of the variable on the blackboard (can be nested)
     """
     def __init__(self,
+                 name: str,
                  topic_name: str,
                  topic_type: typing.Any,
                  qos_profile: rclpy.qos.QoSProfile,
                  blackboard_variable: str,
-                 name: str=py_trees.common.Name.AUTO_GENERATED,
                  ):
         super().__init__(name=name)
         self.topic_name = topic_name

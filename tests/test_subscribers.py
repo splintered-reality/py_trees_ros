@@ -88,6 +88,7 @@ def test_wait_for_data():
 
     publisher = EmptyPublisher(node_name="wait_for_data", qos_profile=qos_profile())
     root = py_trees_ros.subscribers.WaitForData(
+        name="WaitForData",
         topic_name="/wait_for_data/empty",
         topic_type=std_msgs.Empty,
         qos_profile=qos_profile()
