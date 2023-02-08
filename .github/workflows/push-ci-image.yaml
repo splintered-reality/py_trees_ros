@@ -4,22 +4,16 @@ env:
   REGISTRY: ghcr.io
   IMAGE_NAME: ${{ github.repository }}-ci
 
-inputs:
-  ros_distro:
-    description: "humble, rolling, ..."
-    required: false
-    default: "rolling"
-
 on:
-  push:
-    paths:
-      - .devcontainer/Dockerfile
-    branches:
-      - devel
   workflow_dispatch:
+    inputs:
+      ros_distro:
+        description: "humble, rolling, ..."
+        required: false
+        default: "rolling"
 
 jobs:
-  push-container:
+  push-ci-image:
     runs-on: ubuntu-22.04
     permissions: 
       contents: read

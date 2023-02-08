@@ -13,20 +13,40 @@ jobs:
   pre-merge:
     runs-on: ubuntu-22.04
     container:
-      image: ghcr.io/${{ github.repository }}-ci:${ROS_DISTRO}
+      image: ghcr.io/${{ github.repository }}-ci:rolling
       credentials:
         username: ${{ github.actor }}
         password: ${{ secrets.GITHUB_TOKEN }}
 
     steps:
-    - uses: actions/checkout@v3
-    - name: Install Dependencies
-      run: poetry install --no-interaction --no-root
-      if: steps.cache-deps.outputs.cache-hit != 'true'
+    - name: Checkout py_trees
+      uses: actions/checkout@v3
+      with:
+        repository: splintered-reality/py_trees
+        path: src/py_trees
+    - name: Checkout py_trees_ros_interfaces
+      uses: actions/checkout@v3
+      with:
+        repository: splintered-reality/py_trees_ros_interfaces
+        path: src/py_trees_ros_interfaces
+    - name: Checkout py_trees_ros
+      uses: actions/checkout@v3
+      with:
+        path: src/py_trees_ros
 
-    - name: Tox - Tests
-      run: poetry run tox --workdir ${{ env.VENV_DIR }} -e ${{ matrix.python-py-version }}
-    - name: Tox - Formatters, Linters
-      run: poetry run tox --workdir ${{ env.VENV_DIR }} -e check
-    - name: Tox - MyPy
-      run: poetry run tox --workdir ${{ env.VENV_DIR }} -e my${{ matrix.python-py-version }}
+    - name: Dependencies
+      run: |
+        rosdep update
+        rosdep install --from-paths src --rosdistro ${{ env.ROS_DISTRO }} --ignore-src -r -y
+
+    - name: Build
+      shell: bash
+      run: |
+        . /opt/ros/${{ env.ROS_DISTRO }}/setup.bash
+        VERBOSE=1 colcon build --symlink-install --event-handlers console_direct+ --cmake-args -DCMAKE_BUILD_TYPE=RelWithDebInfo -DCMAKE_VERBOSE_MAKEFILE:=ON
+
+    - name: Tests
+      shell: bash
+      run: |
+        . install/setup.bash
+        cd src/py_trees_ros/tests && pytest-3 -s .

@@ -24,6 +24,8 @@ ARG NAME=ros-${ROS_DISTRO}
 RUN apt-get update && apt-get install -y --no-install-recommends \
     # Docs
     python3-venv
+    # PyTrees
+    # ros-${ROS_DISTRO}-py-trees
     # Dot
     # python3-pydot \
     # Qt

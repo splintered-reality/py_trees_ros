@@ -2,7 +2,7 @@
 
 Behaviours, trees and utilities that extend py_trees for use with ROS.
 
-![Trees](doc/images/trees.png?raw=true "Behaviour Trees")
+![Trees](docs/images/trees.png?raw=true "Behaviour Trees")
 
 ## Getting Started (ROS2)
 
