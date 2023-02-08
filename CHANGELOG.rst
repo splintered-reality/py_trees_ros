@@ -5,6 +5,8 @@ Changelog
 Forthcoming
 -----------
 
+* [actions] pre-merge and push-ci-image actions,  `#200 <https://github.com/splintered-reality/py_trees_ros/pull/200>`_
+* [tests] bugfix explicit args and time float errors in tests,  `#200 <https://github.com/splintered-reality/py_trees_ros/pull/200>`_
 * [watchers] handle explicit args and memory details,  `#196 <https://github.com/splintered-reality/py_trees_ros/pull/196>`_
 * [watchers] bugfix blackboard watcher shutdownon humble, `#194 <https://github.com/splintered-reality/py_trees_ros/pull/194>`_
 * [code] refactor for explicit arguments, `#191 <https://github.com/splintered-reality/py_trees_ros/pull/191>`_
