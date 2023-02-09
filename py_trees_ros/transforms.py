@@ -50,13 +50,13 @@ class FromBlackboard(py_trees.behaviour.Behaviour):
     """
     def __init__(
         self,
+        name: str,
         variable_name: str,
         target_frame: str,
         source_frame: str,
         static: bool,
         qos_profile: rclpy.qos.QoSProfile,
         static_qos_profile: rclpy.qos.QoSProfile=None,
-        name: str=py_trees.common.Name.AUTO_GENERATED,
     ):
         super().__init__(name=name)
         self.blackboard = self.attach_blackboard_client(name)
@@ -170,13 +170,13 @@ class ToBlackboard(py_trees.behaviour.Behaviour):
     """
     def __init__(
         self,
+        name: str,
         variable_name,
         target_frame: str,
         source_frame: str,
         qos_profile: rclpy.qos.QoSProfile,
         static_qos_profile: rclpy.qos.QoSProfile=None,
         clearing_policy: py_trees.common.ClearingPolicy=py_trees.common.ClearingPolicy.ON_INITIALISE,
-        name: str=py_trees.common.Name.AUTO_GENERATED,
     ):
         super().__init__(name=name)
         self.variable_name = variable_name
