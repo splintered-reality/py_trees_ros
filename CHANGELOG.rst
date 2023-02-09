@@ -4,7 +4,10 @@ Changelog
 
 Forthcoming
 -----------
+* ...
 
+2.2.0 (2023-02-08)
+------------------
 * [actions] pre-merge and push-ci-image actions,  `#200 <https://github.com/splintered-reality/py_trees_ros/pull/200>`_
 * [tests] bugfix explicit args and time float errors in tests,  `#200 <https://github.com/splintered-reality/py_trees_ros/pull/200>`_
 * [watchers] handle explicit args and memory details,  `#196 <https://github.com/splintered-reality/py_trees_ros/pull/196>`_

@@ -9,9 +9,6 @@
         },
         "context": ".."
     },
-	"extensions": [
-		"ms-python.python"
-	],
     "remoteUser": "zen",
     "workspaceMount": "source=${localWorkspaceFolder}/../..,target=/workspace,type=bind",
     "workspaceFolder": "/workspace",
@@ -20,6 +17,18 @@
     "containerEnv": {
         "DISPLAY": "${localEnv:DISPLAY}",
         "QT_DEBUG_PLUGINS": "1"
+    },
+    "customizations": {
+        "vscode": {
+            "extensions": [
+                "bierner.github-markdown-preview",
+                "bungcip.better-toml",
+                "streetsidesoftware.code-spell-checker",
+                "lextudio.restructuredtext",
+                "ms-python.python",
+                "omnilib.ufmt"
+            ]
+        }
     },
     "mounts": [
 		{
