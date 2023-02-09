@@ -4,8 +4,11 @@ Changelog
 
 Forthcoming
 -----------
-* [behaviours] eliminate more arg name defaults, `#201 <https://github.com/splintered-reality/py_trees_ros/pull/201>`_
 * ...
+
+2.2.1 (2023-02-08)
+------------------
+* [behaviours] eliminate more arg name defaults, `#201 <https://github.com/splintered-reality/py_trees_ros/pull/201>`_
 
 2.2.0 (2023-02-08)
 ------------------
