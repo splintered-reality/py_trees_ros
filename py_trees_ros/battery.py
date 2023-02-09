@@ -42,15 +42,15 @@ class ToBlackboard(subscribers.ToBlackboard):
         * battery_low_warning (:obj:`bool`)[w]: False if battery is ok, True if critically low
 
     Args:
+        name: name of the behaviour
         topic_name: name of the battery state topic
         qos_profile: qos profile for the subscriber
-        name: name of the behaviour
         threshold: percentage level threshold for flagging as low (0-100)
     """
     def __init__(self,
+                 name: str,
                  topic_name: str,
                  qos_profile: rclpy.qos.QoSProfile,
-                 name: str=py_trees.common.Name.AUTO_GENERATED,
                  threshold: float=30.0):
         super().__init__(name=name,
                          topic_name=topic_name,

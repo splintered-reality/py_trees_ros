@@ -160,6 +160,7 @@ class CheckData(Handler):
     - fail_if_bad_comparison=True
 
     Args:
+        name: name of the behaviour
         topic_name: name of the topic to connect to
         topic_type: class of the message type (e.g. :obj:`std_msgs.msg.String`)
         qos_profile: qos profile for the subscriber
@@ -168,7 +169,6 @@ class CheckData(Handler):
         comparison_operator: one from the python `operator module`_
         fail_if_no_data: :attr:`~py_trees.common.Status.FAILURE` instead of :attr:`~py_trees.common.Status.RUNNING` if there is no data yet
         fail_if_bad_comparison: :attr:`~py_trees.common.Status.FAILURE` instead of :attr:`~py_trees.common.Status.RUNNING` if comparison failed
-        name: name of the behaviour
         clearing_policy: when to clear the data
 
     .. tip::
@@ -180,6 +180,7 @@ class CheckData(Handler):
 
     """
     def __init__(self,
+                 name: str,
                  topic_name: str,
                  topic_type: typing.Any,
                  qos_profile: rclpy.qos.QoSProfile,
@@ -188,7 +189,6 @@ class CheckData(Handler):
                  comparison_operator=operator.eq,
                  fail_if_no_data=False,
                  fail_if_bad_comparison=False,
-                 name=py_trees.common.Name.AUTO_GENERATED,
                  clearing_policy=py_trees.common.ClearingPolicy.ON_INITIALISE
                  ):
         super(CheckData, self).__init__(

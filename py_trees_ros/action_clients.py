@@ -78,10 +78,10 @@ class FromBlackboard(py_trees.behaviour.Behaviour):
         )
 
     Args:
+        name: name of the behaviour
         action_type: spec type for the action (e.g. move_base_msgs.action.MoveBase)
         action_name: where you can find the action topics & services (e.g. "bob/move_base")
         key: name of the key on the blackboard
-        name: name of the behaviour (default: lowercase class name)
         generate_feedback_message: formatter for feedback messages, takes action_type.Feedback
             messages and returns strings (default: None)
         wait_for_server_timeout_sec: use negative values for a blocking but periodic check (default: -3.0)
@@ -93,10 +93,10 @@ class FromBlackboard(py_trees.behaviour.Behaviour):
        usually be left up to the behaviour tree manager.
     """
     def __init__(self,
+                 name: str,
                  action_type: typing.Any,
                  action_name: str,
                  key: str,
-                 name: str=py_trees.common.Name.AUTO_GENERATED,
                  generate_feedback_message: typing.Callable[[typing.Any], str]=None,
                  wait_for_server_timeout_sec: float=-3.0
                  ):
@@ -370,10 +370,10 @@ class FromConstant(FromBlackboard):
     .. see-also: :class:`py_trees_ros.action_clients.FromBlackboard`
 
     Args:
+        name: name of the behaviour
         action_type: spec type for the action (e.g. move_base_msgs.action.MoveBase)
         action_name: where you can find the action topics & services (e.g. "bob/move_base")
         action_goal: the goal to send
-        name: name of the behaviour (default: lowercase class name)
         generate_feedback_message: formatter for feedback messages, takes action_type.Feedback
             messages and returns strings (default: None)
         wait_for_server_timeout_sec: use negative values for a blocking but periodic check (default: -3.0)
@@ -385,10 +385,10 @@ class FromConstant(FromBlackboard):
        usually be left up to the behaviour tree manager.
     """
     def __init__(self,
+                 name: str,
                  action_type: typing.Any,
                  action_name: str,
                  action_goal: typing.Any,
-                 name: str=py_trees.common.Name.AUTO_GENERATED,
                  generate_feedback_message: typing.Callable[[typing.Any], str]=None,
                  wait_for_server_timeout_sec: float=-3.0
                  ):
