@@ -39,7 +39,7 @@
   <!-- behaviour dependencies (subscribers, transforms, ...) -->
   <depend>geometry_msgs</depend>
   <depend>sensor_msgs</depend>
-  <depend>tf2_ros</depend>  <!-- monitor this, might migrate to a python only package -->
+  <depend>tf2_ros_py</depend>
 
   <!-- testing dependencies -->
 
