@@ -6,7 +6,7 @@ Behaviours, trees and utilities that extend py_trees for use with ROS.
 
 ## Getting Started (ROS2)
 
-Choose your ros distro and install via debs, e.g. for humble
+Choose your ros distro and install via debs, e.g. for humbledd
 ```
 $ sudo apt install \
     ros-humble-py-trees \
