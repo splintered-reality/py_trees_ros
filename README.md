@@ -6,6 +6,16 @@ Behaviours, trees and utilities that extend py_trees for use with ROS.
 
 ## Getting Started (ROS2)
 
+Choose your ros distro and install via debs, e.g. for humble
+```
+$ sudo apt install \
+    ros-humble-py-trees \
+    ros-humble-py-trees-ros-interfaces \
+    ros-humble-py-trees-ros \
+    ros-humble-py-trees-ros-tutorials \
+    ros-humble-py-trees-ros-viewer
+```
+
 Dive into the [PyTree Docs](https://py-trees.readthedocs.io/en/devel/) for a basic primer (non-ROS) on behaviour trees, then move on to the 
 the [PyTree ROS Tutorials](https://py-trees-ros-tutorials.readthedocs.io/en/devel/) which incrementally build a scenario for a robot. The [PyTree ROS](https://py-trees-ros.readthedocs.io/en/devel/) documentation provides api docs for ROS specific trees, idioms and behaviours respectively.
 
