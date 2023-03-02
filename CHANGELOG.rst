@@ -6,6 +6,10 @@ Forthcoming
 -----------
 * ...
 
+2.2.2 (2023-02-10)
+------------------
+* [pkg] tf2_ros -> tf2_ros_py, `#204 <https://github.com/splintered-reality/py_trees_ros/pull/204>`_
+
 2.2.1 (2023-02-08)
 ------------------
 * [behaviours] eliminate more arg name defaults, `#201 <https://github.com/splintered-reality/py_trees_ros/pull/201>`_

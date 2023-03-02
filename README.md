@@ -6,6 +6,16 @@ Behaviours, trees and utilities that extend py_trees for use with ROS.
 
 ## Getting Started (ROS2)
 
+Choose your ros distro and install via debs, e.g. for humble
+```
+$ sudo apt install \
+    ros-humble-py-trees \
+    ros-humble-py-trees-ros-interfaces \
+    ros-humble-py-trees-ros \
+    ros-humble-py-trees-ros-tutorials \
+    ros-humble-py-trees-ros-viewer
+```
+
 Dive into the [PyTree Docs](https://py-trees.readthedocs.io/en/devel/) for a basic primer (non-ROS) on behaviour trees, then move on to the 
 the [PyTree ROS Tutorials](https://py-trees-ros-tutorials.readthedocs.io/en/devel/) which incrementally build a scenario for a robot. The [PyTree ROS](https://py-trees-ros.readthedocs.io/en/devel/) documentation provides api docs for ROS specific trees, idioms and behaviours respectively.
 
@@ -15,9 +25,9 @@ For version specific releases of the documentation, refer to the documentation l
 |:---:|:---:|:---:|:---:|:---:|
 | [py_trees][py-trees-ros-index] | [![2.2.x][2.2.x-sources-image]][py-trees-sources-2.2.x]<br/>[![Build Status][py-trees-build-status-rolling-image]][py-trees-build-status-rolling]<br/>[![2.2.x-Docs][2.2.x-rtd-image]][py-trees-docs-2.2.x] | [![2.2.x][2.2.x-sources-image]][py-trees-sources-2.2.x]<br/>[![Build Status][py-trees-build-status-humble-image]][py-trees-build-status-humble]<br/>[![2.2.x-Docs][2.2.x-rtd-image]][py-trees-docs-2.2.x] | [![2.1.x][2.1.x-sources-image]][py-trees-sources-2.1.x]<br/>[![Build Status][py-trees-build-status-foxy-image]][py-trees-build-status-foxy]<br/>[![2.1.x-Docs][2.1.x-rtd-image]][py-trees-docs-2.1.x] | [![1.3.x][1.3.x-sources-image]][py-trees-sources-1.3.x]<br/>-<br/>[![1.3.x-Docs][1.3.x-rtd-image]][py-trees-docs-1.3.x] |
 | [py_trees_ros_interfaces][py-trees-ros-interfaces-ros-index] | [![2.1.x][2.1.x-sources-image]][py-trees-ros-interfaces-sources-2.1.x]<br/>[![Build Status][py-trees-ros-interfaces-build-status-rolling-image]][py-trees-ros-interfaces-build-status-rolling]<br/>![2.1.x-Docs][not-available-docs-image] | [![2.1.x][2.1.x-sources-image]][py-trees-ros-interfaces-sources-2.1.x]<br/>[![Build Status][py-trees-ros-interfaces-build-status-humble-image]][py-trees-ros-interfaces-build-status-humble]<br/>![2.1.x-Docs][not-available-docs-image] | [![2.0.x][2.0.x-sources-image]][py-trees-ros-interfaces-sources-2.0.x]<br/>[![Build Status][py-trees-ros-interfaces-build-status-foxy-image]][py-trees-ros-interfaces-build-status-foxy]<br/>![1.2.x-Docs][not-available-docs-image] | [![1.2.x][1.2.x-sources-image]][py-trees-ros-interfaces-sources-1.2.x]<br/>-<br/>![1.2.x-Docs][not-available-docs-image] |
-| [py_trees_ros][py-trees-ros-ros-index] | [![2.2.x][2.2.x-sources-image]][py-trees-ros-sources-2.2.x]<br/><br/>[![2.2.x-Docs][2.2.x-rtd-image]][py-trees-ros-docs-2.2.x] | [![2.2.x][2.2.x-sources-image]][py-trees-ros-sources-2.2.x]<br/><br/>[![2.2.x-Docs][2.2.x-rtd-image]][py-trees-ros-docs-2.2.x] | [![2.1.x][2.1.x-sources-image]][py-trees-ros-sources-2.1.x]<br/>[![Build Status][py-trees-ros-build-status-foxy-image]][py-trees-ros-build-status-foxy]<br/>[![2.1.x-Docs][2.1.x-rtd-image]][py-trees-ros-docs-2.1.x] | [![1.2.x][1.2.x-sources-image]][py-trees-ros-sources-1.2.x]<br/>-<br/>[![1.2.x-Docs][1.2.x-rtd-image]][py-trees-ros-docs-1.2.x] |
+| [py_trees_ros][py-trees-ros-ros-index] | [![2.2.x][2.2.x-sources-image]][py-trees-ros-sources-2.2.x]<br/>[![Build Status][py-trees-ros-build-status-rolling-image]][py-trees-ros-build-status-rolling]<br/>[![2.2.x-Docs][2.2.x-rtd-image]][py-trees-ros-docs-2.2.x] | [![2.2.x][2.2.x-sources-image]][py-trees-ros-sources-2.2.x]<br/>[![Build Status][py-trees-ros-build-status-humble-image]][py-trees-ros-build-status-humble]<br/>[![2.2.x-Docs][2.2.x-rtd-image]][py-trees-ros-docs-2.2.x] | [![2.1.x][2.1.x-sources-image]][py-trees-ros-sources-2.1.x]<br/>[![Build Status][py-trees-ros-build-status-foxy-image]][py-trees-ros-build-status-foxy]<br/>[![2.1.x-Docs][2.1.x-rtd-image]][py-trees-ros-docs-2.1.x] | [![1.2.x][1.2.x-sources-image]][py-trees-ros-sources-1.2.x]<br/>-<br/>[![1.2.x-Docs][1.2.x-rtd-image]][py-trees-ros-docs-1.2.x] |
 | [py_trees_ros_tutorials][py-trees-ros-tutorials-ros-index]  | <br/><br/> | <br/><br/> | [![2.1.x][2.1.x-sources-image]][py-trees-ros-tutorials-sources-2.1.x]<br/>[![Build Status][py-trees-ros-tutorials-build-status-foxy-image]][py-trees-ros-tutorials-build-status-foxy]<br/>[![2.1.x-Docs][2.1.x-rtd-image]][py-trees-ros-tutorials-docs-2.1.x] | [![1.0.x][1.0.x-sources-image]][py-trees-ros-tutorials-sources-1.0.x]<br/>-<br/>[![1.0.x-Docs][1.0.x-rtd-image]][py-trees-ros-tutorials-docs-1.0.x] |
-| [py_trees_js][py-trees-js-ros-index]  | <br/><br/> | <br/><br/> | [![0.6.x][0.6.x-sources-image]][py-trees-js-sources-0.6.x]<br/>[![Build Status][py-trees-js-build-status-foxy-image]][py-trees-js-build-status-foxy]<br/> [![0.6.x-Docs][readme-docs-image]][py-trees-js-docs-0.6.x] | [![0.5.x][0.5.x-sources-image]][py-trees-js-sources-0.5.x]<br/>-<br/> [![0.5.x-Docs][readme-docs-image]][py-trees-js-docs-0.5.x] |
+| [py_trees_js][py-trees-js-ros-index]  | [![0.6.x][0.6.x-sources-image]][py-trees-js-sources-0.6.x]<br/>[![Build Status][py-trees-js-build-status-rolling-image]][py-trees-js-build-status-rolling]<br/>[![0.6.x-Docs][readme-docs-image]][py-trees-js-docs-0.6.x] | [![0.6.x][0.6.x-sources-image]][py-trees-js-sources-0.6.x]<br/>[![Build Status][py-trees-js-build-status-humble-image]][py-trees-js-build-status-humble]<br/>[![0.6.x-Docs][readme-docs-image]][py-trees-js-docs-0.6.x] | [![0.6.x][0.6.x-sources-image]][py-trees-js-sources-0.6.x]<br/>[![Build Status][py-trees-js-build-status-foxy-image]][py-trees-js-build-status-foxy]<br/> [![0.6.x-Docs][readme-docs-image]][py-trees-js-docs-0.6.x] | [![0.5.x][0.5.x-sources-image]][py-trees-js-sources-0.5.x]<br/>-<br/> [![0.5.x-Docs][readme-docs-image]][py-trees-js-docs-0.5.x] |
 | [py_trees_ros_viewer][py-trees-ros-viewer-ros-index]  | <br/><br/> | <br/><br/> | [![0.2.x][0.2.x-sources-image]][py-trees-ros-viewer-sources-0.2.x]<br/>[![Build Status][py-trees-ros-viewer-build-status-foxy-image]][py-trees-ros-viewer-build-status-foxy]<br/> [![0.2.x-Docs][readme-docs-image]][py-trees-ros-viewer-docs-0.2.x] | [![0.1.x][0.1.x-sources-image]][py-trees-ros-viewer-sources-0.1.x]<br/>-<br/> [![0.1.x-Docs][readme-docs-image]][py-trees-ros-viewer-docs-0.1.x] | 
 
 ## Getting Started (ROS1)
@@ -126,6 +136,10 @@ Refer to the documentation links in the matrix below (note: you'll find the tuto
 [py-trees-ros-interfaces-sources-1.2.x]: https://github.com/splintered-reality/py_trees_ros_interfaces/tree/release/1.2.x
 [py-trees-ros-interfaces-sources-1.1.x]: https://github.com/splintered-reality/py_trees_ros_interfaces/tree/release/1.1.x
 
+[py-trees-ros-build-status-rolling]: https://build.ros2.org/job/Rbin_uJ64__py_trees_ros__ubuntu_jammy_amd64__binary/
+[py-trees-ros-build-status-rolling-image]: https://build.ros2.org/job/Rbin_uJ64__py_trees_ros__ubuntu_jammy_amd64__binary/badge/icon?style=plastic
+[py-trees-ros-build-status-humble]: https://build.ros2.org/job/Hbin_uJ64__py_trees_ros__ubuntu_jammy_amd64__binary/
+[py-trees-ros-build-status-humble-image]: https://build.ros2.org/job/Hbin_uJ64__py_trees_ros__ubuntu_jammy_amd64__binary/badge/icon?style=plastic
 [py-trees-ros-build-status-foxy]: http://build.ros2.org/job/Fbin_uF64__py_trees_ros__ubuntu_focal_amd64__binary/
 [py-trees-ros-build-status-foxy-image]: http://build.ros2.org/job/Fbin_uF64__py_trees_ros__ubuntu_focal_amd64__binary/badge/icon?style=plastic
 [py-trees-ros-build-status-melodic]: http://build.ros.org/job/Mbin_uB64__py_trees_ros__ubuntu_bionic_amd64__binary
@@ -166,6 +180,10 @@ Refer to the documentation links in the matrix below (note: you'll find the tuto
 [py-trees-ros-tutorials-docs-foxy-image]: http://img.shields.io/badge/py_trees_ros_tutorials-foxy-brightgreen.svg?style=plastic
 [py-trees-ros-tutorials-docs-dashing-image]: http://img.shields.io/badge/py_trees_ros_tutorials-dashing-brightgreen.svg?style=plastic
 
+[py-trees-js-build-status-rolling]: https://build.ros2.org/job/Rbin_uJ64__py_trees_js__ubuntu_jammy_amd64__binary/
+[py-trees-js-build-status-rolling-image]: https://build.ros2.org/job/Rbin_uJ64__py_trees_js__ubuntu_jammy_amd64__binary/badge/icon?style=plastic
+[py-trees-js-build-status-humble]: https://build.ros2.org/job/Hbin_uJ64__py_trees_js__ubuntu_jammy_amd64__binary/
+[py-trees-js-build-status-humble-image]: https://build.ros2.org/job/Hbin_uJ64__py_trees_js__ubuntu_jammy_amd64__binary/badge/icon?style=plastic
 [py-trees-js-build-status-foxy]: http://build.ros2.org/job/Fbin_uF64__py_trees_js__ubuntu_focal_amd64__binary/
 [py-trees-js-build-status-foxy-image]: http://build.ros2.org/job/Fbin_uF64__py_trees_js__ubuntu_focal_amd64__binary/badge/icon?style=plastic
 [py-trees-js-docs-0.6.x]: https://github.com/splintered-reality/py_trees_js/blob/release/0.6.x/README.md
