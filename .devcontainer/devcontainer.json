@@ -22,11 +22,12 @@
         "vscode": {
             "extensions": [
                 "bierner.github-markdown-preview",
+                "bierner.markdown-preview-github-styles",
                 "bungcip.better-toml",
                 "streetsidesoftware.code-spell-checker",
-                "lextudio.restructuredtext",
                 "ms-python.python",
-                "omnilib.ufmt"
+                "omnilib.ufmt",
+                "tht13.rst-vscode"
             ]
         }
     },
@@ -36,5 +37,12 @@
             "target": "/tmp/.X11-unix",
             "type": "bind"
         }
-	]
+	],
+    "runArgs": [
+        "--runtime=nvidia",
+        "--gpus",
+        "all",
+        "--network",
+        "host"
+    ]
 }

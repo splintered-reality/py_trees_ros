@@ -22,18 +22,24 @@ ARG NAME=ros-${ROS_DISTRO}
 # devcontainer configuration (esp. for qt, X11).
 #
 RUN apt-get update && apt-get install -y --no-install-recommends \
-    # Docs
-    python3-venv
-    # PyTrees
-    # ros-${ROS_DISTRO}-py-trees
-    # Dot
-    # python3-pydot \
-    # Qt
-    # libqt5webkit5 \
-    # pyqt5-dev-tools \
-    # python3-pyqt5 \
+    # poetry
+    curl \
+    python3-dev \
+    # docs
+    python3-venv \
+    # development
+    bash \
+    bash-completion \
+    ca-certificates \
+    git \
+    less \
+    make \
+    ssh \
+    vim \
+    wget \
     # Other
-    # qttools5-dev-tools \
+    qttools5-dev-tools
+    # Still need these?
     # libpyside2-dev \
     # libshiboken2-dev \
     # pyqt5-dev \
@@ -43,6 +49,22 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     # shiboken2 \
     # python3-pyqt5.qtwebengine \
     # python3-mypy
+
+####################
+# OpenGL
+####################
+# mesa-utils : glxgears + gl libs (libgl# libglvnd#, libglx#)
+# egl: not needed (libegl1, libgles2)
+# vulkan: not needed
+RUN apt-get install -y --no-install-recommends \
+    mesa-utils
+
+################################################################################
+# NVIDIA
+################################################################################
+
+ENV NVIDIA_VISIBLE_DEVICES ${NVIDIA_VISIBLE_DEVICES:-all}
+ENV NVIDIA_DRIVER_CAPABILITIES ${NVIDIA_DRIVER_CAPABILITIES:+$NVIDIA_DRIVER_CAPABILITIES,}graphics,display,video,utility,compute
 
 ################################################################################
 # Login Shells for Debugging & Development
