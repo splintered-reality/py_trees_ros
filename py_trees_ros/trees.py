@@ -278,7 +278,8 @@ class BehaviourTree(py_trees.trees.BehaviourTree):
             node: typing.Optional[rclpy.node.Node]=None,
             node_name: str="tree",
             timeout: float=py_trees.common.Duration.INFINITE,
-            visitor: typing.Optional[py_trees.visitors.VisitorBase]=None
+            visitor: typing.Optional[py_trees.visitors.VisitorBase]=None,
+            **kwargs: int
     ):
         """
         Setup the publishers, exchange and add ROS relevant pre/post tick handlers to the tree.
@@ -289,6 +290,7 @@ class BehaviourTree(py_trees.trees.BehaviourTree):
             node_name: Name of ROS node created. Only takes effect if `node` is None.
             timeout: time (s) to wait (use common.Duration.INFINITE to block indefinitely)
             visitor: runnable entities on each node after it's setup
+            **kwargs: distribute args to this behaviour and in turn, to it's children
 
         .. note:
 
@@ -437,7 +439,8 @@ class BehaviourTree(py_trees.trees.BehaviourTree):
             super().setup(
                 timeout=setup_timeout,
                 visitor=visitor,
-                node=self.node
+                node=self.node,
+                **kwargs
             )
         except RuntimeError as e:
             if str(e) == "tree setup interrupted or timed out":
