@@ -58,7 +58,7 @@ class FromBlackboard(py_trees.behaviour.Behaviour):
             name="WaitForGoal",
             variable_name="/my_goal"
         )
-        action_client = py_trees_ros.aciton_clients.FromBlackboard(
+        action_client = py_trees_ros.action_clients.FromBlackboard(
             action_type=py_trees_actions.Dock,
             action_name="dock",
             name="ActionClient"

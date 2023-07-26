@@ -332,7 +332,7 @@ def test_from_blackboard():
 
     tree.tick()
 
-    # Nothing on blackboard yet
+    # Goal exists on blackboard
     assert_details("Goal exists - root.status", "RUNNING", root.status)
     assert(root.status == py_trees.common.Status.RUNNING)
 

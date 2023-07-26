@@ -8,7 +8,7 @@ $ pytest-3
 $ pytest-3 -s
 
 # run a test module
-$ pytest-3 -s test_alakazam.py
+$ pytest-3 -s test_action_client.py
 
 # run a single test
 $ pytest-3 -s test_action_clients.py::test_success
