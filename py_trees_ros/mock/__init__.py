@@ -15,3 +15,5 @@ This package contains mock ROS nodes for py_trees tests.
 
 from . import actions
 from . import dock
+from . import services
+from . import set_bool
