@@ -68,7 +68,7 @@ class FromBlackboard(py_trees.behaviour.Behaviour):
                  service_type: typing.Any,
                  service_name: str,
                  key_request: str,
-                 key_response: typing.Optional[str],
+                 key_response: typing.Optional[str]=None,
                  wait_for_server_timeout_sec: float=-3.0
                  ):
         super().__init__(name)
