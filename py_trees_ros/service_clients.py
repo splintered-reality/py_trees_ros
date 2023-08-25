@@ -73,7 +73,7 @@ class FromBlackboard(py_trees.behaviour.Behaviour):
                  ):
         super().__init__(name)
         self.service_type = service_type
-        self.service_name = service_name
+        self.init_service_name = service_name
         self.wait_for_server_timeout_sec = wait_for_server_timeout_sec
         self.blackboard = self.attach_blackboard_client(name=self.name)
         self.blackboard.register_key(
@@ -112,6 +112,10 @@ class FromBlackboard(py_trees.behaviour.Behaviour):
         except KeyError as e:
             error_message = "didn't find 'node' in setup's kwargs [{}][{}]".format(self.qualified_name)
             raise KeyError(error_message) from e  # 'direct cause' traceability
+
+        # Handle service name remappings, which are not handled by default in rclpy.
+        # See https://github.com/ros2/rclpy/issues/954
+        self.service_name = self.node.resolve_service_name(self.init_service_name)
 
         self.service_client = self.node.create_client(srv_type=self.service_type, srv_name=self.service_name)
 
