@@ -23,6 +23,7 @@ from . import exceptions
 from . import mock
 from . import programs
 from . import publishers
+from . import service_clients
 from . import subscribers
 from . import transforms
 from . import trees

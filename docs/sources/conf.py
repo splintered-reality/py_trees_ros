@@ -146,6 +146,7 @@ MOCK_MODULES = [
     'ros2topic', 'ros2topic.api',
     'sensor_msgs', 'sensor_msgs.msg',
     'std_msgs', 'std_msgs.msg',
+    'std_srvs', 'std_srvs.srv',
     'tf2_ros',
     'unique_identifier_msgs', 'unique_identifier_msgs.msg'
 ]
