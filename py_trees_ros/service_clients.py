@@ -116,8 +116,10 @@ class FromBlackboard(py_trees.behaviour.Behaviour):
         self.service_client = self.node.create_client(srv_type=self.service_type, srv_name=self.service_name)
 
         result = None
-        if self.wait_for_server_timeout_sec >= 0.0:
+        if self.wait_for_server_timeout_sec > 0.0:
             result = self.service_client.wait_for_service(timeout_sec=self.wait_for_server_timeout_sec)
+        elif self.wait_for_server_timeout_sec == 0.0:
+            result = True # don't wait and don't check if the server is ready
         else:
             iterations = 0
             period_sec = -1.0*self.wait_for_server_timeout_sec

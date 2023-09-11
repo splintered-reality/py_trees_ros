@@ -151,8 +151,10 @@ class FromBlackboard(py_trees.behaviour.Behaviour):
             action_name=self.action_name
         )
         result = None
-        if self.wait_for_server_timeout_sec >= 0.0:
+        if self.wait_for_server_timeout_sec > 0.0:
             result = self.action_client.wait_for_server(timeout_sec=self.wait_for_server_timeout_sec)
+        elif self.wait_for_server_timeout_sec == 0.0:
+            result = True # don't wait and don't check if the server is ready
         else:
             iterations = 0
             period_sec = -1.0*self.wait_for_server_timeout_sec
