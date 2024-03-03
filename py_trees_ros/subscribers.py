@@ -77,6 +77,7 @@ class Handler(py_trees.behaviour.Behaviour):
         topic_name: name of the topic to connect to
         topic_type: class of the message type (e.g. :obj:`std_msgs.msg.String`)
         qos_profile: qos profile for the subscriber
+        callback_group: callback group for the subscriber
         clearing_policy: when to clear the data
     """
     def __init__(self,
@@ -84,6 +85,7 @@ class Handler(py_trees.behaviour.Behaviour):
                  topic_name: str,
                  topic_type: typing.Any,
                  qos_profile: rclpy.qos.QoSProfile,
+                 callback_group: rclpy.callback_groups.CallbackGroup=None,
                  clearing_policy: py_trees.common.ClearingPolicy=py_trees.common.ClearingPolicy.ON_INITIALISE
                  ):
         super(Handler, self).__init__(name=name)
@@ -94,6 +96,7 @@ class Handler(py_trees.behaviour.Behaviour):
         self.data_guard = threading.Lock()
         self.clearing_policy = clearing_policy
         self.qos_profile = qos_profile
+        self.callback_group = callback_group
         self.node = None
 
     def setup(self, **kwargs):
@@ -116,7 +119,8 @@ class Handler(py_trees.behaviour.Behaviour):
             msg_type=self.topic_type,
             topic=self.topic_name,
             callback=self._callback,
-            qos_profile=self.qos_profile
+            qos_profile=self.qos_profile,
+            callback_group=self.callback_group
         )
 
     def initialise(self):
