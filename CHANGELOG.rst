@@ -4,7 +4,14 @@ Changelog
 
 Forthcoming
 -----------
-* ...
+* [behaviours] Implement Behaviors to Interact with ROS Services (`#215 <https://github.com/splintered-reality/py_trees_ros/issues/215>`_)
+* [behaviours] Support setting subscription callback_group (`#220 <https://github.com/splintered-reality/py_trees_ros/issues/220>`_)
+* [behaviours] Add keyword arguments to setup
+* [vscode] gl capabilities in the devcontainer
+* [readme] py-trees-js status for rolling, humble
+* [readme] deb install instructions for ros2
+* [readme] py-trees-ros build status for rolling, humble
+* Contributors: Amal Nanavati, Daniel Stonier, Hervé Audren, fred-labs
 
 2.2.2 (2023-02-10)
 ------------------
