@@ -2,8 +2,8 @@
 Changelog
 =========
 
-Forthcoming
------------
+2.3.0 (2025-01-11)
+------------------
 * [behaviours] Implement Behaviors to Interact with ROS Services (`#215 <https://github.com/splintered-reality/py_trees_ros/issues/215>`_)
 * [behaviours] Support setting subscription callback_group (`#220 <https://github.com/splintered-reality/py_trees_ros/issues/220>`_)
 * [behaviours] Add keyword arguments to setup
