@@ -20,7 +20,7 @@ setup(
     install_requires=[],
     extras_require={},
     author='Daniel Stonier, Naveed Usmani, Michal Staniaszek',
-    maintainer='Daniel Stonier <d.stonier@gmail.com>',
+    maintainer='Daniel Stonier <d.stonier@gmail.com>, Sebastian Castro <sebas.a.castro@gmail.com>',
     url='https://github.com/splintered-reality/py_trees_ros',
     keywords=['ROS', 'behaviour-trees'],
     zip_safe=True,
