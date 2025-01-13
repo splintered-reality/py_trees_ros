@@ -12,6 +12,7 @@ $ sudo apt install \
     ros-jazzy-py-trees \
     ros-jazzy-py-trees-ros-interfaces \
     ros-jazzy-py-trees-ros \
+    ros-jazzy-py-trees-ros-tutorials \
     ros-jazzy-py-trees-ros-viewer
 ```
 
