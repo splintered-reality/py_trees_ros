@@ -216,7 +216,7 @@ class FromBlackboard(py_trees.behaviour.Behaviour):
             # goal was rejected
             self.feedback_message = "goal rejected"
             return py_trees.common.Status.FAILURE
-        if self.result_status is None or not self.get_result_future:
+        if self.result_status is None or self.get_result_future is None:
             return py_trees.common.Status.RUNNING
         elif not self.get_result_future.done():
             # should never get here
