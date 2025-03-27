@@ -74,7 +74,7 @@ class FromBlackboard(py_trees.behaviour.Behaviour):
             action_type=py_trees_actions.Dock,
             action_name="dock",
             name="ActionClient",
-            generate_message=lambda msg: "{:.2f}%%".format(msg.feedback.percentage_completed)
+            generate_feedback_message=lambda msg: "{:.2f}%%".format(msg.feedback.percentage_completed)
         )
 
     Args:
