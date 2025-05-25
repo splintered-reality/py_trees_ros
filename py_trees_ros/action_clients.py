@@ -410,3 +410,67 @@ class FromConstant(FromBlackboard):
             access=py_trees.common.Access.WRITE,
         )
         self.blackboard.set(name=key, value=action_goal)
+
+
+class AttributesFromBB(FromBlackboard):
+    """
+    Convenience version of the action client that creates a goal with fields read from BB.
+
+    .. see-also: :class:`py_trees_ros.action_clients.FromBlackboard`
+
+    Args:
+        name: name of the behaviour
+        action_type: spec type for the action (e.g. move_base_msgs.action.MoveBase)
+        action_name: where you can find the action topics & services (e.g. "bob/move_base")
+        goal_fields: dictionary containing pairs of blackboard key: goal field that will be used to construct the goal
+        generate_feedback_message: formatter for feedback messages, takes action_type.Feedback
+            messages and returns strings (default: None)
+        wait_for_server_timeout_sec: use negative values for a blocking but periodic check (default: -3.0)
+
+    .. note::
+       The default setting for timeouts (a negative value) will suit
+       most use cases. With this setting the behaviour will periodically check and
+       issue a warning if the server can't be found. Actually aborting the setup can
+       usually be left up to the behaviour tree manager.
+    """
+
+    def __init__(self,
+                 name: str,
+                 action_type: typing.Any,
+                 action_name: str,
+                 goal_fields: dict,
+                 generate_feedback_message: typing.Callable[[typing.Any], str] = None,
+                 wait_for_server_timeout_sec: float = -3.0
+                 ):
+        unique_id = uuid.uuid4()
+        self.key = "/goal_" + str(unique_id)
+        super().__init__(
+            action_type=action_type,
+            action_name=action_name,
+            key=self.key,
+            name=name,
+            generate_feedback_message=generate_feedback_message,
+            wait_for_server_timeout_sec=wait_for_server_timeout_sec
+        )
+        # The parent constructor already instantiated a blackboard client
+        self.goal_fields = goal_fields
+        for _, bb_key in self.goal_fields.items():
+            self.blackboard.register_key(
+                key=bb_key,
+                access=py_trees.common.Access.READ,
+            )
+        self.blackboard.register_key(
+            key=self.key,
+            access=py_trees.common.Access.WRITE,
+        )
+
+    def initialise(self):
+        """
+        Read from the blackboard the attributes to create a goal object; if succeeded, write it to the blackboard.
+        """
+        self.logger.debug("%s.initialise()" % self.__class__.__name__)
+        goal_attributes = {goal_attr: self.blackboard.get(bb_key) for goal_attr, bb_key in self.goal_fields.items()}
+        goal = self.action_type.Goal(**goal_attributes)
+        self.blackboard.set(name=self.key, value=goal)
+
+        super().initialise()
