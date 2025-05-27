@@ -412,9 +412,9 @@ class FromConstant(FromBlackboard):
         self.blackboard.set(name=key, value=action_goal)
 
 
-class AttributesFromBB(FromBlackboard):
+class AttributesFromBlackboard(FromBlackboard):
     """
-    Convenience version of the action client that creates a goal with fields read from BB.
+    Convenience version of the action client that creates a goal with fields read from the blackboard.
 
     .. see-also: :class:`py_trees_ros.action_clients.FromBlackboard`
 
@@ -422,7 +422,7 @@ class AttributesFromBB(FromBlackboard):
         name: name of the behaviour
         action_type: spec type for the action (e.g. move_base_msgs.action.MoveBase)
         action_name: where you can find the action topics & services (e.g. "bob/move_base")
-        goal_fields: dictionary containing pairs of blackboard key: goal field that will be used to construct the goal
+        goal_fields: dictionary containing pairs {goal field: blackboard key} that will be used to construct the goal
         generate_feedback_message: formatter for feedback messages, takes action_type.Feedback
             messages and returns strings (default: None)
         wait_for_server_timeout_sec: use negative values for a blocking but periodic check (default: -3.0)
@@ -438,7 +438,7 @@ class AttributesFromBB(FromBlackboard):
                  name: str,
                  action_type: typing.Any,
                  action_name: str,
-                 goal_fields: dict,
+                 goal_fields: dict[str, typing.Any],
                  generate_feedback_message: typing.Callable[[typing.Any], str] = None,
                  wait_for_server_timeout_sec: float = -3.0
                  ):
@@ -453,8 +453,9 @@ class AttributesFromBB(FromBlackboard):
             wait_for_server_timeout_sec=wait_for_server_timeout_sec
         )
         # The parent constructor already instantiated a blackboard client
+        # Here we register the keys from which we will read the goal attributes and a key to store the goal itself
         self.goal_fields = goal_fields
-        for _, bb_key in self.goal_fields.items():
+        for bb_key in self.goal_fields.values():
             self.blackboard.register_key(
                 key=bb_key,
                 access=py_trees.common.Access.READ,
