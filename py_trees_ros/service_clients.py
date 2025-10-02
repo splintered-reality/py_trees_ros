@@ -31,7 +31,7 @@ from . import exceptions
 
 class FromBlackboard(py_trees.behaviour.Behaviour):
     """
-    An service client interface that draws requests from the blackboard. The
+    A service client interface that draws requests from the blackboard. The
     lifecycle of this behaviour works as follows:
 
     * :meth:`initialise`: check blackboard for a request and send
@@ -185,7 +185,7 @@ class FromBlackboard(py_trees.behaviour.Behaviour):
             if self.write_response_to_blackboard:
                 self.blackboard.response = self.response
             return py_trees.common.Status.SUCCESS
-        
+
     def terminate(self, new_status: py_trees.common.Status):
         """
         If running and the current request has not already succeeded, cancel it.
@@ -255,3 +255,56 @@ class FromConstant(FromBlackboard):
             access=py_trees.common.Access.WRITE,
         )
         self.blackboard.set(name=key_request, value=service_request)
+
+
+class AttributesFromBlackboard(FromBlackboard):
+    """
+    Convenience version of the service client that creates a request with fields read from BB.
+
+    Args:
+        name (str): Name of the behaviour
+        service_type (typing.Any): Type of the service
+        service_name (str): Endpoint of the service
+        request_fields (dict[str, typing.Any]): Fields of the request mapped to blackboard variables
+        wait_for_server_timeout_sec (float, optional): Wait timeout for the service. Defaults to -3.0.
+    """
+
+    def __init__(self,
+                 name: str,
+                 service_type: typing.Any,
+                 service_name: str,
+                 request_fields: dict[str, typing.Any],
+                 wait_for_server_timeout_sec: float = -3.0
+                 ):
+        unique_id = uuid.uuid4()
+        self.key_request = "/request_" + str(unique_id)
+        super().__init__(
+            service_type=service_type,
+            service_name=service_name,
+            key_request=self.key_request,
+            name=name,
+            wait_for_server_timeout_sec=wait_for_server_timeout_sec
+        )
+        # The parent constructor already instantiated a blackboard client
+        self.request_fields = request_fields
+        for bb_key in self.request_fields.values():
+            self.blackboard.register_key(
+                key=bb_key,
+                access=bt.common.Access.READ,
+            )
+        self.blackboard.register_key(
+            key=self.key_request,
+            access=bt.common.Access.WRITE,
+        )
+
+    def initialise(self):
+        """
+        Read from the blackboard the attributes to create a Request object; if succeeded, write it to the blackboard.
+        """
+        self.logger.debug("%s.initialise()" % self.__class__.__name__)
+        request_attributes = {request_attr: self.blackboard.get(bb_key) for request_attr, bb_key in
+                              self.request_fields.items()}
+        request = self.service_type.Request(**request_attributes)
+        self.blackboard.set(name=self.key_request, value=request)
+
+        super().initialise()
