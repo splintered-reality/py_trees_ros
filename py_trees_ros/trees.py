@@ -554,7 +554,7 @@ class BehaviourTree(py_trees.trees.BehaviourTree):
         super().shutdown()
         if self.node is not None:
             # shutdown the node - this *should* automagically clean
-            # up any non-estoeric shutdown of ros communications
+            # up any non-esoteric shutdown of ros communications
             # inside behaviours
             self.node.destroy_node()
 

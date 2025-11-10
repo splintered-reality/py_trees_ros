@@ -19,6 +19,7 @@ Behaviours for ROS actions.
 
 import typing
 import uuid
+from abc import ABC, abstractmethod
 
 import action_msgs.msg as action_msgs  # GoalStatus
 import py_trees
@@ -480,3 +481,61 @@ class AttributesFromBlackboard(FromBlackboard):
         self.blackboard.set(name=self.key, value=goal)
 
         super().initialise()
+
+
+class FromCallback(FromBlackboard, ABC):
+    """
+    Convenience version of the action client that obtains the goal from a callback implemented by derived classes.
+
+    .. see-also: :class:`py_trees_ros.action_clients.FromBlackboard`
+
+    Args:
+        name: name of the behaviour
+        action_type: spec type for the action (e.g. move_base_msgs.action.MoveBase)
+        action_name: where you can find the action topics & services (e.g. "bob/move_base")
+        generate_feedback_message: formatter for feedback messages, takes action_type.Feedback
+            messages and returns strings (default: None)
+        wait_for_server_timeout_sec: use negative values for a blocking but periodic check (default: -3.0)
+
+    .. note::
+       The default setting for timeouts (a negative value) will suit
+       most use cases. With this setting the behaviour will periodically check and
+       issue a warning if the server can't be found. Actually aborting the setup can
+       usually be left up to the behaviour tree manager.
+    """
+
+    def __init__(self,
+                 name: str,
+                 action_type: typing.Any,
+                 action_name: str,
+                 generate_feedback_message: typing.Callable[[typing.Any], str] = None,
+                 wait_for_server_timeout_sec: float = -3.0
+                 ):
+        unique_id = uuid.uuid4()
+        self.key = "/goal_" + str(unique_id)
+        super().__init__(
+            action_type=action_type,
+            action_name=action_name,
+            key=self.key,
+            name=name,
+            generate_feedback_message=generate_feedback_message,
+            wait_for_server_timeout_sec=wait_for_server_timeout_sec
+        )
+        # The parent constructor already instantiated a blackboard client
+        self.blackboard.register_key(
+            key=self.key,
+            access=py_trees.common.Access.WRITE,
+        )
+
+    def initialise(self):
+        """
+        Call derived class `get_goal` method and write the returned action goal to the blackboard.
+        """
+        self.logger.debug("%s.initialise()" % self.__class__.__name__)
+        self.blackboard.set(name=self.key, value=self.get_goal())
+
+        super().initialise()
+
+    @abstractmethod
+    def get_goal(self):
+        pass
