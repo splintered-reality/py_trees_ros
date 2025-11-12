@@ -340,6 +340,39 @@ def test_from_blackboard():
     server.shutdown()
     executor.shutdown()
 
+
+def test_failure_from_blackboard():
+    console.banner("Client Failure, Goal of wrong type")
+
+    server = py_trees_ros.mock.dock.Dock(duration=1.5)
+
+    root = create_action_client(from_blackboard=True)
+    tree = py_trees_ros.trees.BehaviourTree(root=root)
+
+    # ROS Setup
+    tree.setup()
+    executor = rclpy.executors.MultiThreadedExecutor(num_threads=4)
+    executor.add_node(server.node)
+    executor.add_node(tree.node)
+
+    print("")
+    assert_banner()
+
+    py_trees.blackboard.Blackboard.set(
+        variable_name="/goal",
+        value=py_trees_actions.MoveBase.Goal()  # noqa
+    )
+
+    tree.tick()
+
+    # Goal of wrong type
+    assert_details("Goal of wrong type - root.status", "FAILURE", root.status)
+    assert(root.status == py_trees.common.Status.FAILURE)
+
+    tree.shutdown()
+    server.shutdown()
+    executor.shutdown()
+
 ########################################
 # Timeouts
 ########################################
