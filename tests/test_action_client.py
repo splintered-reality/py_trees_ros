@@ -35,8 +35,8 @@ def assert_details(text, expected, result):
           console.reset)
 
 
-def create_action_client(from_blackboard=False, wait_for_server_timeout_sec=2.0):
-    if from_blackboard:
+def create_action_client(client_type="from_constant", wait_for_server_timeout_sec=2.0):
+    if client_type == "from_blackboard":
         behaviour = py_trees_ros.action_clients.FromBlackboard(
             name="dock",
             action_type=py_trees_actions.Dock,
@@ -45,7 +45,7 @@ def create_action_client(from_blackboard=False, wait_for_server_timeout_sec=2.0)
             generate_feedback_message=lambda msg: "{:.2f}%%".format(msg.feedback.percentage_completed),
             wait_for_server_timeout_sec=wait_for_server_timeout_sec
         )
-    else:
+    elif client_type == "from_constant":
         behaviour = py_trees_ros.action_clients.FromConstant(
             name="dock",
             action_type=py_trees_actions.Dock,
@@ -54,6 +54,21 @@ def create_action_client(from_blackboard=False, wait_for_server_timeout_sec=2.0)
             generate_feedback_message=lambda msg: "{:.2f}%%".format(msg.feedback.percentage_completed),
             wait_for_server_timeout_sec=wait_for_server_timeout_sec
         )
+    elif client_type == "from_callback":
+        class Dock(py_trees_ros.action_clients.FromCallback):
+            def get_goal(self):
+                return py_trees_actions.Dock.Goal(dock=True)
+
+        behaviour = Dock(
+            name="dock",
+            action_type=py_trees_actions.Dock,
+            action_name="dock",
+            generate_feedback_message=lambda msg: "{:.2f}%%".format(msg.feedback.percentage_completed),
+            wait_for_server_timeout_sec=wait_for_server_timeout_sec
+        )
+    else:
+        raise ValueError(f"Unknown client type: '{client_type}'")
+
     return behaviour
 
 
@@ -307,7 +322,7 @@ def test_from_blackboard():
 
     server = py_trees_ros.mock.dock.Dock(duration=1.5)
 
-    root = create_action_client(from_blackboard=True)
+    root = create_action_client(client_type="from_blackboard")
     tree = py_trees_ros.trees.BehaviourTree(root=root)
 
     # ROS Setup
@@ -346,7 +361,7 @@ def test_failure_from_blackboard():
 
     server = py_trees_ros.mock.dock.Dock(duration=1.5)
 
-    root = create_action_client(from_blackboard=True)
+    root = create_action_client(client_type="from_blackboard")
     tree = py_trees_ros.trees.BehaviourTree(root=root)
 
     # ROS Setup
@@ -374,6 +389,39 @@ def test_failure_from_blackboard():
     executor.shutdown()
 
 ########################################
+# From Callback
+########################################
+
+
+def test_from_callback():
+    console.banner("From Callback")
+
+    server = py_trees_ros.mock.dock.Dock(duration=1.5)
+
+    root = create_action_client(client_type="from_callback")
+    tree = py_trees_ros.trees.BehaviourTree(root=root)
+
+    # ROS Setup
+    tree.setup()
+    executor = rclpy.executors.MultiThreadedExecutor(num_threads=4)
+    executor.add_node(server.node)
+    executor.add_node(tree.node)
+
+    print("")
+    assert_banner()
+
+    tree.tick()
+
+    # Goal exists on blackboard
+    assert_details("Goal exists - root.status", "RUNNING", root.status)
+    assert(root.status == py_trees.common.Status.RUNNING)
+
+    tree.shutdown()
+    server.shutdown()
+    executor.shutdown()
+
+
+########################################
 # Timeouts
 ########################################
 
@@ -382,7 +430,7 @@ def test_timeouts():
     console.banner("Timeouts")
 
     timeout = 0.1
-    root = create_action_client(from_blackboard=True, wait_for_server_timeout_sec=timeout)
+    root = create_action_client(client_type="from_blackboard", wait_for_server_timeout_sec=timeout)
     tree = py_trees_ros.trees.BehaviourTree(root=root)
 
     start_time = time.monotonic()
