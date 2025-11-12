@@ -195,8 +195,13 @@ class FromBlackboard(py_trees.behaviour.Behaviour):
         try:
             self.send_goal_request(self.blackboard.goal)
             self.feedback_message = "sent goal request"
-        except KeyError:
-            pass  # self.send_goal_future will be None, check on that
+        except TypeError:
+            expected_type = self.action_type.Goal.__name__
+            received_type = type(self.blackboard.goal).__name__
+            self.logger.error(f"Received a goal of type <{received_type}> instead of <{expected_type}>")
+        except KeyError as e:
+            self.logger.error(f"{e}")
+        # self.send_goal_future will be None on either exception, and update will return FAILURE
 
     def update(self):
         """
