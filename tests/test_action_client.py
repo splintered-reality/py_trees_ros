@@ -361,7 +361,7 @@ def test_failure_from_blackboard():
 
     server = py_trees_ros.mock.dock.Dock(duration=1.5)
 
-    root = create_action_client(from_blackboard=True)
+    root = create_action_client(client_type="from_blackboard")
     tree = py_trees_ros.trees.BehaviourTree(root=root)
 
     # ROS Setup

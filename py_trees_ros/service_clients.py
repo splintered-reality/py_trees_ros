@@ -19,6 +19,7 @@ Behaviours for ROS services.
 from asyncio.tasks import wait_for
 import typing
 import uuid
+from abc import ABC, abstractmethod
 
 import py_trees
 
@@ -148,7 +149,7 @@ class FromBlackboard(py_trees.behaviour.Behaviour):
 
     def initialise(self):
         """
-        Reset the internal variables and kick off a new request request.
+        Reset the internal variables and kick off a new request.
         """
         self.logger.debug("{}.initialise()".format(self.qualified_name))
 
@@ -245,7 +246,7 @@ class FromConstant(FromBlackboard):
                  wait_for_server_timeout_sec: float=-3.0
                  ):
         unique_id = uuid.uuid4()
-        key_request = "/goal_" + str(unique_id)
+        key_request = "/request_" + str(unique_id)
         super().__init__(
             service_type=service_type,
             service_name=service_name,
@@ -313,3 +314,61 @@ class AttributesFromBlackboard(FromBlackboard):
         self.blackboard.set(name=self.key_request, value=request)
 
         super().initialise()
+
+
+class FromCallback(FromBlackboard, ABC):
+    """
+    Convenience version of the service client that obtains the request from a callback implemented
+    by derived classes.
+
+    .. see-also: :class:`py_trees_ros.service_clients.FromBlackboard`
+
+    Args:
+        name: name of the behaviour
+        name: name of the behaviour
+        service_type: spec type for the service
+        service_name: where you can find the service
+        key_response: optional name of the key for the response on the blackboard (default: None)
+        wait_for_server_timeout_sec: use negative values for a blocking but periodic check (default: -3.0)
+
+    .. note::
+       The default setting for timeouts (a negative value) will suit
+       most use cases. With this setting the behaviour will periodically check and
+       issue a warning if the server can't be found. Actually aborting the setup can
+       usually be left up to the behaviour tree manager.
+    """
+    def __init__(self,
+                 name: str,
+                 service_type: typing.Any,
+                 service_name: str,
+                 key_response: typing.Optional[str]=None,
+                 wait_for_server_timeout_sec: float=-3.0
+                 ):
+        unique_id = uuid.uuid4()
+        self.key_request = "/request_" + str(unique_id)
+        super().__init__(
+            service_type=service_type,
+            service_name=service_name,
+            key_request=self.key_request,
+            key_response=key_response,
+            name=name,
+            wait_for_server_timeout_sec=wait_for_server_timeout_sec
+        )
+        # parent already instantiated a blackboard client
+        self.blackboard.register_key(
+            key=self.key_request,
+            access=py_trees.common.Access.WRITE,
+        )
+
+    def initialise(self):
+        """
+        Call derived class `get_request` method and write the returned service request to the blackboard.
+        """
+        self.logger.debug("%s.initialise()" % self.__class__.__name__)
+        self.blackboard.set(name=self.key_request, value=self.get_request())
+
+        super().initialise()
+
+    @abstractmethod
+    def get_request(self):
+        pass

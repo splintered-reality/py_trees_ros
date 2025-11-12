@@ -35,8 +35,8 @@ def assert_details(text, expected, result):
           console.reset)
 
 
-def create_service_client(from_blackboard=False, key_response=None, wait_for_server_timeout_sec=2.0):
-    if from_blackboard:
+def create_service_client(client_type="from_constant", key_response=None, wait_for_server_timeout_sec=2.0):
+    if client_type == "from_blackboard":
         behaviour = py_trees_ros.service_clients.FromBlackboard(
             name="set_bool_client",
             service_type=SetBool,
@@ -45,7 +45,7 @@ def create_service_client(from_blackboard=False, key_response=None, wait_for_ser
             key_response=key_response,
             wait_for_server_timeout_sec=wait_for_server_timeout_sec
         )
-    else:
+    elif client_type == "from_constant":
         behaviour = py_trees_ros.service_clients.FromConstant(
             name="set_bool_client",
             service_type=SetBool,
@@ -54,6 +54,21 @@ def create_service_client(from_blackboard=False, key_response=None, wait_for_ser
             key_response=key_response,
             wait_for_server_timeout_sec=wait_for_server_timeout_sec
         )
+    elif client_type == "from_callback":
+        class SetBoolFromCallback(py_trees_ros.service_clients.FromCallback):
+            def get_request(self):
+                return SetBool.Request(data=True)
+
+        behaviour = SetBoolFromCallback(
+            name="set_bool_client",
+            service_type=SetBool,
+            service_name="set_bool",
+            key_response=key_response,
+            wait_for_server_timeout_sec=wait_for_server_timeout_sec
+        )
+    else:
+        raise ValueError(f"Unknown client type: '{client_type}'")
+
     return behaviour
 
 
@@ -190,7 +205,7 @@ def test_success_from_blackboard():
 
     server = py_trees_ros.mock.set_bool.SetBoolServer(sleep_time=1.0)
 
-    root = create_service_client(from_blackboard=True)
+    root = create_service_client(client_type="from_blackboard")
     tree = py_trees_ros.trees.BehaviourTree(
         root=root,
         unicode_tree_debug=False
@@ -277,7 +292,7 @@ def test_failure_server_does_not_exist():
     console.banner("Client Failure, Server does not exist")
 
     timeout = 0.1
-    root = create_service_client(from_blackboard=True, wait_for_server_timeout_sec=timeout)
+    root = create_service_client(client_type="from_blackboard", wait_for_server_timeout_sec=timeout)
     tree = py_trees_ros.trees.BehaviourTree(root=root)
 
     start_time = time.monotonic()
@@ -299,7 +314,7 @@ def test_failure_from_blackboard():
 
     server = py_trees_ros.mock.set_bool.SetBoolServer(sleep_time=1.0)
 
-    root = create_service_client(from_blackboard=True)
+    root = create_service_client(client_type="from_blackboard")
     tree = py_trees_ros.trees.BehaviourTree(
         root=root,
         unicode_tree_debug=False
@@ -368,6 +383,46 @@ def test_priority_interrupt():
 
     # Sleep longer than sleep time to ensure nothing happens after the server callback ends
     time.sleep(sleep_time*1.5)
+
+    tree.shutdown()
+    server.shutdown()
+    executor.shutdown()
+
+########################################
+# From Callback
+########################################
+
+
+def test_from_callback():
+    console.banner("From Callback")
+
+    server = py_trees_ros.mock.set_bool.SetBoolServer(sleep_time=1.0)
+
+    root = create_service_client(client_type="from_callback")
+    tree = py_trees_ros.trees.BehaviourTree(root=root)
+
+    tree.setup()
+    executor = rclpy.executors.MultiThreadedExecutor(num_threads=4)
+    executor.add_node(server.node)
+    executor.add_node(tree.node)
+
+    assert_banner()
+
+    tree.tick()
+
+    assert_details("root.status", "RUNNING", root.status)
+    assert(root.status == py_trees.common.Status.RUNNING)
+
+    tree.tick_tock(
+        period_ms=100,
+        number_of_iterations=number_of_iterations()
+    )
+
+    while tree.count < number_of_iterations() and root.status == py_trees.common.Status.RUNNING:
+        executor.spin_once(timeout_sec=0.05)
+
+    assert_details("root.status", "SUCCESS", root.status)
+    assert(root.status == py_trees.common.Status.SUCCESS)
 
     tree.shutdown()
     server.shutdown()
