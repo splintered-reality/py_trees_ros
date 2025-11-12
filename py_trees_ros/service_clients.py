@@ -158,8 +158,12 @@ class FromBlackboard(py_trees.behaviour.Behaviour):
         try:
             if self.service_client.service_is_ready():
                 self.service_future = self.service_client.call_async(self.blackboard.request)
-        except (KeyError, TypeError):
-            pass  # self.service_future will be None, check on that
+        except TypeError:
+            tr, te = type(self.blackboard.request).__name__,  self.service_type.Request.__name__
+            self.logger.error(f"Received a request of type <{tr}> instead of <{te}>")
+        except KeyError as e:
+            self.logger.error(f"{e}")
+        # self.service_future will be None on either exception, and update will return FAILURE
 
     def update(self):
         """
