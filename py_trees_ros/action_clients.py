@@ -7,7 +7,6 @@
 ##############################################################################
 # Documentation
 ##############################################################################
-from asyncio.tasks import wait_for
 
 """
 Behaviours for ROS actions.
@@ -24,6 +23,7 @@ from abc import ABC, abstractmethod
 import action_msgs.msg as action_msgs  # GoalStatus
 import py_trees
 import rclpy.action
+import rclpy.callback_groups
 
 from . import exceptions
 
@@ -86,6 +86,7 @@ class FromBlackboard(py_trees.behaviour.Behaviour):
         generate_feedback_message: formatter for feedback messages, takes action_type.Feedback
             messages and returns strings (default: None)
         wait_for_server_timeout_sec: use negative values for a blocking but periodic check (default: -3.0)
+        callback_group: callback group for the action client
 
     .. note::
        The default setting for timeouts (a negative value) will suit
@@ -99,12 +100,15 @@ class FromBlackboard(py_trees.behaviour.Behaviour):
                  action_name: str,
                  key: str,
                  generate_feedback_message: typing.Callable[[typing.Any], str]=None,
-                 wait_for_server_timeout_sec: float=-3.0
+                 wait_for_server_timeout_sec: float=-3.0,
+                 callback_group: typing.Optional[rclpy.callback_groups.CallbackGroup] = None,
                  ):
         super().__init__(name)
         self.action_type = action_type
         self.action_name = action_name
         self.wait_for_server_timeout_sec = wait_for_server_timeout_sec
+        self.callback_group = callback_group
+
         self.blackboard = self.attach_blackboard_client(name=self.name)
         self.blackboard.register_key(
             key="goal",
@@ -149,7 +153,8 @@ class FromBlackboard(py_trees.behaviour.Behaviour):
         self.action_client = rclpy.action.ActionClient(
             node=self.node,
             action_type=self.action_type,
-            action_name=self.action_name
+            action_name=self.action_name,
+            callback_group=self.callback_group,
         )
         result = None
         if self.wait_for_server_timeout_sec > 0.0:

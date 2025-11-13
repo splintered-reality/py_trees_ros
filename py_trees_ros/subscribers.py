@@ -85,7 +85,7 @@ class Handler(py_trees.behaviour.Behaviour):
                  topic_name: str,
                  topic_type: typing.Any,
                  qos_profile: rclpy.qos.QoSProfile,
-                 callback_group: rclpy.callback_groups.CallbackGroup=None,
+                 callback_group: typing.Optional[rclpy.callback_groups.CallbackGroup] = None,
                  clearing_policy: py_trees.common.ClearingPolicy=py_trees.common.ClearingPolicy.ON_INITIALISE
                  ):
         super(Handler, self).__init__(name=name)
