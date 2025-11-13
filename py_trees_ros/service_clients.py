@@ -16,12 +16,12 @@ Behaviours for ROS services.
 # Imports
 ##############################################################################
 
-from asyncio.tasks import wait_for
 import typing
 import uuid
 from abc import ABC, abstractmethod
 
 import py_trees
+from rclpy.callback_groups import CallbackGroup
 
 from . import exceptions
 
@@ -57,6 +57,7 @@ class FromBlackboard(py_trees.behaviour.Behaviour):
         key_request: name of the key for the request on the blackboard
         key_response: optional name of the key for the response on the blackboard (default: None)
         wait_for_server_timeout_sec: use negative values for a blocking but periodic check (default: -3.0)
+        callback_group: callback group for the service client
 
     .. note::
        The default setting for timeouts (a negative value) will suit
@@ -70,12 +71,15 @@ class FromBlackboard(py_trees.behaviour.Behaviour):
                  service_name: str,
                  key_request: str,
                  key_response: typing.Optional[str]=None,
-                 wait_for_server_timeout_sec: float=-3.0
+                 wait_for_server_timeout_sec: float=-3.0,
+                 callback_group: typing.Optional[CallbackGroup] = None,
                  ):
         super().__init__(name)
         self.service_type = service_type
         self.service_name = service_name
         self.wait_for_server_timeout_sec = wait_for_server_timeout_sec
+        self.callback_group = callback_group
+
         self.blackboard = self.attach_blackboard_client(name=self.name)
         self.blackboard.register_key(
             key="request",
@@ -109,12 +113,16 @@ class FromBlackboard(py_trees.behaviour.Behaviour):
         """
         self.logger.debug("{}.setup()".format(self.qualified_name))
         try:
-            self.node = kwargs['node']
+            self.node = kwargs["node"]
         except KeyError as e:
             error_message = "didn't find 'node' in setup's kwargs [{}][{}]".format(self.qualified_name)
             raise KeyError(error_message) from e  # 'direct cause' traceability
 
-        self.service_client = self.node.create_client(srv_type=self.service_type, srv_name=self.service_name)
+        self.service_client = self.node.create_client(
+            srv_type=self.service_type,
+            srv_name=self.service_name,
+            callback_group=self.callback_group,
+        )
 
         result = None
         if self.wait_for_server_timeout_sec > 0.0:
@@ -123,7 +131,7 @@ class FromBlackboard(py_trees.behaviour.Behaviour):
             result = True # don't wait and don't check if the server is ready
         else:
             iterations = 0
-            period_sec = -1.0*self.wait_for_server_timeout_sec
+            period_sec = -1.0 * self.wait_for_server_timeout_sec
             while not result:
                 iterations += 1
                 result = self.service_client.wait_for_service(timeout_sec=period_sec)
