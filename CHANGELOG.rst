@@ -2,6 +2,20 @@
 Changelog
 =========
 
+2.4.0 (2025-11-13)
+------------------
+* [readme] Remove ROS 1 from, add ROS 2 Kilted to, README (`#242 <https://github.com/splintered-reality/py_trees_ros/issues/242>`_)
+* [behaviours] Fix callback group parameter consistency and remove (most) old-school type hints (`#241 <https://github.com/splintered-reality/py_trees_ros/issues/241>`_)
+* [behaviours] Support setting callback group for service and action clients (`#240 <https://github.com/splintered-reality/py_trees_ros/issues/240>`_)
+* [behaviours] Add FromCallback service and action client behaviors (`#238 <https://github.com/splintered-reality/py_trees_ros/issues/238>`_)
+* [behaviours] Avoid silent failure on service and action client FromBlackboard (`#236 <https://github.com/splintered-reality/py_trees_ros/issues/236>`_) (`#239 <https://github.com/splintered-reality/py_trees_ros/issues/239>`_)
+* [behaviours] Add convenience version of FromBlackboard service that creates a request with fields read from BB (`#235 <https://github.com/splintered-reality/py_trees_ros/issues/235>`_)
+* [behaviours] Add convenience version of FromBlackboard action that creates a goal with fields read from BB (`#232 <https://github.com/splintered-reality/py_trees_ros/issues/232>`_)
+* [behaviours] Fix feedback message args in docs action_clients.py (`#231 <https://github.com/splintered-reality/py_trees_ros/issues/231>`_)
+* [behaviours] fixes AttributeError when a goal callback does not return before the update() method of FromBlackboard. (`#229 <https://github.com/splintered-reality/py_trees_ros/issues/229>`_)
+* [readme] Update README to latest ROS versions (`#227 <https://github.com/splintered-reality/py_trees_ros/issues/227>`_)
+* Contributors: Jorge Santos Simón, Sebastian Castro, Thomas Cameron, tanneguy
+
 2.3.0 (2025-01-11)
 ------------------
 * [behaviours] Implement Behaviors to Interact with ROS Services (`#215 <https://github.com/splintered-reality/py_trees_ros/issues/215>`_)

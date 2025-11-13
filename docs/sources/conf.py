@@ -42,7 +42,7 @@ sys.path.insert(0, project_dir)
 ##############################################################################
 
 project = u'py_trees_ros'
-copyright = u'2023, Daniel Stonier'
+copyright = u'2023-2025, Daniel Stonier'
 author = "Daniel Stonier"
 
 version = __version__
@@ -116,9 +116,9 @@ html_show_sphinx = False
 
 intersphinx_mapping = {
     'python': ('https://docs.python.org/3', None),
-    'py_trees': ('https://py-trees.readthedocs.io/en/release-2.2.x', None),
-    'py_trees_ros_tutorials': ('https://py-trees-ros-tutorials.readthedocs.io/en/release-2.1.x', None),
-    'rclpy': ('https://docs.ros2.org/foxy/api/rclpy/', None),
+    'py_trees': ('https://py-trees.readthedocs.io/en/release-2.4.x', None),
+    'py_trees_ros_tutorials': ('https://py-trees-ros-tutorials.readthedocs.io/en/release-2.4.x', None),
+    'rclpy': ('https://docs.ros2.org/jazzy/p/rclpy/', None),
 }
 
 
