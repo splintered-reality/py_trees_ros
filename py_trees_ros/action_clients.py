@@ -99,9 +99,9 @@ class FromBlackboard(py_trees.behaviour.Behaviour):
                  action_type: typing.Any,
                  action_name: str,
                  key: str,
-                 generate_feedback_message: typing.Callable[[typing.Any], str]=None,
-                 wait_for_server_timeout_sec: float=-3.0,
-                 callback_group: typing.Optional[rclpy.callback_groups.CallbackGroup] = None,
+                 generate_feedback_message: typing.Callable[[typing.Any], str] = None,
+                 wait_for_server_timeout_sec: float = -3.0,
+                 callback_group: rclpy.callback_groups.CallbackGroup | None = None,
                  ):
         super().__init__(name)
         self.action_type = action_type

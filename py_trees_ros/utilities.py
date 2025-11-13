@@ -25,7 +25,6 @@ import rclpy
 import rclpy.node
 import rclpy.qos
 import time
-import typing
 
 from . import exceptions
 
@@ -86,7 +85,7 @@ def find_topics(
         node: rclpy.node.Node,
         topic_type: str,
         namespace: str=None,
-        timeout: float=0.5) -> typing.List[str]:
+        timeout: float=0.5) -> list[str]:
     """
     Discover a topic of the specified type and if necessary, under the specified
     namespace.
