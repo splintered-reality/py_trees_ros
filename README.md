@@ -4,7 +4,7 @@ Behaviours, trees, and utilities that extend [PyTrees](https://github.com/splint
 
 ![Trees](docs/images/trees.png?raw=true "Behaviour Trees")
 
-## Getting Started (ROS 2)
+## Getting Started
 
 Choose your ROS distro and install via debians, e.g., for Jazzy:
 ```
@@ -22,7 +22,7 @@ The [PyTrees ROS](https://py-trees-ros.readthedocs.io/en/devel/) documentation p
 
 For version specific releases of the documentation, refer to the documentation links in the matrix below.
 
-| ROS 2 | [Rolling][rolling-build-farm] | [Kilted][kilted-build-farm] | [Jazzy][jazzy-build-farm] | [Humble][humble-build-farm] |
+| ROS Distro | [Rolling][rolling-build-farm] | [Kilted][kilted-build-farm] | [Jazzy][jazzy-build-farm] | [Humble][humble-build-farm] |
 |:---:|:---:|:---:|:---:|:---:|
 | [py_trees][py-trees-ros-index] | [![2.3.x][2.3.x-sources-image]][py-trees-sources-2.3.x]<br/>[![Build Status][py-trees-build-status-rolling-image]][py-trees-build-status-rolling]<br/>[![2.3.x-Docs][2.3.x-rtd-image]][py-trees-docs-2.3.x] | [![2.3.x][2.3.x-sources-image]][py-trees-sources-2.3.x]<br/>[![Build Status][py-trees-build-status-kilted-image]][py-trees-build-status-kilted]<br/>[![2.3.x-Docs][2.3.x-rtd-image]][py-trees-docs-2.3.x] | [![2.3.x][2.3.x-sources-image]][py-trees-sources-2.3.x]<br/>[![Build Status][py-trees-build-status-jazzy-image]][py-trees-build-status-jazzy]<br/>[![2.3.x-Docs][2.3.x-rtd-image]][py-trees-docs-2.3.x] | [![2.3.x][2.3.x-sources-image]][py-trees-sources-2.3.x]<br/>[![Build Status][py-trees-build-status-humble-image]][py-trees-build-status-humble]<br/>[![2.3.x-Docs][2.3.x-rtd-image]][py-trees-docs-2.3.x] |
 | [py_trees_ros_interfaces][py-trees-ros-interfaces-ros-index] | [![2.3.x][2.3.x-sources-image]][py-trees-ros-interfaces-sources-2.3.x]<br/>[![Build Status][py-trees-ros-interfaces-build-status-rolling-image]][py-trees-ros-interfaces-build-status-rolling] | [![2.3.x][2.3.x-sources-image]][py-trees-ros-interfaces-sources-2.3.x]<br/>[![Build Status][py-trees-ros-interfaces-build-status-kilted-image]][py-trees-ros-interfaces-build-status-kilted] | [![2.3.x][2.3.x-sources-image]][py-trees-ros-interfaces-sources-2.3.x]<br/>[![Build Status][py-trees-ros-interfaces-build-status-jazzy-image]][py-trees-ros-interfaces-build-status-jazzy] | [![2.3.x][2.3.x-sources-image]][py-trees-ros-interfaces-sources-2.3.x]<br/>[![Build Status][py-trees-ros-interfaces-build-status-humble-image]][py-trees-ros-interfaces-build-status-humble] |
