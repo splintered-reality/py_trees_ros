@@ -22,8 +22,8 @@ from abc import ABC, abstractmethod
 
 import action_msgs.msg as action_msgs  # GoalStatus
 import py_trees
-from rclpy.action import ActionClient
-from rclpy.callback_groups import CallbackGroup
+import rclpy.action
+import rclpy.callback_groups
 
 from . import exceptions
 
@@ -101,7 +101,7 @@ class FromBlackboard(py_trees.behaviour.Behaviour):
                  key: str,
                  generate_feedback_message: typing.Callable[[typing.Any], str]=None,
                  wait_for_server_timeout_sec: float=-3.0,
-                 callback_group: typing.Optional[CallbackGroup] = None,
+                 callback_group: typing.Optional[rclpy.callback_groups.CallbackGroup] = None,
                  ):
         super().__init__(name)
         self.action_type = action_type
@@ -150,7 +150,7 @@ class FromBlackboard(py_trees.behaviour.Behaviour):
             error_message = "didn't find 'node' in setup's kwargs [{}][{}]".format(self.qualified_name)
             raise KeyError(error_message) from e  # 'direct cause' traceability
 
-        self.action_client = ActionClient(
+        self.action_client = rclpy.action.ActionClient(
             node=self.node,
             action_type=self.action_type,
             action_name=self.action_name,

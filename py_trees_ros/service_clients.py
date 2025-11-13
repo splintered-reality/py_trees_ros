@@ -21,7 +21,7 @@ import uuid
 from abc import ABC, abstractmethod
 
 import py_trees
-from rclpy.callback_groups import CallbackGroup
+import rclpy.callback_groups
 
 from . import exceptions
 
@@ -72,7 +72,7 @@ class FromBlackboard(py_trees.behaviour.Behaviour):
                  key_request: str,
                  key_response: typing.Optional[str]=None,
                  wait_for_server_timeout_sec: float=-3.0,
-                 callback_group: typing.Optional[CallbackGroup] = None,
+                 callback_group: typing.Optional[rclpy.callback_groups.CallbackGroup] = None,
                  ):
         super().__init__(name)
         self.service_type = service_type
