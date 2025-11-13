@@ -31,17 +31,6 @@ For version specific releases of the documentation, refer to the documentation l
 | [py_trees_js][py-trees-js-ros-index] | [![0.6.x][0.6.x-sources-image]][py-trees-js-sources-0.6.x]<br/>[![Build Status][py-trees-js-build-status-rolling-image]][py-trees-js-build-status-rolling]<br/>[![0.6.x-Docs][readme-docs-image]][py-trees-js-docs-0.6.x] | [![0.6.x][0.6.x-sources-image]][py-trees-js-sources-0.6.x]<br/>[![Build Status][py-trees-js-build-status-jazzy-image]][py-trees-js-build-status-jazzy]<br/>[![0.6.x-Docs][readme-docs-image]][py-trees-js-docs-0.6.x] | [![0.6.x][0.6.x-sources-image]][py-trees-js-sources-0.6.x]<br/>[![Build Status][py-trees-js-build-status-humble-image]][py-trees-js-build-status-humble]<br/>[![0.6.x-Docs][readme-docs-image]][py-trees-js-docs-0.6.x] | 
 | [py_trees_ros_viewer][py-trees-ros-viewer-ros-index] | [![0.2.x][0.2.x-sources-image]][py-trees-ros-viewer-sources-0.2.x]<br/>[![Build Status][py-trees-ros-viewer-build-status-rolling-image]][py-trees-ros-viewer-build-status-rolling]<br/>[![0.2.x-Docs][readme-docs-image]][py-trees-ros-viewer-docs-0.2.x] | [![0.2.x][0.2.x-sources-image]][py-trees-ros-viewer-sources-0.2.x]<br/>[![Build Status][py-trees-ros-viewer-build-status-jazzy-image]][py-trees-ros-viewer-build-status-jazzy]<br/>[![0.2.x-Docs][readme-docs-image]][py-trees-ros-viewer-docs-0.2.x] | [![0.2.x][0.2.x-sources-image]][py-trees-ros-viewer-sources-0.2.x]<br/>[![Build Status][py-trees-ros-viewer-build-status-humble-image]][py-trees-ros-viewer-build-status-humble]<br/>[![0.2.x-Docs][readme-docs-image]][py-trees-ros-viewer-docs-0.2.x] |
 
-## Getting Started (ROS 1)
-
-Refer to the documentation links in the matrix below (note: you'll find the tutorials in the `py_trees_ros` documentation).
-
-|  ROS 1 | [Noetic][noetic-build-farm] |
-|:---:|:---:|
-| [py_trees][py-trees-wiki] | [![0.7.x][0.7.x-sources-image]][py-trees-sources-0.7.x]<br/>[![Build Status][py-trees-build-status-noetic-image]][py-trees-build-status-noetic]<br/>[![Docs Status][py-trees-docs-noetic-image]][py-trees-docs-noetic] |
-| [py_trees_msgs][py-trees-msgs-wiki] | [![0.3.x][0.3.x-sources-image]][py-trees-msgs-sources-noetic]<br/>[![Build Status][py-trees-msgs-build-status-noetic-image]][py-trees-msgs-build-status-noetic]<br/>[![Docs Status][py-trees-msgs-docs-noetic-image]][py-trees-msgs-docs-noetic] |
-| [py_trees_ros][py-trees-ros-wiki] | [![0.6.x][0.6.x-sources-image]][py-trees-ros-sources-0.6.x]<br/>[![Build Status][py-trees-ros-build-status-noetic-image]][py-trees-ros-build-status-noetic]<br/>[![Docs Status][py-trees-ros-docs-noetic-image]][py-trees-ros-docs-noetic] |
-| [rqt_py_trees][rqt-py-trees-wiki] | [![0.4.x][0.4.x-sources-image]][rqt-py-trees-sources-noetic]<br/>[![Build Status][rqt-py-trees-build-status-noetic-image]][rqt-py-trees-build-status-noetic] |
-
 
 [devel-sources-image]: http://img.shields.io/badge/sources-devel-blue.svg?style=plastic
 [2.3.x-sources-image]: http://img.shields.io/badge/sources-2.3.x-blue.svg?style=plastic
@@ -84,7 +73,6 @@ Refer to the documentation links in the matrix below (note: you'll find the tuto
 [rolling-build-farm]: http://repo.ros2.org/status_page/ros_rolling_default.html?q=py_trees
 [jazzy-build-farm]: http://repo.ros2.org/status_page/ros_jazzy_default.html?q=py_trees
 [humble-build-farm]: http://repo.ros2.org/status_page/ros_humble_default.html?q=py_trees
-[noetic-build-farm]: http://repositories.ros.org/status_page/ros_noetic_default.html?q=py_trees
 
 [py-trees-build-status-rolling]: https://build.ros2.org/job/Rbin_uN64__py_trees__ubuntu_noble_amd64__binary/
 [py-trees-build-status-rolling-image]: https://build.ros2.org/job/Rbin_uN64__py_trees__ubuntu_noble_amd64__binary/badge/icon?style=plastic
@@ -92,8 +80,6 @@ Refer to the documentation links in the matrix below (note: you'll find the tuto
 [py-trees-build-status-jazzy-image]: https://build.ros2.org/job/Jbin_uN64__py_trees__ubuntu_noble_amd64__binary/badge/icon?style=plastic
 [py-trees-build-status-humble]: https://build.ros2.org/job/Hbin_uJ64__py_trees__ubuntu_jammy_amd64__binary/
 [py-trees-build-status-humble-image]: https://build.ros2.org/job/Hbin_uJ64__py_trees__ubuntu_jammy_amd64__binary/badge/icon?style=plastic
-[py-trees-build-status-noetic]: http://build.ros.org/job/Nbin_uF64__py_trees__ubuntu_focal_amd64__binary
-[py-trees-build-status-noetic-image]: http://build.ros.org/job/Nbin_uF64__py_trees__ubuntu_focal_amd64__binary/badge/icon?style=plastic
 [py-trees-docs-devel]: http://py-trees.readthedocs.io/
 [py-trees-docs-2.3.x]: http://py-trees.readthedocs.io/en/release-2.3.x/
 [py-trees-docs-2.2.x]: http://py-trees.readthedocs.io/en/release-2.2.x/
@@ -105,8 +91,6 @@ Refer to the documentation links in the matrix below (note: you'll find the tuto
 [py-trees-docs-rolling-image]: http://img.shields.io/badge/py_trees-rolling-brightgreen.svg?style=plastic
 [py-trees-docs-jazzy-image]: http://img.shields.io/badge/py_trees-jazzy-brightgreen.svg?style=plastic
 [py-trees-docs-humble-image]: http://img.shields.io/badge/py_trees-humble-brightgreen.svg?style=plastic
-[py-trees-docs-noetic]: http://docs.ros.org/noetic/api/py_trees/html/
-[py-trees-docs-noetic-image]: https://img.shields.io/jenkins/s/http/build.ros.org/job/Ndoc__py_trees__ubuntu_focal_amd64.svg?label=docs&style=plastic
 [py-trees-ros-index]: https://index.ros.org/p/py_trees/github-splintered-reality-py_trees
 [py-trees-sources-devel]: https://github.com/splintered-reality/py_trees/tree/devel
 [py-trees-sources-2.3.x]: https://github.com/splintered-reality/py_trees/tree/release/2.3.x
@@ -139,16 +123,12 @@ Refer to the documentation links in the matrix below (note: you'll find the tuto
 [py-trees-ros-build-status-jazzy-image]: https://build.ros2.org/job/Jbin_uN64__py_trees_ros__ubuntu_noble_amd64__binary/badge/icon?style=plastic
 [py-trees-ros-build-status-humble]: https://build.ros2.org/job/Hbin_uJ64__py_trees_ros__ubuntu_jammy_amd64__binary/
 [py-trees-ros-build-status-humble-image]: https://build.ros2.org/job/Hbin_uJ64__py_trees_ros__ubuntu_jammy_amd64__binary/badge/icon?style=plastic
-[py-trees-ros-build-status-noetic]: http://build.ros.org/job/Nbin_uF64__py_trees_ros__ubuntu_focal_amd64__binary
-[py-trees-ros-build-status-noetic-image]: http://build.ros.org/job/Nbin_uF64__py_trees_ros__ubuntu_focal_amd64__binary/badge/icon?style=plastic
 [py-trees-ros-docs-2.3.x]: http://py-trees-ros.readthedocs.io/en/release-2.3.x/
 [py-trees-ros-docs-2.2.x]: http://py-trees-ros.readthedocs.io/en/release-2.2.x/
 [py-trees-ros-docs-2.1.x]: http://py-trees-ros.readthedocs.io/en/release-2.1.x/
 [py-trees-ros-docs-2.0.x]: http://py-trees-ros.readthedocs.io/en/release-2.0.x/
 [py-trees-ros-docs-1.3.x]: http://py-trees-ros.readthedocs.io/en/release-1.3.x/
 [py-trees-ros-docs-1.2.x]: http://py-trees-ros.readthedocs.io/en/release-1.2.x/
-[py-trees-ros-docs-noetic]: http://docs.ros.org/noetic/api/py_trees_ros/html/
-[py-trees-ros-docs-noetic-image]: https://img.shields.io/jenkins/s/http/build.ros.org/job/Ndoc__py_trees_ros__ubuntu_focal_amd64.svg?label=docs&style=plastic
 [py-trees-ros-ros-index]: https://index.ros.org/p/py_trees_ros/github-splintered-reality-py_trees_ros
 [py-trees-ros-sources-2.3.x]: https://github.com/splintered-reality/py_trees_ros/tree/release/2.3.x
 [py-trees-ros-sources-2.2.x]: https://github.com/splintered-reality/py_trees_ros/tree/release/2.2.x
@@ -203,15 +183,3 @@ Refer to the documentation links in the matrix below (note: you'll find the tuto
 [py-trees-ros-viewer-sources-0.2.x]: https://github.com/splintered-reality/py_trees_ros_viewer/tree/release/0.2.x
 [py-trees-ros-viewer-sources-0.1.x]: https://github.com/splintered-reality/py_trees_ros_viewer/tree/release/0.1.x
 [py-trees-ros-viewer-ros-index]: https://index.ros.org/p/py_trees_ros_viewer/github-splintered-reality-py_trees_ros_viewer
-
-[py-trees-msgs-build-status-noetic]: http://build.ros.org/job/Nbin_uF64__py_trees_msgs__ubuntu_focal_amd64__binary
-[py-trees-msgs-build-status-noetic-image]: http://build.ros.org/job/Nbin_uF64__py_trees_msgs__ubuntu_focal_amd64__binary/badge/icon?style=plastic
-[py-trees-msgs-docs-noetic]: http://docs.ros.org/noetic/api/py_trees_msgs/html/index-msg.html
-[py-trees-msgs-docs-noetic-image]: https://img.shields.io/jenkins/s/http/build.ros.org/job/Ndoc__py_trees_msgs__ubuntu_focal_amd64.svg?label=docs&style=plastic
-[py-trees-msgs-sources-noetic]: https://github.com/splintered-reality/py_trees_msgs/tree/release/0.3.x
-[py-trees-msgs-wiki]: http://wiki.ros.org/py_trees_msgs
-
-[rqt-py-trees-build-status-noetic]: http://build.ros.org/job/Nbin_uF64__rqt_py_trees__ubuntu_focal_amd64__binary
-[rqt-py-trees-build-status-noetic-image]: http://build.ros.org/job/Nbin_uF64__rqt_py_trees__ubuntu_focal_amd64__binary/badge/icon?style=plastic
-[rqt-py-trees-sources-noetic]: https://github.com/splintered-reality/rqt_py_trees/tree/release/0.4.x
-[rqt-py-trees-wiki]: http://wiki.ros.org/rqt_py_trees
