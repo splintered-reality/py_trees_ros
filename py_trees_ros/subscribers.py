@@ -133,7 +133,7 @@ class Handler(py_trees.behaviour.Behaviour):
             if self.clearing_policy == py_trees.common.ClearingPolicy.ON_INITIALISE:
                 self.msg = None
 
-    def _callback(self, msg):
+    def _callback(self, msg: typing.Any):
         """
         The subscriber callback, just stores a copy of the message internally.
 
@@ -173,6 +173,7 @@ class CheckData(Handler):
         comparison_operator: one from the python `operator module`_
         fail_if_no_data: :attr:`~py_trees.common.Status.FAILURE` instead of :attr:`~py_trees.common.Status.RUNNING` if there is no data yet
         fail_if_bad_comparison: :attr:`~py_trees.common.Status.FAILURE` instead of :attr:`~py_trees.common.Status.RUNNING` if comparison failed
+        callback_group: callback group for the subscriber
         clearing_policy: when to clear the data
 
     .. tip::
@@ -190,16 +191,18 @@ class CheckData(Handler):
                  qos_profile: rclpy.qos.QoSProfile,
                  variable_name: str,
                  expected_value: typing.Any,
-                 comparison_operator=operator.eq,
-                 fail_if_no_data=False,
-                 fail_if_bad_comparison=False,
-                 clearing_policy=py_trees.common.ClearingPolicy.ON_INITIALISE
+                 comparison_operator: typing.Callable = operator.eq,
+                 fail_if_no_data: bool = False,
+                 fail_if_bad_comparison: bool = False,
+                 callback_group: rclpy.callback_groups.CallbackGroup | None = None,
+                 clearing_policy: py_trees.common.ClearingPolicy = py_trees.common.ClearingPolicy.ON_INITIALISE,
                  ):
         super(CheckData, self).__init__(
             name=name,
             topic_name=topic_name,
             topic_type=topic_type,
             qos_profile=qos_profile,
+            callback_group=callback_group,
             clearing_policy=clearing_policy,
         )
         self.variable_name = variable_name
@@ -284,6 +287,7 @@ class WaitForData(Handler):
         topic_type: class of the message type (e.g. :obj:`std_msgs.msg.String`)
         qos_profile: qos profile for the subscriber
         name: name of the behaviour
+        callback_group: callback group for the subscriber
         clearing_policy: when to clear the data
     """
     def __init__(self,
@@ -291,13 +295,15 @@ class WaitForData(Handler):
                  topic_name: str,
                  topic_type: typing.Any,
                  qos_profile: rclpy.qos.QoSProfile,
-                 clearing_policy=py_trees.common.ClearingPolicy.ON_INITIALISE
+                 callback_group: rclpy.callback_groups.CallbackGroup | None = None,
+                 clearing_policy: py_trees.common.ClearingPolicy = py_trees.common.ClearingPolicy.ON_INITIALISE
                  ):
         super().__init__(
             name=name,
             topic_name=topic_name,
             topic_type=topic_type,
             qos_profile=qos_profile,
+            callback_group=callback_group,
             clearing_policy=clearing_policy
         )
 
@@ -334,6 +340,7 @@ class ToBlackboard(Handler):
         blackboard_variables: blackboard variable string or dict {names (keys) - message subfields (values)}, use a value of None to indicate the entire message
         initialise_variables: initialise the blackboard variables to some defaults
         name: name of the behaviour
+        callback_group: callback group for the subscriber
         clearing_policy: when to clear the data
 
     Examples:
@@ -367,15 +374,17 @@ class ToBlackboard(Handler):
                  topic_name: str,
                  topic_type: typing.Any,
                  qos_profile: rclpy.qos.QoSProfile,
-                 blackboard_variables: typing.Dict[str, typing.Any]={},  # e.g. {"chatter": None}
-                 initialise_variables: typing.Dict[str, typing.Any]={},
-                 clearing_policy=py_trees.common.ClearingPolicy.ON_INITIALISE
+                 blackboard_variables: dict[str, typing.Any]={},  # e.g. {"chatter": None}
+                 initialise_variables: dict[str, typing.Any]={},
+                 callback_group: rclpy.callback_groups.CallbackGroup | None = None,
+                 clearing_policy: py_trees.common.ClearingPolicy = py_trees.common.ClearingPolicy.ON_INITIALISE
                  ):
         super().__init__(
             name=name,
             topic_name=topic_name,
             topic_type=topic_type,
             qos_profile=qos_profile,
+            callback_group=callback_group,
             clearing_policy=clearing_policy
         )
         self.blackboard = self.attach_blackboard_client(name=self.name)
@@ -453,18 +462,21 @@ class EventToBlackboard(Handler):
         topic_name: name of the topic to connect to
         qos_profile: qos profile for the subscriber
         variable_name: name to write the boolean result on the blackboard
+        callback_group: callback group for the subscriber
     """
     def __init__(self,
                  name: str,
                  topic_name: str,
                  qos_profile: rclpy.qos.QoSProfile,
                  variable_name: str,
+                 callback_group: rclpy.callback_groups.CallbackGroup | None = None,
                  ):
         super().__init__(
             name=name,
             topic_name=topic_name,
             topic_type=std_msgs.Empty,
             qos_profile=qos_profile,
+            callback_group=callback_group,
             clearing_policy=py_trees.common.ClearingPolicy.ON_SUCCESS
         )
         self.variable_name = variable_name
