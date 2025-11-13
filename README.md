@@ -94,7 +94,7 @@ For version specific releases of the documentation, refer to the documentation l
 [py-trees-docs-rolling-image]: http://img.shields.io/badge/py_trees-rolling-brightgreen.svg?style=plastic
 [py-trees-docs-jazzy-image]: http://img.shields.io/badge/py_trees-jazzy-brightgreen.svg?style=plastic
 [py-trees-docs-humble-image]: http://img.shields.io/badge/py_trees-humble-brightgreen.svg?style=plastic
-[py-trees-ros-index]: https://index.ros.org/p/py_trees/github-splintered-reality-py_trees
+[py-trees-ros-index]: https://index.ros.org/p/py_trees/
 [py-trees-sources-devel]: https://github.com/splintered-reality/py_trees/tree/devel
 [py-trees-sources-2.3.x]: https://github.com/splintered-reality/py_trees/tree/release/2.3.x
 [py-trees-sources-2.2.x]: https://github.com/splintered-reality/py_trees/tree/release/2.2.x
@@ -114,7 +114,7 @@ For version specific releases of the documentation, refer to the documentation l
 [py-trees-ros-interfaces-build-status-jazzy-image]: https://build.ros2.org/job/Jbin_uN64__py_trees_ros_interfaces__ubuntu_noble_amd64__binary/badge/icon?style=plastic
 [py-trees-ros-interfaces-build-status-humble]: https://build.ros2.org/job/Hbin_uJ64__py_trees_ros_interfaces__ubuntu_jammy_amd64__binary/
 [py-trees-ros-interfaces-build-status-humble-image]: https://build.ros2.org/job/Hbin_uJ64__py_trees_ros_interfaces__ubuntu_jammy_amd64__binary/badge/icon?style=plastic
-[py-trees-ros-interfaces-ros-index]: https://index.ros.org/p/py_trees_ros_interfaces/github-splintered-reality-py_trees_ros_interfaces
+[py-trees-ros-interfaces-ros-index]: https://index.ros.org/p/py_trees_ros_interfaces/
 [py-trees-ros-interfaces-sources-2.3.x]: https://github.com/splintered-reality/py_trees_ros_interfaces/tree/release/2.3.x
 [py-trees-ros-interfaces-sources-2.2.x]: https://github.com/splintered-reality/py_trees_ros_interfaces/tree/release/2.2.x
 [py-trees-ros-interfaces-sources-2.1.x]: https://github.com/splintered-reality/py_trees_ros_interfaces/tree/release/2.1.x
@@ -136,7 +136,7 @@ For version specific releases of the documentation, refer to the documentation l
 [py-trees-ros-docs-2.0.x]: http://py-trees-ros.readthedocs.io/en/release-2.0.x/
 [py-trees-ros-docs-1.3.x]: http://py-trees-ros.readthedocs.io/en/release-1.3.x/
 [py-trees-ros-docs-1.2.x]: http://py-trees-ros.readthedocs.io/en/release-1.2.x/
-[py-trees-ros-ros-index]: https://index.ros.org/p/py_trees_ros/github-splintered-reality-py_trees_ros
+[py-trees-ros-ros-index]: https://index.ros.org/p/py_trees_ros/
 [py-trees-ros-sources-2.3.x]: https://github.com/splintered-reality/py_trees_ros/tree/release/2.3.x
 [py-trees-ros-sources-2.2.x]: https://github.com/splintered-reality/py_trees_ros/tree/release/2.2.x
 [py-trees-ros-sources-2.1.x]: https://github.com/splintered-reality/py_trees_ros/tree/release/2.1.x
@@ -165,7 +165,7 @@ For version specific releases of the documentation, refer to the documentation l
 [py-trees-ros-tutorials-sources-2.1.x]: https://github.com/splintered-reality/py_trees_ros_tutorials/tree/release/2.1.x
 [py-trees-ros-tutorials-sources-2.0.x]: https://github.com/splintered-reality/py_trees_ros_tutorials/tree/release/2.0.x
 [py-trees-ros-tutorials-sources-1.0.x]: https://github.com/splintered-reality/py_trees_ros_tutorials/tree/release/1.0.x
-[py-trees-ros-tutorials-ros-index]: https://index.ros.org/p/py_trees_ros_tutorials/github-splintered-reality-py_trees_ros_tutorials
+[py-trees-ros-tutorials-ros-index]: https://index.ros.org/p/py_trees_ros_tutorials/
 
 [py-trees-js-build-status-rolling]: https://build.ros2.org/job/Rbin_uN64__py_trees_js__ubuntu_noble_amd64__binary/
 [py-trees-js-build-status-rolling-image]: https://build.ros2.org/job/Rbin_uN64__py_trees_js__ubuntu_noble_amd64__binary/badge/icon?style=plastic
@@ -181,7 +181,7 @@ For version specific releases of the documentation, refer to the documentation l
 [py-trees-js-sources-0.5.x]: https://github.com/splintered-reality/py_trees_js/tree/release/0.5.x
 [py-trees-js-docs-0.4.x]: https://github.com/splintered-reality/py_trees_js/blob/release/0.4.x/README.md
 [py-trees-js-sources-0.4.x]: https://github.com/splintered-reality/py_trees_js/tree/release/0.4.x
-[py-trees-js-ros-index]: https://index.ros.org/p/py_trees_js/github-splintered-reality-py_trees_js
+[py-trees-js-ros-index]: https://index.ros.org/p/py_trees_js/
 
 [py-trees-ros-viewer-build-status-rolling]: https://build.ros2.org/job/Rbin_uN64__py_trees_ros_viewer__ubuntu_noble_amd64__binary/
 [py-trees-ros-viewer-build-status-rolling-image]: https://build.ros2.org/job/Rbin_uN64__py_trees_ros_viewer__ubuntu_noble_amd64__binary/badge/icon?style=plastic
@@ -195,4 +195,4 @@ For version specific releases of the documentation, refer to the documentation l
 [py-trees-ros-viewer-docs-0.1.x]: https://github.com/splintered-reality/py_trees_ros_viewer/blob/release/0.1.x/README.md
 [py-trees-ros-viewer-sources-0.2.x]: https://github.com/splintered-reality/py_trees_ros_viewer/tree/release/0.2.x
 [py-trees-ros-viewer-sources-0.1.x]: https://github.com/splintered-reality/py_trees_ros_viewer/tree/release/0.1.x
-[py-trees-ros-viewer-ros-index]: https://index.ros.org/p/py_trees_ros_viewer/github-splintered-reality-py_trees_ros_viewer
+[py-trees-ros-viewer-ros-index]: https://index.ros.org/p/py_trees_ros_viewer/
