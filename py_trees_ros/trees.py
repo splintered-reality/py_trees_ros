@@ -148,8 +148,8 @@ class SnapshotStream(object):
             root: py_trees.behaviour.Behaviour,
             changed: bool,
             statistics: py_trees_msgs.Statistics,
-            visited_behaviour_ids: typing.Set[uuid.UUID],
-            visited_blackboard_client_ids: typing.Set[uuid.UUID]
+            visited_behaviour_ids: set[uuid.UUID],
+            visited_blackboard_client_ids: set[uuid.UUID]
     ):
         """"
         Publish a snapshot, including only what has been parameterised.
@@ -275,10 +275,10 @@ class BehaviourTree(py_trees.trees.BehaviourTree):
 
     def setup(
             self,
-            node: typing.Optional[rclpy.node.Node]=None,
-            node_name: str="tree",
-            timeout: float=py_trees.common.Duration.INFINITE,
-            visitor: typing.Optional[py_trees.visitors.VisitorBase]=None,
+            node: typing.Optional[rclpy.node.Node] = None,
+            node_name: str = "tree",
+            timeout: float = py_trees.common.Duration.INFINITE,
+            visitor: py_trees.visitors.VisitorBase | None = None,
             **kwargs: int
     ):
         """
@@ -459,7 +459,7 @@ class BehaviourTree(py_trees.trees.BehaviourTree):
 
     def _set_parameters_callback(
         self,
-        parameters: typing.List[rclpy.parameter.Parameter]
+        parameters: list[rclpy.parameter.Parameter]
     ) -> rcl_interfaces_msgs.SetParametersResult:
         """
         Callback that dynamically handles changes in parameters.

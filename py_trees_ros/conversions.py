@@ -30,7 +30,7 @@ import uuid
 ##############################################################################
 
 
-def activity_stream_to_msgs() -> typing.List[py_trees_ros_interfaces.msg.ActivityItem]:
+def activity_stream_to_msgs() -> list[py_trees_ros_interfaces.msg.ActivityItem]:
     """
     Convert the blackboard activity stream to a message.
 

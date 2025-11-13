@@ -70,8 +70,8 @@ class FromBlackboard(py_trees.behaviour.Behaviour):
                  service_type: typing.Any,
                  service_name: str,
                  key_request: str,
-                 key_response: typing.Optional[str]=None,
-                 wait_for_server_timeout_sec: float=-3.0,
+                 key_response: str | None = None,
+                 wait_for_server_timeout_sec: float = -3.0,
                  callback_group: typing.Optional[rclpy.callback_groups.CallbackGroup] = None,
                  ):
         super().__init__(name)
@@ -238,6 +238,7 @@ class FromConstant(FromBlackboard):
         service_request: the request to send
         key_response: optional name of the key for the response on the blackboard (default: None)
         wait_for_server_timeout_sec: use negative values for a blocking but periodic check (default: -3.0)
+        callback_group: callback group for the service client
 
     .. note::
        The default setting for timeouts (a negative value) will suit
@@ -250,8 +251,9 @@ class FromConstant(FromBlackboard):
                  service_type: typing.Any,
                  service_name: str,
                  service_request: typing.Any,
-                 key_response: typing.Optional[str]=None,
-                 wait_for_server_timeout_sec: float=-3.0
+                 key_response: str | None = None,
+                 wait_for_server_timeout_sec: float = -3.0,
+                 callback_group: typing.Optional[rclpy.callback_groups.CallbackGroup] = None,
                  ):
         unique_id = uuid.uuid4()
         key_request = "/request_" + str(unique_id)
@@ -261,7 +263,8 @@ class FromConstant(FromBlackboard):
             key_request=key_request,
             key_response=key_response,
             name=name,
-            wait_for_server_timeout_sec=wait_for_server_timeout_sec
+            wait_for_server_timeout_sec=wait_for_server_timeout_sec,
+            callback_group=callback_group,
         )
         # parent already instantiated a blackboard client
         self.blackboard.register_key(
@@ -281,6 +284,7 @@ class AttributesFromBlackboard(FromBlackboard):
         service_name (str): Endpoint of the service
         request_fields (dict[str, typing.Any]): Fields of the request mapped to blackboard variables
         wait_for_server_timeout_sec (float, optional): Wait timeout for the service. Defaults to -3.0.
+        callback_group: callback group for the service client
     """
 
     def __init__(self,
@@ -288,7 +292,8 @@ class AttributesFromBlackboard(FromBlackboard):
                  service_type: typing.Any,
                  service_name: str,
                  request_fields: dict[str, typing.Any],
-                 wait_for_server_timeout_sec: float = -3.0
+                 wait_for_server_timeout_sec: float = -3.0,
+                 callback_group: typing.Optional[rclpy.callback_groups.CallbackGroup] = None,
                  ):
         unique_id = uuid.uuid4()
         self.key_request = "/request_" + str(unique_id)
@@ -297,18 +302,19 @@ class AttributesFromBlackboard(FromBlackboard):
             service_name=service_name,
             key_request=self.key_request,
             name=name,
-            wait_for_server_timeout_sec=wait_for_server_timeout_sec
+            wait_for_server_timeout_sec=wait_for_server_timeout_sec,
+            callback_group=callback_group,
         )
         # The parent constructor already instantiated a blackboard client
         self.request_fields = request_fields
         for bb_key in self.request_fields.values():
             self.blackboard.register_key(
                 key=bb_key,
-                access=bt.common.Access.READ,
+                access=py_trees.common.Access.READ,
             )
         self.blackboard.register_key(
             key=self.key_request,
-            access=bt.common.Access.WRITE,
+            access=py_trees.common.Access.WRITE,
         )
 
     def initialise(self):
@@ -338,6 +344,7 @@ class FromCallback(FromBlackboard, ABC):
         service_name: where you can find the service
         key_response: optional name of the key for the response on the blackboard (default: None)
         wait_for_server_timeout_sec: use negative values for a blocking but periodic check (default: -3.0)
+        callback_group: callback group for the service client
 
     .. note::
        The default setting for timeouts (a negative value) will suit
@@ -349,8 +356,9 @@ class FromCallback(FromBlackboard, ABC):
                  name: str,
                  service_type: typing.Any,
                  service_name: str,
-                 key_response: typing.Optional[str]=None,
-                 wait_for_server_timeout_sec: float=-3.0
+                 key_response: str | None = None,
+                 wait_for_server_timeout_sec: float = -3.0,
+                 callback_group: typing.Optional[rclpy.callback_groups.CallbackGroup] = None,
                  ):
         unique_id = uuid.uuid4()
         self.key_request = "/request_" + str(unique_id)
@@ -360,7 +368,8 @@ class FromCallback(FromBlackboard, ABC):
             key_request=self.key_request,
             key_response=key_response,
             name=name,
-            wait_for_server_timeout_sec=wait_for_server_timeout_sec
+            wait_for_server_timeout_sec=wait_for_server_timeout_sec,
+            callback_group=callback_group,
         )
         # parent already instantiated a blackboard client
         self.blackboard.register_key(

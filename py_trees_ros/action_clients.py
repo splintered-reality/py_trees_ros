@@ -99,8 +99,8 @@ class FromBlackboard(py_trees.behaviour.Behaviour):
                  action_type: typing.Any,
                  action_name: str,
                  key: str,
-                 generate_feedback_message: typing.Callable[[typing.Any], str]=None,
-                 wait_for_server_timeout_sec: float=-3.0,
+                 generate_feedback_message: typing.Callable[[typing.Any], str] = None,
+                 wait_for_server_timeout_sec: float = -3.0,
                  callback_group: typing.Optional[rclpy.callback_groups.CallbackGroup] = None,
                  ):
         super().__init__(name)
@@ -390,6 +390,7 @@ class FromConstant(FromBlackboard):
         generate_feedback_message: formatter for feedback messages, takes action_type.Feedback
             messages and returns strings (default: None)
         wait_for_server_timeout_sec: use negative values for a blocking but periodic check (default: -3.0)
+        callback_group: callback group for the action client
 
     .. note::
        The default setting for timeouts (a negative value) will suit
@@ -402,8 +403,9 @@ class FromConstant(FromBlackboard):
                  action_type: typing.Any,
                  action_name: str,
                  action_goal: typing.Any,
-                 generate_feedback_message: typing.Callable[[typing.Any], str]=None,
-                 wait_for_server_timeout_sec: float=-3.0
+                 generate_feedback_message: typing.Callable[[typing.Any], str] = None,
+                 wait_for_server_timeout_sec: float = -3.0,
+                 callback_group: typing.Optional[rclpy.callback_groups.CallbackGroup] = None,
                  ):
         unique_id = uuid.uuid4()
         key = "/goal_" + str(unique_id)
@@ -413,7 +415,8 @@ class FromConstant(FromBlackboard):
             key=key,
             name=name,
             generate_feedback_message=generate_feedback_message,
-            wait_for_server_timeout_sec=wait_for_server_timeout_sec
+            wait_for_server_timeout_sec=wait_for_server_timeout_sec,
+            callback_group=callback_group,
         )
         # parent already instantiated a blackboard client
         self.blackboard.register_key(
@@ -437,6 +440,7 @@ class AttributesFromBlackboard(FromBlackboard):
         generate_feedback_message: formatter for feedback messages, takes action_type.Feedback
             messages and returns strings (default: None)
         wait_for_server_timeout_sec: use negative values for a blocking but periodic check (default: -3.0)
+        callback_group: callback group for the action client
 
     .. note::
        The default setting for timeouts (a negative value) will suit
@@ -451,7 +455,8 @@ class AttributesFromBlackboard(FromBlackboard):
                  action_name: str,
                  goal_fields: dict[str, typing.Any],
                  generate_feedback_message: typing.Callable[[typing.Any], str] = None,
-                 wait_for_server_timeout_sec: float = -3.0
+                 wait_for_server_timeout_sec: float = -3.0,
+                 callback_group: typing.Optional[rclpy.callback_groups.CallbackGroup] = None,
                  ):
         unique_id = uuid.uuid4()
         self.key = "/goal_" + str(unique_id)
@@ -461,7 +466,8 @@ class AttributesFromBlackboard(FromBlackboard):
             key=self.key,
             name=name,
             generate_feedback_message=generate_feedback_message,
-            wait_for_server_timeout_sec=wait_for_server_timeout_sec
+            wait_for_server_timeout_sec=wait_for_server_timeout_sec,
+            callback_group=callback_group,
         )
         # The parent constructor already instantiated a blackboard client
         # Here we register the keys from which we will read the goal attributes and a key to store the goal itself
@@ -501,6 +507,7 @@ class FromCallback(FromBlackboard, ABC):
         generate_feedback_message: formatter for feedback messages, takes action_type.Feedback
             messages and returns strings (default: None)
         wait_for_server_timeout_sec: use negative values for a blocking but periodic check (default: -3.0)
+        callback_group: callback group for the action client
 
     .. note::
        The default setting for timeouts (a negative value) will suit
@@ -514,7 +521,8 @@ class FromCallback(FromBlackboard, ABC):
                  action_type: typing.Any,
                  action_name: str,
                  generate_feedback_message: typing.Callable[[typing.Any], str] = None,
-                 wait_for_server_timeout_sec: float = -3.0
+                 wait_for_server_timeout_sec: float = -3.0,
+                 callback_group: typing.Optional[rclpy.callback_groups.CallbackGroup] = None,
                  ):
         unique_id = uuid.uuid4()
         self.key = "/goal_" + str(unique_id)
@@ -524,7 +532,8 @@ class FromCallback(FromBlackboard, ABC):
             key=self.key,
             name=name,
             generate_feedback_message=generate_feedback_message,
-            wait_for_server_timeout_sec=wait_for_server_timeout_sec
+            wait_for_server_timeout_sec=wait_for_server_timeout_sec,
+            callback_group=callback_group,
         )
         # The parent constructor already instantiated a blackboard client
         self.blackboard.register_key(

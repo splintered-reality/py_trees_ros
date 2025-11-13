@@ -29,7 +29,6 @@ import py_trees_ros_interfaces.srv as py_trees_srvs  # noqa
 import rclpy.expand_topic_name
 import rclpy.node
 import std_msgs.msg as std_msgs
-import typing
 import uuid
 
 from . import exceptions
@@ -57,7 +56,7 @@ class SubBlackboard(object):
         self.node = node
         self.warned = False
 
-    def update(self, variable_names: typing.Set[str]):
+    def update(self, variable_names: set[str]):
         """
         Check for changes to the blackboard scoped to the provided set of
         variable names (may be nested, e.g. battery.percentage). Checks
@@ -145,7 +144,7 @@ class BlackboardView(object):
             self,
             node: rclpy.node.Node,
             topic_name: str,
-            variable_names: typing.Set[str],
+            variable_names: set[str],
             filter_on_visited_path: bool,
             with_activity_stream: bool
     ):
@@ -170,7 +169,7 @@ class BlackboardView(object):
         """
         self.node.destroy_publisher(self.publisher)
 
-    def is_changed(self, visited_clients: typing.Set[uuid.UUID]) -> bool:
+    def is_changed(self, visited_clients: set[uuid.UUID]) -> bool:
         """
         Dynamically adjusts the tracking parameters for the sub-blackboard
         against the clients that were visited (if desired) and proceeds
@@ -328,7 +327,7 @@ class Exchange(object):
 
         return variables
 
-    def post_tick_handler(self, visited_client_ids: typing.List[uuid.UUID]=None):
+    def post_tick_handler(self, visited_client_ids: list[uuid.UUID] | None = None):
         """
         Update blackboard watcher views, publish changes and
         clear the activity stream. Publishing is lazy, depending
