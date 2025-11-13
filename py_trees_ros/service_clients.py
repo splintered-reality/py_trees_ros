@@ -72,7 +72,7 @@ class FromBlackboard(py_trees.behaviour.Behaviour):
                  key_request: str,
                  key_response: str | None = None,
                  wait_for_server_timeout_sec: float = -3.0,
-                 callback_group: rclpy.callback_groups.CallbackGroup | None = None,
+                 callback_group: typing.Optional[rclpy.callback_groups.CallbackGroup] = None,
                  ):
         super().__init__(name)
         self.service_type = service_type
@@ -253,7 +253,7 @@ class FromConstant(FromBlackboard):
                  service_request: typing.Any,
                  key_response: str | None = None,
                  wait_for_server_timeout_sec: float = -3.0,
-                 callback_group: rclpy.callback_groups.CallbackGroup | None = None,
+                 callback_group: typing.Optional[rclpy.callback_groups.CallbackGroup] = None,
                  ):
         unique_id = uuid.uuid4()
         key_request = "/request_" + str(unique_id)
@@ -293,7 +293,7 @@ class AttributesFromBlackboard(FromBlackboard):
                  service_name: str,
                  request_fields: dict[str, typing.Any],
                  wait_for_server_timeout_sec: float = -3.0,
-                 callback_group: rclpy.callback_groups.CallbackGroup | None = None,
+                 callback_group: typing.Optional[rclpy.callback_groups.CallbackGroup] = None,
                  ):
         unique_id = uuid.uuid4()
         self.key_request = "/request_" + str(unique_id)
@@ -358,7 +358,7 @@ class FromCallback(FromBlackboard, ABC):
                  service_name: str,
                  key_response: str | None = None,
                  wait_for_server_timeout_sec: float = -3.0,
-                 callback_group: rclpy.callback_groups.CallbackGroup | None = None,
+                 callback_group: typing.Optional[rclpy.callback_groups.CallbackGroup] = None,
                  ):
         unique_id = uuid.uuid4()
         self.key_request = "/request_" + str(unique_id)

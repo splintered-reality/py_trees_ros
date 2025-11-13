@@ -29,6 +29,7 @@ import statistics
 import subprocess
 import tempfile
 import time
+import typing
 import uuid
 
 import diagnostic_msgs.msg as diagnostic_msgs  # noqa
@@ -274,7 +275,7 @@ class BehaviourTree(py_trees.trees.BehaviourTree):
 
     def setup(
             self,
-            node: rclpy.node.Node | None = None,
+            node: typing.Optional[rclpy.node.Node] = None,
             node_name: str = "tree",
             timeout: float = py_trees.common.Duration.INFINITE,
             visitor: py_trees.visitors.VisitorBase | None = None,
