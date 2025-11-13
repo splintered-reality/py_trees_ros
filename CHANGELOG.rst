@@ -2,8 +2,8 @@
 Changelog
 =========
 
-Forthcoming
------------
+2.4.0 (2025-11-13)
+------------------
 * [readme] Remove ROS 1 from, add ROS 2 Kilted to, README (`#242 <https://github.com/splintered-reality/py_trees_ros/issues/242>`_)
 * [behaviours] Fix callback group parameter consistency and remove (most) old-school type hints (`#241 <https://github.com/splintered-reality/py_trees_ros/issues/241>`_)
 * [behaviours] Support setting callback group for service and action clients (`#240 <https://github.com/splintered-reality/py_trees_ros/issues/240>`_)
