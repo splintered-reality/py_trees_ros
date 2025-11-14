@@ -118,7 +118,6 @@ intersphinx_mapping = {
     'python': ('https://docs.python.org/3', None),
     'py_trees': ('https://py-trees.readthedocs.io/en/release-2.4.x', None),
     'py_trees_ros_tutorials': ('https://py-trees-ros-tutorials.readthedocs.io/en/release-2.4.x', None),
-    'rclpy': ('https://docs.ros2.org/jazzy/p/rclpy/', None),
 }
 
 
