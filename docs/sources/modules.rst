@@ -57,6 +57,14 @@ py_trees_ros.publishers
     :show-inheritance:
     :synopsis: publish data to the ROS network
 
+py_trees_ros.service_clients
+----------------------------
+
+.. automodule:: py_trees_ros.service_clients
+    :members:
+    :show-inheritance:
+    :synopsis: behaviours that work with service clients
+
 py_trees_ros.subscribers
 ------------------------
 
