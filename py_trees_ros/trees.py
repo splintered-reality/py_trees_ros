@@ -274,16 +274,20 @@ class BehaviourTree(py_trees.trees.BehaviourTree):
         self.snapshot_streams = {}
 
     def setup(
-            self,
-            node: typing.Optional[rclpy.node.Node] = None,
-            node_name: str = "tree",
-            timeout: float = py_trees.common.Duration.INFINITE,
-            visitor: py_trees.visitors.VisitorBase | None = None,
-            **kwargs: int
+        self,
+        node: typing.Optional[rclpy.node.Node] = None,
+        node_name: str = "tree",
+        timeout: float = py_trees.common.Duration.INFINITE,
+        visitor: py_trees.visitors.VisitorBase | None = None,
+        **kwargs: int
     ):
         """
         Setup the publishers, exchange and add ROS relevant pre/post tick handlers to the tree.
         Ultimately relays this call down to all the behaviours in the tree.
+
+        If this method is called subsequent times for the same tree, then it assumes the node
+        and all relevant publishers etc. are already set up, in which case only the ``setup()``
+        methods of the tree's nodes are called.
 
         Args:
             node: Optional ROS Node object. If None (default), creates its own node.
@@ -291,6 +295,61 @@ class BehaviourTree(py_trees.trees.BehaviourTree):
             timeout: time (s) to wait (use common.Duration.INFINITE to block indefinitely)
             visitor: runnable entities on each node after it's setup
             **kwargs: distribute args to this behaviour and in turn, to it's children
+
+        Raises:
+            rclpy.exceptions.NotInitializedException: rclpy not yet initialised
+            TypeError: node argument is not a valid rclpy.node.Node object
+            Exception: be ready to catch if any of the behaviours raise an exception
+        """
+        if self.node is None:
+            if node:
+                # Use existing node if one is passed in, and is of the correct type.
+                if isinstance(node, rclpy.node.Node):
+                    self.node = node
+                else:
+                    raise TypeError(f"invalid node object [received: {type(node)}][expected: rclpy.node.Node]")
+            else:
+                # Node creation - can raise rclpy.exceptions.NotInitializedException
+                self.node = rclpy.create_node(node_name=node_name)
+
+            self._setup_ros_exchange(timeout, visitor)
+
+        # Get the resulting timeout
+        setup_timeout = self.node.get_parameter("setup_timeout").value
+        # Ugly workaround to accomodate use of the enum (TODO: rewind this)
+        #   Need to pass the enum for now (instead of just a float) in case
+        #   there are behaviours out in the wild that apply logic around the
+        #   use of the enum
+        if setup_timeout == py_trees.common.Duration.INFINITE.value:
+            setup_timeout = py_trees.common.Duration.INFINITE
+
+        ########################################
+        # Behaviours
+        ########################################
+        try:
+            super().setup(
+                timeout=setup_timeout,
+                visitor=visitor,
+                node=self.node,
+                **kwargs
+            )
+        except RuntimeError as e:
+            if str(e) == "tree setup interrupted or timed out":
+                raise exceptions.TimedOutError(str(e))
+            else:
+                raise
+
+    def _setup_ros_exchange(
+        self,
+        timeout: float = py_trees.common.Duration.INFINITE,
+        visitor: py_trees.visitors.VisitorBase | None = None,
+    ):
+        """
+        Setup the publishers, exchange and add ROS relevant pre/post tick handlers to the tree.
+
+        Args:
+            timeout: time (s) to wait (use common.Duration.INFINITE to block indefinitely)
+            visitor: runnable entities on each node after it's setup
 
         .. note:
 
@@ -302,18 +361,7 @@ class BehaviourTree(py_trees.trees.BehaviourTree):
         Raises:
             rclpy.exceptions.NotInitializedException: rclpy not yet initialised
             TypeError: node argument is not a valid rclpy.node.Node object
-            Exception: be ready to catch if any of the behaviours raise an exception
         """
-        # node creation - can raise rclpy.exceptions.NotInitializedException
-        if node:
-            # Use existing node if one is passed in, and is of the correct type.
-            if isinstance(node, rclpy.node.Node):
-                self.node = node
-            else:
-                raise TypeError(f"invalid node object [received: {type(node)}][expected: rclpy.node.Node]")
-        else:
-            # Node creation - can raise rclpy.exceptions.NotInitializedException
-            self.node = rclpy.create_node(node_name=node_name)
         if visitor is None:
             visitor = visitors.SetupLogger(node=self.node)
         self.default_snapshot_stream_topic_name = SnapshotStream.expand_topic_name(
@@ -423,30 +471,6 @@ class BehaviourTree(py_trees.trees.BehaviourTree):
                     to_value=py_trees.common.Duration.INFINITE.value)]
             )
         )
-        # Get the resulting timeout
-        setup_timeout = self.node.get_parameter("setup_timeout").value
-        # Ugly workaround to accomodate use of the enum (TODO: rewind this)
-        #   Need to pass the enum for now (instead of just a float) in case
-        #   there are behaviours out in the wild that apply logic around the
-        #   use of the enum
-        if setup_timeout == py_trees.common.Duration.INFINITE.value:
-            setup_timeout = py_trees.common.Duration.INFINITE
-
-        ########################################
-        # Behaviours
-        ########################################
-        try:
-            super().setup(
-                timeout=setup_timeout,
-                visitor=visitor,
-                node=self.node,
-                **kwargs
-            )
-        except RuntimeError as e:
-            if str(e) == "tree setup interrupted or timed out":
-                raise exceptions.TimedOutError(str(e))
-            else:
-                raise
 
         ########################################
         # Setup Handlers
@@ -456,6 +480,7 @@ class BehaviourTree(py_trees.trees.BehaviourTree):
         # to the callback function here.
         self.tree_update_handler = self._on_tree_update_handler
         self.post_tick_handlers.append(self._snapshots_post_tick_handler)
+
 
     def _set_parameters_callback(
         self,
