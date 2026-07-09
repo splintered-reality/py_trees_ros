@@ -339,6 +339,11 @@ class BehaviourTree(py_trees.trees.BehaviourTree):
             else:
                 raise
 
+        # Unconditionally publish a snapshot - setup() is typically (re)run
+        # after modifications to the tree and those modifications may have
+        # occurred without accompanying notifications,
+        self._on_tree_update_handler()
+
     def _setup_ros_exchange(
         self,
         timeout: float = py_trees.common.Duration.INFINITE,
@@ -608,18 +613,22 @@ class BehaviourTree(py_trees.trees.BehaviourTree):
         Whenever there has been a modification to the tree (insertion/pruning), publish
         the snapshot.
         """
-        # only worth notifying once we've actually commenced
-        if self.statistics is not None:
-            rclpy_start_time = rclpy.clock.Clock().now()
-            self.statistics.stamp = rclpy_start_time.to_msg()
-            for unused_topic_name, snapshot_stream in self.snapshot_streams.items():
-                snapshot_stream.publish(
-                    root=self.root,
-                    changed=True,
-                    statistics=self.statistics,
-                    visited_behaviour_ids=self.snapshot_visitor.visited.keys(),
-                    visited_blackboard_client_ids=self.snapshot_visitor.visited_blackboard_client_ids
-                )
+        if self.statistics is None:
+            # not ticking yet - fabricate a stamped statistics object so that
+            # modifications between setup() and the first tick still notify
+            # any connected snapshot streams (it is replaced on the next tick)
+            self.statistics = py_trees_msgs.Statistics()
+
+        rclpy_start_time = rclpy.clock.Clock().now()
+        self.statistics.stamp = rclpy_start_time.to_msg()
+        for _, snapshot_stream in self.snapshot_streams.items():
+            snapshot_stream.publish(
+                root=self.root,
+                changed=True,
+                statistics=self.statistics,
+                visited_behaviour_ids=self.snapshot_visitor.visited.keys(),
+                visited_blackboard_client_ids=self.snapshot_visitor.visited_blackboard_client_ids
+            )
 
     def _statistics_pre_tick_handler(self, tree: py_trees.trees.BehaviourTree):
         """
