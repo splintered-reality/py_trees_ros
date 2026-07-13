@@ -14,7 +14,7 @@
    :prog: py-trees-tree-watcher
 
 Command line utility that introspects on a running
-:class:`~py_trees_ros.trees.BehaviourTree` instance over it's snapshot
+:class:`~py_trees_ros.trees.BehaviourTree` instance over its snapshot
 stream interfaces. Use to visualise the tree as a dot graph or
 track tree changes, timing statistics and blackboard variables visited
 by the tree on each tick.
@@ -42,7 +42,7 @@ import sys
 def description(formatted_for_sphinx):
     short = "Open up a window onto the behaviour tree!\n"
     long = ("\nRender a oneshot snapshot of the tree as a dot graph, or\n"
-            "stream it and it's state continuously as unicode art on your console.\n"
+            "stream it and its state continuously as unicode art on your console.\n"
             "This utility automatically discovers the running tree and opens\n"
             "interfaces to that, but if there is more than one tree executing\n"
             "use the namespace argument to differentiate between trees.\n"
@@ -50,7 +50,7 @@ def description(formatted_for_sphinx):
     examples = {
         "--dot-graph": "render the tree as a dot graph (does not include runtime information)",
         "/tree/snapshots": "connect to an existing snapshot stream (e.g. the default, if it is enabled)",
-        "": "open and connect to a snapshot stream, visualise the tree graph and it's changes only",
+        "": "open and connect to a snapshot stream, visualise the tree graph and its changes only",
         "-b": "open a snapshot stream and include visited blackboard variables",
         "-a": "open a snapshot stream and include blackboard access details (activity)",
         "-s": "open a snapshot stream and include timing statistics",
