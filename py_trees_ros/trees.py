@@ -572,9 +572,14 @@ class BehaviourTree(py_trees.trees.BehaviourTree):
         )
         self.tick_tock_count = 0
 
-    def shutdown(self):
+    def shutdown(self, destroy_node: bool = True):
         """
-        Cleanly shut down rclpy timers and nodes.
+        Cleanly shut down rclpy timers and (optionally) nodes.
+
+        Args:
+            destroy_node (:obj:`bool`): if True (default), destroys the underlying ROS node.
+                If False, keeps the node alive, which can be useful if you plan to setup the tree again,
+                or if the node is otherwise externally managed.
         """
         # stop ticking if we're ticking
         if self.node is not None:
@@ -584,7 +589,7 @@ class BehaviourTree(py_trees.trees.BehaviourTree):
         # call shutdown on each behaviour first, in case it has
         # some esoteric shutdown steps
         super().shutdown()
-        if self.node is not None:
+        if destroy_node and self.node is not None:
             # shutdown the node - this *should* automagically clean
             # up any non-esoteric shutdown of ros communications
             # inside behaviours
