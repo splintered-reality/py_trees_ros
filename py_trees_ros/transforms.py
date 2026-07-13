@@ -78,7 +78,7 @@ class FromBlackboard(py_trees.behaviour.Behaviour):
 
         Args:
             **kwargs (:obj:`dict`): distribute arguments to this
-               behaviour and in turn, all of it's children
+               behaviour and in turn, all of its children
 
         Raises:
             KeyError: if a ros2 node isn't passed under the key 'node' in kwargs
@@ -202,7 +202,7 @@ class ToBlackboard(py_trees.behaviour.Behaviour):
 
         Args:
             **kwargs (:obj:`dict`): distribute arguments to this
-               behaviour and in turn, all of it's children
+               behaviour and in turn, all of its children
 
         Raises:
             KeyError: if a ros2 node isn't passed under the key 'node' in kwargs

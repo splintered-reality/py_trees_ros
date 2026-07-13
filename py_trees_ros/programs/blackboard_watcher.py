@@ -198,7 +198,7 @@ def main(command_line_args=sys.argv[1:]):
             finally:
                 # no pre-shutdown hooks from fumble
                 #   https://github.com/ros2/rclpy/issues/1077
-                # instead, letting the blackboard clean up it's own blackboard views
+                # instead, letting the blackboard clean up its own blackboard views
                 # when the subscriber count goes to zero
                 #   https://github.com/splintered-reality/py_trees_ros/issues/185
                 pass

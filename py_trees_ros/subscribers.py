@@ -85,7 +85,7 @@ class Handler(py_trees.behaviour.Behaviour):
                  topic_name: str,
                  topic_type: typing.Any,
                  qos_profile: rclpy.qos.QoSProfile,
-                 callback_group: typing.Optional[rclpy.callback_groups.CallbackGroup] = None,
+                 callback_group: rclpy.callback_groups.CallbackGroup | None = None,
                  clearing_policy: py_trees.common.ClearingPolicy = py_trees.common.ClearingPolicy.ON_INITIALISE
                  ):
         super(Handler, self).__init__(name=name)
@@ -105,7 +105,7 @@ class Handler(py_trees.behaviour.Behaviour):
 
         Args:
             **kwargs (:obj:`dict`): distribute arguments to this
-               behaviour and in turn, all of it's children
+               behaviour and in turn, all of its children
 
         Raises:
             KeyError: if a ros2 node isn't passed under the key 'node' in kwargs
@@ -194,7 +194,7 @@ class CheckData(Handler):
                  comparison_operator: typing.Callable = operator.eq,
                  fail_if_no_data: bool = False,
                  fail_if_bad_comparison: bool = False,
-                 callback_group: typing.Optional[rclpy.callback_groups.CallbackGroup] = None,
+                 callback_group: rclpy.callback_groups.CallbackGroup | None = None,
                  clearing_policy: py_trees.common.ClearingPolicy = py_trees.common.ClearingPolicy.ON_INITIALISE,
                  ):
         super(CheckData, self).__init__(
@@ -295,7 +295,7 @@ class WaitForData(Handler):
                  topic_name: str,
                  topic_type: typing.Any,
                  qos_profile: rclpy.qos.QoSProfile,
-                 callback_group: typing.Optional[rclpy.callback_groups.CallbackGroup] = None,
+                 callback_group: rclpy.callback_groups.CallbackGroup | None = None,
                  clearing_policy: py_trees.common.ClearingPolicy = py_trees.common.ClearingPolicy.ON_INITIALISE
                  ):
         super().__init__(
@@ -376,7 +376,7 @@ class ToBlackboard(Handler):
                  qos_profile: rclpy.qos.QoSProfile,
                  blackboard_variables: dict[str, typing.Any]={},  # e.g. {"chatter": None}
                  initialise_variables: dict[str, typing.Any]={},
-                 callback_group: typing.Optional[rclpy.callback_groups.CallbackGroup] = None,
+                 callback_group: rclpy.callback_groups.CallbackGroup | None = None,
                  clearing_policy: py_trees.common.ClearingPolicy = py_trees.common.ClearingPolicy.ON_INITIALISE
                  ):
         super().__init__(
@@ -469,7 +469,7 @@ class EventToBlackboard(Handler):
                  topic_name: str,
                  qos_profile: rclpy.qos.QoSProfile,
                  variable_name: str,
-                 callback_group: typing.Optional[rclpy.callback_groups.CallbackGroup] = None,
+                 callback_group: rclpy.callback_groups.CallbackGroup | None = None,
                  ):
         super().__init__(
             name=name,

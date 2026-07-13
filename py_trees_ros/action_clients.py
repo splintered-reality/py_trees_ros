@@ -101,7 +101,7 @@ class FromBlackboard(py_trees.behaviour.Behaviour):
                  key: str,
                  generate_feedback_message: typing.Callable[[typing.Any], str] = None,
                  wait_for_server_timeout_sec: float = -3.0,
-                 callback_group: typing.Optional[rclpy.callback_groups.CallbackGroup] = None,
+                 callback_group: rclpy.callback_groups.CallbackGroup | None = None,
                  ):
         super().__init__(name)
         self.action_type = action_type
@@ -137,7 +137,7 @@ class FromBlackboard(py_trees.behaviour.Behaviour):
 
         Args:
             **kwargs (:obj:`dict`): distribute arguments to this
-               behaviour and in turn, all of it's children
+               behaviour and in turn, all of its children
 
         Raises:
             :class:`KeyError`: if a ros2 node isn't passed under the key 'node' in kwargs
@@ -405,7 +405,7 @@ class FromConstant(FromBlackboard):
                  action_goal: typing.Any,
                  generate_feedback_message: typing.Callable[[typing.Any], str] = None,
                  wait_for_server_timeout_sec: float = -3.0,
-                 callback_group: typing.Optional[rclpy.callback_groups.CallbackGroup] = None,
+                 callback_group: rclpy.callback_groups.CallbackGroup | None = None,
                  ):
         unique_id = uuid.uuid4()
         key = "/goal_" + str(unique_id)
@@ -456,7 +456,7 @@ class AttributesFromBlackboard(FromBlackboard):
                  goal_fields: dict[str, typing.Any],
                  generate_feedback_message: typing.Callable[[typing.Any], str] = None,
                  wait_for_server_timeout_sec: float = -3.0,
-                 callback_group: typing.Optional[rclpy.callback_groups.CallbackGroup] = None,
+                 callback_group: rclpy.callback_groups.CallbackGroup | None = None,
                  ):
         unique_id = uuid.uuid4()
         self.key = "/goal_" + str(unique_id)
@@ -522,7 +522,7 @@ class FromCallback(FromBlackboard, ABC):
                  action_name: str,
                  generate_feedback_message: typing.Callable[[typing.Any], str] = None,
                  wait_for_server_timeout_sec: float = -3.0,
-                 callback_group: typing.Optional[rclpy.callback_groups.CallbackGroup] = None,
+                 callback_group: rclpy.callback_groups.CallbackGroup | None = None,
                  ):
         unique_id = uuid.uuid4()
         self.key = "/goal_" + str(unique_id)

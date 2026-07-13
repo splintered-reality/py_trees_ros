@@ -275,7 +275,7 @@ class BehaviourTree(py_trees.trees.BehaviourTree):
 
     def setup(
         self,
-        node: typing.Optional[rclpy.node.Node] = None,
+        node: rclpy.node.Node | None = None,
         node_name: str = "tree",
         timeout: float = py_trees.common.Duration.INFINITE,
         visitor: py_trees.visitors.VisitorBase | None = None,
@@ -293,8 +293,8 @@ class BehaviourTree(py_trees.trees.BehaviourTree):
             node: Optional ROS Node object. If None (default), creates its own node.
             node_name: Name of ROS node created. Only takes effect if `node` is None.
             timeout: time (s) to wait (use common.Duration.INFINITE to block indefinitely)
-            visitor: runnable entities on each node after it's setup
-            **kwargs: distribute args to this behaviour and in turn, to it's children
+            visitor: runnable entities on each node after setup
+            **kwargs: distribute args to this behaviour and in turn, to its children
 
         Raises:
             rclpy.exceptions.NotInitializedException: rclpy not yet initialised
@@ -354,7 +354,7 @@ class BehaviourTree(py_trees.trees.BehaviourTree):
 
         Args:
             timeout: time (s) to wait (use common.Duration.INFINITE to block indefinitely)
-            visitor: runnable entities on each node after it's setup
+            visitor: runnable entities on each node after setup
 
         .. note:
 
@@ -687,7 +687,7 @@ class BehaviourTree(py_trees.trees.BehaviourTree):
     def _snapshots_post_tick_handler(self, tree: py_trees.trees.BehaviourTree):
         """
         Post-tick handler that checks for changes in the tree/blackboard as a result
-        of it's last tick and publish updates on ROS topics.
+        of its last tick and publish updates on ROS topics.
 
         Args:
             tree (:class:`~py_trees.trees.BehaviourTree`): the behaviour tree that has just been ticked
@@ -794,7 +794,7 @@ class Watcher(object):
     """
     The tree watcher sits on the other side of a running
     :class:`~py_trees_ros.trees.BehaviourTree` and is a useful mechanism for
-    quick introspection of it's current state.
+    quick introspection of its current state.
 
     Args:
         topic_name: location of the snapshot stream (optional)
