@@ -68,6 +68,8 @@ def behaviour_type_to_msg_constant(behaviour: py_trees.behaviour.Behaviour):
         return py_trees_ros_interfaces.msg.Behaviour.SELECTOR
     elif isinstance(behaviour, py_trees.composites.Parallel):
         return py_trees_ros_interfaces.msg.Behaviour.PARALLEL
+    elif isinstance(behaviour, py_trees.composites.Composite):
+        return py_trees_ros_interfaces.msg.Behaviour.COMPOSITE
     elif isinstance(behaviour, py_trees.decorators.Decorator):
         return py_trees_ros_interfaces.msg.Behaviour.DECORATOR
     elif isinstance(behaviour, py_trees.behaviour.Behaviour):
@@ -79,8 +81,7 @@ def behaviour_type_to_msg_constant(behaviour: py_trees.behaviour.Behaviour):
 def msg_constant_to_behaviour_type(value: int) -> typing.Any:
     """
     Convert one of the behaviour type constants in a
-    :class:`py_trees_ros_interfaces.msg.Behaviour` message to
-    a type.
+    :class:`py_trees_ros_interfaces.msg.Behaviour` message to a type.
 
     Args:
         value: see the message definition for details
@@ -97,12 +98,14 @@ def msg_constant_to_behaviour_type(value: int) -> typing.Any:
         return py_trees.composites.Selector
     elif value == py_trees_ros_interfaces.msg.Behaviour.PARALLEL:
         return py_trees.composites.Parallel
+    elif value == py_trees_ros_interfaces.msg.Behaviour.COMPOSITE:
+        return py_trees.composites.Composite
     elif value == py_trees_ros_interfaces.msg.Behaviour.DECORATOR:
         return py_trees.decorators.Decorator
     elif value == py_trees_ros_interfaces.msg.Behaviour.BEHAVIOUR:
         return py_trees.behaviour.Behaviour
     else:
-        raise TypeError("invalid type specified in message [{}]".format(value))
+        raise TypeError(f"invalid type specified in message [{value}]")
 
 
 def additional_detail_to_str(behaviour: py_trees.behaviour.Behaviour) -> str:
