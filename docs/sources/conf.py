@@ -65,7 +65,6 @@ extensions = [
     'sphinx.ext.todo',
     'sphinx.ext.viewcode',
     'sphinxarg.ext',
-    'sphinx.ext.autodoc.typehints'
     # Broken with latest sphinx / mock
     # https://github.com/tox-dev/sphinx-autodoc-typehints/issues/220
     # 'sphinx_autodoc_typehints',

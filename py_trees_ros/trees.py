@@ -20,6 +20,8 @@ Interact with these services via the :ref:`py-trees-blackboard-watcher` and
 # Imports
 ##############################################################################
 
+from __future__ import annotations
+
 import collections
 import enum
 import functools

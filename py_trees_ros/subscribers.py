@@ -25,6 +25,8 @@ permitted to be used or written to the blackboard.
 # Imports
 ##############################################################################
 
+from __future__ import annotations
+
 import copy
 import operator
 import threading

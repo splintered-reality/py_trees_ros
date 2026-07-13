@@ -16,6 +16,8 @@ Behaviours for ROS actions.
 # Imports
 ##############################################################################
 
+from __future__ import annotations
+
 import typing
 import uuid
 from abc import ABC, abstractmethod
