@@ -2,6 +2,17 @@
 Changelog
 =========
 
+Forthcoming
+-----------
+* [trees] Provide option to shutdown tree without destroying node (`#253 <https://github.com/splintered-reality/py_trees_ros/issues/253>`_)
+* [code] It's vs its correctness, remove typing.Optional (`#252 <https://github.com/splintered-reality/py_trees_ros/issues/252>`_)
+* [conversions] Include COMPOSITE enum in behaviour to ROS Message conversions (`#251 <https://github.com/splintered-reality/py_trees_ros/issues/251>`_)
+* [trees] Always publish snapshot on setup() calls (`#250 <https://github.com/splintered-reality/py_trees_ros/issues/250>`_)
+* [trees] Allow setup() method to be called multiple times per tree (`#249 <https://github.com/splintered-reality/py_trees_ros/issues/249>`_)
+* [docs] Add `service_clients` module to docs (`#246 <https://github.com/splintered-reality/py_trees_ros/issues/246>`_)
+* [docs] Remove rclpy intersphinx mapping (`#244 <https://github.com/splintered-reality/py_trees_ros/issues/244>`_)
+* Contributors: Sebastian Castro
+
 2.4.0 (2025-11-13)
 ------------------
 * [readme] Remove ROS 1 from, add ROS 2 Kilted to, README (`#242 <https://github.com/splintered-reality/py_trees_ros/issues/242>`_)
