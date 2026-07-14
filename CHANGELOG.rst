@@ -2,8 +2,8 @@
 Changelog
 =========
 
-Forthcoming
------------
+2.5.0 (2026-07-13)
+------------------
 * [trees] Provide option to shutdown tree without destroying node (`#253 <https://github.com/splintered-reality/py_trees_ros/issues/253>`_)
 * [code] It's vs its correctness, remove typing.Optional (`#252 <https://github.com/splintered-reality/py_trees_ros/issues/252>`_)
 * [conversions] Include COMPOSITE enum in behaviour to ROS Message conversions (`#251 <https://github.com/splintered-reality/py_trees_ros/issues/251>`_)
