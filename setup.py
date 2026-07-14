@@ -26,7 +26,6 @@ setup(
     zip_safe=True,
     classifiers=[
         'Intended Audience :: Developers',
-        'License :: OSI Approved :: BSD License',
         'Programming Language :: Python',
         'Topic :: Scientific/Engineering :: Artificial Intelligence',
         'Topic :: Software Development :: Libraries'
@@ -41,9 +40,7 @@ setup(
         "manager with ROS communication handles for debugging and"
         "visualisation, logging and various tutorials."
     ),
-    license='BSD',
-    test_suite='tests',
-    tests_require=[],  # using vanilla py unit tests
+    license='BSD-3-Clause',
     entry_points={
         'console_scripts': [
             'py-trees-blackboard-watcher = py_trees_ros.programs.blackboard_watcher:main',
