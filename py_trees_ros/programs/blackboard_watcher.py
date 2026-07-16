@@ -24,7 +24,6 @@ Example interaction with the services of an :class:`py_trees_ros.blackboard.Exch
 ##############################################################################
 
 import argparse
-import functools
 import sys
 
 import rclpy

@@ -18,7 +18,7 @@ Example interaction with the services of a :class:`Blackboard Exchange <py_trees
 
 .. image:: images/watcher.gif
 
-.. todo:: switch to using py_tree_ros' robust find_topic call
+.. todo:: switch to using py_trees_ros' robust find_topic call
 """
 
 ##############################################################################
@@ -31,7 +31,6 @@ import py_trees.console as console
 import py_trees_ros.utilities
 import rclpy
 import ros2topic.api
-import ros2cli.node.strategy
 import sys
 import time
 
@@ -47,7 +46,7 @@ DEFAULT_TRUNCATE_LENGTH = 128
 
 
 def description():
-    short = "ROS2 topic echo with latched option for topics\n"
+    short = "ROS 2 topic echo with latched option for topics\n"
     examples = ['/foo/bar']
     script_name = "py-trees-echo"
     banner_line = console.green + "*" * 79 + "\n" + console.reset

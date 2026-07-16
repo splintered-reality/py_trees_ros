@@ -31,7 +31,6 @@ import statistics
 import subprocess
 import tempfile
 import time
-import typing
 import uuid
 
 import diagnostic_msgs.msg as diagnostic_msgs  # noqa

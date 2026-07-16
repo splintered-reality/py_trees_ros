@@ -2,7 +2,7 @@
 
 Behaviours, trees, and utilities that extend [PyTrees](https://github.com/splintered-reality/py_trees) for use with ROS.
 
-![Trees](docs/images/trees.png?raw=true "Behaviour Trees")
+![Trees](docs/sources/images/trees.png?raw=true "Behaviour Trees")
 
 ## Getting Started
 

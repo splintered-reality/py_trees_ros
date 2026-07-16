@@ -20,8 +20,6 @@ import py_trees
 import rclpy.qos
 import tf2_ros
 
-import py_trees.console as console
-
 import geometry_msgs.msg as geometry_msgs
 
 ##############################################################################
