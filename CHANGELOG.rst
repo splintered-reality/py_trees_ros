@@ -2,8 +2,8 @@
 Changelog
 =========
 
-Forthcoming
------------
+2.6.0 (2026-09-10)
+------------------
 * [docs] Remove duplicate images folder and shrink trees.png file size
 * [infra] Fix build warnings (`#255 <https://github.com/splintered-reality/py_trees_ros/issues/255>`_)
 * [readme] Update py_trees_ros_tutorials version to 2.5.x
